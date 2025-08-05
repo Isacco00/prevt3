@@ -14,7 +14,203 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      parametri: {
+        Row: {
+          attivo: boolean
+          created_at: string
+          descrizione: string | null
+          id: string
+          nome: string
+          tipo: string
+          updated_at: string
+          user_id: string
+          valore: number | null
+          valore_testo: string | null
+        }
+        Insert: {
+          attivo?: boolean
+          created_at?: string
+          descrizione?: string | null
+          id?: string
+          nome: string
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valore?: number | null
+          valore_testo?: string | null
+        }
+        Update: {
+          attivo?: boolean
+          created_at?: string
+          descrizione?: string | null
+          id?: string
+          nome?: string
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valore?: number | null
+          valore_testo?: string | null
+        }
+        Relationships: []
+      }
+      preventivi: {
+        Row: {
+          altezza: number
+          costo_fisso: number
+          costo_mc: number
+          costo_mq: number
+          created_at: string
+          data_scadenza: string | null
+          descrizione: string | null
+          id: string
+          larghezza: number
+          lunghezza: number
+          note: string | null
+          numero_preventivo: string
+          prospect_id: string | null
+          status: string
+          superficie: number | null
+          titolo: string
+          totale: number | null
+          updated_at: string
+          user_id: string
+          volume: number | null
+        }
+        Insert: {
+          altezza: number
+          costo_fisso?: number
+          costo_mc?: number
+          costo_mq?: number
+          created_at?: string
+          data_scadenza?: string | null
+          descrizione?: string | null
+          id?: string
+          larghezza: number
+          lunghezza: number
+          note?: string | null
+          numero_preventivo: string
+          prospect_id?: string | null
+          status?: string
+          superficie?: number | null
+          titolo: string
+          totale?: number | null
+          updated_at?: string
+          user_id: string
+          volume?: number | null
+        }
+        Update: {
+          altezza?: number
+          costo_fisso?: number
+          costo_mc?: number
+          costo_mq?: number
+          created_at?: string
+          data_scadenza?: string | null
+          descrizione?: string | null
+          id?: string
+          larghezza?: number
+          lunghezza?: number
+          note?: string | null
+          numero_preventivo?: string
+          prospect_id?: string | null
+          status?: string
+          superficie?: number | null
+          titolo?: string
+          totale?: number | null
+          updated_at?: string
+          user_id?: string
+          volume?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preventivi_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
+            referencedRelation: "prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prospects: {
+        Row: {
+          cap: string | null
+          citta: string | null
+          codice_fiscale: string | null
+          created_at: string
+          email: string | null
+          id: string
+          indirizzo: string | null
+          partita_iva: string
+          provincia: string | null
+          ragione_sociale: string
+          telefono: string | null
+          tipo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cap?: string | null
+          citta?: string | null
+          codice_fiscale?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          indirizzo?: string | null
+          partita_iva: string
+          provincia?: string | null
+          ragione_sociale: string
+          telefono?: string | null
+          tipo?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cap?: string | null
+          citta?: string | null
+          codice_fiscale?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          indirizzo?: string | null
+          partita_iva?: string
+          provincia?: string | null
+          ragione_sociale?: string
+          telefono?: string | null
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -13,6 +13,7 @@ import { Plus, Edit, Search } from 'lucide-react';
 
 interface Prospect {
   id: string;
+  user_id: string;
   ragione_sociale: string;
   partita_iva: string;
   codice_fiscale?: string;
@@ -24,6 +25,7 @@ interface Prospect {
   email?: string;
   tipo: 'prospect' | 'cliente';
   created_at: string;
+  updated_at: string;
 }
 
 const Prospects = () => {
@@ -54,13 +56,13 @@ const Prospects = () => {
 
   const fetchProspects = async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('prospects')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProspects(data || []);
+      setProspects((data || []) as Prospect[]);
     } catch (error: any) {
       toast({
         title: "Errore",
@@ -112,7 +114,7 @@ const Prospects = () => {
 
     try {
       // Controlla duplicati
-      const { data: existing } = await (supabase as any)
+      const { data: existing } = await supabase
         .from('prospects')
         .select('id')
         .eq('partita_iva', formData.partita_iva)
@@ -128,7 +130,7 @@ const Prospects = () => {
       }
 
       if (editingProspect) {
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from('prospects')
           .update(formData)
           .eq('id', editingProspect.id);
@@ -140,9 +142,9 @@ const Prospects = () => {
           description: "Anagrafica aggiornata con successo",
         });
       } else {
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from('prospects')
-          .insert([formData]);
+          .insert([{ ...formData, user_id: (await supabase.auth.getUser()).data.user?.id }]);
         
         if (error) throw error;
         
