@@ -10,6 +10,8 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { AppHeader } from "@/components/AppHeader";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Prospects from "./pages/Prospects";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -37,10 +39,18 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={
               <ProtectedRoute>
                 <AppLayout>
                   <Index />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/prospects" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Prospects />
                 </AppLayout>
               </ProtectedRoute>
             } />
