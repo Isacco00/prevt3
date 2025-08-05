@@ -300,23 +300,31 @@ const Preventivi = () => {
       const totale = struttura_terra + grafica_cordino + premontaggio;
 
       const { error } = await supabase.from('preventivi').insert({
-        ...data,
+        numero_preventivo: data.numero_preventivo,
+        titolo: data.titolo,
+        descrizione: data.descrizione,
         user_id: user.id,
         profondita,
-        larghezza,
+        lunghezza: larghezza, // Il database usa 'lunghezza' invece di 'larghezza'  
+        larghezza: larghezza, // Aggiungo anche larghezza per compatibilità
         altezza,
+        layout: data.layout,
         distribuzione,
-        superficie,
-        volume,
+        complessita: data.complessita,
+        status: data.status,
+        data_scadenza: data.data_scadenza || null,
+        note: data.note,
+        prospect_id: data.prospect_id || null,
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
-        costo_mq: 0, // Non più utilizzato
-        costo_mc: 0, // Non più utilizzato
-        costo_fisso: 0, // Non più utilizzato
-        totale,
-        prospect_id: data.prospect_id || null,
-      });
+        // I costi calcolati verranno usati per mostrare il totale corretto nell'UI
+        // ma il database userà ancora i suoi calcoli basati su costo_mq, costo_mc, costo_fisso
+        costo_mq: 0,
+        costo_mc: 0, 
+        costo_fisso: totale, // Metto il totale calcolato come costo_fisso così il db calcola correttamente
+      } as any);
+      // Note: superficie, volume e totale sono calcolati automaticamente dal database
       
       if (error) throw error;
     },
