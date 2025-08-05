@@ -55,6 +55,10 @@ interface Preventivo {
   costo_mq: number;
   costo_mc: number;
   costo_fisso: number;
+  costo_struttura?: number;
+  costo_grafica?: number;
+  costo_premontaggio?: number;
+  costo_totale?: number;
   totale?: number;
   status: string;
   data_scadenza?: string;
@@ -307,7 +311,8 @@ const Preventivi = () => {
         titolo: data.titolo,
         descrizione: data.descrizione,
         user_id: user.id,
-        lunghezza: profondita, // Mappatura corretta: profondità → lunghezza nel database
+        lunghezza: profondita, // Manteniamo lunghezza per compatibilità
+        profondita: profondita,
         larghezza: larghezza,
         altezza: altezza,
         layout: data.layout,
@@ -317,6 +322,8 @@ const Preventivi = () => {
         data_scadenza: data.data_scadenza || null,
         note: data.note,
         prospect_id: data.prospect_id || null,
+        superficie: superficie,
+        volume: volume,
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
@@ -423,7 +430,8 @@ const Preventivi = () => {
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
         descrizione: data.descrizione,
-        lunghezza: profondita,
+        lunghezza: profondita, // Manteniamo lunghezza per compatibilità
+        profondita: profondita,
         larghezza: larghezza,
         altezza: altezza,
         layout: data.layout,
@@ -433,6 +441,8 @@ const Preventivi = () => {
         data_scadenza: data.data_scadenza || null,
         note: data.note,
         prospect_id: data.prospect_id || null,
+        superficie: superficie,
+        volume: volume,
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
@@ -841,8 +851,8 @@ const Preventivi = () => {
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                   Annulla
                 </Button>
-                <Button type="submit" disabled={createPreventivoMutation.isPending}>
-                  {createPreventivoMutation.isPending ? 'Creazione...' : 'Crea Preventivo'}
+                <Button type="submit" disabled={createPreventivoMutation.isPending || updatePreventivoMutation.isPending}>
+                  {editingPreventivo ? (updatePreventivoMutation.isPending ? 'Aggiornamento...' : 'Aggiorna Preventivo') : (createPreventivoMutation.isPending ? 'Creazione...' : 'Crea Preventivo')}
                 </Button>
               </div>
             </form>
@@ -933,11 +943,11 @@ const Preventivi = () => {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="font-medium">
-                        €{preventivo.totale?.toLocaleString('it-IT') || '0'}
-                      </div>
-                    </TableCell>
+                     <TableCell>
+                       <div className="font-medium">
+                         €{(preventivo.costo_totale || preventivo.totale)?.toLocaleString('it-IT') || '0'}
+                       </div>
+                     </TableCell>
                     <TableCell>
                       {getStatusBadge(preventivo.status)}
                     </TableCell>
