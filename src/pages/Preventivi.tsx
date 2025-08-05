@@ -32,7 +32,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Search, FileText, Calculator } from 'lucide-react';
+import { Plus, Search, FileText, Calculator, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Preventivo {
@@ -76,6 +76,7 @@ const Preventivi = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingPreventivo, setEditingPreventivo] = useState<Preventivo | null>(null);
   const [formData, setFormData] = useState({
     numero_preventivo: '',
     titolo: '',
@@ -297,19 +298,20 @@ const Preventivi = () => {
       const premontaggio = costoPremontaggio ? 
         elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
-      const totale = struttura_terra + grafica_cordino + premontaggio;
+      const costo_totale = struttura_terra + grafica_cordino + premontaggio;
+      const superficie_mq = superficie / 10000; // Conversione da cm² a m²
+      const volume_mc = volume / 1000000; // Conversione da cm³ a m³
 
       const { error } = await supabase.from('preventivi').insert({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
         descrizione: data.descrizione,
         user_id: user.id,
-        profondita,
-        lunghezza: larghezza, // Il database usa 'lunghezza' invece di 'larghezza'  
-        larghezza: larghezza, // Aggiungo anche larghezza per compatibilità
-        altezza,
+        lunghezza: profondita, // Mappatura corretta: profondità → lunghezza nel database
+        larghezza: larghezza,
+        altezza: altezza,
         layout: data.layout,
-        distribuzione,
+        distribuzione: distribuzione,
         complessita: data.complessita,
         status: data.status,
         data_scadenza: data.data_scadenza || null,
@@ -318,13 +320,14 @@ const Preventivi = () => {
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
-        // I costi calcolati verranno usati per mostrare il totale corretto nell'UI
-        // ma il database userà ancora i suoi calcoli basati su costo_mq, costo_mc, costo_fisso
-        costo_mq: 0,
-        costo_mc: 0, 
-        costo_fisso: totale, // Metto il totale calcolato come costo_fisso così il db calcola correttamente
-      } as any);
-      // Note: superficie, volume e totale sono calcolati automaticamente dal database
+        costo_struttura: struttura_terra,
+        costo_grafica: grafica_cordino,
+        costo_premontaggio: premontaggio,
+        costo_totale: costo_totale,
+        costo_mq: superficie_mq > 0 ? costo_totale / superficie_mq : 0,
+        costo_mc: volume_mc > 0 ? costo_totale / volume_mc : 0,
+        costo_fisso: 0,
+      });
       
       if (error) throw error;
     },
@@ -360,7 +363,104 @@ const Preventivi = () => {
       data_scadenza: '',
       note: '',
     });
+    setEditingPreventivo(null);
   };
+
+  const openEditDialog = (preventivo: Preventivo) => {
+    setEditingPreventivo(preventivo);
+    setFormData({
+      numero_preventivo: preventivo.numero_preventivo,
+      titolo: preventivo.titolo,
+      descrizione: preventivo.descrizione || '',
+      prospect_id: preventivo.prospect_id || '',
+      profondita: preventivo.profondita.toString(),
+      larghezza: preventivo.larghezza.toString(),
+      altezza: preventivo.altezza.toString(),
+      layout: preventivo.layout,
+      distribuzione: preventivo.distribuzione.toString(),
+      complessita: preventivo.complessita || 'normale',
+      status: preventivo.status,
+      data_scadenza: preventivo.data_scadenza || '',
+      note: preventivo.note || '',
+    });
+    setIsDialogOpen(true);
+  };
+
+  // Mutation per aggiornare un preventivo
+  const updatePreventivoMutation = useMutation({
+    mutationFn: async (data: any) => {
+      if (!user || !editingPreventivo) throw new Error('User not authenticated or no preventivo selected');
+      
+      // Calcoli automatici
+      const profondita = parseFloat(data.profondita);
+      const larghezza = parseFloat(data.larghezza);
+      const altezza = parseFloat(data.altezza);
+      const distribuzione = parseInt(data.distribuzione);
+      
+      // Calcolo elementi fisici
+      const elements = calculatePhysicalElements();
+      
+      const superficie = larghezza * profondita;
+      const volume = superficie * altezza;
+
+      // Calcolo dei costi usando i parametri
+      const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
+      const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+      const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === data.altezza);
+
+      const struttura_terra = costoAltezzaParam ? 
+        elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+      const grafica_cordino = costoStampaParam ? 
+        elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+      const premontaggio = costoPremontaggio ? 
+        elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+
+      const costo_totale = struttura_terra + grafica_cordino + premontaggio;
+      const superficie_mq = superficie / 10000;
+      const volume_mc = volume / 1000000;
+
+      const { error } = await supabase.from('preventivi').update({
+        numero_preventivo: data.numero_preventivo,
+        titolo: data.titolo,
+        descrizione: data.descrizione,
+        lunghezza: profondita,
+        larghezza: larghezza,
+        altezza: altezza,
+        layout: data.layout,
+        distribuzione: distribuzione,
+        complessita: data.complessita,
+        status: data.status,
+        data_scadenza: data.data_scadenza || null,
+        note: data.note,
+        prospect_id: data.prospect_id || null,
+        superficie_stampa: elements.superficie_stampa,
+        sviluppo_lineare: elements.sviluppo_lineare,
+        numero_pezzi: elements.numero_pezzi,
+        costo_struttura: struttura_terra,
+        costo_grafica: grafica_cordino,
+        costo_premontaggio: premontaggio,
+        costo_totale: costo_totale,
+        costo_mq: superficie_mq > 0 ? costo_totale / superficie_mq : 0,
+        costo_mc: volume_mc > 0 ? costo_totale / volume_mc : 0,
+      }).eq('id', editingPreventivo.id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preventivi'] });
+      queryClient.invalidateQueries({ queryKey: ['preventivi-count'] });
+      queryClient.invalidateQueries({ queryKey: ['preventivi-in-corso'] });
+      queryClient.invalidateQueries({ queryKey: ['preventivi-valore'] });
+      queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
+      setIsDialogOpen(false);
+      resetForm();
+      toast.success('Preventivo aggiornato con successo');
+    },
+    onError: (error) => {
+      toast.error('Errore nell\'aggiornamento del preventivo');
+      console.error('Error updating preventivo:', error);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -371,7 +471,11 @@ const Preventivi = () => {
       return;
     }
 
-    createPreventivoMutation.mutate(formData);
+    if (editingPreventivo) {
+      updatePreventivoMutation.mutate(formData);
+    } else {
+      createPreventivoMutation.mutate(formData);
+    }
   };
 
   // Filtri
@@ -418,9 +522,9 @@ const Preventivi = () => {
           </DialogTrigger>
           <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Nuovo Preventivo</DialogTitle>
+              <DialogTitle>{editingPreventivo ? 'Modifica Preventivo' : 'Nuovo Preventivo'}</DialogTitle>
               <DialogDescription>
-                Crea un nuovo preventivo compilando le 4 sezioni seguenti.
+                {editingPreventivo ? 'Modifica il preventivo esistente' : 'Crea un nuovo preventivo compilando le 4 sezioni seguenti'}.
               </DialogDescription>
             </DialogHeader>
             
@@ -800,6 +904,7 @@ const Preventivi = () => {
                   <TableHead>Totale</TableHead>
                   <TableHead>Stato</TableHead>
                   <TableHead>Data Creazione</TableHead>
+                  <TableHead>Azioni</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -838,6 +943,15 @@ const Preventivi = () => {
                     </TableCell>
                     <TableCell>
                       {new Date(preventivo.created_at).toLocaleDateString('it-IT')}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openEditDialog(preventivo)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

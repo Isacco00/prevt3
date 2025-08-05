@@ -64,8 +64,12 @@ export type Database = {
           altezza: number
           complessita: string | null
           costo_fisso: number
+          costo_grafica: number | null
           costo_mc: number
           costo_mq: number
+          costo_premontaggio: number | null
+          costo_struttura: number | null
+          costo_totale: number | null
           created_at: string
           data_scadenza: string | null
           descrizione: string | null
@@ -93,8 +97,12 @@ export type Database = {
           altezza: number
           complessita?: string | null
           costo_fisso?: number
+          costo_grafica?: number | null
           costo_mc?: number
           costo_mq?: number
+          costo_premontaggio?: number | null
+          costo_struttura?: number | null
+          costo_totale?: number | null
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
@@ -122,8 +130,12 @@ export type Database = {
           altezza?: number
           complessita?: string | null
           costo_fisso?: number
+          costo_grafica?: number | null
           costo_mc?: number
           costo_mq?: number
+          costo_premontaggio?: number | null
+          costo_struttura?: number | null
+          costo_totale?: number | null
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
