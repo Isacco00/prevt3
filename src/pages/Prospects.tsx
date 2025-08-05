@@ -54,7 +54,7 @@ const Prospects = () => {
 
   const fetchProspects = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('prospects')
         .select('*')
         .order('created_at', { ascending: false });
@@ -112,7 +112,7 @@ const Prospects = () => {
 
     try {
       // Controlla duplicati
-      const { data: existing } = await supabase
+      const { data: existing } = await (supabase as any)
         .from('prospects')
         .select('id')
         .eq('partita_iva', formData.partita_iva)
@@ -128,7 +128,7 @@ const Prospects = () => {
       }
 
       if (editingProspect) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('prospects')
           .update(formData)
           .eq('id', editingProspect.id);
@@ -140,7 +140,7 @@ const Prospects = () => {
           description: "Anagrafica aggiornata con successo",
         });
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('prospects')
           .insert([formData]);
         
