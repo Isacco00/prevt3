@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Prospects from "./pages/Prospects";
 import Preventivi from "./pages/Preventivi";
+import Admin from "./pages/Admin";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -59,6 +60,13 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <Preventivi />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Admin />
                 </AppLayout>
               </ProtectedRoute>
             } />

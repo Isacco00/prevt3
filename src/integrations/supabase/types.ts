@@ -21,10 +21,12 @@ export type Database = {
           descrizione: string | null
           id: string
           nome: string
+          ordine: number | null
           tipo: string
           updated_at: string
           user_id: string
           valore: number | null
+          valore_chiave: string | null
           valore_testo: string | null
         }
         Insert: {
@@ -33,10 +35,12 @@ export type Database = {
           descrizione?: string | null
           id?: string
           nome: string
+          ordine?: number | null
           tipo: string
           updated_at?: string
           user_id: string
           valore?: number | null
+          valore_chiave?: string | null
           valore_testo?: string | null
         }
         Update: {
@@ -45,10 +49,12 @@ export type Database = {
           descrizione?: string | null
           id?: string
           nome?: string
+          ordine?: number | null
           tipo?: string
           updated_at?: string
           user_id?: string
           valore?: number | null
+          valore_chiave?: string | null
           valore_testo?: string | null
         }
         Relationships: []
