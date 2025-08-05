@@ -77,21 +77,18 @@ export type Database = {
           id: string
           larghezza: number
           layout: string | null
-          lunghezza: number
           note: string | null
           numero_pezzi: number | null
           numero_preventivo: string
           profondita: number | null
           prospect_id: string | null
           status: string
-          superficie: number | null
           superficie_stampa: number | null
           sviluppo_lineare: number | null
           titolo: string
           totale: number | null
           updated_at: string
           user_id: string
-          volume: number | null
         }
         Insert: {
           altezza: number
@@ -110,21 +107,18 @@ export type Database = {
           id?: string
           larghezza: number
           layout?: string | null
-          lunghezza: number
           note?: string | null
           numero_pezzi?: number | null
           numero_preventivo: string
           profondita?: number | null
           prospect_id?: string | null
           status?: string
-          superficie?: number | null
           superficie_stampa?: number | null
           sviluppo_lineare?: number | null
           titolo: string
           totale?: number | null
           updated_at?: string
           user_id: string
-          volume?: number | null
         }
         Update: {
           altezza?: number
@@ -143,21 +137,18 @@ export type Database = {
           id?: string
           larghezza?: number
           layout?: string | null
-          lunghezza?: number
           note?: string | null
           numero_pezzi?: number | null
           numero_preventivo?: string
           profondita?: number | null
           prospect_id?: string | null
           status?: string
-          superficie?: number | null
           superficie_stampa?: number | null
           sviluppo_lineare?: number | null
           titolo?: string
           totale?: number | null
           updated_at?: string
           user_id?: string
-          volume?: number | null
         }
         Relationships: [
           {

@@ -311,7 +311,6 @@ const Preventivi = () => {
         titolo: data.titolo,
         descrizione: data.descrizione,
         user_id: user.id,
-        lunghezza: profondita, // Manteniamo lunghezza per compatibilità
         profondita: profondita,
         larghezza: larghezza,
         altezza: altezza,
@@ -429,7 +428,6 @@ const Preventivi = () => {
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
         descrizione: data.descrizione,
-        lunghezza: profondita, // Manteniamo lunghezza per compatibilità
         profondita: profondita,
         larghezza: larghezza,
         altezza: altezza,
