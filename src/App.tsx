@@ -11,6 +11,7 @@ import { AppHeader } from "@/components/AppHeader";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Prospects from "./pages/Prospects";
+import Preventivi from "./pages/Preventivi";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -51,6 +52,13 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <Prospects />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/preventivi" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Preventivi />
                 </AppLayout>
               </ProtectedRoute>
             } />
