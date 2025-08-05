@@ -1,18 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Plus, Edit, Trash2, Search, FileText, Calculator } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -22,18 +14,30 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Plus, Search, FileText, Calculator, Edit } from 'lucide-react';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
 
 interface Preventivo {
   id: string;
@@ -77,10 +81,12 @@ interface Prospect {
 const Preventivi = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPreventivo, setEditingPreventivo] = useState<Preventivo | null>(null);
+  const [deletePreventivo, setDeletePreventivo] = useState<Preventivo | null>(null);
   const [formData, setFormData] = useState({
     numero_preventivo: '',
     titolo: '',
@@ -174,7 +180,6 @@ const Preventivi = () => {
   };
 
   const physicalElements = calculatePhysicalElements();
-
 
   // Query per recuperare i preventivi
   const { data: preventivi = [], isLoading } = useQuery({
@@ -344,52 +349,20 @@ const Preventivi = () => {
       queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
       setIsDialogOpen(false);
       resetForm();
-      toast.success('Preventivo creato con successo');
+      toast({
+        title: "Successo",
+        description: "Preventivo creato con successo",
+      });
     },
     onError: (error) => {
-      toast.error('Errore nella creazione del preventivo');
+      toast({
+        title: "Errore",
+        description: "Errore nella creazione del preventivo",
+        variant: "destructive",
+      });
       console.error('Error creating preventivo:', error);
     },
   });
-
-  const resetForm = () => {
-    setFormData({
-      numero_preventivo: '',
-      titolo: '',
-      descrizione: '',
-      prospect_id: '',
-      profondita: '',
-      larghezza: '',
-      altezza: '',
-      layout: '',
-      distribuzione: '',
-      complessita: 'normale',
-      status: 'bozza',
-      data_scadenza: '',
-      note: '',
-    });
-    setEditingPreventivo(null);
-  };
-
-  const openEditDialog = (preventivo: Preventivo) => {
-    setEditingPreventivo(preventivo);
-    setFormData({
-      numero_preventivo: preventivo.numero_preventivo,
-      titolo: preventivo.titolo,
-      descrizione: preventivo.descrizione || '',
-      prospect_id: preventivo.prospect_id || '',
-      profondita: preventivo.profondita.toString(),
-      larghezza: preventivo.larghezza.toString(),
-      altezza: preventivo.altezza.toString(),
-      layout: preventivo.layout,
-      distribuzione: preventivo.distribuzione.toString(),
-      complessita: preventivo.complessita || 'normale',
-      status: preventivo.status,
-      data_scadenza: preventivo.data_scadenza || '',
-      note: preventivo.note || '',
-    });
-    setIsDialogOpen(true);
-  };
 
   // Mutation per aggiornare un preventivo
   const updatePreventivoMutation = useMutation({
@@ -460,20 +433,102 @@ const Preventivi = () => {
       queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
       setIsDialogOpen(false);
       resetForm();
-      toast.success('Preventivo aggiornato con successo');
+      toast({
+        title: "Successo", 
+        description: "Preventivo aggiornato con successo",
+      });
     },
     onError: (error) => {
-      toast.error('Errore nell\'aggiornamento del preventivo');
+      toast({
+        title: "Errore",
+        description: "Errore nell'aggiornamento del preventivo",
+        variant: "destructive",
+      });
       console.error('Error updating preventivo:', error);
     },
   });
+
+  // Mutation per eliminare un preventivo
+  const deletePreventivoMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('preventivi')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['preventivi'] });
+      queryClient.invalidateQueries({ queryKey: ['preventivi-count'] });
+      queryClient.invalidateQueries({ queryKey: ['preventivi-in-corso'] });
+      queryClient.invalidateQueries({ queryKey: ['preventivi-valore'] });
+      queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
+      setDeletePreventivo(null);
+      toast({
+        title: "Successo",
+        description: "Preventivo eliminato con successo",
+      });
+    },
+    onError: (error) => {
+      console.error('Error deleting preventivo:', error);
+      toast({
+        title: "Errore",
+        description: "Errore durante l'eliminazione del preventivo",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      numero_preventivo: '',
+      titolo: '',
+      descrizione: '',
+      prospect_id: '',
+      profondita: '',
+      larghezza: '',
+      altezza: '',
+      layout: '',
+      distribuzione: '',
+      complessita: 'normale',
+      status: 'bozza',
+      data_scadenza: '',
+      note: '',
+    });
+    setEditingPreventivo(null);
+  };
+
+  const openEditDialog = (preventivo: Preventivo) => {
+    setEditingPreventivo(preventivo);
+    setFormData({
+      numero_preventivo: preventivo.numero_preventivo,
+      titolo: preventivo.titolo,
+      descrizione: preventivo.descrizione || '',
+      prospect_id: preventivo.prospect_id || '',
+      profondita: preventivo.profondita.toString(),
+      larghezza: preventivo.larghezza.toString(),
+      altezza: preventivo.altezza.toString(),
+      layout: preventivo.layout,
+      distribuzione: preventivo.distribuzione.toString(),
+      complessita: preventivo.complessita || 'normale',
+      status: preventivo.status,
+      data_scadenza: preventivo.data_scadenza || '',
+      note: preventivo.note || '',
+    });
+    setIsDialogOpen(true);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validazione base
     if (!formData.numero_preventivo || !formData.titolo || !formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione) {
-      toast.error('Compila tutti i campi obbligatori');
+      toast({
+        title: "Errore",
+        description: "Compila tutti i campi obbligatori",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -781,9 +836,6 @@ const Preventivi = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">€{costs.struttura_terra.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">
-                        {physicalElements.sviluppo_lineare.toFixed(2)}m × €{parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.altezza)?.valore?.toFixed(2) || '0.00'}
-                      </p>
                     </CardContent>
                   </Card>
 
@@ -794,9 +846,6 @@ const Preventivi = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">
-                        {physicalElements.superficie_stampa.toFixed(2)}m² × €{parametri.find(p => p.tipo === 'costo_stampa')?.valore?.toFixed(2) || '0.00'}
-                      </p>
                     </CardContent>
                   </Card>
 
@@ -807,14 +856,10 @@ const Preventivi = () => {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">
-                        {physicalElements.numero_pezzi.toFixed(0)}pz × €{parametri.find(p => p.tipo === 'costo_premontaggio')?.valore?.toFixed(2) || '0.00'}
-                      </p>
                     </CardContent>
                   </Card>
                 </div>
 
-                {/* Totale */}
                 <Card className="border-2 border-primary">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Totale Preventivo</CardTitle>
@@ -930,9 +975,6 @@ const Preventivi = () => {
                     <TableCell>
                       <div className="text-sm">
                         <div>{preventivo.profondita}×{preventivo.larghezza}×{preventivo.altezza}m</div>
-                        <div className="text-muted-foreground">
-                          {preventivo.superficie?.toFixed(2)}m² • {preventivo.volume?.toFixed(2)}m³
-                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -954,15 +996,25 @@ const Preventivi = () => {
                     <TableCell>
                       {new Date(preventivo.created_at).toLocaleDateString('it-IT')}
                     </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => openEditDialog(preventivo)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+                     <TableCell>
+                       <div className="flex gap-1">
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => openEditDialog(preventivo)}
+                         >
+                           <Edit className="h-4 w-4" />
+                         </Button>
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => setDeletePreventivo(preventivo)}
+                           className="text-destructive hover:text-destructive/90"
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                       </div>
+                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -970,6 +1022,27 @@ const Preventivi = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Alert Dialog per conferma cancellazione */}
+      <AlertDialog open={!!deletePreventivo} onOpenChange={() => setDeletePreventivo(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sei sicuro di cancellare il preventivo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Questa azione non può essere annullata. Il preventivo "{deletePreventivo?.titolo}" verrà eliminato definitivamente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annulla</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => deletePreventivo && deletePreventivoMutation.mutate(deletePreventivo.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Elimina
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
