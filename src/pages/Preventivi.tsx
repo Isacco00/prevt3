@@ -170,6 +170,62 @@ const Preventivi = () => {
 
   const physicalElements = calculatePhysicalElements();
 
+
+  // Query per recuperare i preventivi
+  const { data: preventivi = [], isLoading } = useQuery({
+    queryKey: ['preventivi'],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('preventivi')
+        .select(`
+          *,
+          prospects:prospect_id (ragione_sociale)
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Preventivo[];
+    },
+    enabled: !!user,
+  });
+
+  // Query per recuperare i parametri
+  const { data: parametri = [] } = useQuery({
+    queryKey: ['parametri-for-preventivi'],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('parametri')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('tipo', { ascending: true })
+        .order('ordine', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Query per recuperare le anagrafiche
+  const { data: prospects = [] } = useQuery({
+    queryKey: ['prospects-for-preventivi'],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('prospects')
+        .select('id, ragione_sociale')
+        .eq('user_id', user.id)
+        .order('ragione_sociale');
+      
+      if (error) throw error;
+      return data as Prospect[];
+    },
+    enabled: !!user,
+  });
+
   // Calcolo dei costi automatici
   const calculateCosts = () => {
     if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione || !parametri.length) {
@@ -211,61 +267,6 @@ const Preventivi = () => {
   };
 
   const costs = calculateCosts();
-
-  // Query per recuperare i preventivi
-  const { data: preventivi = [], isLoading } = useQuery({
-    queryKey: ['preventivi'],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from('preventivi')
-        .select(`
-          *,
-          prospects:prospect_id (ragione_sociale)
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data as Preventivo[];
-    },
-    enabled: !!user,
-  });
-
-  // Query per recuperare le anagrafiche
-  const { data: prospects = [] } = useQuery({
-    queryKey: ['prospects-for-preventivi'],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from('prospects')
-        .select('id, ragione_sociale')
-        .eq('user_id', user.id)
-        .order('ragione_sociale');
-      
-      if (error) throw error;
-      return data as Prospect[];
-    },
-    enabled: !!user,
-  });
-
-  // Query per recuperare i parametri
-  const { data: parametri = [] } = useQuery({
-    queryKey: ['parametri-for-preventivi'],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data, error } = await supabase
-        .from('parametri')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('tipo', { ascending: true })
-        .order('ordine', { ascending: true });
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
 
   // Mutation per creare un nuovo preventivo
   const createPreventivoMutation = useMutation({
