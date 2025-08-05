@@ -87,9 +87,6 @@ const Preventivi = () => {
     layout: '',
     distribuzione: '',
     complessita: 'normale',
-    costo_mq: '',
-    costo_mc: '',
-    costo_fisso: '',
     status: 'bozza',
     data_scadenza: '',
     note: '',
@@ -173,6 +170,48 @@ const Preventivi = () => {
 
   const physicalElements = calculatePhysicalElements();
 
+  // Calcolo dei costi automatici
+  const calculateCosts = () => {
+    if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione || !parametri.length) {
+      return {
+        struttura_terra: 0,
+        grafica_cordino: 0,
+        premontaggio: 0,
+        totale: 0
+      };
+    }
+
+    const elements = physicalElements;
+    
+    // Trova i parametri necessari
+    const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
+    const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.altezza);
+
+    // Struttura a terra: sviluppo lineare * costo per m/l in base all'altezza
+    const struttura_terra = costoAltezzaParam ? 
+      elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+
+    // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
+    const grafica_cordino = costoStampaParam ? 
+      elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+
+    // Premontaggio: numero pezzi * costo premontaggio al pezzo
+    const premontaggio = costoPremontaggio ? 
+      elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+
+    const totale = struttura_terra + grafica_cordino + premontaggio;
+
+    return {
+      struttura_terra,
+      grafica_cordino,
+      premontaggio,
+      totale
+    };
+  };
+
+  const costs = calculateCosts();
+
   // Query per recuperare i preventivi
   const { data: preventivi = [], isLoading } = useQuery({
     queryKey: ['preventivi'],
@@ -210,6 +249,24 @@ const Preventivi = () => {
     enabled: !!user,
   });
 
+  // Query per recuperare i parametri
+  const { data: parametri = [] } = useQuery({
+    queryKey: ['parametri-for-preventivi'],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('parametri')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('tipo', { ascending: true })
+        .order('ordine', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Mutation per creare un nuovo preventivo
   const createPreventivoMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -226,10 +283,20 @@ const Preventivi = () => {
       
       const superficie = larghezza * profondita;
       const volume = superficie * altezza;
-      const costoMq = parseFloat(data.costo_mq) || 0;
-      const costoMc = parseFloat(data.costo_mc) || 0;
-      const costoFisso = parseFloat(data.costo_fisso) || 0;
-      const totale = (superficie * costoMq) + (volume * costoMc) + costoFisso;
+
+      // Calcolo dei costi usando i parametri
+      const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
+      const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+      const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === data.altezza);
+
+      const struttura_terra = costoAltezzaParam ? 
+        elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+      const grafica_cordino = costoStampaParam ? 
+        elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+      const premontaggio = costoPremontaggio ? 
+        elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+
+      const totale = struttura_terra + grafica_cordino + premontaggio;
 
       const { error } = await supabase.from('preventivi').insert({
         ...data,
@@ -243,9 +310,9 @@ const Preventivi = () => {
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
-        costo_mq: costoMq,
-        costo_mc: costoMc,
-        costo_fisso: costoFisso,
+        costo_mq: 0, // Non più utilizzato
+        costo_mc: 0, // Non più utilizzato
+        costo_fisso: 0, // Non più utilizzato
         totale,
         prospect_id: data.prospect_id || null,
       });
@@ -280,9 +347,6 @@ const Preventivi = () => {
       layout: '',
       distribuzione: '',
       complessita: 'normale',
-      costo_mq: '',
-      costo_mc: '',
-      costo_fisso: '',
       status: 'bozza',
       data_scadenza: '',
       note: '',
@@ -463,15 +527,17 @@ const Preventivi = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="altezza">Altezza (m) *</Label>
-                    <Input
-                      id="altezza"
-                      type="number"
-                      step="0.01"
-                      value={formData.altezza}
-                      onChange={(e) => setFormData({ ...formData, altezza: e.target.value })}
-                      placeholder="0.00"
-                      required
-                    />
+                    <Select value={formData.altezza} onValueChange={(value) => setFormData({ ...formData, altezza: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleziona altezza" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="2.5">2.5 m</SelectItem>
+                        <SelectItem value="3">3 m</SelectItem>
+                        <SelectItem value="3.5">3.5 m</SelectItem>
+                        <SelectItem value="4">4 m</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -576,50 +642,64 @@ const Preventivi = () => {
 
               <Separator />
 
-              {/* Sezione 4: Preventivo (costi) */}
+              {/* Sezione 4: Calcolo Costi */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">4. Preventivo</h3>
+                  <Calculator className="h-5 w-5" />
+                  <h3 className="text-lg font-semibold">4. Calcolo Costi</h3>
                 </div>
                 
+                {/* Dettaglio costi */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="costo_mq">Costo al m² (€)</Label>
-                    <Input
-                      id="costo_mq"
-                      type="number"
-                      step="0.01"
-                      value={formData.costo_mq}
-                      onChange={(e) => setFormData({ ...formData, costo_mq: e.target.value })}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="costo_mc">Costo al m³ (€)</Label>
-                    <Input
-                      id="costo_mc"
-                      type="number"
-                      step="0.01"
-                      value={formData.costo_mc}
-                      onChange={(e) => setFormData({ ...formData, costo_mc: e.target.value })}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="costo_fisso">Costo Fisso (€)</Label>
-                    <Input
-                      id="costo_fisso"
-                      type="number"
-                      step="0.01"
-                      value={formData.costo_fisso}
-                      onChange={(e) => setFormData({ ...formData, costo_fisso: e.target.value })}
-                      placeholder="0.00"
-                    />
-                  </div>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm">Struttura a terra</CardTitle>
+                      <CardDescription className="text-xs">Sviluppo lineare × Costo per altezza</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">€{costs.struttura_terra.toFixed(2)}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {physicalElements.sviluppo_lineare.toFixed(2)}m × €{parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.altezza)?.valore?.toFixed(2) || '0.00'}
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm">Grafica con cordino cucito</CardTitle>
+                      <CardDescription className="text-xs">Superficie stampa × Costo stampa mq</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {physicalElements.superficie_stampa.toFixed(2)}m² × €{parametri.find(p => p.tipo === 'costo_stampa')?.valore?.toFixed(2) || '0.00'}
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm">Premontaggio</CardTitle>
+                      <CardDescription className="text-xs">Numero pezzi × Costo premontaggio</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
+                      <p className="text-xs text-muted-foreground">
+                        {physicalElements.numero_pezzi.toFixed(0)}pz × €{parametri.find(p => p.tipo === 'costo_premontaggio')?.valore?.toFixed(2) || '0.00'}
+                      </p>
+                    </CardContent>
+                  </Card>
                 </div>
+
+                {/* Totale */}
+                <Card className="border-2 border-primary">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">Totale Preventivo</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-4xl font-bold text-primary">€{costs.totale.toFixed(2)}</div>
+                  </CardContent>
+                </Card>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
