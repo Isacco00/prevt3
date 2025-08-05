@@ -322,8 +322,6 @@ const Preventivi = () => {
         data_scadenza: data.data_scadenza || null,
         note: data.note,
         prospect_id: data.prospect_id || null,
-        superficie: superficie,
-        volume: volume,
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
@@ -334,6 +332,7 @@ const Preventivi = () => {
         costo_mq: superficie_mq > 0 ? costo_totale / superficie_mq : 0,
         costo_mc: volume_mc > 0 ? costo_totale / volume_mc : 0,
         costo_fisso: 0,
+        totale: costo_totale,
       });
       
       if (error) throw error;
@@ -441,8 +440,6 @@ const Preventivi = () => {
         data_scadenza: data.data_scadenza || null,
         note: data.note,
         prospect_id: data.prospect_id || null,
-        superficie: superficie,
-        volume: volume,
         superficie_stampa: elements.superficie_stampa,
         sviluppo_lineare: elements.sviluppo_lineare,
         numero_pezzi: elements.numero_pezzi,
@@ -452,6 +449,7 @@ const Preventivi = () => {
         costo_totale: costo_totale,
         costo_mq: superficie_mq > 0 ? costo_totale / superficie_mq : 0,
         costo_mc: volume_mc > 0 ? costo_totale / volume_mc : 0,
+        totale: costo_totale,
       }).eq('id', editingPreventivo.id);
       
       if (error) throw error;
@@ -525,7 +523,11 @@ const Preventivi = () => {
         
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setIsDialogOpen(true)}>
+            <Button onClick={() => {
+              setEditingPreventivo(null);
+              resetForm();
+              setIsDialogOpen(true);
+            }}>
               <Plus className="mr-2 h-4 w-4" />
               Nuovo Preventivo
             </Button>
