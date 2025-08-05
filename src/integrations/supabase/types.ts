@@ -56,20 +56,27 @@ export type Database = {
       preventivi: {
         Row: {
           altezza: number
+          complessita: string | null
           costo_fisso: number
           costo_mc: number
           costo_mq: number
           created_at: string
           data_scadenza: string | null
           descrizione: string | null
+          distribuzione: number | null
           id: string
           larghezza: number
+          layout: string | null
           lunghezza: number
           note: string | null
+          numero_pezzi: number | null
           numero_preventivo: string
+          profondita: number | null
           prospect_id: string | null
           status: string
           superficie: number | null
+          superficie_stampa: number | null
+          sviluppo_lineare: number | null
           titolo: string
           totale: number | null
           updated_at: string
@@ -78,20 +85,27 @@ export type Database = {
         }
         Insert: {
           altezza: number
+          complessita?: string | null
           costo_fisso?: number
           costo_mc?: number
           costo_mq?: number
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
+          distribuzione?: number | null
           id?: string
           larghezza: number
+          layout?: string | null
           lunghezza: number
           note?: string | null
+          numero_pezzi?: number | null
           numero_preventivo: string
+          profondita?: number | null
           prospect_id?: string | null
           status?: string
           superficie?: number | null
+          superficie_stampa?: number | null
+          sviluppo_lineare?: number | null
           titolo: string
           totale?: number | null
           updated_at?: string
@@ -100,20 +114,27 @@ export type Database = {
         }
         Update: {
           altezza?: number
+          complessita?: string | null
           costo_fisso?: number
           costo_mc?: number
           costo_mq?: number
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
+          distribuzione?: number | null
           id?: string
           larghezza?: number
+          layout?: string | null
           lunghezza?: number
           note?: string | null
+          numero_pezzi?: number | null
           numero_preventivo?: string
+          profondita?: number | null
           prospect_id?: string | null
           status?: string
           superficie?: number | null
+          superficie_stampa?: number | null
+          sviluppo_lineare?: number | null
           titolo?: string
           totale?: number | null
           updated_at?: string
