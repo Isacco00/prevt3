@@ -852,7 +852,7 @@ const Preventivi = () => {
                   Annulla
                 </Button>
                 <Button type="submit" disabled={createPreventivoMutation.isPending || updatePreventivoMutation.isPending}>
-                  {editingPreventivo ? (updatePreventivoMutation.isPending ? 'Aggiornamento...' : 'Aggiorna Preventivo') : (createPreventivoMutation.isPending ? 'Creazione...' : 'Crea Preventivo')}
+                  {editingPreventivo ? (updatePreventivoMutation.isPending ? 'Aggiornamento...' : 'Aggiorna') : (createPreventivoMutation.isPending ? 'Salvataggio...' : 'Salva')}
                 </Button>
               </div>
             </form>
