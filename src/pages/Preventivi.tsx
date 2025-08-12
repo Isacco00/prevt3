@@ -164,7 +164,7 @@ const Preventivi = () => {
 
     // Numero di pezzi
     const profiliPerDistribuzione = {
-      1: 6,
+      1: 60,
       2: 10,
       3: 14,
       4: 18
