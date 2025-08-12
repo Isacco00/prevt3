@@ -673,7 +673,7 @@ const Preventivi = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">2. Dati di Ingresso per il Preventivo</h3>
+                  <h3 className="text-lg font-semibold">2. Dati di Ingresso per Stand</h3>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
