@@ -104,7 +104,7 @@ const Preventivi = () => {
   });
 
   // Calcoli automatici degli elementi fisici
-  const calculatePhysicalElements = () => {
+  const calculatePhysicalElements = (profiliDistribuzioneMap: Record<number, number>) => {
     if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione) {
       return {
         superficie_stampa: 0,
@@ -163,13 +163,8 @@ const Preventivi = () => {
     }
 
     // Numero di pezzi
-    const profiliPerDistribuzione = {
-      1: 6,
-      2: 10,
-      3: 14,
-      4: 18
-    };
-    const numero_pezzi = sviluppo_lineare * (profiliPerDistribuzione[distribuzione as keyof typeof profiliPerDistribuzione] || 0);
+    const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
+    const numero_pezzi = sviluppo_lineare * fattoreDistribuzione;
 
     return {
       superficie_stampa,
@@ -179,7 +174,7 @@ const Preventivi = () => {
     };
   };
 
-  const physicalElements = calculatePhysicalElements();
+  // physicalElements calcolati dopo il caricamento dei parametri
 
   // Query per recuperare i preventivi
   const { data: preventivi = [], isLoading } = useQuery({
@@ -218,6 +213,21 @@ const Preventivi = () => {
     },
     enabled: !!user,
   });
+
+  // Mappa dinamica profili per distribuzione dai parametri
+  const profiliDistribuzioneMap = React.useMemo(() => {
+    const map: Record<number, number> = {};
+    for (const p of (parametri as any[])) {
+      if (p.tipo === 'profili_distribuzione') {
+        const key = parseInt((p.nome as string) || '', 10);
+        if (!isNaN(key)) map[key] = Number(p.valore) || 0;
+      }
+    }
+    return map;
+  }, [parametri]);
+
+  // Elementi fisici calcolati (dipendono dai parametri)
+  const physicalElements = calculatePhysicalElements(profiliDistribuzioneMap);
 
   // Query per recuperare le anagrafiche
   const { data: prospects = [] } = useQuery({
@@ -290,7 +300,7 @@ const Preventivi = () => {
       const distribuzione = parseInt(data.distribuzione);
       
       // Calcolo elementi fisici
-      const elements = calculatePhysicalElements();
+      const elements = calculatePhysicalElements(profiliDistribuzioneMap);
       
       const superficie = larghezza * profondita;
       const volume = superficie * altezza;
@@ -376,7 +386,7 @@ const Preventivi = () => {
       const distribuzione = parseInt(data.distribuzione);
       
       // Calcolo elementi fisici
-      const elements = calculatePhysicalElements();
+      const elements = calculatePhysicalElements(profiliDistribuzioneMap);
       
       const superficie = larghezza * profondita;
       const volume = superficie * altezza;
