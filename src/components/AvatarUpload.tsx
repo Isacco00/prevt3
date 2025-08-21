@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
-import { Camera, Upload, RotateCcw, ZoomIn, ZoomOut, Move, Save, X } from 'lucide-react';
+import { Upload, RotateCcw, ZoomIn, ZoomOut, Move, Save, X } from 'lucide-react';
 import { Slider } from '@/components/ui/slider';
 
 interface AvatarUploadProps {
@@ -26,7 +26,6 @@ export function AvatarUpload({ currentAvatarUrl, onAvatarUpdate, onClose }: Avat
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -213,42 +212,22 @@ export function AvatarUpload({ currentAvatarUrl, onAvatarUpdate, onClose }: Avat
           {!selectedImage ? (
             <div className="text-center space-y-4">
               <p className="text-muted-foreground">
-                Seleziona una nuova foto profilo
+                Seleziona una nuova foto profilo dal tuo dispositivo
               </p>
               
-              <div className="flex gap-4 justify-center">
-                <Button
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  Carica file
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={() => cameraInputRef.current?.click()}
-                  className="flex items-center gap-2"
-                >
-                  <Camera className="h-4 w-4" />
-                  Scatta foto
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                Carica file
+              </Button>
 
               <Input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                className="hidden"
-                onChange={handleFileSelect}
-              />
-              
-              <Input
-                ref={cameraInputRef}
-                type="file"
-                accept="image/*"
-                capture="user"
                 className="hidden"
                 onChange={handleFileSelect}
               />
