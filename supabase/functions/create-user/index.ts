@@ -59,30 +59,27 @@ Deno.serve(async (req) => {
 
     console.log('User created successfully:', userData.user?.id)
 
-    // Create profile
+    // Update the existing profile created by trigger with the correct role
     const { error: profileError } = await supabaseClient
       .from('profiles')
-      .insert({
-        user_id: userData.user!.id,
-        first_name: firstName,
-        last_name: lastName,
-        email,
+      .update({
         role,
         active: true
       })
+      .eq('user_id', userData.user!.id)
 
     if (profileError) {
-      console.error('Error creating profile:', profileError)
-      // Try to clean up the user if profile creation fails
+      console.error('Error updating profile:', profileError)
+      // Try to clean up the user if profile update fails
       await supabaseClient.auth.admin.deleteUser(userData.user!.id)
       
       return new Response(
-        JSON.stringify({ error: 'Failed to create user profile' }),
+        JSON.stringify({ error: 'Failed to update user profile' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    console.log('Profile created successfully')
+    console.log('Profile updated successfully')
 
     return new Response(
       JSON.stringify({ 
