@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { UserManagement } from '@/components/UserManagement';
 
 interface Parametro {
   id: string;
@@ -184,19 +185,7 @@ export default function Admin() {
         </TabsList>
         
         <TabsContent value="utenti" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Gestione Utenti</CardTitle>
-              <CardDescription>
-                Funzionalità per la gestione degli utenti (da implementare)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Questa sezione verrà implementata in futuro per gestire gli utenti del sistema.
-              </p>
-            </CardContent>
-          </Card>
+          <UserManagement />
         </TabsContent>
         
         <TabsContent value="parametri" className="space-y-6">
