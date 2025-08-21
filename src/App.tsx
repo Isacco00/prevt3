@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import Prospects from "./pages/Prospects";
 import Preventivi from "./pages/Preventivi";
 import Admin from "./pages/Admin";
+import { Profile } from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
@@ -67,6 +68,13 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <Admin />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Profile />
                 </AppLayout>
               </ProtectedRoute>
             } />
