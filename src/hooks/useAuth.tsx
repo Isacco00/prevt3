@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -30,20 +31,65 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const checkUserActive = async (userId: string) => {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('active')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error || !profile?.active) {
+      await supabase.auth.signOut();
+      toast({
+        title: "Accesso negato",
+        description: "Utente non attivo, contatta un amministratore",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+      async (event, session) => {
+        if (session?.user) {
+          // Check if user is active when session is established
+          setTimeout(async () => {
+            const isActive = await checkUserActive(session.user.id);
+            if (isActive) {
+              setSession(session);
+              setUser(session.user);
+            } else {
+              setSession(null);
+              setUser(null);
+            }
+            setLoading(false);
+          }, 0);
+        } else {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        }
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        const isActive = await checkUserActive(session.user.id);
+        if (isActive) {
+          setSession(session);
+          setUser(session.user);
+        } else {
+          setSession(null);
+          setUser(null);
+        }
+      } else {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
       setLoading(false);
     });
 
@@ -51,10 +97,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    // If login successful, check if user is active
+    if (data.user && !error) {
+      const isActive = await checkUserActive(data.user.id);
+      if (!isActive) {
+        return { error: { message: "Utente non attivo, contatta un amministratore" } };
+      }
+    }
+    
     return { error };
   };
 
