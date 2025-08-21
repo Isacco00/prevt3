@@ -55,21 +55,34 @@ export function AppSidebar() {
   const { data: profile } = useQuery({
     queryKey: ['user-profile', user?.id],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!user?.id) {
+        console.log('DEBUG: No user ID found');
+        return null;
+      }
+      
+      console.log('DEBUG: Current user ID:', user.id);
+      console.log('DEBUG: Current user email:', user.email);
       
       const { data, error } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, user_id, email')
         .eq('user_id', user.id)
         .single();
 
-      if (error) throw error;
+      console.log('DEBUG: Profile query result:', { data, error });
+      
+      if (error) {
+        console.log('DEBUG: Profile query error:', error);
+        throw error;
+      }
       return data;
     },
     enabled: !!user?.id,
   });
 
   const isAdmin = profile?.role === 'admin';
+  console.log('DEBUG: Profile data:', profile);
+  console.log('DEBUG: Is admin:', isAdmin);
 
   // Filter navigation items based on user role
   const visibleNavigationItems = navigationItems.filter(item => {
