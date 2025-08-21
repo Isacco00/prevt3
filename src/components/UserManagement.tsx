@@ -73,15 +73,26 @@ export function UserManagement() {
   // Create user mutation
   const createUserMutation = useMutation({
     mutationFn: async (userData: NewUserForm) => {
-      const { data, error } = await supabase.rpc('create_user_by_admin', {
-        email: userData.email,
-        password: userData.password,
-        first_name: userData.firstName,
-        last_name: userData.lastName,
-        user_role: userData.role
+      const { data, error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: userData.email,
+          password: userData.password,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          role: userData.role
+        }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error from edge function:', error);
+        throw new Error(error.message || 'Errore durante la creazione dell\'utente');
+      }
+
+      if (!data?.success) {
+        console.error('Error from result:', data);
+        throw new Error(data?.error || 'Errore durante la creazione dell\'utente');
+      }
+
       return data;
     },
     onSuccess: () => {
