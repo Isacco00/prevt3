@@ -101,6 +101,8 @@ const Preventivi = () => {
     status: 'bozza',
     data_scadenza: '',
     note: '',
+    bifaccialita: '',
+    retroilluminazione: '',
   });
 
   // Calcoli automatici degli elementi fisici
@@ -505,6 +507,8 @@ const Preventivi = () => {
       status: 'bozza',
       data_scadenza: '',
       note: '',
+      bifaccialita: '',
+      retroilluminazione: '',
     });
     setEditingPreventivo(null);
   };
@@ -525,6 +529,8 @@ const Preventivi = () => {
       status: preventivo.status,
       data_scadenza: preventivo.data_scadenza || '',
       note: preventivo.note || '',
+      bifaccialita: (preventivo as any).bifaccialita?.toString() || '',
+      retroilluminazione: (preventivo as any).retroilluminazione?.toString() || '',
     });
     setIsDialogOpen(true);
   };
@@ -772,6 +778,36 @@ const Preventivi = () => {
                         <SelectItem value="alta">Alta</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="bifaccialita">Bifaccialità (m)</Label>
+                    <Input
+                      id="bifaccialita"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="15"
+                      value={formData.bifaccialita}
+                      onChange={(e) => setFormData({ ...formData, bifaccialita: e.target.value })}
+                      placeholder="0.00"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="retroilluminazione">Retroilluminazione (m)</Label>
+                    <Input
+                      id="retroilluminazione"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="15"
+                      value={formData.retroilluminazione}
+                      onChange={(e) => setFormData({ ...formData, retroilluminazione: e.target.value })}
+                      placeholder="0.00"
+                    />
                   </div>
                 </div>
               </div>
