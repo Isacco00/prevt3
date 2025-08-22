@@ -125,16 +125,16 @@ const Preventivi = () => {
     let superficie_stampa = 0;
     switch (formData.layout) {
       case '4_lati':
-        superficie_stampa = (2 * larghezza + 2 * profondita) * altezza + altezza;
+        superficie_stampa = (2 * larghezza + 2 * profondita) * altezza + bifaccialita * altezza;
         break;
       case '3_lati':
-        superficie_stampa = (larghezza + 2 * profondita) * altezza + altezza;
+        superficie_stampa = (larghezza + 2 * profondita) * altezza + bifaccialita * altezza + altezza;
         break;
       case '2_lati':
-        superficie_stampa = (larghezza + profondita) * altezza + altezza;
+        superficie_stampa = (larghezza + profondita) * altezza + bifaccialita * altezza + altezza;
         break;
       case '1_lato':
-        superficie_stampa = larghezza * altezza + altezza;
+        superficie_stampa = larghezza * altezza + bifaccialita * altezza + altezza;
         break;
       case '0_lati':
         superficie_stampa = 0;
