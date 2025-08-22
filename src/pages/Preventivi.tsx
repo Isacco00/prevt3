@@ -120,6 +120,7 @@ const Preventivi = () => {
     const larghezza = parseFloat(formData.larghezza);
     const altezza = parseFloat(formData.altezza);
     const distribuzione = parseInt(formData.distribuzione);
+    const bifaccialita = parseInt(formData.bifaccialita);
 
     // Superficie di stampa
     let superficie_stampa = 0;
@@ -698,10 +699,12 @@ const Preventivi = () => {
                     <Input
                       id="profondita"
                       type="number"
-                      step="0.01"
+                      step="0.5"
+                      min="0"
+                      max="15"
                       value={formData.profondita}
                       onChange={(e) => setFormData({ ...formData, profondita: e.target.value })}
-                      placeholder="0.00"
+                      placeholder="0.0"
                       required
                     />
                   </div>
@@ -711,10 +714,12 @@ const Preventivi = () => {
                     <Input
                       id="larghezza"
                       type="number"
-                      step="0.01"
+                      step="0.5"
+                      min="0"
+                      max="15"
                       value={formData.larghezza}
                       onChange={(e) => setFormData({ ...formData, larghezza: e.target.value })}
-                      placeholder="0.00"
+                      placeholder="0.0"
                       required
                     />
                   </div>
@@ -787,12 +792,12 @@ const Preventivi = () => {
                     <Input
                       id="bifaccialita"
                       type="number"
-                      step="0.01"
+                      step="0.5"
                       min="0"
                       max="15"
                       value={formData.bifaccialita}
                       onChange={(e) => setFormData({ ...formData, bifaccialita: e.target.value })}
-                      placeholder="0.00"
+                      placeholder="0.0"
                     />
                   </div>
                   
@@ -801,12 +806,12 @@ const Preventivi = () => {
                     <Input
                       id="retroilluminazione"
                       type="number"
-                      step="0.01"
+                      step="0.5"
                       min="0"
                       max="15"
                       value={formData.retroilluminazione}
                       onChange={(e) => setFormData({ ...formData, retroilluminazione: e.target.value })}
-                      placeholder="0.00"
+                      placeholder="0.0"
                     />
                   </div>
                 </div>
