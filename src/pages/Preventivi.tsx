@@ -101,7 +101,7 @@ const Preventivi = () => {
     status: 'bozza',
     data_scadenza: '',
     note: '',
-    bifaccialita: '',
+    bifaccialita: '0',
     retroilluminazione: '',
   });
 
@@ -508,7 +508,7 @@ const Preventivi = () => {
       status: 'bozza',
       data_scadenza: '',
       note: '',
-      bifaccialita: '',
+      bifaccialita: '0',
       retroilluminazione: '',
     });
     setEditingPreventivo(null);
@@ -530,7 +530,7 @@ const Preventivi = () => {
       status: preventivo.status,
       data_scadenza: preventivo.data_scadenza || '',
       note: preventivo.note || '',
-      bifaccialita: (preventivo as any).bifaccialita?.toString() || '',
+      bifaccialita: (preventivo as any).bifaccialita?.toString() || '0',
       retroilluminazione: (preventivo as any).retroilluminazione?.toString() || '',
     });
     setIsDialogOpen(true);
