@@ -62,6 +62,7 @@ export type Database = {
       preventivi: {
         Row: {
           altezza: number
+          bifaccialita: number | null
           complessita: string | null
           costo_fisso: number
           costo_grafica: number | null
@@ -82,6 +83,7 @@ export type Database = {
           numero_preventivo: string
           profondita: number | null
           prospect_id: string | null
+          retroilluminazione: number | null
           status: string
           superficie_stampa: number | null
           sviluppo_lineare: number | null
@@ -92,6 +94,7 @@ export type Database = {
         }
         Insert: {
           altezza: number
+          bifaccialita?: number | null
           complessita?: string | null
           costo_fisso?: number
           costo_grafica?: number | null
@@ -112,6 +115,7 @@ export type Database = {
           numero_preventivo: string
           profondita?: number | null
           prospect_id?: string | null
+          retroilluminazione?: number | null
           status?: string
           superficie_stampa?: number | null
           sviluppo_lineare?: number | null
@@ -122,6 +126,7 @@ export type Database = {
         }
         Update: {
           altezza?: number
+          bifaccialita?: number | null
           complessita?: string | null
           costo_fisso?: number
           costo_grafica?: number | null
@@ -142,6 +147,7 @@ export type Database = {
           numero_preventivo?: string
           profondita?: number | null
           prospect_id?: string | null
+          retroilluminazione?: number | null
           status?: string
           superficie_stampa?: number | null
           sviluppo_lineare?: number | null

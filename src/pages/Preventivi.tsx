@@ -301,6 +301,8 @@ const Preventivi = () => {
       const larghezza = parseFloat(data.larghezza);
       const altezza = parseFloat(data.altezza);
       const distribuzione = parseInt(data.distribuzione);
+      const bifaccialita = parseFloat((data.bifaccialita ?? '0')) || 0;
+      const retroilluminazione = parseFloat((data.retroilluminazione ?? '0')) || 0;
       
       // Calcolo elementi fisici
       const elements = calculatePhysicalElements(profiliDistribuzioneMap);
@@ -324,6 +326,13 @@ const Preventivi = () => {
       const superficie_mq = superficie / 10000; // Conversione da cm² a m²
       const volume_mc = volume / 1000000; // Conversione da cm³ a m³
 
+      // Evita overflow su colonne numeric(10,2)
+      const MAX_NUMERIC = 99999999.99;
+      let costo_mq_value = superficie_mq > 0 ? (costo_totale / superficie_mq) : 0;
+      let costo_mc_value = volume_mc > 0 ? (costo_totale / volume_mc) : 0;
+      if (!isFinite(costo_mq_value) || Math.abs(costo_mq_value) > MAX_NUMERIC) costo_mq_value = MAX_NUMERIC;
+      if (!isFinite(costo_mc_value) || Math.abs(costo_mc_value) > MAX_NUMERIC) costo_mc_value = MAX_NUMERIC;
+
       const { error } = await supabase.from('preventivi').insert({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
@@ -346,10 +355,12 @@ const Preventivi = () => {
         costo_grafica: grafica_cordino,
         costo_premontaggio: premontaggio,
         costo_totale: costo_totale,
-        costo_mq: superficie_mq > 0 ? costo_totale / superficie_mq : 0,
-        costo_mc: volume_mc > 0 ? costo_totale / volume_mc : 0,
+        costo_mq: costo_mq_value,
+        costo_mc: costo_mc_value,
         costo_fisso: 0,
         totale: costo_totale,
+        bifaccialita,
+        retroilluminazione,
       });
       
       if (error) throw error;
@@ -387,6 +398,8 @@ const Preventivi = () => {
       const larghezza = parseFloat(data.larghezza);
       const altezza = parseFloat(data.altezza);
       const distribuzione = parseInt(data.distribuzione);
+      const bifaccialita = parseFloat((data.bifaccialita ?? '0')) || 0;
+      const retroilluminazione = parseFloat((data.retroilluminazione ?? '0')) || 0;
       
       // Calcolo elementi fisici
       const elements = calculatePhysicalElements(profiliDistribuzioneMap);
@@ -410,6 +423,13 @@ const Preventivi = () => {
       const superficie_mq = superficie / 10000;
       const volume_mc = volume / 1000000;
 
+      // Evita overflow su colonne numeric(10,2)
+      const MAX_NUMERIC = 99999999.99;
+      let costo_mq_value = superficie_mq > 0 ? (costo_totale / superficie_mq) : 0;
+      let costo_mc_value = volume_mc > 0 ? (costo_totale / volume_mc) : 0;
+      if (!isFinite(costo_mq_value) || Math.abs(costo_mq_value) > MAX_NUMERIC) costo_mq_value = MAX_NUMERIC;
+      if (!isFinite(costo_mc_value) || Math.abs(costo_mc_value) > MAX_NUMERIC) costo_mc_value = MAX_NUMERIC;
+
       const { error } = await supabase.from('preventivi').update({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
@@ -431,9 +451,11 @@ const Preventivi = () => {
         costo_grafica: grafica_cordino,
         costo_premontaggio: premontaggio,
         costo_totale: costo_totale,
-        costo_mq: superficie_mq > 0 ? costo_totale / superficie_mq : 0,
-        costo_mc: volume_mc > 0 ? costo_totale / volume_mc : 0,
+        costo_mq: costo_mq_value,
+        costo_mc: costo_mc_value,
         totale: costo_totale,
+        bifaccialita,
+        retroilluminazione,
       }).eq('id', editingPreventivo.id);
       
       if (error) throw error;
