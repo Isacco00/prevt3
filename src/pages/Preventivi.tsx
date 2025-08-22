@@ -167,7 +167,7 @@ const Preventivi = () => {
 
     // Numero di pezzi
     const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
-    const numero_pezzi = sviluppo_lineare * fattoreDistribuzione;
+    const numero_pezzi = sviluppo_lineare * fattoreDistribuzione + bifaccialita * (distribuzione + 1);
 
     return {
       superficie_stampa,
