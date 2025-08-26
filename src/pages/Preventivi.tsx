@@ -4,7 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Plus, Edit, Trash2, Search, FileText, Calculator } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, FileText, Calculator, ChevronDown, ChevronRight } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { StandSection } from '@/components/StandSection';
+import { StorageSection } from '@/components/StorageSection';
+import { EmptySection } from '@/components/EmptySection';
 import {
   Dialog,
   DialogContent,
@@ -103,6 +107,21 @@ const Preventivi = () => {
     note: '',
     bifaccialita: '0',
     retroilluminazione: '',
+    // Storage fields
+    larg_storage: '',
+    prof_storage: '',
+    alt_storage: '',
+    layout_storage: '',
+    numero_porte: '',
+  });
+
+  // State per controllare le sezioni collassabili
+  const [sectionsOpen, setSectionsOpen] = useState({
+    stand: true,
+    storage: false,
+    desk: false,
+    espositori: false,
+    complementi: false,
   });
 
   // Calcoli automatici degli elementi fisici
@@ -532,8 +551,21 @@ const Preventivi = () => {
       note: '',
       bifaccialita: '0',
       retroilluminazione: '',
+      // Storage fields
+      larg_storage: '',
+      prof_storage: '',
+      alt_storage: '',
+      layout_storage: '',
+      numero_porte: '',
     });
     setEditingPreventivo(null);
+    setSectionsOpen({
+      stand: true,
+      storage: false,
+      desk: false,
+      espositori: false,
+      complementi: false,
+    });
   };
 
   const openEditDialog = (preventivo: Preventivo) => {
@@ -554,6 +586,19 @@ const Preventivi = () => {
       note: preventivo.note || '',
       bifaccialita: (preventivo as any).bifaccialita?.toString() || '0',
       retroilluminazione: (preventivo as any).retroilluminazione?.toString() || '',
+      // Storage fields - in futuro verranno recuperati dal database
+      larg_storage: '',
+      prof_storage: '',
+      alt_storage: '',
+      layout_storage: '',
+      numero_porte: '',
+    });
+    setSectionsOpen({
+      stand: true,
+      storage: false,
+      desk: false,
+      espositori: false,
+      complementi: false,
     });
     setIsDialogOpen(true);
   };
@@ -628,7 +673,7 @@ const Preventivi = () => {
             <DialogHeader>
               <DialogTitle>{editingPreventivo ? 'Modifica Preventivo' : 'Nuovo Preventivo'}</DialogTitle>
               <DialogDescription>
-                {editingPreventivo ? 'Modifica il preventivo esistente' : 'Crea un nuovo preventivo compilando le 4 sezioni seguenti'}.
+                {editingPreventivo ? 'Modifica il preventivo esistente' : 'Crea un nuovo preventivo compilando le sezioni seguenti'}.
               </DialogDescription>
             </DialogHeader>
             
@@ -708,229 +753,125 @@ const Preventivi = () => {
 
               <Separator />
 
-              {/* Sezione 2: Dati di Ingresso */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">2. Dati di Ingresso per Stand</h3>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="profondita">Profondità (m) *</Label>
-                    <Input
-                      id="profondita"
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="15"
-                      value={formData.profondita}
-                      onChange={(e) => setFormData({ ...formData, profondita: e.target.value })}
-                      placeholder="0.0"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="larghezza">Larghezza (m) *</Label>
-                    <Input
-                      id="larghezza"
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="15"
-                      value={formData.larghezza}
-                      onChange={(e) => setFormData({ ...formData, larghezza: e.target.value })}
-                      placeholder="0.0"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="altezza">Altezza (m) *</Label>
-                    <Select value={formData.altezza} onValueChange={(value) => setFormData({ ...formData, altezza: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleziona altezza" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="2.5">2.5 m</SelectItem>
-                        <SelectItem value="3">3 m</SelectItem>
-                        <SelectItem value="3.5">3.5 m</SelectItem>
-                        <SelectItem value="4">4 m</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="layout">Layout *</Label>
-                    <Select value={formData.layout} onValueChange={(value) => setFormData({ ...formData, layout: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleziona layout" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="4_lati">4 lati</SelectItem>
-                        <SelectItem value="3_lati">3 lati</SelectItem>
-                        <SelectItem value="2_lati">2 lati</SelectItem>
-                        <SelectItem value="1_lato">1 lato</SelectItem>
-                        <SelectItem value="0_lati">0 lati</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="distribuzione">Distribuzione *</Label>
-                    <Select value={formData.distribuzione} onValueChange={(value) => setFormData({ ...formData, distribuzione: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleziona distribuzione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">1</SelectItem>
-                        <SelectItem value="2">2</SelectItem>
-                        <SelectItem value="3">3</SelectItem>
-                        <SelectItem value="4">4</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="complessita">Complessità</Label>
-                    <Select value={formData.complessita} onValueChange={(value) => setFormData({ ...formData, complessita: value })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="normale">Normale</SelectItem>
-                        <SelectItem value="alta">Alta</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="bifaccialita">Bifaccialità (m)</Label>
-                    <Input
-                      id="bifaccialita"
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="15"
-                      value={formData.bifaccialita}
-                      onChange={(e) => setFormData({ ...formData, bifaccialita: e.target.value })}
-                      placeholder="0.0"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="retroilluminazione">Retroilluminazione (m)</Label>
-                    <Input
-                      id="retroilluminazione"
-                      type="number"
-                      step="0.5"
-                      min="0"
-                      max="15"
-                      value={formData.retroilluminazione}
-                      onChange={(e) => setFormData({ ...formData, retroilluminazione: e.target.value })}
-                      placeholder="0.0"
-                    />
-                  </div>
-                </div>
-              </div>
+              {/* Sezione Stand (sempre visibile) */}
+              <Collapsible
+                open={sectionsOpen.stand}
+                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, stand: open }))}
+              >
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">Stand</h3>
+                    </div>
+                    {sectionsOpen.stand ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 px-4 pb-4">
+                  <StandSection 
+                    formData={formData}
+                    setFormData={setFormData}
+                    physicalElements={physicalElements}
+                    costs={costs}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
 
               <Separator />
 
-              {/* Sezione 3: Elementi Fisici da Calcolare */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">3. Elementi Fisici da Calcolare</h3>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Superficie di stampa</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{physicalElements.superficie_stampa.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">m²</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Superficie metri quadri</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{physicalElements.superficie_mq.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">m²</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Sviluppo lineare</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{physicalElements.sviluppo_lineare.toFixed(2)}</div>
-                      <p className="text-xs text-muted-foreground">m</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Numero di pezzi</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{physicalElements.numero_pezzi.toFixed(0)}</div>
-                      <p className="text-xs text-muted-foreground">N</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
+              {/* Sezione Storage */}
+              <Collapsible
+                open={sectionsOpen.storage}
+                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, storage: open }))}
+              >
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">Storage</h3>
+                    </div>
+                    {sectionsOpen.storage ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 px-4 pb-4">
+                  <StorageSection 
+                    formData={formData}
+                    setFormData={setFormData}
+                    profiliDistribuzioneMap={profiliDistribuzioneMap}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
 
               <Separator />
 
-              {/* Sezione 4: Calcolo Costi */}
+              {/* Sezione Desk */}
+              <Collapsible
+                open={sectionsOpen.desk}
+                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, desk: open }))}
+              >
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">Desk</h3>
+                    </div>
+                    {sectionsOpen.desk ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 px-4 pb-4">
+                  <EmptySection sectionName="Desk" />
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Separator />
+
+              {/* Sezione Espositori/Plinto */}
+              <Collapsible
+                open={sectionsOpen.espositori}
+                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, espositori: open }))}
+              >
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">Espositori/Plinto</h3>
+                    </div>
+                    {sectionsOpen.espositori ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 px-4 pb-4">
+                  <EmptySection sectionName="Espositori/Plinto" />
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Separator />
+
+              {/* Sezione Complementi */}
+              <Collapsible
+                open={sectionsOpen.complementi}
+                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, complementi: open }))}
+              >
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
+                    <div className="flex items-center gap-2">
+                      <Calculator className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">Complementi</h3>
+                    </div>
+                    {sectionsOpen.complementi ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 px-4 pb-4">
+                  <EmptySection sectionName="Complementi" />
+                </CollapsibleContent>
+              </Collapsible>
+
+              <Separator />
+
+              {/* Sezione Totale Generale */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">4. Calcolo Costi</h3>
-                </div>
-                
-                {/* Dettaglio costi */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Struttura a terra</CardTitle>
-                      <CardDescription className="text-xs">Sviluppo lineare × Costo per altezza</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">€{costs.struttura_terra.toFixed(2)}</div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Grafica con cordino cucito</CardTitle>
-                      <CardDescription className="text-xs">Superficie stampa × Costo stampa mq</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm">Premontaggio</CardTitle>
-                      <CardDescription className="text-xs">Numero pezzi × Costo premontaggio</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
-                    </CardContent>
-                  </Card>
+                  <h3 className="text-lg font-semibold">Totale Generale Preventivo</h3>
                 </div>
 
                 <Card className="border-2 border-primary">
