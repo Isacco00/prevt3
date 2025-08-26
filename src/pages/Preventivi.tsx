@@ -753,119 +753,135 @@ const Preventivi = () => {
 
               <Separator />
 
-              {/* Sezione Stand (sempre visibile) */}
-              <Collapsible
-                open={sectionsOpen.stand}
-                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, stand: open }))}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
-                    <div className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5" />
-                      <h3 className="text-lg font-semibold">Stand</h3>
-                    </div>
-                    {sectionsOpen.stand ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 px-4 pb-4">
+              {/* Sezione Stand - principale */}
+              <div className="bg-[hsl(var(--section-stand))] border border-[hsl(var(--section-stand-border))] rounded-lg">
+                <div className="p-4 border-b border-[hsl(var(--section-stand-border))]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-stand-foreground))]"></div>
+                    <h3 className="text-lg font-semibold text-[hsl(var(--section-stand-foreground))]">
+                      Stand
+                    </h3>
+                    <span className="ml-auto text-xs bg-[hsl(var(--section-stand-foreground))] text-[hsl(var(--section-stand))] px-2 py-1 rounded-full">
+                      Principale
+                    </span>
+                  </div>
+                </div>
+                <div className="p-6">
                   <StandSection 
                     formData={formData}
                     setFormData={setFormData}
                     physicalElements={physicalElements}
                     costs={costs}
                   />
-                </CollapsibleContent>
-              </Collapsible>
+                </div>
+              </div>
 
-              <Separator />
+              {/* Sezioni aggiuntive collassabili */}
+              <div className="space-y-3">
+                <Collapsible
+                  open={sectionsOpen.storage}
+                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, storage: open }))}
+                >
+                  <div className="bg-[hsl(var(--section-storage))] border border-[hsl(var(--section-storage-border))] rounded-lg overflow-hidden">
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-storage-border))] rounded-none border-0"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-storage-foreground))]"></div>
+                          <span className="font-medium text-[hsl(var(--section-storage-foreground))]">Storage</span>
+                        </div>
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-storage-foreground))] ${sectionsOpen.storage ? 'rotate-180' : ''}`} />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="border-t border-[hsl(var(--section-storage-border))] bg-card p-6">
+                        <StorageSection 
+                          formData={formData}
+                          setFormData={setFormData}
+                          profiliDistribuzioneMap={profiliDistribuzioneMap}
+                        />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
 
-              {/* Sezione Storage */}
-              <Collapsible
-                open={sectionsOpen.storage}
-                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, storage: open }))}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
-                    <div className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5" />
-                      <h3 className="text-lg font-semibold">Storage</h3>
-                    </div>
-                    {sectionsOpen.storage ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 px-4 pb-4">
-                  <StorageSection 
-                    formData={formData}
-                    setFormData={setFormData}
-                    profiliDistribuzioneMap={profiliDistribuzioneMap}
-                  />
-                </CollapsibleContent>
-              </Collapsible>
+                <Collapsible
+                  open={sectionsOpen.desk}
+                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, desk: open }))}
+                >
+                  <div className="bg-[hsl(var(--section-desk))] border border-[hsl(var(--section-desk-border))] rounded-lg overflow-hidden">
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-desk-border))] rounded-none border-0"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-desk-foreground))]"></div>
+                          <span className="font-medium text-[hsl(var(--section-desk-foreground))]">Desk</span>
+                        </div>
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-desk-foreground))] ${sectionsOpen.desk ? 'rotate-180' : ''}`} />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="border-t border-[hsl(var(--section-desk-border))] bg-card p-6">
+                        <EmptySection sectionName="Desk" />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
 
-              <Separator />
+                <Collapsible
+                  open={sectionsOpen.espositori}
+                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, espositori: open }))}
+                >
+                  <div className="bg-[hsl(var(--section-expo))] border border-[hsl(var(--section-expo-border))] rounded-lg overflow-hidden">
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-expo-border))] rounded-none border-0"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-expo-foreground))]"></div>
+                          <span className="font-medium text-[hsl(var(--section-expo-foreground))]">Espositori/Plinto</span>
+                        </div>
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-expo-foreground))] ${sectionsOpen.espositori ? 'rotate-180' : ''}`} />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="border-t border-[hsl(var(--section-expo-border))] bg-card p-6">
+                        <EmptySection sectionName="Espositori/Plinto" />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
 
-              {/* Sezione Desk */}
-              <Collapsible
-                open={sectionsOpen.desk}
-                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, desk: open }))}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
-                    <div className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5" />
-                      <h3 className="text-lg font-semibold">Desk</h3>
-                    </div>
-                    {sectionsOpen.desk ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 px-4 pb-4">
-                  <EmptySection sectionName="Desk" />
-                </CollapsibleContent>
-              </Collapsible>
-
-              <Separator />
-
-              {/* Sezione Espositori/Plinto */}
-              <Collapsible
-                open={sectionsOpen.espositori}
-                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, espositori: open }))}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
-                    <div className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5" />
-                      <h3 className="text-lg font-semibold">Espositori/Plinto</h3>
-                    </div>
-                    {sectionsOpen.espositori ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 px-4 pb-4">
-                  <EmptySection sectionName="Espositori/Plinto" />
-                </CollapsibleContent>
-              </Collapsible>
-
-              <Separator />
-
-              {/* Sezione Complementi */}
-              <Collapsible
-                open={sectionsOpen.complementi}
-                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, complementi: open }))}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-between p-4 h-auto">
-                    <div className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5" />
-                      <h3 className="text-lg font-semibold">Complementi</h3>
-                    </div>
-                    {sectionsOpen.complementi ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-4 px-4 pb-4">
-                  <EmptySection sectionName="Complementi" />
-                </CollapsibleContent>
-              </Collapsible>
-
-              <Separator />
+                <Collapsible
+                  open={sectionsOpen.complementi}
+                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, complementi: open }))}
+                >
+                  <div className="bg-[hsl(var(--section-complement))] border border-[hsl(var(--section-complement-border))] rounded-lg overflow-hidden">
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-complement-border))] rounded-none border-0"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-complement-foreground))]"></div>
+                          <span className="font-medium text-[hsl(var(--section-complement-foreground))]">Complementi</span>
+                        </div>
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-complement-foreground))] ${sectionsOpen.complementi ? 'rotate-180' : ''}`} />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
+                        <EmptySection sectionName="Complementi" />
+                      </div>
+                    </CollapsibleContent>
+                  </div>
+                </Collapsible>
+              </div>
 
               {/* Sezione Totale Generale */}
               <div className="space-y-4">

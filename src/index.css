@@ -53,6 +53,27 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Section colors - soft pastels */
+    --section-stand: 220 65% 95%;
+    --section-stand-foreground: 220 65% 25%;
+    --section-stand-border: 220 65% 85%;
+    
+    --section-storage: 150 45% 95%;
+    --section-storage-foreground: 150 45% 25%;
+    --section-storage-border: 150 45% 85%;
+    
+    --section-desk: 260 50% 95%;
+    --section-desk-foreground: 260 50% 25%;
+    --section-desk-border: 260 50% 85%;
+    
+    --section-expo: 30 60% 95%;
+    --section-expo-foreground: 30 60% 25%;
+    --section-expo-border: 30 60% 85%;
+    
+    --section-complement: 320 40% 95%;
+    --section-complement-foreground: 320 40% 25%;
+    --section-complement-border: 320 40% 85%;
   }
 
   .dark {
@@ -91,6 +112,27 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Section colors - dark mode */
+    --section-stand: 220 25% 15%;
+    --section-stand-foreground: 220 65% 85%;
+    --section-stand-border: 220 25% 25%;
+    
+    --section-storage: 150 20% 15%;
+    --section-storage-foreground: 150 45% 85%;
+    --section-storage-border: 150 20% 25%;
+    
+    --section-desk: 260 25% 15%;
+    --section-desk-foreground: 260 50% 85%;
+    --section-desk-border: 260 25% 25%;
+    
+    --section-expo: 30 25% 15%;
+    --section-expo-foreground: 30 60% 85%;
+    --section-expo-border: 30 25% 25%;
+    
+    --section-complement: 320 20% 15%;
+    --section-complement-foreground: 320 40% 85%;
+    --section-complement-border: 320 20% 25%;
   }
 }
 
