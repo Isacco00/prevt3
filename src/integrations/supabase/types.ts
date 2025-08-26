@@ -63,8 +63,10 @@ export type Database = {
         Row: {
           alt_storage: number | null
           altezza: number
+          baule_trolley: number | null
           bifaccialita: number | null
           borsa: number | null
+          borsa_stand: number | null
           complementi_config: string | null
           complessita: string | null
           costo_fisso: number
@@ -82,24 +84,32 @@ export type Database = {
           espositori_config: string | null
           fronte_luminoso: number | null
           id: string
+          kit_faro_100w: number | null
+          kit_faro_50w: number | null
           larg_storage: number | null
           larghezza: number
           layout: string | null
           layout_desk: string | null
           layout_storage: string | null
+          mensola: number | null
+          nicchia: number | null
           note: string | null
           numero_pezzi: number | null
           numero_pezzi_desk: number | null
           numero_pezzi_storage: number | null
           numero_porte: string | null
           numero_preventivo: string
+          pedana: number | null
           porta_scorrevole: number | null
           prof_storage: number | null
           profondita: number | null
           prospect_id: string | null
+          quadro_elettrico_16a: number | null
           retroilluminazione: number | null
           ripiano_inferiore: number | null
           ripiano_superiore: number | null
+          spot_light: number | null
+          staffa_monitor: number | null
           status: string
           superficie_stampa: number | null
           superficie_stampa_desk: number | null
@@ -115,8 +125,10 @@ export type Database = {
         Insert: {
           alt_storage?: number | null
           altezza: number
+          baule_trolley?: number | null
           bifaccialita?: number | null
           borsa?: number | null
+          borsa_stand?: number | null
           complementi_config?: string | null
           complessita?: string | null
           costo_fisso?: number
@@ -134,24 +146,32 @@ export type Database = {
           espositori_config?: string | null
           fronte_luminoso?: number | null
           id?: string
+          kit_faro_100w?: number | null
+          kit_faro_50w?: number | null
           larg_storage?: number | null
           larghezza: number
           layout?: string | null
           layout_desk?: string | null
           layout_storage?: string | null
+          mensola?: number | null
+          nicchia?: number | null
           note?: string | null
           numero_pezzi?: number | null
           numero_pezzi_desk?: number | null
           numero_pezzi_storage?: number | null
           numero_porte?: string | null
           numero_preventivo: string
+          pedana?: number | null
           porta_scorrevole?: number | null
           prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
+          quadro_elettrico_16a?: number | null
           retroilluminazione?: number | null
           ripiano_inferiore?: number | null
           ripiano_superiore?: number | null
+          spot_light?: number | null
+          staffa_monitor?: number | null
           status?: string
           superficie_stampa?: number | null
           superficie_stampa_desk?: number | null
@@ -167,8 +187,10 @@ export type Database = {
         Update: {
           alt_storage?: number | null
           altezza?: number
+          baule_trolley?: number | null
           bifaccialita?: number | null
           borsa?: number | null
+          borsa_stand?: number | null
           complementi_config?: string | null
           complessita?: string | null
           costo_fisso?: number
@@ -186,24 +208,32 @@ export type Database = {
           espositori_config?: string | null
           fronte_luminoso?: number | null
           id?: string
+          kit_faro_100w?: number | null
+          kit_faro_50w?: number | null
           larg_storage?: number | null
           larghezza?: number
           layout?: string | null
           layout_desk?: string | null
           layout_storage?: string | null
+          mensola?: number | null
+          nicchia?: number | null
           note?: string | null
           numero_pezzi?: number | null
           numero_pezzi_desk?: number | null
           numero_pezzi_storage?: number | null
           numero_porte?: string | null
           numero_preventivo?: string
+          pedana?: number | null
           porta_scorrevole?: number | null
           prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
+          quadro_elettrico_16a?: number | null
           retroilluminazione?: number | null
           ripiano_inferiore?: number | null
           ripiano_superiore?: number | null
+          spot_light?: number | null
+          staffa_monitor?: number | null
           status?: string
           superficie_stampa?: number | null
           superficie_stampa_desk?: number | null

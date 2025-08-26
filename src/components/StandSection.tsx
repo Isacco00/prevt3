@@ -15,6 +15,16 @@ interface StandSectionProps {
     complessita: string;
     bifaccialita: string;
     retroilluminazione: string;
+    borsa_stand: string;
+    baule_trolley: string;
+    staffa_monitor: string;
+    mensola: string;
+    spot_light: string;
+    kit_faro_50w: string;
+    kit_faro_100w: string;
+    quadro_elettrico_16a: string;
+    nicchia: string;
+    pedana: string;
   };
   setFormData: (data: any) => void;
   physicalElements: {
@@ -212,6 +222,146 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <p className="text-xs text-muted-foreground">N</p>
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      {/* Accessori Stand */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Calculator className="h-5 w-5" />
+          <h4 className="text-md font-semibold">Accessori Stand</h4>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="borsa_stand">Borsa</Label>
+            <Input
+              id="borsa_stand"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.borsa_stand}
+              onChange={(e) => setFormData({ ...formData, borsa_stand: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="baule_trolley">Baule Trolley</Label>
+            <Input
+              id="baule_trolley"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.baule_trolley}
+              onChange={(e) => setFormData({ ...formData, baule_trolley: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="staffa_monitor">Staffa monitor</Label>
+            <Input
+              id="staffa_monitor"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.staffa_monitor}
+              onChange={(e) => setFormData({ ...formData, staffa_monitor: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="mensola">Mensola</Label>
+            <Input
+              id="mensola"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.mensola}
+              onChange={(e) => setFormData({ ...formData, mensola: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="spot_light">Spot light</Label>
+            <Input
+              id="spot_light"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.spot_light}
+              onChange={(e) => setFormData({ ...formData, spot_light: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="kit_faro_50w">Kit Faro 50W</Label>
+            <Input
+              id="kit_faro_50w"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.kit_faro_50w}
+              onChange={(e) => setFormData({ ...formData, kit_faro_50w: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="kit_faro_100w">Kit Faro 100W</Label>
+            <Input
+              id="kit_faro_100w"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.kit_faro_100w}
+              onChange={(e) => setFormData({ ...formData, kit_faro_100w: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="quadro_elettrico_16a">Quadro Elettrico 16A</Label>
+            <Input
+              id="quadro_elettrico_16a"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.quadro_elettrico_16a}
+              onChange={(e) => setFormData({ ...formData, quadro_elettrico_16a: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="nicchia">Nicchia</Label>
+            <Input
+              id="nicchia"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.nicchia}
+              onChange={(e) => setFormData({ ...formData, nicchia: e.target.value })}
+              placeholder="0"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="pedana">Pedana (SI/NO)</Label>
+            <Input
+              id="pedana"
+              type="number"
+              min="0"
+              max="10"
+              value={formData.pedana}
+              onChange={(e) => setFormData({ ...formData, pedana: e.target.value })}
+              placeholder="0"
+            />
+          </div>
         </div>
       </div>
 
