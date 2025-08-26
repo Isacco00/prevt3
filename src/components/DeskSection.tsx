@@ -128,7 +128,7 @@ export function DeskSection({ data, onChange }: DeskSectionProps) {
           <div className="mt-6">
             <h5 className="text-md font-medium mb-3 text-desk">Accessori Desk</h5>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="porta_scorrevole">Porta scorrevole con chiave</Label>
                 <Input
