@@ -6,6 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface DeskData {
   desk_qta: number;
   layout_desk: string;
+  porta_scorrevole: number;
+  ripiano_superiore: number;
+  ripiano_inferiore: number;
+  teca_plexiglass: number;
+  fronte_luminoso: number;
+  borsa: number;
 }
 
 interface DeskSectionProps {
@@ -114,6 +120,97 @@ export function DeskSection({ data, onChange }: DeskSectionProps) {
                 <span className="text-lg font-medium text-desk">
                   {calculateNumeroPezzi()}
                 </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Accessori Desk */}
+          <div className="mt-6">
+            <h5 className="text-md font-medium mb-3 text-desk">Accessori Desk</h5>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="porta_scorrevole">Porta scorrevole con chiave</Label>
+                <Input
+                  id="porta_scorrevole"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={data.porta_scorrevole || ""}
+                  onChange={(e) => onChange("porta_scorrevole", parseInt(e.target.value) || 0)}
+                  placeholder="0-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ripiano_superiore">Ripiano Superiore L 100</Label>
+                <Input
+                  id="ripiano_superiore"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={data.ripiano_superiore || ""}
+                  onChange={(e) => onChange("ripiano_superiore", parseInt(e.target.value) || 0)}
+                  placeholder="0-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ripiano_inferiore">Ripiano Inferiore L 100</Label>
+                <Input
+                  id="ripiano_inferiore"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={data.ripiano_inferiore || ""}
+                  onChange={(e) => onChange("ripiano_inferiore", parseInt(e.target.value) || 0)}
+                  placeholder="0-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="teca_plexiglass">Teca in plexiglass</Label>
+                <Input
+                  id="teca_plexiglass"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={data.teca_plexiglass || ""}
+                  onChange={(e) => onChange("teca_plexiglass", parseInt(e.target.value) || 0)}
+                  placeholder="0-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="fronte_luminoso">Fronte luminoso dim. 100x100</Label>
+                <Input
+                  id="fronte_luminoso"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={data.fronte_luminoso || ""}
+                  onChange={(e) => onChange("fronte_luminoso", parseInt(e.target.value) || 0)}
+                  placeholder="0-10"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="borsa">Borsa</Label>
+                <Input
+                  id="borsa"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  value={data.borsa || ""}
+                  onChange={(e) => onChange("borsa", parseInt(e.target.value) || 0)}
+                  placeholder="0-10"
+                />
               </div>
             </div>
           </div>

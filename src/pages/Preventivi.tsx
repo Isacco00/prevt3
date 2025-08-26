@@ -117,6 +117,12 @@ const Preventivi = () => {
     // Desk fields
     desk_qta: 1,
     layout_desk: '',
+    porta_scorrevole: 0,
+    ripiano_superiore: 0,
+    ripiano_inferiore: 0,
+    teca_plexiglass: 0,
+    fronte_luminoso: 0,
+    borsa: 0,
   });
 
   // State per controllare le sezioni collassabili
@@ -564,6 +570,12 @@ const Preventivi = () => {
       // Desk fields
       desk_qta: 1,
       layout_desk: '',
+      porta_scorrevole: 0,
+      ripiano_superiore: 0,
+      ripiano_inferiore: 0,
+      teca_plexiglass: 0,
+      fronte_luminoso: 0,
+      borsa: 0,
     });
     setEditingPreventivo(null);
     setSectionsOpen({
@@ -602,6 +614,12 @@ const Preventivi = () => {
       // Desk fields - in futuro verranno recuperati dal database
       desk_qta: 1,
       layout_desk: '',
+      porta_scorrevole: 0,
+      ripiano_superiore: 0,
+      ripiano_inferiore: 0,
+      teca_plexiglass: 0,
+      fronte_luminoso: 0,
+      borsa: 0,
     });
     setSectionsOpen({
       stand: true,
@@ -836,13 +854,19 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-desk-border))] bg-card p-6">
-                        <DeskSection 
-                          data={{
-                            desk_qta: formData.desk_qta,
-                            layout_desk: formData.layout_desk,
-                          }}
-                          onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
-                        />
+                         <DeskSection 
+                           data={{
+                             desk_qta: formData.desk_qta,
+                             layout_desk: formData.layout_desk,
+                             porta_scorrevole: formData.porta_scorrevole,
+                             ripiano_superiore: formData.ripiano_superiore,
+                             ripiano_inferiore: formData.ripiano_inferiore,
+                             teca_plexiglass: formData.teca_plexiglass,
+                             fronte_luminoso: formData.fronte_luminoso,
+                             borsa: formData.borsa,
+                           }}
+                           onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
+                         />
                       </div>
                     </CollapsibleContent>
                   </div>
