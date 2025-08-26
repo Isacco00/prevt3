@@ -362,6 +362,66 @@ const Preventivi = () => {
       if (!isFinite(costo_mq_value) || Math.abs(costo_mq_value) > MAX_NUMERIC) costo_mq_value = MAX_NUMERIC;
       if (!isFinite(costo_mc_value) || Math.abs(costo_mc_value) > MAX_NUMERIC) costo_mc_value = MAX_NUMERIC;
 
+      // Calcoli Storage
+      let superficie_stampa_storage = 0;
+      let sviluppo_metri_lineari_storage = 0;
+      let numero_pezzi_storage = 0;
+
+      if (data.larg_storage && data.prof_storage && data.alt_storage && data.layout_storage) {
+        const larg = parseFloat(data.larg_storage);
+        const prof = parseFloat(data.prof_storage);
+        const alt = parseFloat(data.alt_storage);
+        const layout = data.layout_storage;
+
+        // Calcolo superficie di stampa storage
+        if (layout === "0") {
+          superficie_stampa_storage = (2 * larg + 2 * prof) * alt;
+        } else if (layout === "1") {
+          superficie_stampa_storage = (2 * larg + 2 * prof) * alt + 2;
+        } else if (layout === "2") {
+          superficie_stampa_storage = (larg + prof) * alt + 2;
+        }
+
+        // Calcolo sviluppo in metri lineari storage
+        if (layout === "0") {
+          sviluppo_metri_lineari_storage = larg + prof;
+        } else if (layout === "1") {
+          sviluppo_metri_lineari_storage = 2 * larg + 2 * prof;
+        } else if (layout === "2") {
+          sviluppo_metri_lineari_storage = larg + prof + 1;
+        }
+
+        // Numero pezzi storage basato su distribuzione
+        numero_pezzi_storage = sviluppo_metri_lineari_storage * distribuzione;
+      }
+
+      // Calcoli Desk
+      let superficie_stampa_desk = 0;
+      let numero_pezzi_desk = 0;
+
+      if (data.desk_qta && data.layout_desk) {
+        const qta = parseInt(data.desk_qta);
+        const layout = data.layout_desk;
+
+        // Calcolo superficie di stampa desk
+        if (layout === "50") {
+          superficie_stampa_desk = 1.5 * qta;
+        } else if (layout === "100") {
+          superficie_stampa_desk = 2 * qta;
+        } else if (layout === "150") {
+          superficie_stampa_desk = 2.5 * qta;
+        } else if (layout === "200") {
+          superficie_stampa_desk = 3 * qta;
+        }
+
+        // Calcolo numero di pezzi desk
+        if (layout === "50" || layout === "100" || layout === "150") {
+          numero_pezzi_desk = 12 * qta;
+        } else if (layout === "200") {
+          numero_pezzi_desk = 20 * qta;
+        }
+      }
+
       const { error } = await supabase.from('preventivi').insert({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
@@ -390,6 +450,26 @@ const Preventivi = () => {
         totale: costo_totale,
         bifaccialita,
         retroilluminazione,
+        // Storage fields
+        larg_storage: parseFloat(data.larg_storage) || 0,
+        prof_storage: parseFloat(data.prof_storage) || 0,
+        alt_storage: parseFloat(data.alt_storage) || 2.5,
+        layout_storage: data.layout_storage || '0',
+        numero_porte: data.numero_porte || '0',
+        superficie_stampa_storage,
+        sviluppo_metri_lineari_storage,
+        numero_pezzi_storage,
+        // Desk fields
+        desk_qta: parseInt(data.desk_qta) || 0,
+        layout_desk: data.layout_desk || '',
+        porta_scorrevole: parseInt(data.porta_scorrevole) || 0,
+        ripiano_superiore: parseInt(data.ripiano_superiore) || 0,
+        ripiano_inferiore: parseInt(data.ripiano_inferiore) || 0,
+        teca_plexiglass: parseInt(data.teca_plexiglass) || 0,
+        fronte_luminoso: parseInt(data.fronte_luminoso) || 0,
+        borsa: parseInt(data.borsa) || 0,
+        superficie_stampa_desk,
+        numero_pezzi_desk,
       });
       
       if (error) throw error;
@@ -459,6 +539,66 @@ const Preventivi = () => {
       if (!isFinite(costo_mq_value) || Math.abs(costo_mq_value) > MAX_NUMERIC) costo_mq_value = MAX_NUMERIC;
       if (!isFinite(costo_mc_value) || Math.abs(costo_mc_value) > MAX_NUMERIC) costo_mc_value = MAX_NUMERIC;
 
+      // Calcoli Storage
+      let superficie_stampa_storage = 0;
+      let sviluppo_metri_lineari_storage = 0;
+      let numero_pezzi_storage = 0;
+
+      if (data.larg_storage && data.prof_storage && data.alt_storage && data.layout_storage) {
+        const larg = parseFloat(data.larg_storage);
+        const prof = parseFloat(data.prof_storage);
+        const alt = parseFloat(data.alt_storage);
+        const layout = data.layout_storage;
+
+        // Calcolo superficie di stampa storage
+        if (layout === "0") {
+          superficie_stampa_storage = (2 * larg + 2 * prof) * alt;
+        } else if (layout === "1") {
+          superficie_stampa_storage = (2 * larg + 2 * prof) * alt + 2;
+        } else if (layout === "2") {
+          superficie_stampa_storage = (larg + prof) * alt + 2;
+        }
+
+        // Calcolo sviluppo in metri lineari storage
+        if (layout === "0") {
+          sviluppo_metri_lineari_storage = larg + prof;
+        } else if (layout === "1") {
+          sviluppo_metri_lineari_storage = 2 * larg + 2 * prof;
+        } else if (layout === "2") {
+          sviluppo_metri_lineari_storage = larg + prof + 1;
+        }
+
+        // Numero pezzi storage basato su distribuzione
+        numero_pezzi_storage = sviluppo_metri_lineari_storage * distribuzione;
+      }
+
+      // Calcoli Desk
+      let superficie_stampa_desk = 0;
+      let numero_pezzi_desk = 0;
+
+      if (data.desk_qta && data.layout_desk) {
+        const qta = parseInt(data.desk_qta);
+        const layout = data.layout_desk;
+
+        // Calcolo superficie di stampa desk
+        if (layout === "50") {
+          superficie_stampa_desk = 1.5 * qta;
+        } else if (layout === "100") {
+          superficie_stampa_desk = 2 * qta;
+        } else if (layout === "150") {
+          superficie_stampa_desk = 2.5 * qta;
+        } else if (layout === "200") {
+          superficie_stampa_desk = 3 * qta;
+        }
+
+        // Calcolo numero di pezzi desk
+        if (layout === "50" || layout === "100" || layout === "150") {
+          numero_pezzi_desk = 12 * qta;
+        } else if (layout === "200") {
+          numero_pezzi_desk = 20 * qta;
+        }
+      }
+
       const { error } = await supabase.from('preventivi').update({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
@@ -485,6 +625,26 @@ const Preventivi = () => {
         totale: costo_totale,
         bifaccialita,
         retroilluminazione,
+        // Storage fields
+        larg_storage: parseFloat(data.larg_storage) || 0,
+        prof_storage: parseFloat(data.prof_storage) || 0,
+        alt_storage: parseFloat(data.alt_storage) || 2.5,
+        layout_storage: data.layout_storage || '0',
+        numero_porte: data.numero_porte || '0',
+        superficie_stampa_storage,
+        sviluppo_metri_lineari_storage,
+        numero_pezzi_storage,
+        // Desk fields
+        desk_qta: parseInt(data.desk_qta) || 0,
+        layout_desk: data.layout_desk || '',
+        porta_scorrevole: parseInt(data.porta_scorrevole) || 0,
+        ripiano_superiore: parseInt(data.ripiano_superiore) || 0,
+        ripiano_inferiore: parseInt(data.ripiano_inferiore) || 0,
+        teca_plexiglass: parseInt(data.teca_plexiglass) || 0,
+        fronte_luminoso: parseInt(data.fronte_luminoso) || 0,
+        borsa: parseInt(data.borsa) || 0,
+        superficie_stampa_desk,
+        numero_pezzi_desk,
       }).eq('id', editingPreventivo.id);
       
       if (error) throw error;
@@ -605,21 +765,21 @@ const Preventivi = () => {
       note: preventivo.note || '',
       bifaccialita: (preventivo as any).bifaccialita?.toString() || '0',
       retroilluminazione: (preventivo as any).retroilluminazione?.toString() || '',
-      // Storage fields - in futuro verranno recuperati dal database
-      larg_storage: '',
-      prof_storage: '',
-      alt_storage: '',
-      layout_storage: '',
-      numero_porte: '',
-      // Desk fields - in futuro verranno recuperati dal database
-      desk_qta: 1,
-      layout_desk: '',
-      porta_scorrevole: 0,
-      ripiano_superiore: 0,
-      ripiano_inferiore: 0,
-      teca_plexiglass: 0,
-      fronte_luminoso: 0,
-      borsa: 0,
+      // Storage fields
+      larg_storage: (preventivo as any).larg_storage?.toString() || '',
+      prof_storage: (preventivo as any).prof_storage?.toString() || '',
+      alt_storage: (preventivo as any).alt_storage?.toString() || '',
+      layout_storage: (preventivo as any).layout_storage || '',
+      numero_porte: (preventivo as any).numero_porte || '',
+      // Desk fields
+      desk_qta: (preventivo as any).desk_qta || 0,
+      layout_desk: (preventivo as any).layout_desk || '',
+      porta_scorrevole: (preventivo as any).porta_scorrevole || 0,
+      ripiano_superiore: (preventivo as any).ripiano_superiore || 0,
+      ripiano_inferiore: (preventivo as any).ripiano_inferiore || 0,
+      teca_plexiglass: (preventivo as any).teca_plexiglass || 0,
+      fronte_luminoso: (preventivo as any).fronte_luminoso || 0,
+      borsa: (preventivo as any).borsa || 0,
     });
     setSectionsOpen({
       stand: true,

@@ -61,8 +61,11 @@ export type Database = {
       }
       preventivi: {
         Row: {
+          alt_storage: number | null
           altezza: number
           bifaccialita: number | null
+          borsa: number | null
+          complementi_config: string | null
           complessita: string | null
           costo_fisso: number
           costo_grafica: number | null
@@ -74,27 +77,47 @@ export type Database = {
           created_at: string
           data_scadenza: string | null
           descrizione: string | null
+          desk_qta: number | null
           distribuzione: number | null
+          espositori_config: string | null
+          fronte_luminoso: number | null
           id: string
+          larg_storage: number | null
           larghezza: number
           layout: string | null
+          layout_desk: string | null
+          layout_storage: string | null
           note: string | null
           numero_pezzi: number | null
+          numero_pezzi_desk: number | null
+          numero_pezzi_storage: number | null
+          numero_porte: string | null
           numero_preventivo: string
+          porta_scorrevole: number | null
+          prof_storage: number | null
           profondita: number | null
           prospect_id: string | null
           retroilluminazione: number | null
+          ripiano_inferiore: number | null
+          ripiano_superiore: number | null
           status: string
           superficie_stampa: number | null
+          superficie_stampa_desk: number | null
+          superficie_stampa_storage: number | null
           sviluppo_lineare: number | null
+          sviluppo_metri_lineari_storage: number | null
+          teca_plexiglass: number | null
           titolo: string
           totale: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          alt_storage?: number | null
           altezza: number
           bifaccialita?: number | null
+          borsa?: number | null
+          complementi_config?: string | null
           complessita?: string | null
           costo_fisso?: number
           costo_grafica?: number | null
@@ -106,27 +129,47 @@ export type Database = {
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
+          desk_qta?: number | null
           distribuzione?: number | null
+          espositori_config?: string | null
+          fronte_luminoso?: number | null
           id?: string
+          larg_storage?: number | null
           larghezza: number
           layout?: string | null
+          layout_desk?: string | null
+          layout_storage?: string | null
           note?: string | null
           numero_pezzi?: number | null
+          numero_pezzi_desk?: number | null
+          numero_pezzi_storage?: number | null
+          numero_porte?: string | null
           numero_preventivo: string
+          porta_scorrevole?: number | null
+          prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
           retroilluminazione?: number | null
+          ripiano_inferiore?: number | null
+          ripiano_superiore?: number | null
           status?: string
           superficie_stampa?: number | null
+          superficie_stampa_desk?: number | null
+          superficie_stampa_storage?: number | null
           sviluppo_lineare?: number | null
+          sviluppo_metri_lineari_storage?: number | null
+          teca_plexiglass?: number | null
           titolo: string
           totale?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          alt_storage?: number | null
           altezza?: number
           bifaccialita?: number | null
+          borsa?: number | null
+          complementi_config?: string | null
           complessita?: string | null
           costo_fisso?: number
           costo_grafica?: number | null
@@ -138,19 +181,36 @@ export type Database = {
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
+          desk_qta?: number | null
           distribuzione?: number | null
+          espositori_config?: string | null
+          fronte_luminoso?: number | null
           id?: string
+          larg_storage?: number | null
           larghezza?: number
           layout?: string | null
+          layout_desk?: string | null
+          layout_storage?: string | null
           note?: string | null
           numero_pezzi?: number | null
+          numero_pezzi_desk?: number | null
+          numero_pezzi_storage?: number | null
+          numero_porte?: string | null
           numero_preventivo?: string
+          porta_scorrevole?: number | null
+          prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
           retroilluminazione?: number | null
+          ripiano_inferiore?: number | null
+          ripiano_superiore?: number | null
           status?: string
           superficie_stampa?: number | null
+          superficie_stampa_desk?: number | null
+          superficie_stampa_storage?: number | null
           sviluppo_lineare?: number | null
+          sviluppo_metri_lineari_storage?: number | null
+          teca_plexiglass?: number | null
           titolo?: string
           totale?: number | null
           updated_at?: string
