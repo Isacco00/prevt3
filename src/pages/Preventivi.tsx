@@ -8,6 +8,7 @@ import { Plus, Edit, Trash2, Search, FileText, Calculator, ChevronDown, ChevronR
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { StandSection } from '@/components/StandSection';
 import { StorageSection } from '@/components/StorageSection';
+import { DeskSection } from '@/components/DeskSection';
 import { EmptySection } from '@/components/EmptySection';
 import {
   Dialog,
@@ -113,6 +114,9 @@ const Preventivi = () => {
     alt_storage: '',
     layout_storage: '',
     numero_porte: '',
+    // Desk fields
+    desk_qta: 1,
+    layout_desk: '',
   });
 
   // State per controllare le sezioni collassabili
@@ -557,6 +561,9 @@ const Preventivi = () => {
       alt_storage: '',
       layout_storage: '',
       numero_porte: '',
+      // Desk fields
+      desk_qta: 1,
+      layout_desk: '',
     });
     setEditingPreventivo(null);
     setSectionsOpen({
@@ -592,6 +599,9 @@ const Preventivi = () => {
       alt_storage: '',
       layout_storage: '',
       numero_porte: '',
+      // Desk fields - in futuro verranno recuperati dal database
+      desk_qta: 1,
+      layout_desk: '',
     });
     setSectionsOpen({
       stand: true,
@@ -826,7 +836,13 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-desk-border))] bg-card p-6">
-                        <EmptySection sectionName="Desk" />
+                        <DeskSection 
+                          data={{
+                            desk_qta: formData.desk_qta,
+                            layout_desk: formData.layout_desk,
+                          }}
+                          onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
+                        />
                       </div>
                     </CollapsibleContent>
                   </div>
