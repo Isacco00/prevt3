@@ -334,6 +334,7 @@ const Preventivi = () => {
         struttura_terra: 0,
         grafica_cordino: 0,
         premontaggio: 0,
+        retroilluminazione: 0,
         extra_stand_complesso: 0,
         totale: 0
       };
@@ -988,12 +989,13 @@ const Preventivi = () => {
       retroilluminazione_30x30x100h: (preventivo as any).retroilluminazione_30x30x100h || 0,
       retroilluminazione_50x50x100h: (preventivo as any).retroilluminazione_50x50x100h || 0,
       retroilluminazione_100x50x100h: (preventivo as any).retroilluminazione_100x50x100h || 0,
-      // Services fields
+      // Services
       servizio_montaggio_smontaggio: (preventivo as any).servizio_montaggio_smontaggio || false,
       servizio_certificazioni: (preventivo as any).servizio_certificazioni || false,
       servizio_istruzioni_assistenza: (preventivo as any).servizio_istruzioni_assistenza || false,
       // Complexity fields
       extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
+      costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
     });
     setSectionsOpen({
       stand: true,

@@ -139,8 +139,8 @@ export default function Admin() {
 
   const renderRetroilluminazioneRow = (costo: any) => (
     <TableRow key={costo.id}>
-      <TableCell className="font-medium">{costo.altezza}m</TableCell>
-      <TableCell>€{costo.costo_al_metro?.toFixed(2)}</TableCell>
+      <TableCell className="font-medium">{costo.altezza?.toString().replace('.', ',')}m</TableCell>
+      <TableCell>€{costo.costo_al_metro?.toFixed(2).replace('.', ',')}</TableCell>
     </TableRow>
   );
 
