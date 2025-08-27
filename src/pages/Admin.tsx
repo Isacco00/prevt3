@@ -38,6 +38,9 @@ export default function Admin() {
   const [editValue, setEditValue] = useState<string>('');
   const [editingRetroId, setEditingRetroId] = useState<string | null>(null);
   const [editRetroCost, setEditRetroCost] = useState<string>('');
+  const [showAddRetro, setShowAddRetro] = useState(false);
+  const [newRetroHeight, setNewRetroHeight] = useState('');
+  const [newRetroCost, setNewRetroCost] = useState('');
 
   // Fetch parameters
   const { data: parametri = [], isLoading } = useQuery({
@@ -132,6 +135,27 @@ export default function Admin() {
     },
   });
 
+  // Add retroilluminazione mutation
+  const addRetroMutation = useMutation({
+    mutationFn: async ({ altezza, costo_al_metro }: { altezza: number; costo_al_metro: number }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { error } = await supabase
+        .from('costi_retroilluminazione')
+        .insert({ user_id: user.id, altezza, costo_al_metro });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-retroilluminazione'] });
+      toast({ title: 'Riga aggiunta', description: 'Altezza e costo aggiunti con successo.' });
+      setShowAddRetro(false);
+      setNewRetroHeight('');
+      setNewRetroCost('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere la riga.', variant: 'destructive' });
+    },
+  });
+
   const handleEdit = (parametro: Parametro) => {
     setEditingParameter(parametro.id);
     setEditValue(parametro.valore?.toString() || '');
@@ -192,7 +216,23 @@ export default function Admin() {
     setEditRetroCost('');
   };
 
-  // Group parameters by type
+  const handleAddRetroSave = () => {
+    const hNorm = newRetroHeight.trim().replace(',', '.');
+    const cNorm = newRetroCost.trim().replace(',', '.');
+    const hVal = parseFloat(hNorm);
+    const cVal = parseFloat(cNorm);
+    if (isNaN(hVal) || isNaN(cVal)) {
+      toast({ title: 'Errore', description: 'Inserisci valori validi (usa la virgola per i decimali).', variant: 'destructive' });
+      return;
+    }
+    addRetroMutation.mutate({ altezza: hVal, costo_al_metro: cVal });
+  };
+
+  const handleAddRetroCancel = () => {
+    setShowAddRetro(false);
+    setNewRetroHeight('');
+    setNewRetroCost('');
+  };
   const costoStampa = parametri.filter(p => p.tipo === 'costo_stampa');
   const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
   const profiliDistribuzione = parametri.filter(p => p.tipo === 'profili_distribuzione');
@@ -389,11 +429,50 @@ export default function Admin() {
 
           {/* Costo Retroilluminazione */}
           <Card>
-        <CardHeader>
-          <CardTitle>Costo Retroilluminazione</CardTitle>
-          <CardDescription>Costo retroilluminazione al metro lineare in funzione dell'altezza</CardDescription>
-        </CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Costo Retroilluminazione</CardTitle>
+                <CardDescription>Costo retroilluminazione al metro lineare in funzione dell'altezza</CardDescription>
+              </div>
+              <Button size="sm" onClick={() => setShowAddRetro((v) => !v)}>
+                {showAddRetro ? 'Annulla' : 'Aggiungi riga'}
+              </Button>
+            </CardHeader>
         <CardContent>
+          {showAddRetro && (
+            <div className="mb-4 flex items-end gap-2">
+              <div className="space-y-2">
+                <Label htmlFor="newRetroHeight">Altezza (m)</Label>
+                <Input
+                  id="newRetroHeight"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="2,5"
+                  value={newRetroHeight}
+                  onChange={(e) => setNewRetroHeight(e.target.value)}
+                  className="w-24"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="newRetroCost">Costo per m/l</Label>
+                <Input
+                  id="newRetroCost"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="270,00"
+                  value={newRetroCost}
+                  onChange={(e) => setNewRetroCost(e.target.value)}
+                  className="w-32"
+                />
+              </div>
+              <Button size="sm" onClick={handleAddRetroSave} disabled={addRetroMutation.isPending}>
+                <Save className="h-4 w-4" />
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleAddRetroCancel}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
           <Table>
             <TableHeader>
               <TableRow>
