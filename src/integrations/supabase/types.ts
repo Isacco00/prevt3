@@ -118,6 +118,9 @@ export type Database = {
           ripiano_50x50: number | null
           ripiano_inferiore: number | null
           ripiano_superiore: number | null
+          servizio_certificazioni: boolean | null
+          servizio_istruzioni_assistenza: boolean | null
+          servizio_montaggio_smontaggio: boolean | null
           spot_light: number | null
           staffa_monitor: number | null
           status: string
@@ -194,6 +197,9 @@ export type Database = {
           ripiano_50x50?: number | null
           ripiano_inferiore?: number | null
           ripiano_superiore?: number | null
+          servizio_certificazioni?: boolean | null
+          servizio_istruzioni_assistenza?: boolean | null
+          servizio_montaggio_smontaggio?: boolean | null
           spot_light?: number | null
           staffa_monitor?: number | null
           status?: string
@@ -270,6 +276,9 @@ export type Database = {
           ripiano_50x50?: number | null
           ripiano_inferiore?: number | null
           ripiano_superiore?: number | null
+          servizio_certificazioni?: boolean | null
+          servizio_istruzioni_assistenza?: boolean | null
+          servizio_montaggio_smontaggio?: boolean | null
           spot_light?: number | null
           staffa_monitor?: number | null
           status?: string

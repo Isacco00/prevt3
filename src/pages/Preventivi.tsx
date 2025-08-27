@@ -10,7 +10,7 @@ import { StandSection } from '@/components/StandSection';
 import { StorageSection } from '@/components/StorageSection';
 import { DeskSection } from '@/components/DeskSection';
 import { ExpositoreSection } from '@/components/ExpositoreSection';
-import { EmptySection } from '@/components/EmptySection';
+import { ServicesSection } from '@/components/ServicesSection';
 import {
   Dialog,
   DialogContent,
@@ -148,6 +148,10 @@ const Preventivi = () => {
     retroilluminazione_30x30x100h: 0,
     retroilluminazione_50x50x100h: 0,
     retroilluminazione_100x50x100h: 0,
+    // Services fields
+    servizio_montaggio_smontaggio: false,
+    servizio_certificazioni: false,
+    servizio_istruzioni_assistenza: false,
   });
 
   // State per controllare le sezioni collassabili
@@ -156,7 +160,7 @@ const Preventivi = () => {
     storage: false,
     desk: false,
     espositori: false,
-    complementi: false,
+    servizi: false,
   });
 
   // Calcoli automatici degli elementi fisici
@@ -545,6 +549,10 @@ const Preventivi = () => {
         retroilluminazione_30x30x100h: parseInt(data.retroilluminazione_30x30x100h) || 0,
         retroilluminazione_50x50x100h: parseInt(data.retroilluminazione_50x50x100h) || 0,
         retroilluminazione_100x50x100h: parseInt(data.retroilluminazione_100x50x100h) || 0,
+        // Services fields
+        servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
+        servizio_certificazioni: data.servizio_certificazioni || false,
+        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
       });
       
       if (error) throw error;
@@ -754,6 +762,10 @@ const Preventivi = () => {
         retroilluminazione_30x30x100h: parseInt(data.retroilluminazione_30x30x100h) || 0,
         retroilluminazione_50x50x100h: parseInt(data.retroilluminazione_50x50x100h) || 0,
         retroilluminazione_100x50x100h: parseInt(data.retroilluminazione_100x50x100h) || 0,
+        // Services fields
+        servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
+        servizio_certificazioni: data.servizio_certificazioni || false,
+        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
       }).eq('id', editingPreventivo.id);
       
       if (error) throw error;
@@ -869,6 +881,10 @@ const Preventivi = () => {
       retroilluminazione_30x30x100h: 0,
       retroilluminazione_50x50x100h: 0,
       retroilluminazione_100x50x100h: 0,
+      // Services fields
+      servizio_montaggio_smontaggio: false,
+      servizio_certificazioni: false,
+      servizio_istruzioni_assistenza: false,
     });
     setEditingPreventivo(null);
     setSectionsOpen({
@@ -876,7 +892,7 @@ const Preventivi = () => {
       storage: false,
       desk: false,
       espositori: false,
-      complementi: false,
+      servizi: false,
     });
   };
 
@@ -937,13 +953,17 @@ const Preventivi = () => {
       retroilluminazione_30x30x100h: (preventivo as any).retroilluminazione_30x30x100h || 0,
       retroilluminazione_50x50x100h: (preventivo as any).retroilluminazione_50x50x100h || 0,
       retroilluminazione_100x50x100h: (preventivo as any).retroilluminazione_100x50x100h || 0,
+      // Services fields
+      servizio_montaggio_smontaggio: (preventivo as any).servizio_montaggio_smontaggio || false,
+      servizio_certificazioni: (preventivo as any).servizio_certificazioni || false,
+      servizio_istruzioni_assistenza: (preventivo as any).servizio_istruzioni_assistenza || false,
     });
     setSectionsOpen({
       stand: true,
       storage: false,
       desk: false,
       espositori: false,
-      complementi: false,
+      servizi: false,
     });
     setIsDialogOpen(true);
   };
@@ -1219,8 +1239,8 @@ const Preventivi = () => {
                 </Collapsible>
 
                 <Collapsible
-                  open={sectionsOpen.complementi}
-                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, complementi: open }))}
+                  open={sectionsOpen.servizi}
+                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, servizi: open }))}
                 >
                   <div className="bg-[hsl(var(--section-complement))] border border-[hsl(var(--section-complement-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
@@ -1230,14 +1250,17 @@ const Preventivi = () => {
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-complement-foreground))]"></div>
-                          <span className="font-medium text-[hsl(var(--section-complement-foreground))]">Complementi</span>
+                          <span className="font-medium text-[hsl(var(--section-complement-foreground))]">Servizi</span>
                         </div>
-                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-complement-foreground))] ${sectionsOpen.complementi ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-complement-foreground))] ${sectionsOpen.servizi ? 'rotate-180' : ''}`} />
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
-                        <EmptySection sectionName="Complementi" />
+                        <ServicesSection 
+                          formData={formData}
+                          setFormData={setFormData}
+                        />
                       </div>
                     </CollapsibleContent>
                   </div>
