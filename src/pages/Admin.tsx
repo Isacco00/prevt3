@@ -36,6 +36,8 @@ export default function Admin() {
   const queryClient = useQueryClient();
   const [editingParameter, setEditingParameter] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
+  const [editingRetroId, setEditingRetroId] = useState<string | null>(null);
+  const [editRetroCost, setEditRetroCost] = useState<string>('');
 
   // Fetch parameters
   const { data: parametri = [], isLoading } = useQuery({
@@ -102,6 +104,34 @@ export default function Admin() {
     },
   });
 
+  // Update retroilluminazione mutation
+  const updateRetroMutation = useMutation({
+    mutationFn: async ({ id, costo_al_metro }: { id: string; costo_al_metro: number }) => {
+      const { error } = await supabase
+        .from('costi_retroilluminazione')
+        .update({ costo_al_metro })
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-retroilluminazione'] });
+      toast({
+        title: "Costo aggiornato",
+        description: "Il costo di retroilluminazione è stato aggiornato.",
+      });
+      setEditingRetroId(null);
+      setEditRetroCost('');
+    },
+    onError: () => {
+      toast({
+        title: "Errore",
+        description: "Errore nell'aggiornamento del costo.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleEdit = (parametro: Parametro) => {
     setEditingParameter(parametro.id);
     setEditValue(parametro.valore?.toString() || '');
@@ -131,18 +161,98 @@ export default function Admin() {
     setEditValue('');
   };
 
+  // Handlers for retroilluminazione editing
+  const handleEditRetro = (costo: any) => {
+    setEditingRetroId(costo.id);
+    const costNum = Number(costo.costo_al_metro);
+    const formatted = isNaN(costNum)
+      ? String(costo.costo_al_metro ?? '')
+      : costNum.toString().replace('.', ',');
+    setEditRetroCost(formatted);
+  };
+
+  const handleSaveRetro = () => {
+    if (!editingRetroId) return;
+    const normalized = editRetroCost.replace(',', '.');
+    const value = parseFloat(normalized);
+    if (isNaN(value)) {
+      toast({
+        title: "Errore",
+        description: "Inserire un valore numerico valido (usa la virgola).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    updateRetroMutation.mutate({ id: editingRetroId, costo_al_metro: value });
+  };
+
+  const handleCancelRetro = () => {
+    setEditingRetroId(null);
+    setEditRetroCost('');
+  };
+
   // Group parameters by type
   const costoStampa = parametri.filter(p => p.tipo === 'costo_stampa');
   const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
   const profiliDistribuzione = parametri.filter(p => p.tipo === 'profili_distribuzione');
   const costoAltezza = parametri.filter(p => p.tipo === 'costo_altezza');
 
-  const renderRetroilluminazioneRow = (costo: any) => (
-    <TableRow key={costo.id}>
-      <TableCell className="font-medium">{costo.altezza?.toString().replace('.', ',')}m</TableCell>
-      <TableCell>€{costo.costo_al_metro?.toFixed(2).replace('.', ',')}</TableCell>
-    </TableRow>
-  );
+  const renderRetroilluminazioneRow = (costo: any) => {
+    const altezzaNum = Number(costo.altezza);
+    const altezzaStr = isNaN(altezzaNum)
+      ? String(costo.altezza ?? '')
+      : altezzaNum.toString().replace('.', ',');
+
+    const costoNum = Number(costo.costo_al_metro);
+    const costoStr = isNaN(costoNum)
+      ? String(costo.costo_al_metro ?? '')
+      : costoNum.toFixed(2).replace('.', ',');
+
+    return (
+      <TableRow key={costo.id}>
+        <TableCell className="font-medium">{altezzaStr}m</TableCell>
+        <TableCell>
+          {editingRetroId === costo.id ? (
+            <div className="flex items-center gap-2">
+              <Input
+                type="text"
+                inputMode="decimal"
+                value={editRetroCost}
+                onChange={(e) => setEditRetroCost(e.target.value)}
+                className="w-24"
+              />
+              <Button 
+                size="sm" 
+                onClick={handleSaveRetro}
+                disabled={updateRetroMutation.isPending}
+              >
+                <Save className="h-4 w-4" />
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleCancelRetro}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <span>€{costoStr}</span>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                onClick={() => handleEditRetro(costo)}
+              >
+                <Edit2 className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </TableCell>
+      </TableRow>
+    );
+  };
 
   const renderParameterRow = (parametro: Parametro, showDescription = false) => (
     <TableRow key={parametro.id}>
