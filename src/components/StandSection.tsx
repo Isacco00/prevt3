@@ -25,6 +25,7 @@ interface StandSectionProps {
     quadro_elettrico_16a: string;
     nicchia: string;
     pedana: string;
+    extra_perc_complex: string;
   };
   setFormData: (data: any) => void;
   physicalElements: {
@@ -37,6 +38,7 @@ interface StandSectionProps {
     struttura_terra: number;
     grafica_cordino: number;
     premontaggio: number;
+    extra_stand_complesso: number;
     totale: number;
   };
 }
@@ -397,6 +399,32 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Extra per Complessità */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="extra_perc_complex">Extra per struttura complessa (%)</Label>
+            <Input
+              id="extra_perc_complex"
+              type="number"
+              step="0.1"
+              min="0"
+              max="100"
+              value={formData.extra_perc_complex}
+              onChange={(e) => setFormData({ ...formData, extra_perc_complex: e.target.value })}
+              placeholder="0.0"
+            />
+          </div>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Extra per Struttura Complessa</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
             </CardContent>
           </Card>
         </div>

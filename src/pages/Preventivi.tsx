@@ -152,6 +152,8 @@ const Preventivi = () => {
     servizio_montaggio_smontaggio: false,
     servizio_certificazioni: false,
     servizio_istruzioni_assistenza: false,
+    // Complexity fields
+    extra_perc_complex: '',
   });
 
   // State per controllare le sezioni collassabili
@@ -314,6 +316,7 @@ const Preventivi = () => {
         struttura_terra: 0,
         grafica_cordino: 0,
         premontaggio: 0,
+        extra_stand_complesso: 0,
         totale: 0
       };
     }
@@ -337,12 +340,17 @@ const Preventivi = () => {
     const premontaggio = costoPremontaggio ? 
       elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
-    const totale = struttura_terra + grafica_cordino + premontaggio;
+    // Extra per struttura complessa: percentuale sui costi di struttura a terra
+    const extraPercComplex = parseFloat(formData.extra_perc_complex || '0') || 0;
+    const extra_stand_complesso = struttura_terra * (extraPercComplex / 100);
+
+    const totale = struttura_terra + grafica_cordino + premontaggio + extra_stand_complesso;
 
     return {
       struttura_terra,
       grafica_cordino,
       premontaggio,
+      extra_stand_complesso,
       totale
     };
   };
@@ -885,6 +893,8 @@ const Preventivi = () => {
       servizio_montaggio_smontaggio: false,
       servizio_certificazioni: false,
       servizio_istruzioni_assistenza: false,
+      // Complexity fields
+      extra_perc_complex: '',
     });
     setEditingPreventivo(null);
     setSectionsOpen({
@@ -957,6 +967,8 @@ const Preventivi = () => {
       servizio_montaggio_smontaggio: (preventivo as any).servizio_montaggio_smontaggio || false,
       servizio_certificazioni: (preventivo as any).servizio_certificazioni || false,
       servizio_istruzioni_assistenza: (preventivo as any).servizio_istruzioni_assistenza || false,
+      // Complexity fields
+      extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
     });
     setSectionsOpen({
       stand: true,

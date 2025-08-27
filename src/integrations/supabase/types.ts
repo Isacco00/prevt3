@@ -82,6 +82,8 @@ export type Database = {
           desk_qta: number | null
           distribuzione: number | null
           espositori_config: string | null
+          extra_perc_complex: number | null
+          extra_stand_complesso: number | null
           fronte_luminoso: number | null
           id: string
           kit_faro_100w: number | null
@@ -161,6 +163,8 @@ export type Database = {
           desk_qta?: number | null
           distribuzione?: number | null
           espositori_config?: string | null
+          extra_perc_complex?: number | null
+          extra_stand_complesso?: number | null
           fronte_luminoso?: number | null
           id?: string
           kit_faro_100w?: number | null
@@ -240,6 +244,8 @@ export type Database = {
           desk_qta?: number | null
           distribuzione?: number | null
           espositori_config?: string | null
+          extra_perc_complex?: number | null
+          extra_stand_complesso?: number | null
           fronte_luminoso?: number | null
           id?: string
           kit_faro_100w?: number | null
