@@ -56,6 +56,24 @@ export default function Admin() {
     enabled: !!user?.id,
   });
 
+  // Fetch retroilluminazione costs
+  const { data: costiRetroilluminazione = [] } = useQuery({
+    queryKey: ['costi-retroilluminazione', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('costi_retroilluminazione')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('altezza');
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   // Update parameter mutation
   const updateParameterMutation = useMutation({
     mutationFn: async ({ id, valore }: { id: string; valore: number }) => {
@@ -118,6 +136,13 @@ export default function Admin() {
   const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
   const profiliDistribuzione = parametri.filter(p => p.tipo === 'profili_distribuzione');
   const costoAltezza = parametri.filter(p => p.tipo === 'costo_altezza');
+
+  const renderRetroilluminazioneRow = (costo: any) => (
+    <TableRow key={costo.id}>
+      <TableCell className="font-medium">{costo.altezza}m</TableCell>
+      <TableCell>€{costo.costo_al_metro?.toFixed(2)}</TableCell>
+    </TableRow>
+  );
 
   const renderParameterRow = (parametro: Parametro, showDescription = false) => (
     <TableRow key={parametro.id}>
@@ -252,26 +277,26 @@ export default function Admin() {
             </CardContent>
           </Card>
 
-          {/* Costo per altezza */}
+          {/* Costo Retroilluminazione */}
           <Card>
-            <CardHeader>
-              <CardTitle>Costo per Altezza</CardTitle>
-              <CardDescription>Costo per m/l in funzione dell'altezza</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Altezza</TableHead>
-                    <TableHead>Costo per m/l</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {costoAltezza.map(parametro => renderParameterRow(parametro))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+        <CardHeader>
+          <CardTitle>Costo Retroilluminazione</CardTitle>
+          <CardDescription>Costo retroilluminazione al metro lineare in funzione dell'altezza</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Altezza</TableHead>
+                <TableHead>Costo per m/l</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {costiRetroilluminazione.map(costo => renderRetroilluminazioneRow(costo))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
         </TabsContent>
       </Tabs>
     </div>

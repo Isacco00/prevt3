@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      costi_retroilluminazione: {
+        Row: {
+          altezza: number
+          costo_al_metro: number
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          altezza: number
+          costo_al_metro: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          altezza?: number
+          costo_al_metro?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       parametri: {
         Row: {
           attivo: boolean
@@ -74,6 +101,7 @@ export type Database = {
           costo_mc: number
           costo_mq: number
           costo_premontaggio: number | null
+          costo_retroilluminazione: number | null
           costo_struttura: number | null
           costo_totale: number | null
           created_at: string
@@ -155,6 +183,7 @@ export type Database = {
           costo_mc?: number
           costo_mq?: number
           costo_premontaggio?: number | null
+          costo_retroilluminazione?: number | null
           costo_struttura?: number | null
           costo_totale?: number | null
           created_at?: string
@@ -236,6 +265,7 @@ export type Database = {
           costo_mc?: number
           costo_mq?: number
           costo_premontaggio?: number | null
+          costo_retroilluminazione?: number | null
           costo_struttura?: number | null
           costo_totale?: number | null
           created_at?: string

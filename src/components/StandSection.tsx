@@ -38,6 +38,7 @@ interface StandSectionProps {
     struttura_terra: number;
     grafica_cordino: number;
     premontaggio: number;
+    retroilluminazione: number;
     extra_stand_complesso: number;
     totale: number;
   };
@@ -374,7 +375,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <h4 className="text-md font-semibold">Calcolo Costi Stand</h4>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Struttura a terra</CardTitle>
@@ -399,6 +400,15 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Retroilluminazione</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
             </CardContent>
           </Card>
         </div>

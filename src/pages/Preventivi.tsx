@@ -153,7 +153,8 @@ const Preventivi = () => {
     servizio_certificazioni: false,
     servizio_istruzioni_assistenza: false,
     // Complexity fields
-    extra_perc_complex: '',
+          extra_perc_complex: '',
+          costo_retroilluminazione: 0,
   });
 
   // State per controllare le sezioni collassabili
@@ -277,6 +278,23 @@ const Preventivi = () => {
     enabled: !!user,
   });
 
+  // Query per recuperare i costi retroilluminazione
+  const { data: costiRetroilluminazione = [] } = useQuery({
+    queryKey: ['costi-retroilluminazione'],
+    queryFn: async () => {
+      if (!user) return [];
+      const { data, error } = await supabase
+        .from('costi_retroilluminazione')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('altezza');
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Mappa dinamica profili per distribuzione dai parametri
   const profiliDistribuzioneMap = React.useMemo(() => {
     const map: Record<number, number> = {};
@@ -340,16 +358,22 @@ const Preventivi = () => {
     const premontaggio = costoPremontaggio ? 
       elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
+    // Retroilluminazione: metri retroilluminazione * costo per m/l in base all'altezza
+    const costoRetroilluminazioneParam = costiRetroilluminazione.find(c => c.altezza === parseFloat(formData.altezza));
+    const retroilluminazione = costoRetroilluminazioneParam ? 
+      parseFloat(formData.retroilluminazione || '0') * (costoRetroilluminazioneParam.costo_al_metro || 0) : 0;
+
     // Extra per struttura complessa: percentuale sui costi di struttura a terra
     const extraPercComplex = parseFloat(formData.extra_perc_complex || '0') || 0;
     const extra_stand_complesso = struttura_terra * (extraPercComplex / 100);
 
-    const totale = struttura_terra + grafica_cordino + premontaggio + extra_stand_complesso;
+    const totale = struttura_terra + grafica_cordino + premontaggio + retroilluminazione + extra_stand_complesso;
 
     return {
       struttura_terra,
       grafica_cordino,
       premontaggio,
+      retroilluminazione,
       extra_stand_complesso,
       totale
     };
@@ -894,7 +918,8 @@ const Preventivi = () => {
       servizio_certificazioni: false,
       servizio_istruzioni_assistenza: false,
       // Complexity fields
-      extra_perc_complex: '',
+        extra_perc_complex: '',
+        costo_retroilluminazione: 0,
     });
     setEditingPreventivo(null);
     setSectionsOpen({
