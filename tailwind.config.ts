@@ -61,7 +61,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				stand: 'hsl(var(--section-stand-foreground))',
+				storage: 'hsl(var(--section-storage-foreground))',
+				desk: 'hsl(var(--section-desk-foreground))',
+				espositore: 'hsl(var(--section-expo-foreground))',
+				complement: 'hsl(var(--section-complement-foreground))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

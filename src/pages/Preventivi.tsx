@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { StandSection } from '@/components/StandSection';
 import { StorageSection } from '@/components/StorageSection';
 import { DeskSection } from '@/components/DeskSection';
+import { ExpositoreSection } from '@/components/ExpositoreSection';
 import { EmptySection } from '@/components/EmptySection';
 import {
   Dialog,
@@ -134,6 +135,19 @@ const Preventivi = () => {
     teca_plexiglass: 0,
     fronte_luminoso: 0,
     borsa: 0,
+    // Espositore fields
+    qta_tipo30: 0,
+    qta_tipo50: 0,
+    qta_tipo100: 0,
+    ripiano_30x30: 0,
+    ripiano_50x50: 0,
+    ripiano_100x50: 0,
+    teca_plexiglass_30x30x30: 0,
+    teca_plexiglass_50x50x50: 0,
+    teca_plexiglass_100x50x30: 0,
+    retroilluminazione_30x30x100h: 0,
+    retroilluminazione_50x50x100h: 0,
+    retroilluminazione_100x50x100h: 0,
   });
 
   // State per controllare le sezioni collassabili
@@ -329,6 +343,22 @@ const Preventivi = () => {
     };
   };
 
+  // Calcola gli elementi fisici per gli espositori
+  const calculateExpositorePhysicalElements = () => {
+    const qta30 = parseInt(formData.qta_tipo30?.toString() || '0') || 0;
+    const qta50 = parseInt(formData.qta_tipo50?.toString() || '0') || 0;
+    const qta100 = parseInt(formData.qta_tipo100?.toString() || '0') || 0;
+
+    const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
+    const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+
+    return {
+      numero_pezzi_espositori,
+      superficie_stampa_espositori
+    };
+  };
+
+  const espositorePhysicalElements = calculateExpositorePhysicalElements();
   const costs = calculateCosts();
 
   // Mutation per creare un nuovo preventivo
@@ -433,6 +463,14 @@ const Preventivi = () => {
         }
       }
 
+      // Calcoli Espositori
+      const qta30 = parseInt(data.qta_tipo30) || 0;
+      const qta50 = parseInt(data.qta_tipo50) || 0;
+      const qta100 = parseInt(data.qta_tipo100) || 0;
+
+      const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
+      const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+
       const { error } = await supabase.from('preventivi').insert({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
@@ -492,6 +530,21 @@ const Preventivi = () => {
         borsa: parseInt(data.borsa) || 0,
         superficie_stampa_desk,
         numero_pezzi_desk,
+        // Espositore fields
+        qta_tipo30: qta30,
+        qta_tipo50: qta50,
+        qta_tipo100: qta100,
+        numero_pezzi_espositori,
+        superficie_stampa_espositori,
+        ripiano_30x30: parseInt(data.ripiano_30x30) || 0,
+        ripiano_50x50: parseInt(data.ripiano_50x50) || 0,
+        ripiano_100x50: parseInt(data.ripiano_100x50) || 0,
+        teca_plexiglass_30x30x30: parseInt(data.teca_plexiglass_30x30x30) || 0,
+        teca_plexiglass_50x50x50: parseInt(data.teca_plexiglass_50x50x50) || 0,
+        teca_plexiglass_100x50x30: parseInt(data.teca_plexiglass_100x50x30) || 0,
+        retroilluminazione_30x30x100h: parseInt(data.retroilluminazione_30x30x100h) || 0,
+        retroilluminazione_50x50x100h: parseInt(data.retroilluminazione_50x50x100h) || 0,
+        retroilluminazione_100x50x100h: parseInt(data.retroilluminazione_100x50x100h) || 0,
       });
       
       if (error) throw error;
@@ -621,6 +674,14 @@ const Preventivi = () => {
         }
       }
 
+      // Calcoli Espositori
+      const qta30 = parseInt(data.qta_tipo30) || 0;
+      const qta50 = parseInt(data.qta_tipo50) || 0;
+      const qta100 = parseInt(data.qta_tipo100) || 0;
+
+      const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
+      const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+
       const { error } = await supabase.from('preventivi').update({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
@@ -678,6 +739,21 @@ const Preventivi = () => {
         borsa: parseInt(data.borsa) || 0,
         superficie_stampa_desk,
         numero_pezzi_desk,
+        // Espositore fields
+        qta_tipo30: qta30,
+        qta_tipo50: qta50,
+        qta_tipo100: qta100,
+        numero_pezzi_espositori,
+        superficie_stampa_espositori,
+        ripiano_30x30: parseInt(data.ripiano_30x30) || 0,
+        ripiano_50x50: parseInt(data.ripiano_50x50) || 0,
+        ripiano_100x50: parseInt(data.ripiano_100x50) || 0,
+        teca_plexiglass_30x30x30: parseInt(data.teca_plexiglass_30x30x30) || 0,
+        teca_plexiglass_50x50x50: parseInt(data.teca_plexiglass_50x50x50) || 0,
+        teca_plexiglass_100x50x30: parseInt(data.teca_plexiglass_100x50x30) || 0,
+        retroilluminazione_30x30x100h: parseInt(data.retroilluminazione_30x30x100h) || 0,
+        retroilluminazione_50x50x100h: parseInt(data.retroilluminazione_50x50x100h) || 0,
+        retroilluminazione_100x50x100h: parseInt(data.retroilluminazione_100x50x100h) || 0,
       }).eq('id', editingPreventivo.id);
       
       if (error) throw error;
@@ -780,6 +856,19 @@ const Preventivi = () => {
       teca_plexiglass: 0,
       fronte_luminoso: 0,
       borsa: 0,
+      // Espositore fields
+      qta_tipo30: 0,
+      qta_tipo50: 0,
+      qta_tipo100: 0,
+      ripiano_30x30: 0,
+      ripiano_50x50: 0,
+      ripiano_100x50: 0,
+      teca_plexiglass_30x30x30: 0,
+      teca_plexiglass_50x50x50: 0,
+      teca_plexiglass_100x50x30: 0,
+      retroilluminazione_30x30x100h: 0,
+      retroilluminazione_50x50x100h: 0,
+      retroilluminazione_100x50x100h: 0,
     });
     setEditingPreventivo(null);
     setSectionsOpen({
@@ -835,6 +924,19 @@ const Preventivi = () => {
       teca_plexiglass: (preventivo as any).teca_plexiglass || 0,
       fronte_luminoso: (preventivo as any).fronte_luminoso || 0,
       borsa: (preventivo as any).borsa || 0,
+      // Espositore fields
+      qta_tipo30: (preventivo as any).qta_tipo30 || 0,
+      qta_tipo50: (preventivo as any).qta_tipo50 || 0,
+      qta_tipo100: (preventivo as any).qta_tipo100 || 0,
+      ripiano_30x30: (preventivo as any).ripiano_30x30 || 0,
+      ripiano_50x50: (preventivo as any).ripiano_50x50 || 0,
+      ripiano_100x50: (preventivo as any).ripiano_100x50 || 0,
+      teca_plexiglass_30x30x30: (preventivo as any).teca_plexiglass_30x30x30 || 0,
+      teca_plexiglass_50x50x50: (preventivo as any).teca_plexiglass_50x50x50 || 0,
+      teca_plexiglass_100x50x30: (preventivo as any).teca_plexiglass_100x50x30 || 0,
+      retroilluminazione_30x30x100h: (preventivo as any).retroilluminazione_30x30x100h || 0,
+      retroilluminazione_50x50x100h: (preventivo as any).retroilluminazione_50x50x100h || 0,
+      retroilluminazione_100x50x100h: (preventivo as any).retroilluminazione_100x50x100h || 0,
     });
     setSectionsOpen({
       stand: true,
@@ -1105,9 +1207,13 @@ const Preventivi = () => {
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
-                      <div className="border-t border-[hsl(var(--section-expo-border))] bg-card p-6">
-                        <EmptySection sectionName="Espositori/Plinto" />
-                      </div>
+                       <div className="border-t border-[hsl(var(--section-expo-border))] bg-card p-6">
+                         <ExpositoreSection 
+                           formData={formData}
+                           setFormData={setFormData}
+                           physicalElements={espositorePhysicalElements}
+                         />
+                       </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>

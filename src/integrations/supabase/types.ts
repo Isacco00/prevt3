@@ -96,6 +96,7 @@ export type Database = {
           note: string | null
           numero_pezzi: number | null
           numero_pezzi_desk: number | null
+          numero_pezzi_espositori: number | null
           numero_pezzi_storage: number | null
           numero_porte: string | null
           numero_preventivo: string
@@ -104,8 +105,17 @@ export type Database = {
           prof_storage: number | null
           profondita: number | null
           prospect_id: string | null
+          qta_tipo100: number | null
+          qta_tipo30: number | null
+          qta_tipo50: number | null
           quadro_elettrico_16a: number | null
           retroilluminazione: number | null
+          retroilluminazione_100x50x100h: number | null
+          retroilluminazione_30x30x100h: number | null
+          retroilluminazione_50x50x100h: number | null
+          ripiano_100x50: number | null
+          ripiano_30x30: number | null
+          ripiano_50x50: number | null
           ripiano_inferiore: number | null
           ripiano_superiore: number | null
           spot_light: number | null
@@ -113,10 +123,14 @@ export type Database = {
           status: string
           superficie_stampa: number | null
           superficie_stampa_desk: number | null
+          superficie_stampa_espositori: number | null
           superficie_stampa_storage: number | null
           sviluppo_lineare: number | null
           sviluppo_metri_lineari_storage: number | null
           teca_plexiglass: number | null
+          teca_plexiglass_100x50x30: number | null
+          teca_plexiglass_30x30x30: number | null
+          teca_plexiglass_50x50x50: number | null
           titolo: string
           totale: number | null
           updated_at: string
@@ -158,6 +172,7 @@ export type Database = {
           note?: string | null
           numero_pezzi?: number | null
           numero_pezzi_desk?: number | null
+          numero_pezzi_espositori?: number | null
           numero_pezzi_storage?: number | null
           numero_porte?: string | null
           numero_preventivo: string
@@ -166,8 +181,17 @@ export type Database = {
           prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
+          qta_tipo100?: number | null
+          qta_tipo30?: number | null
+          qta_tipo50?: number | null
           quadro_elettrico_16a?: number | null
           retroilluminazione?: number | null
+          retroilluminazione_100x50x100h?: number | null
+          retroilluminazione_30x30x100h?: number | null
+          retroilluminazione_50x50x100h?: number | null
+          ripiano_100x50?: number | null
+          ripiano_30x30?: number | null
+          ripiano_50x50?: number | null
           ripiano_inferiore?: number | null
           ripiano_superiore?: number | null
           spot_light?: number | null
@@ -175,10 +199,14 @@ export type Database = {
           status?: string
           superficie_stampa?: number | null
           superficie_stampa_desk?: number | null
+          superficie_stampa_espositori?: number | null
           superficie_stampa_storage?: number | null
           sviluppo_lineare?: number | null
           sviluppo_metri_lineari_storage?: number | null
           teca_plexiglass?: number | null
+          teca_plexiglass_100x50x30?: number | null
+          teca_plexiglass_30x30x30?: number | null
+          teca_plexiglass_50x50x50?: number | null
           titolo: string
           totale?: number | null
           updated_at?: string
@@ -220,6 +248,7 @@ export type Database = {
           note?: string | null
           numero_pezzi?: number | null
           numero_pezzi_desk?: number | null
+          numero_pezzi_espositori?: number | null
           numero_pezzi_storage?: number | null
           numero_porte?: string | null
           numero_preventivo?: string
@@ -228,8 +257,17 @@ export type Database = {
           prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
+          qta_tipo100?: number | null
+          qta_tipo30?: number | null
+          qta_tipo50?: number | null
           quadro_elettrico_16a?: number | null
           retroilluminazione?: number | null
+          retroilluminazione_100x50x100h?: number | null
+          retroilluminazione_30x30x100h?: number | null
+          retroilluminazione_50x50x100h?: number | null
+          ripiano_100x50?: number | null
+          ripiano_30x30?: number | null
+          ripiano_50x50?: number | null
           ripiano_inferiore?: number | null
           ripiano_superiore?: number | null
           spot_light?: number | null
@@ -237,10 +275,14 @@ export type Database = {
           status?: string
           superficie_stampa?: number | null
           superficie_stampa_desk?: number | null
+          superficie_stampa_espositori?: number | null
           superficie_stampa_storage?: number | null
           sviluppo_lineare?: number | null
           sviluppo_metri_lineari_storage?: number | null
           teca_plexiglass?: number | null
+          teca_plexiglass_100x50x30?: number | null
+          teca_plexiglass_30x30x30?: number | null
+          teca_plexiglass_50x50x50?: number | null
           titolo?: string
           totale?: number | null
           updated_at?: string
