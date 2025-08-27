@@ -66,7 +66,9 @@ function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElem
 
 export function ExpositoreSection({ formData, setFormData, physicalElements }: EspositoriSectionProps) {
   const handleInputChange = (field: keyof ExpositoreData, value: string) => {
-    const numValue = value === '' ? 0 : parseInt(value) || 0;
+    // Rimuovi caratteri non numerici eccetto stringa vuota
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    const numValue = cleanValue === '' ? 0 : parseInt(cleanValue) || 0;
     setFormData({
       ...formData,
       [field]: numValue
@@ -105,7 +107,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 <Input
                   type="number"
                   min="0"
-                  value={formData.qta_tipo30}
+                  value={formData.qta_tipo30 === 0 ? '' : formData.qta_tipo30.toString()}
                   onChange={(e) => handleInputChange('qta_tipo30', e.target.value)}
                   placeholder="0"
                 />
@@ -115,7 +117,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 <Input
                   type="number"
                   min="0"
-                  value={formData.qta_tipo50}
+                  value={formData.qta_tipo50 === 0 ? '' : formData.qta_tipo50.toString()}
                   onChange={(e) => handleInputChange('qta_tipo50', e.target.value)}
                   placeholder="0"
                 />
@@ -125,7 +127,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 <Input
                   type="number"
                   min="0"
-                  value={formData.qta_tipo100}
+                  value={formData.qta_tipo100 === 0 ? '' : formData.qta_tipo100.toString()}
                   onChange={(e) => handleInputChange('qta_tipo100', e.target.value)}
                   placeholder="0"
                 />
@@ -153,7 +155,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.ripiano_30x30}
+                value={formData.ripiano_30x30 === 0 ? '' : formData.ripiano_30x30.toString()}
                 onChange={(e) => handleInputChange('ripiano_30x30', e.target.value)}
                 placeholder="0"
               />
@@ -166,7 +168,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.ripiano_50x50}
+                value={formData.ripiano_50x50 === 0 ? '' : formData.ripiano_50x50.toString()}
                 onChange={(e) => handleInputChange('ripiano_50x50', e.target.value)}
                 placeholder="0"
               />
@@ -179,7 +181,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.ripiano_100x50}
+                value={formData.ripiano_100x50 === 0 ? '' : formData.ripiano_100x50.toString()}
                 onChange={(e) => handleInputChange('ripiano_100x50', e.target.value)}
                 placeholder="0"
               />
@@ -193,7 +195,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.teca_plexiglass_30x30x30}
+                value={formData.teca_plexiglass_30x30x30 === 0 ? '' : formData.teca_plexiglass_30x30x30.toString()}
                 onChange={(e) => handleInputChange('teca_plexiglass_30x30x30', e.target.value)}
                 placeholder="0"
               />
@@ -206,7 +208,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.teca_plexiglass_50x50x50}
+                value={formData.teca_plexiglass_50x50x50 === 0 ? '' : formData.teca_plexiglass_50x50x50.toString()}
                 onChange={(e) => handleInputChange('teca_plexiglass_50x50x50', e.target.value)}
                 placeholder="0"
               />
@@ -219,7 +221,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.teca_plexiglass_100x50x30}
+                value={formData.teca_plexiglass_100x50x30 === 0 ? '' : formData.teca_plexiglass_100x50x30.toString()}
                 onChange={(e) => handleInputChange('teca_plexiglass_100x50x30', e.target.value)}
                 placeholder="0"
               />
@@ -233,7 +235,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.retroilluminazione_30x30x100h}
+                value={formData.retroilluminazione_30x30x100h === 0 ? '' : formData.retroilluminazione_30x30x100h.toString()}
                 onChange={(e) => handleInputChange('retroilluminazione_30x30x100h', e.target.value)}
                 placeholder="0"
               />
@@ -246,7 +248,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.retroilluminazione_50x50x100h}
+                value={formData.retroilluminazione_50x50x100h === 0 ? '' : formData.retroilluminazione_50x50x100h.toString()}
                 onChange={(e) => handleInputChange('retroilluminazione_50x50x100h', e.target.value)}
                 placeholder="0"
               />
@@ -259,7 +261,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
                 type="number"
                 min="0"
                 max="10"
-                value={formData.retroilluminazione_100x50x100h}
+                value={formData.retroilluminazione_100x50x100h === 0 ? '' : formData.retroilluminazione_100x50x100h.toString()}
                 onChange={(e) => handleInputChange('retroilluminazione_100x50x100h', e.target.value)}
                 placeholder="0"
               />
