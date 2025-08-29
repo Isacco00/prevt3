@@ -10,7 +10,13 @@ import { supabase } from "@/integrations/supabase/client";
 interface DeskData {
   desk_qta: number;
   layout_desk: string;
-  accessori_desk: Record<string, number>;
+  // Accessori desk individuali
+  porta_scorrevole: number;
+  ripiano_superiore: number;
+  ripiano_inferiore: number;
+  teca_plexiglass: number;
+  fronte_luminoso: number;
+  borsa: number;
 }
 
 interface DeskSectionProps {
@@ -60,12 +66,21 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
     enabled: !!user,
   });
 
-  const handleAccessorioChange = (accessorioId: string, quantity: number) => {
-    const currentAccessori = data.accessori_desk || {};
-    onChange("accessori_desk", {
-      ...currentAccessori,
-      [accessorioId]: quantity
-    });
+  const handleAccessorioChange = (accessorioNome: string, quantity: number) => {
+    // Mappa i nomi degli accessori ai campi del formData
+    const fieldMap: Record<string, keyof DeskData> = {
+      'Porta scorrevole con chiave': 'porta_scorrevole',
+      'Ripiano Superiore L 100': 'ripiano_superiore',
+      'Ripiano Inferiore L 100': 'ripiano_inferiore',
+      'Teca in plexiglass': 'teca_plexiglass',
+      'Fronte luminoso dim. 100x100': 'fronte_luminoso',
+      'Borsa': 'borsa'
+    };
+    
+    const field = fieldMap[accessorioNome];
+    if (field) {
+      onChange(field, quantity);
+    }
   };
   const calculateSuperficieStampa = () => {
     const { desk_qta, layout_desk } = data;
@@ -190,8 +205,19 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                     </TableHeader>
                     <TableBody>
                       {accessoriDesk.map((accessorio: any) => {
-                        const quantity = data.accessori_desk?.[accessorio.id] || 0;
-                        const total = quantity * Number(accessorio.costo_unitario);
+                        // Mappa i nomi degli accessori ai campi del formData
+                        const fieldMap: Record<string, keyof DeskData> = {
+                          'Porta scorrevole con chiave': 'porta_scorrevole',
+                          'Ripiano Superiore L 100': 'ripiano_superiore',
+                          'Ripiano Inferiore L 100': 'ripiano_inferiore',
+                          'Teca in plexiglass': 'teca_plexiglass',
+                          'Fronte luminoso dim. 100x100': 'fronte_luminoso',
+                          'Borsa': 'borsa'
+                        };
+                        
+                        const field = fieldMap[accessorio.nome];
+                        const quantity = field ? (data[field] || 0) : 0;
+                        const total = Number(quantity) * Number(accessorio.costo_unitario);
                         return (
                           <TableRow key={accessorio.id}>
                             <TableCell className="font-medium">{accessorio.nome}</TableCell>
@@ -202,7 +228,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                                 min="0"
                                 max="99"
                                 value={quantity}
-                                onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
+                                onChange={(e) => handleAccessorioChange(accessorio.nome, parseInt(e.target.value) || 0)}
                                 className="w-16 text-center"
                               />
                             </TableCell>

@@ -131,8 +131,13 @@ const Preventivi = () => {
     layout_desk: '',
     // Accessori stand dinamici
     accessori_stand: {},
-    // Accessori desk dinamici  
-    accessori_desk: {},
+    // Desk accessories (individual fields)
+    porta_scorrevole: 0,
+    ripiano_superiore: 0,
+    ripiano_inferiore: 0,
+    teca_plexiglass: 0,
+    fronte_luminoso: 0,
+    borsa: 0,
     // Espositore fields
     qta_tipo30: 0,
     qta_tipo50: 0,
@@ -423,11 +428,14 @@ const Preventivi = () => {
 
     // Calcolo costi accessori desk
     let costi_accessori_desk = 0;
-    if (formData.accessori_desk && accessoriDesk && accessoriDesk.length > 0) {
-      accessoriDesk.forEach(accessorio => {
-        const quantity = formData.accessori_desk[accessorio.id] || 0;
-        costi_accessori_desk += quantity * accessorio.costo_unitario;
-      });
+    if (accessoriDesk && accessoriDesk.length > 0) {
+      // Calcolo basato sui campi individuali del formData
+      costi_accessori_desk += (formData.porta_scorrevole || 0) * (accessoriDesk.find(a => a.nome === 'Porta scorrevole con chiave')?.costo_unitario || 0);
+      costi_accessori_desk += (formData.ripiano_superiore || 0) * (accessoriDesk.find(a => a.nome === 'Ripiano Superiore L 100')?.costo_unitario || 0);
+      costi_accessori_desk += (formData.ripiano_inferiore || 0) * (accessoriDesk.find(a => a.nome === 'Ripiano Inferiore L 100')?.costo_unitario || 0);
+      costi_accessori_desk += (formData.teca_plexiglass || 0) * (accessoriDesk.find(a => a.nome === 'Teca in plexiglass')?.costo_unitario || 0);
+      costi_accessori_desk += (formData.fronte_luminoso || 0) * (accessoriDesk.find(a => a.nome === 'Fronte luminoso dim. 100x100')?.costo_unitario || 0);
+      costi_accessori_desk += (formData.borsa || 0) * (accessoriDesk.find(a => a.nome === 'Borsa')?.costo_unitario || 0);
     }
 
     // Calcolo costi desk
@@ -895,7 +903,13 @@ const Preventivi = () => {
         // Desk fields
         desk_qta: parseInt(data.desk_qta) || 0,
         layout_desk: data.layout_desk || '',
-        accessori_desk: data.accessori_desk || {},
+        // Desk accessories
+        porta_scorrevole: formData.porta_scorrevole,
+        ripiano_superiore: formData.ripiano_superiore,
+        ripiano_inferiore: formData.ripiano_inferiore,
+        teca_plexiglass: formData.teca_plexiglass,
+        fronte_luminoso: formData.fronte_luminoso,
+        borsa: formData.borsa,
         superficie_stampa_desk,
         numero_pezzi_desk,
         // Espositore fields
@@ -1013,7 +1027,13 @@ const Preventivi = () => {
       // Desk fields
       desk_qta: 1,
       layout_desk: '',
-      accessori_desk: {},
+      // Desk accessories
+      porta_scorrevole: 0,
+      ripiano_superiore: 0,
+      ripiano_inferiore: 0,
+      teca_plexiglass: 0,
+      fronte_luminoso: 0,  
+      borsa: 0,
       // Espositore fields
       qta_tipo30: 0,
       qta_tipo50: 0,
@@ -1085,7 +1105,13 @@ const Preventivi = () => {
       // Desk fields
       desk_qta: (preventivo as any).desk_qta || 0,
       layout_desk: (preventivo as any).layout_desk || '',
-      accessori_desk: (preventivo as any).accessori_desk || {},
+      // Desk accessories
+      porta_scorrevole: (preventivo as any).porta_scorrevole || 0,
+      ripiano_superiore: (preventivo as any).ripiano_superiore || 0,
+      ripiano_inferiore: (preventivo as any).ripiano_inferiore || 0,
+      teca_plexiglass: (preventivo as any).teca_plexiglass || 0,
+      fronte_luminoso: (preventivo as any).fronte_luminoso || 0,
+      borsa: (preventivo as any).borsa || 0,
       // Espositore fields
       qta_tipo30: (preventivo as any).qta_tipo30 || 0,
       qta_tipo50: (preventivo as any).qta_tipo50 || 0,
@@ -1358,7 +1384,12 @@ const Preventivi = () => {
                             data={{
                               desk_qta: formData.desk_qta,
                               layout_desk: formData.layout_desk,
-                              accessori_desk: formData.accessori_desk,
+                              porta_scorrevole: formData.porta_scorrevole,
+                              ripiano_superiore: formData.ripiano_superiore,
+                              ripiano_inferiore: formData.ripiano_inferiore,
+                              teca_plexiglass: formData.teca_plexiglass,
+                              fronte_luminoso: formData.fronte_luminoso,
+                              borsa: formData.borsa,
                             }}
                             onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
                             parametri={parametri}
