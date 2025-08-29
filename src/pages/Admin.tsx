@@ -47,6 +47,14 @@ export default function Admin() {
   const [editingAccessorioId, setEditingAccessorioId] = useState<string | null>(null);
   const [editAccessorioNome, setEditAccessorioNome] = useState('');
   const [editAccessorioCosto, setEditAccessorioCosto] = useState('');
+  
+  // Desk accessories states
+  const [newAccessorioDeskNome, setNewAccessorioDeskNome] = useState('');
+  const [newAccessorioDeskCosto, setNewAccessorioDeskCosto] = useState('');
+  
+  // Desk structure costs states
+  const [newLayoutDesk, setNewLayoutDesk] = useState('');
+  const [newCostoStrutturaDesk, setNewCostoStrutturaDesk] = useState('');
 
   // Fetch parameters
   const { data: parametri = [], isLoading } = useQuery({
@@ -357,6 +365,40 @@ export default function Admin() {
     setShowAddAccessorio(false);
     setNewAccessorioNome('');
     setNewAccessorioCosto('');
+  };
+
+  // Desk accessories handlers
+  const handleAddAccessorioDeskSave = () => {
+    const cNorm = newAccessorioDeskCosto.trim().replace(',', '.');
+    const cVal = parseFloat(cNorm);
+    if (isNaN(cVal) || !newAccessorioDeskNome.trim()) {
+      toast({ title: 'Errore', description: 'Inserisci nome e costo validi.', variant: 'destructive' });
+      return;
+    }
+    addAccessorioDeskMutation.mutate({ nome: newAccessorioDeskNome.trim(), costo_unitario: cVal });
+  };
+
+  const handleAddAccessorioDeskCancel = () => {
+    setShowAddAccessorioDesk(false);
+    setNewAccessorioDeskNome('');
+    setNewAccessorioDeskCosto('');
+  };
+
+  // Desk structure costs handlers
+  const handleAddCostoStrutturaDeskSave = () => {
+    const cNorm = newCostoStrutturaDesk.trim().replace(',', '.');
+    const cVal = parseFloat(cNorm);
+    if (isNaN(cVal) || !newLayoutDesk.trim()) {
+      toast({ title: 'Errore', description: 'Inserisci layout e costo validi.', variant: 'destructive' });
+      return;
+    }
+    addCostoStrutturaDeskMutation.mutate({ layout_desk: newLayoutDesk.trim(), costo_unitario: cVal });
+  };
+
+  const handleAddCostoStrutturaDeskCancel = () => {
+    setShowAddCostoStrutturaDesk(false);
+    setNewLayoutDesk('');
+    setNewCostoStrutturaDesk('');
   };
   const costoStampa = parametri.filter(p => p.tipo === 'costo_stampa');
   const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
@@ -729,6 +771,245 @@ export default function Admin() {
                         </TableCell>
                       </TableRow>
                     ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Listino Accessori Desk */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Listino Accessori Desk</CardTitle>
+                <CardDescription>Gestione accessori desk con relativi costi</CardDescription>
+              </div>
+              <Button size="sm" onClick={() => setShowAddAccessorioDesk((v) => !v)}>
+                {showAddAccessorioDesk ? 'Annulla' : 'Aggiungi accessorio desk'}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {showAddAccessorioDesk && (
+                <div className="mb-4 flex items-end gap-2">
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="newAccessorioDeskNome">Nome accessorio</Label>
+                    <Input
+                      id="newAccessorioDeskNome"
+                      type="text"
+                      placeholder="Nome accessorio"
+                      value={newAccessorioDeskNome}
+                      onChange={(e) => setNewAccessorioDeskNome(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newAccessorioDeskCosto">Costo unitario (€)</Label>
+                    <Input
+                      id="newAccessorioDeskCosto"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="100,00"
+                      value={newAccessorioDeskCosto}
+                      onChange={(e) => setNewAccessorioDeskCosto(e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                  <Button size="sm" onClick={handleAddAccessorioDeskSave} disabled={addAccessorioDeskMutation.isPending}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleAddAccessorioDeskCancel}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Costo unitario</TableHead>
+                    <TableHead className="w-[100px]">Azioni</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {accessoriDesk && accessoriDesk.length > 0 ? (
+                    accessoriDesk.map((accessorio) => (
+                      <TableRow key={accessorio.id}>
+                        <TableCell>
+                          {editingAccessorioDesk?.id === accessorio.id ? (
+                            <Input
+                              value={editingAccessorioDesk.nome}
+                              onChange={(e) => setEditingAccessorioDesk({...editingAccessorioDesk, nome: e.target.value})}
+                              className="w-full"
+                            />
+                          ) : (
+                            accessorio.nome
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingAccessorioDesk?.id === accessorio.id ? (
+                            <div className="flex items-center gap-2">
+                              <span>€</span>
+                              <Input
+                                value={editingAccessorioDesk.costo_unitario.toString().replace('.', ',')}
+                                onChange={(e) => setEditingAccessorioDesk({...editingAccessorioDesk, costo_unitario: parseFloat(e.target.value.replace(',', '.')) || 0})}
+                                className="w-24"
+                              />
+                            </div>
+                          ) : (
+                            `€ ${accessorio.costo_unitario.toString().replace('.', ',')}`
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingAccessorioDesk?.id === accessorio.id ? (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" onClick={() => updateAccessorioDeskMutation.mutate(editingAccessorioDesk)} disabled={updateAccessorioDeskMutation.isPending}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingAccessorioDesk(null)}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="outline" onClick={() => setEditingAccessorioDesk(accessorio)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => deleteAccessorioDeskMutation.mutate(accessorio.id)}
+                                disabled={deleteAccessorioDeskMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center">Nessun accessorio desk trovato</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Costi Struttura Desk per Layout */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Costi Struttura Desk per Layout</CardTitle>
+                <CardDescription>Costo struttura desk in funzione del layout</CardDescription>
+              </div>
+              <Button size="sm" onClick={() => setShowAddCostoStrutturaDesk((v) => !v)}>
+                {showAddCostoStrutturaDesk ? 'Annulla' : 'Aggiungi layout'}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {showAddCostoStrutturaDesk && (
+                <div className="mb-4 flex items-end gap-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="newLayoutDesk">Layout Desk</Label>
+                    <Input
+                      id="newLayoutDesk"
+                      type="text"
+                      placeholder="50"
+                      value={newLayoutDesk}
+                      onChange={(e) => setNewLayoutDesk(e.target.value)}
+                      className="w-24"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newCostoStrutturaDesk">Costo unitario (€)</Label>
+                    <Input
+                      id="newCostoStrutturaDesk"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="415,00"
+                      value={newCostoStrutturaDesk}
+                      onChange={(e) => setNewCostoStrutturaDesk(e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                  <Button size="sm" onClick={handleAddCostoStrutturaDeskSave} disabled={addCostoStrutturaDeskMutation.isPending}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleAddCostoStrutturaDeskCancel}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Layout Desk</TableHead>
+                    <TableHead>Costo unitario</TableHead>
+                    <TableHead className="w-[100px]">Azioni</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {costiStrutturaDesk && costiStrutturaDesk.length > 0 ? (
+                    costiStrutturaDesk.map((costo) => (
+                      <TableRow key={costo.id}>
+                        <TableCell>
+                          {editingCostoStrutturaDesk?.id === costo.id ? (
+                            <Input
+                              value={editingCostoStrutturaDesk.layout_desk}
+                              onChange={(e) => setEditingCostoStrutturaDesk({...editingCostoStrutturaDesk, layout_desk: e.target.value})}
+                              className="w-24"
+                            />
+                          ) : (
+                            costo.layout_desk
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingCostoStrutturaDesk?.id === costo.id ? (
+                            <div className="flex items-center gap-2">
+                              <span>€</span>
+                              <Input
+                                value={editingCostoStrutturaDesk.costo_unitario.toString().replace('.', ',')}
+                                onChange={(e) => setEditingCostoStrutturaDesk({...editingCostoStrutturaDesk, costo_unitario: parseFloat(e.target.value.replace(',', '.')) || 0})}
+                                className="w-24"
+                              />
+                            </div>
+                          ) : (
+                            `€ ${costo.costo_unitario.toString().replace('.', ',')}`
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingCostoStrutturaDesk?.id === costo.id ? (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" onClick={() => updateCostoStrutturaDeskMutation.mutate(editingCostoStrutturaDesk)} disabled={updateCostoStrutturaDeskMutation.isPending}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingCostoStrutturaDesk(null)}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="outline" onClick={() => setEditingCostoStrutturaDesk(costo)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => deleteCostoStrutturaDeskMutation.mutate(costo.id)}
+                                disabled={deleteCostoStrutturaDeskMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center">Nessun costo struttura desk trovato</TableCell>
+                    </TableRow>
                   )}
                 </TableBody>
               </Table>

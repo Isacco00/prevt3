@@ -128,15 +128,11 @@ const Preventivi = () => {
     numero_porte: '',
     // Desk fields
     desk_qta: 1,
+    layout_desk: '',
     // Accessori stand dinamici
     accessori_stand: {},
-    layout_desk: '',
-    porta_scorrevole: 0,
-    ripiano_superiore: 0,
-    ripiano_inferiore: 0,
-    teca_plexiglass: 0,
-    fronte_luminoso: 0,
-    borsa: 0,
+    // Accessori desk dinamici  
+    accessori_desk: {},
     // Espositore fields
     qta_tipo30: 0,
     qta_tipo50: 0,
@@ -345,6 +341,35 @@ const Preventivi = () => {
     enabled: !!user?.id,
   });
 
+  // Fetch listino accessori desk
+  const { data: accessoriDesk } = useQuery({
+    queryKey: ["listino-accessori-desk"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("listino_accessori_desk")
+        .select("*")
+        .eq("attivo", true)
+        .order("nome");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Fetch costi struttura desk
+  const { data: costiStrutturaDesk } = useQuery({
+    queryKey: ["costi-struttura-desk-layout"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("costi_struttura_desk_layout")
+        .select("*")
+        .eq("attivo", true);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Calcolo dei costi automatici
   const calculateCosts = () => {
     if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione || !parametri.length) {
@@ -396,6 +421,36 @@ const Preventivi = () => {
       });
     }
 
+    // Calcolo costi accessori desk
+    let costi_accessori_desk = 0;
+    if (formData.accessori_desk && accessoriDesk && accessoriDesk.length > 0) {
+      accessoriDesk.forEach(accessorio => {
+        const quantity = formData.accessori_desk[accessorio.id] || 0;
+        costi_accessori_desk += quantity * accessorio.costo_unitario;
+      });
+    }
+
+    // Calcolo costi desk
+    const costoStampaDeskParam = parametri.find(p => p.tipo === 'costo_stampa');
+    const costoPremontaggerDesk = parametri.find(p => p.tipo === 'costo_premontaggio');
+    
+    // Costo struttura desk
+    const costoStrutturaDesk_param = costiStrutturaDesk?.find(c => c.layout_desk === formData.layout_desk);
+    const struttura_terra_desk = costoStrutturaDesk_param ? 
+      formData.desk_qta * (costoStrutturaDesk_param.costo_unitario || 0) : 0;
+
+    // Grafica desk con cordino cucito
+    const superficie_stampa_desk = calculateSuperficieStampaDesk();
+    const grafica_cordino_desk = costoStampaDeskParam ? 
+      superficie_stampa_desk * (costoStampaDeskParam.valore || 0) : 0;
+
+    // Premontaggio desk
+    const numero_pezzi_desk = calculateNumeroPezziDesk();
+    const premontaggio_desk = costoPremontaggerDesk ? 
+      numero_pezzi_desk * (costoPremontaggerDesk.valore || 0) : 0;
+
+    const totale_desk = struttura_terra_desk + grafica_cordino_desk + premontaggio_desk + costi_accessori_desk;
+
     const totale = struttura_terra + grafica_cordino + premontaggio + retroilluminazione + costi_accessori + extra_stand_complesso;
 
     return {
@@ -405,8 +460,52 @@ const Preventivi = () => {
       retroilluminazione,
       extra_stand_complesso,
       costi_accessori,
+      costi_accessori_desk,
+      costi_desk: {
+        struttura_terra: struttura_terra_desk,
+        grafica_cordino: grafica_cordino_desk,
+        premontaggio: premontaggio_desk,
+        totale: totale_desk
+      },
       totale
     };
+  };
+
+  // Funzioni helper per calcolo desk
+  const calculateSuperficieStampaDesk = () => {
+    const { desk_qta, layout_desk } = formData;
+    
+    if (!layout_desk || !desk_qta) return 0;
+    
+    switch (layout_desk) {
+      case "50":
+        return 1.5 * desk_qta;
+      case "100":
+        return 2 * desk_qta;
+      case "150":
+        return 2.5 * desk_qta;
+      case "200":
+        return 3 * desk_qta;
+      default:
+        return 0;
+    }
+  };
+
+  const calculateNumeroPezziDesk = () => {
+    const { desk_qta, layout_desk } = formData;
+    
+    if (!layout_desk || !desk_qta) return 0;
+    
+    switch (layout_desk) {
+      case "50":
+      case "100":
+      case "150":
+        return 12 * desk_qta;
+      case "200":
+        return 20 * desk_qta;
+      default:
+        return 0;
+    }
   };
 
   // Calcola gli elementi fisici per gli espositori
@@ -588,12 +687,7 @@ const Preventivi = () => {
         // Desk fields
         desk_qta: parseInt(data.desk_qta) || 0,
         layout_desk: data.layout_desk || '',
-        porta_scorrevole: parseInt(data.porta_scorrevole) || 0,
-        ripiano_superiore: parseInt(data.ripiano_superiore) || 0,
-        ripiano_inferiore: parseInt(data.ripiano_inferiore) || 0,
-        teca_plexiglass: parseInt(data.teca_plexiglass) || 0,
-        fronte_luminoso: parseInt(data.fronte_luminoso) || 0,
-        borsa: parseInt(data.borsa) || 0,
+        accessori_desk: data.accessori_desk || {},
         superficie_stampa_desk,
         numero_pezzi_desk,
         // Espositore fields
@@ -801,12 +895,7 @@ const Preventivi = () => {
         // Desk fields
         desk_qta: parseInt(data.desk_qta) || 0,
         layout_desk: data.layout_desk || '',
-        porta_scorrevole: parseInt(data.porta_scorrevole) || 0,
-        ripiano_superiore: parseInt(data.ripiano_superiore) || 0,
-        ripiano_inferiore: parseInt(data.ripiano_inferiore) || 0,
-        teca_plexiglass: parseInt(data.teca_plexiglass) || 0,
-        fronte_luminoso: parseInt(data.fronte_luminoso) || 0,
-        borsa: parseInt(data.borsa) || 0,
+        accessori_desk: data.accessori_desk || {},
         superficie_stampa_desk,
         numero_pezzi_desk,
         // Espositore fields
@@ -924,12 +1013,7 @@ const Preventivi = () => {
       // Desk fields
       desk_qta: 1,
       layout_desk: '',
-      porta_scorrevole: 0,
-      ripiano_superiore: 0,
-      ripiano_inferiore: 0,
-      teca_plexiglass: 0,
-      fronte_luminoso: 0,
-      borsa: 0,
+      accessori_desk: {},
       // Espositore fields
       qta_tipo30: 0,
       qta_tipo50: 0,
@@ -1001,12 +1085,7 @@ const Preventivi = () => {
       // Desk fields
       desk_qta: (preventivo as any).desk_qta || 0,
       layout_desk: (preventivo as any).layout_desk || '',
-      porta_scorrevole: (preventivo as any).porta_scorrevole || 0,
-      ripiano_superiore: (preventivo as any).ripiano_superiore || 0,
-      ripiano_inferiore: (preventivo as any).ripiano_inferiore || 0,
-      teca_plexiglass: (preventivo as any).teca_plexiglass || 0,
-      fronte_luminoso: (preventivo as any).fronte_luminoso || 0,
-      borsa: (preventivo as any).borsa || 0,
+      accessori_desk: (preventivo as any).accessori_desk || {},
       // Espositore fields
       qta_tipo30: (preventivo as any).qta_tipo30 || 0,
       qta_tipo50: (preventivo as any).qta_tipo50 || 0,
@@ -1264,20 +1343,18 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-desk-border))] bg-card p-6">
-                         <DeskSection 
-                           data={{
-                             desk_qta: formData.desk_qta,
-                             layout_desk: formData.layout_desk,
-                             porta_scorrevole: formData.porta_scorrevole,
-                             ripiano_superiore: formData.ripiano_superiore,
-                             ripiano_inferiore: formData.ripiano_inferiore,
-                             teca_plexiglass: formData.teca_plexiglass,
-                             fronte_luminoso: formData.fronte_luminoso,
-                             borsa: formData.borsa,
-                           }}
-                           onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
-                         />
-                      </div>
+                          <DeskSection 
+                            data={{
+                              desk_qta: formData.desk_qta,
+                              layout_desk: formData.layout_desk,
+                              accessori_desk: formData.accessori_desk,
+                            }}
+                            onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
+                            parametri={parametri}
+                            costiAccessori={calculateCosts().costi_accessori_desk}
+                            costiDesk={calculateCosts().costi_desk}
+                          />
+                       </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>

@@ -41,6 +41,66 @@ export type Database = {
         }
         Relationships: []
       }
+      costi_struttura_desk_layout: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          layout_desk: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          layout_desk: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          layout_desk?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      listino_accessori_desk: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       listino_accessori_stand: {
         Row: {
           attivo: boolean
