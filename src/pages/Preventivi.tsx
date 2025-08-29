@@ -1027,6 +1027,8 @@ const Preventivi = () => {
       // Complexity fields
       extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
       costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
+      // Accessori stand dinamici  
+      accessori_stand: (preventivo as any).accessori_stand || {},
     });
     setSectionsOpen({
       stand: true,

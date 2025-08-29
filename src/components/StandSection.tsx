@@ -315,75 +315,81 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <h4 className="text-md font-semibold">Calcolo Costi Stand</h4>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Struttura a terra</CardTitle>
+        {/* Prima riga - 4 cards principali */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <Card className="h-24">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Struttura a terra</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costs.struttura_terra.toFixed(2)}</div>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <div className="text-xl font-bold">€{costs.struttura_terra.toFixed(2)}</div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Grafica con cordino cucito</CardTitle>
+          <Card className="h-24">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Grafica con cordino cucito</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <div className="text-xl font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Premontaggio</CardTitle>
+          <Card className="h-24">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Retroilluminazione</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <div className="text-xl font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Retroilluminazione</CardTitle>
+          <Card className="h-24">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Costo Accessori</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Costi totali Accessori</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costs.costi_accessori.toFixed(2)}</div>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <div className="text-xl font-bold">€{costs.costi_accessori.toFixed(2)}</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Extra per Complessità */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="extra_perc_complex">Extra (%)</Label>
-            <Input
-              id="extra_perc_complex"
-              type="number"
-              step="0.1"
-              min="0"
-              max="100"
-              value={formData.extra_perc_complex}
-              onChange={(e) => setFormData({ ...formData, extra_perc_complex: e.target.value })}
-              placeholder="0.0"
-            />
-          </div>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Extra per Struttura Complessa</CardTitle>
+        {/* Seconda riga - Premontaggio, Extra (%), Extra per struttura complessa */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <Card className="h-24">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Premontaggio</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <div className="text-xl font-bold">€{costs.premontaggio.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+
+          <Card className="h-24 flex flex-col">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Extra (%)</CardTitle>
+            </CardHeader>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <Input
+                id="extra_perc_complex"
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                value={formData.extra_perc_complex}
+                onChange={(e) => setFormData({ ...formData, extra_perc_complex: e.target.value })}
+                placeholder="0.0"
+                className="h-8 text-right font-bold"
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="h-24">
+            <CardHeader className="pb-1 pt-3 px-3">
+              <CardTitle className="text-xs font-medium leading-tight">Extra per struttura complessa</CardTitle>
+            </CardHeader>
+            <CardContent className="pb-3 px-3 flex items-end h-full">
+              <div className="text-xl font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
             </CardContent>
           </Card>
         </div>
