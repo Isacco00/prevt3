@@ -317,12 +317,12 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
         
         {/* Prima riga - 4 cards principali */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          <Card className="h-24">
+          <Card className="h-24 flex flex-col overflow-hidden">
             <CardHeader className="pb-1 pt-3 px-3">
               <CardTitle className="text-xs font-medium leading-tight">Struttura a terra</CardTitle>
             </CardHeader>
-            <CardContent className="pb-3 px-3 flex items-end h-full">
-              <div className="text-xl font-bold">€{costs.struttura_terra.toFixed(2)}</div>
+            <CardContent className="mt-auto pb-3 px-3">
+              <div className="text-xl font-bold leading-none tabular-nums truncate">€{costs.struttura_terra.toFixed(2)}</div>
             </CardContent>
           </Card>
 
