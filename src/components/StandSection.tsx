@@ -417,7 +417,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
 
         <Card className="border-2 border-primary">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Totale Stand</CardTitle>
+            <CardTitle className="text-lg">Costo Totale Stand</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold text-primary">€{costs.totale.toFixed(2)}</div>
