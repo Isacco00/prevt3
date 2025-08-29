@@ -41,7 +41,12 @@ export default function Admin() {
   const [showAddRetro, setShowAddRetro] = useState(false);
   const [newRetroHeight, setNewRetroHeight] = useState('');
   const [newRetroCost, setNewRetroCost] = useState('');
+  const [editingAccessorio, setEditingAccessorio] = useState<any>(null);
+  const [editingAccessorioDesk, setEditingAccessorioDesk] = useState<any>(null);
+  const [editingCostoStrutturaDesk, setEditingCostoStrutturaDesk] = useState<any>(null);
   const [showAddAccessorio, setShowAddAccessorio] = useState(false);
+  const [showAddAccessorioDesk, setShowAddAccessorioDesk] = useState(false);
+  const [showAddCostoStrutturaDesk, setShowAddCostoStrutturaDesk] = useState(false);
   const [newAccessorioNome, setNewAccessorioNome] = useState('');
   const [newAccessorioCosto, setNewAccessorioCosto] = useState('');
   const [editingAccessorioId, setEditingAccessorioId] = useState<string | null>(null);
@@ -166,6 +171,40 @@ export default function Admin() {
     enabled: !!user?.id,
   });
 
+  // Fetch listino accessori desk
+  const { data: accessoriDesk = [] } = useQuery({
+    queryKey: ['listino-accessori-desk'],
+    queryFn: async () => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await supabase
+        .from('listino_accessori_desk')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('attivo', true)
+        .order('nome');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  // Fetch costi struttura desk
+  const { data: costiStrutturaDesk = [] } = useQuery({
+    queryKey: ['costi-struttura-desk-layout'],
+    queryFn: async () => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await supabase
+        .from('costi_struttura_desk_layout')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('attivo', true)
+        .order('layout_desk');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   // Add retroilluminazione mutation
   const addRetroMutation = useMutation({
     mutationFn: async ({ altezza, costo_al_metro }: { altezza: number; costo_al_metro: number }) => {
@@ -244,6 +283,118 @@ export default function Admin() {
     },
     onError: (error: any) => {
       toast({ title: 'Errore', description: error?.message || 'Impossibile eliminare accessorio.', variant: 'destructive' });
+    },
+  });
+
+  // Desk accessories mutations
+  const addAccessorioDeskMutation = useMutation({
+    mutationFn: async ({ nome, costo_unitario }: { nome: string; costo_unitario: number }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { error } = await supabase
+        .from('listino_accessori_desk')
+        .insert({ user_id: user.id, nome, costo_unitario });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-desk'] });
+      toast({ title: 'Accessorio Desk aggiunto', description: 'Accessorio Desk aggiunto con successo.' });
+      setShowAddAccessorioDesk(false);
+      setNewAccessorioDeskNome('');
+      setNewAccessorioDeskCosto('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere accessorio Desk.', variant: 'destructive' });
+    },
+  });
+
+  const updateAccessorioDeskMutation = useMutation({
+    mutationFn: async ({ id, nome, costo_unitario }: { id: string; nome: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('listino_accessori_desk')
+        .update({ nome, costo_unitario })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-desk'] });
+      toast({ title: 'Accessorio Desk aggiornato', description: 'Accessorio Desk aggiornato con successo.' });
+      setEditingAccessorioDesk(null);
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiornare accessorio Desk.', variant: 'destructive' });
+    },
+  });
+
+  const deleteAccessorioDeskMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('listino_accessori_desk')
+        .update({ attivo: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-desk'] });
+      toast({ title: 'Accessorio Desk eliminato', description: 'Accessorio Desk eliminato con successo.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile eliminare accessorio Desk.', variant: 'destructive' });
+    },
+  });
+
+  // Desk structure costs mutations
+  const addCostoStrutturaDeskMutation = useMutation({
+    mutationFn: async ({ layout_desk, costo_unitario }: { layout_desk: string; costo_unitario: number }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { error } = await supabase
+        .from('costi_struttura_desk_layout')
+        .insert({ user_id: user.id, layout_desk, costo_unitario });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-struttura-desk-layout'] });
+      toast({ title: 'Costo struttura Desk aggiunto', description: 'Costo struttura Desk aggiunto con successo.' });
+      setShowAddCostoStrutturaDesk(false);
+      setNewLayoutDesk('');
+      setNewCostoStrutturaDesk('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere costo struttura Desk.', variant: 'destructive' });
+    },
+  });
+
+  const updateCostoStrutturaDeskMutation = useMutation({
+    mutationFn: async ({ id, layout_desk, costo_unitario }: { id: string; layout_desk: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('costi_struttura_desk_layout')
+        .update({ layout_desk, costo_unitario })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-struttura-desk-layout'] });
+      toast({ title: 'Costo struttura Desk aggiornato', description: 'Costo struttura Desk aggiornato con successo.' });
+      setEditingCostoStrutturaDesk(null);
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiornare costo struttura Desk.', variant: 'destructive' });
+    },
+  });
+
+  const deleteCostoStrutturaDeskMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('costi_struttura_desk_layout')
+        .update({ attivo: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-struttura-desk-layout'] });
+      toast({ title: 'Costo struttura Desk eliminato', description: 'Costo struttura Desk eliminato con successo.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile eliminare costo struttura Desk.', variant: 'destructive' });
     },
   });
 
