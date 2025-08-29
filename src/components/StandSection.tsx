@@ -281,8 +281,8 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     const totalCost = quantity * accessorio.costo_unitario;
                     return (
                       <TableRow key={accessorio.id}>
-                        <TableCell className="font-medium py-0.5">{accessorio.nome}</TableCell>
-                        <TableCell className="text-center py-0.5">
+                        <TableCell className="font-medium py-0,5">{accessorio.nome}</TableCell>
+                        <TableCell className="text-center py-0,5">
                           € {accessorio.costo_unitario.toString().replace('.', ',')}
                         </TableCell>
                         <TableCell className="text-center">
