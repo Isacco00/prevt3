@@ -217,76 +217,81 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
         </CardContent>
       </Card>
 
-      {/* Calcolo Costi Desk */}
-      <Card>
-        <CardContent className="pt-6">
-          <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Desk</h4>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            {/* Costo struttura a terra Desk */}
-            <div className="bg-card rounded-lg border p-4 flex flex-col justify-between h-24">
-              <Label className="text-sm text-muted-foreground leading-tight">
-                Struttura a terra Desk
-              </Label>
-              <div className="mt-auto">
-                <span className="text-lg font-bold text-desk">
-                  € {costiDesk?.struttura_terra?.toFixed(2) || '0.00'}
-                </span>
-              </div>
-            </div>
+     {/* Calcolo Costi Desk */}
+<Card>
+  <CardContent className="pt-6">
+    <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Desk</h4>
 
-            {/* Costo grafica Desk */}
-            <div className="bg-card rounded-lg border p-4 flex flex-col justify-between h-24">
-              <Label className="text-sm text-muted-foreground leading-tight">
-                Grafica con cordino cucito Desk
-              </Label>
-              <div className="mt-auto">
-                <span className="text-lg font-bold text-desk">
-                  € {costiDesk?.grafica_cordino?.toFixed(2) || '0.00'}
-                </span>
-              </div>
-            </div>
-
-            {/* Costo premontaggio Desk */}
-            <div className="bg-card rounded-lg border p-4 flex flex-col justify-between h-24">
-              <Label className="text-sm text-muted-foreground leading-tight">
-                Premontaggio Desk
-              </Label>
-              <div className="mt-auto">
-                <span className="text-lg font-bold text-desk">
-                  € {costiDesk?.premontaggio?.toFixed(2) || '0.00'}
-                </span>
-              </div>
-            </div>
-
-            {/* Costi totali Accessori Desk */}
-            <div className="bg-card rounded-lg border p-4 flex flex-col justify-between h-24">
-              <Label className="text-sm text-muted-foreground leading-tight">
-                Costi totali Accessori Desk
-              </Label>
-              <div className="mt-auto">
-                <span className="text-lg font-bold text-desk">
-                  € {costiAccessori?.toFixed(2) || '0.00'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Costo totale Desk */}
-          <div className="flex justify-center">
-            <div className="bg-primary/5 rounded-lg border-2 border-primary/20 p-6 min-w-64">
-              <div className="text-center">
-                <Label className="text-lg text-muted-foreground leading-tight block mb-2">
-                  Costo totale Desk
-                </Label>
-                <span className="text-3xl font-bold text-primary">
-                  € {costiDesk?.totale?.toFixed(2) || '0.00'}
-                </span>
-              </div>
-            </div>
+    {/* 4 cards principali */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      <Card className="h-24 flex flex-col overflow-hidden">
+        <CardHeader className="pb-1 pt-3 px-3">
+          <CardTitle className="text-xs font-medium leading-tight">
+            Struttura a terra Desk
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
+          <div className="text-xl font-bold leading-none tabular-nums truncate">
+            €{(costiDesk?.struttura_terra ?? 0).toFixed(2)}
           </div>
         </CardContent>
       </Card>
+
+      <Card className="h-24 flex flex-col overflow-hidden">
+        <CardHeader className="pb-1 pt-3 px-3">
+          <CardTitle className="text-xs font-medium leading-tight">
+            Grafica con cordino cucito Desk
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
+          <div className="text-xl font-bold leading-none tabular-nums truncate">
+            €{(costiDesk?.grafica_cordino ?? 0).toFixed(2)}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="h-24 flex flex-col overflow-hidden">
+        <CardHeader className="pb-1 pt-3 px-3">
+          <CardTitle className="text-xs font-medium leading-tight">
+            Premontaggio Desk
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
+          <div className="text-xl font-bold leading-none tabular-nums truncate">
+            €{(costiDesk?.premontaggio ?? 0).toFixed(2)}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="h-24 flex flex-col overflow-hidden">
+        <CardHeader className="pb-1 pt-3 px-3">
+          <CardTitle className="text-xs font-medium leading-tight">
+            Costi totali Accessori Desk
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
+          <div className="text-xl font-bold leading-none tabular-nums truncate">
+            €{(costiAccessori ?? 0).toFixed(2)}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    {/* Costo totale Desk */}
+    <Card className="w-full max-w-md mx-auto h-28 flex flex-col overflow-hidden border-primary/20">
+      <CardHeader className="pt-4 pb-1 px-4">
+        <CardTitle className="text-center text-sm text-muted-foreground leading-tight">
+          Costo totale Desk
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="mt-auto pb-4 px-4">
+        <div className="text-3xl font-bold leading-none tabular-nums text-center">
+          €{(costiDesk?.totale ?? 0).toFixed(2)}
+        </div>
+      </CardContent>
+    </Card>
+  </CardContent>
+</Card>
     </div>
   );
 }
