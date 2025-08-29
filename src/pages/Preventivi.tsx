@@ -128,6 +128,8 @@ const Preventivi = () => {
     numero_porte: '',
     // Desk fields
     desk_qta: 1,
+    // Accessori stand dinamici
+    accessori_stand: {},
     layout_desk: '',
     porta_scorrevole: 0,
     ripiano_superiore: 0,
@@ -327,6 +329,22 @@ const Preventivi = () => {
     enabled: !!user,
   });
 
+  // Fetch accessori stand for cost calculation
+  const { data: accessoriStand = [] } = useQuery({
+    queryKey: ['listino-accessori-stand'],
+    queryFn: async () => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await supabase
+        .from('listino_accessori_stand')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('attivo', true);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   // Calcolo dei costi automatici
   const calculateCosts = () => {
     if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione || !parametri.length) {
@@ -336,6 +354,7 @@ const Preventivi = () => {
         premontaggio: 0,
         retroilluminazione: 0,
         extra_stand_complesso: 0,
+        costi_accessori: 0,
         totale: 0
       };
     }
@@ -368,7 +387,16 @@ const Preventivi = () => {
     const extraPercComplex = parseFloat(formData.extra_perc_complex || '0') || 0;
     const extra_stand_complesso = struttura_terra * (extraPercComplex / 100);
 
-    const totale = struttura_terra + grafica_cordino + premontaggio + retroilluminazione + extra_stand_complesso;
+    // Calcolo costi accessori
+    let costi_accessori = 0;
+    if (formData.accessori_stand && accessoriStand.length > 0) {
+      accessoriStand.forEach(accessorio => {
+        const quantity = formData.accessori_stand[accessorio.id] || 0;
+        costi_accessori += quantity * accessorio.costo_unitario;
+      });
+    }
+
+    const totale = struttura_terra + grafica_cordino + premontaggio + retroilluminazione + costi_accessori + extra_stand_complesso;
 
     return {
       struttura_terra,
@@ -376,6 +404,7 @@ const Preventivi = () => {
       premontaggio,
       retroilluminazione,
       extra_stand_complesso,
+      costi_accessori,
       totale
     };
   };
@@ -921,6 +950,8 @@ const Preventivi = () => {
       // Complexity fields
         extra_perc_complex: '',
         costo_retroilluminazione: 0,
+        // Accessori stand dinamici
+        accessori_stand: {},
     });
     setEditingPreventivo(null);
     setSectionsOpen({

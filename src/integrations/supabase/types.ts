@@ -41,6 +41,36 @@ export type Database = {
         }
         Relationships: []
       }
+      listino_accessori_stand: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       parametri: {
         Row: {
           attivo: boolean

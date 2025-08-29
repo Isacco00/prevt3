@@ -3,7 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Calculator } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface StandSectionProps {
   formData: {
@@ -15,17 +19,9 @@ interface StandSectionProps {
     complessita: string;
     bifaccialita: string;
     retroilluminazione: string;
-    borsa_stand: string;
-    baule_trolley: string;
-    staffa_monitor: string;
-    mensola: string;
-    spot_light: string;
-    kit_faro_50w: string;
-    kit_faro_100w: string;
-    quadro_elettrico_16a: string;
-    nicchia: string;
-    pedana: string;
     extra_perc_complex: string;
+    // Accessori stand dinamici
+    accessori_stand: Record<string, number>;
   };
   setFormData: (data: any) => void;
   physicalElements: {
@@ -40,11 +36,41 @@ interface StandSectionProps {
     premontaggio: number;
     retroilluminazione: number;
     extra_stand_complesso: number;
+    costi_accessori: number;
     totale: number;
   };
 }
 
 export function StandSection({ formData, setFormData, physicalElements, costs }: StandSectionProps) {
+  const { user } = useAuth();
+
+  // Fetch accessori stand from database
+  const { data: accessoriStand = [], isLoading } = useQuery({
+    queryKey: ['listino-accessori-stand'],
+    queryFn: async () => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await supabase
+        .from('listino_accessori_stand')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('attivo', true)
+        .order('nome');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
+  const handleAccessorioChange = (accessorioId: string, quantity: number) => {
+    setFormData({
+      ...formData,
+      accessori_stand: {
+        ...formData.accessori_stand,
+        [accessorioId]: quantity
+      }
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Dati di Ingresso per Stand */}
@@ -235,137 +261,51 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <h4 className="text-md font-semibold">Accessori Stand</h4>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="borsa_stand">Borsa</Label>
-            <Input
-              id="borsa_stand"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.borsa_stand}
-              onChange={(e) => setFormData({ ...formData, borsa_stand: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="baule_trolley">Baule Trolley</Label>
-            <Input
-              id="baule_trolley"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.baule_trolley}
-              onChange={(e) => setFormData({ ...formData, baule_trolley: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="staffa_monitor">Staffa monitor</Label>
-            <Input
-              id="staffa_monitor"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.staffa_monitor}
-              onChange={(e) => setFormData({ ...formData, staffa_monitor: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="mensola">Mensola</Label>
-            <Input
-              id="mensola"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.mensola}
-              onChange={(e) => setFormData({ ...formData, mensola: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="spot_light">Spot light</Label>
-            <Input
-              id="spot_light"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.spot_light}
-              onChange={(e) => setFormData({ ...formData, spot_light: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="kit_faro_50w">Kit Faro 50W</Label>
-            <Input
-              id="kit_faro_50w"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.kit_faro_50w}
-              onChange={(e) => setFormData({ ...formData, kit_faro_50w: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="kit_faro_100w">Kit Faro 100W</Label>
-            <Input
-              id="kit_faro_100w"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.kit_faro_100w}
-              onChange={(e) => setFormData({ ...formData, kit_faro_100w: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="quadro_elettrico_16a">Quadro Elettrico 16A</Label>
-            <Input
-              id="quadro_elettrico_16a"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.quadro_elettrico_16a}
-              onChange={(e) => setFormData({ ...formData, quadro_elettrico_16a: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="nicchia">Nicchia</Label>
-            <Input
-              id="nicchia"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.nicchia}
-              onChange={(e) => setFormData({ ...formData, nicchia: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="pedana">Pedana (SI/NO)</Label>
-            <Input
-              id="pedana"
-              type="number"
-              min="0"
-              max="10"
-              value={formData.pedana}
-              onChange={(e) => setFormData({ ...formData, pedana: e.target.value })}
-              placeholder="0"
-            />
-          </div>
-        </div>
+        {isLoading ? (
+          <div className="text-center py-4">Caricamento accessori...</div>
+        ) : (
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Accessorio</TableHead>
+                    <TableHead className="text-center">Costo unitario</TableHead>
+                    <TableHead className="text-center w-24">Quantità</TableHead>
+                    <TableHead className="text-right">Costo totale</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {accessoriStand.map((accessorio) => {
+                    const quantity = formData.accessori_stand?.[accessorio.id] || 0;
+                    const totalCost = quantity * accessorio.costo_unitario;
+                    return (
+                      <TableRow key={accessorio.id}>
+                        <TableCell className="font-medium">{accessorio.nome}</TableCell>
+                        <TableCell className="text-center">
+                          € {accessorio.costo_unitario.toString().replace('.', ',')}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Input
+                            type="number"
+                            min="0"
+                            max="99"
+                            value={quantity}
+                            onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
+                            className="w-16 text-center"
+                          />
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          € {totalCost.toFixed(2).replace('.', ',')}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Calcolo Costi Stand */}
@@ -375,7 +315,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <h4 className="text-md font-semibold">Calcolo Costi Stand</h4>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm">Struttura a terra</CardTitle>
@@ -411,12 +351,21 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <div className="text-2xl font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Costi totali Accessori</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">€{costs.costi_accessori.toFixed(2)}</div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Extra per Complessità */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="extra_perc_complex">Extra per struttura complessa (%)</Label>
+            <Label htmlFor="extra_perc_complex">Extra (%)</Label>
             <Input
               id="extra_perc_complex"
               type="number"

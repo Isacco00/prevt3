@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit2, Save, X } from 'lucide-react';
+import { Edit2, Save, X, Edit, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -41,6 +41,12 @@ export default function Admin() {
   const [showAddRetro, setShowAddRetro] = useState(false);
   const [newRetroHeight, setNewRetroHeight] = useState('');
   const [newRetroCost, setNewRetroCost] = useState('');
+  const [showAddAccessorio, setShowAddAccessorio] = useState(false);
+  const [newAccessorioNome, setNewAccessorioNome] = useState('');
+  const [newAccessorioCosto, setNewAccessorioCosto] = useState('');
+  const [editingAccessorioId, setEditingAccessorioId] = useState<string | null>(null);
+  const [editAccessorioNome, setEditAccessorioNome] = useState('');
+  const [editAccessorioCosto, setEditAccessorioCosto] = useState('');
 
   // Fetch parameters
   const { data: parametri = [], isLoading } = useQuery({
@@ -135,6 +141,23 @@ export default function Admin() {
     },
   });
 
+  // Fetch listino accessori stand
+  const { data: accessoriStand = [], isLoading: isLoadingAccessori } = useQuery({
+    queryKey: ['listino-accessori-stand'],
+    queryFn: async () => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { data, error } = await supabase
+        .from('listino_accessori_stand')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('attivo', true)
+        .order('nome');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   // Add retroilluminazione mutation
   const addRetroMutation = useMutation({
     mutationFn: async ({ altezza, costo_al_metro }: { altezza: number; costo_al_metro: number }) => {
@@ -153,6 +176,66 @@ export default function Admin() {
     },
     onError: (error: any) => {
       toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere la riga.', variant: 'destructive' });
+    },
+  });
+
+  // Add accessorio mutation
+  const addAccessorioMutation = useMutation({
+    mutationFn: async ({ nome, costo_unitario }: { nome: string; costo_unitario: number }) => {
+      if (!user?.id) throw new Error('User not authenticated');
+      const { error } = await supabase
+        .from('listino_accessori_stand')
+        .insert({ user_id: user.id, nome, costo_unitario });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-stand'] });
+      toast({ title: 'Accessorio aggiunto', description: 'Accessorio aggiunto con successo.' });
+      setShowAddAccessorio(false);
+      setNewAccessorioNome('');
+      setNewAccessorioCosto('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere accessorio.', variant: 'destructive' });
+    },
+  });
+
+  // Update accessorio mutation
+  const updateAccessorioMutation = useMutation({
+    mutationFn: async ({ id, nome, costo_unitario }: { id: string; nome: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('listino_accessori_stand')
+        .update({ nome, costo_unitario })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-stand'] });
+      toast({ title: 'Accessorio aggiornato', description: 'Accessorio aggiornato con successo.' });
+      setEditingAccessorioId(null);
+      setEditAccessorioNome('');
+      setEditAccessorioCosto('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiornare accessorio.', variant: 'destructive' });
+    },
+  });
+
+  // Delete accessorio mutation
+  const deleteAccessorioMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('listino_accessori_stand')
+        .update({ attivo: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-stand'] });
+      toast({ title: 'Accessorio eliminato', description: 'Accessorio eliminato con successo.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile eliminare accessorio.', variant: 'destructive' });
     },
   });
 
@@ -232,6 +315,48 @@ export default function Admin() {
     setShowAddRetro(false);
     setNewRetroHeight('');
     setNewRetroCost('');
+  };
+
+  const handleEditAccessorio = (accessorio: any) => {
+    setEditingAccessorioId(accessorio.id);
+    setEditAccessorioNome(accessorio.nome);
+    setEditAccessorioCosto(accessorio.costo_unitario.toString().replace('.', ','));
+  };
+
+  const handleAccessorioSave = () => {
+    const cNorm = editAccessorioCosto.trim().replace(',', '.');
+    const cVal = parseFloat(cNorm);
+    if (isNaN(cVal)) {
+      toast({ title: 'Errore', description: 'Inserisci un costo valido (usa la virgola per i decimali).', variant: 'destructive' });
+      return;
+    }
+    updateAccessorioMutation.mutate({ 
+      id: editingAccessorioId!, 
+      nome: editAccessorioNome.trim(), 
+      costo_unitario: cVal 
+    });
+  };
+
+  const handleAccessorioCancel = () => {
+    setEditingAccessorioId(null);
+    setEditAccessorioNome('');
+    setEditAccessorioCosto('');
+  };
+
+  const handleAddAccessorioSave = () => {
+    const cNorm = newAccessorioCosto.trim().replace(',', '.');
+    const cVal = parseFloat(cNorm);
+    if (isNaN(cVal) || !newAccessorioNome.trim()) {
+      toast({ title: 'Errore', description: 'Inserisci nome e costo validi (usa la virgola per i decimali).', variant: 'destructive' });
+      return;
+    }
+    addAccessorioMutation.mutate({ nome: newAccessorioNome.trim(), costo_unitario: cVal });
+  };
+
+  const handleAddAccessorioCancel = () => {
+    setShowAddAccessorio(false);
+    setNewAccessorioNome('');
+    setNewAccessorioCosto('');
   };
   const costoStampa = parametri.filter(p => p.tipo === 'costo_stampa');
   const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
@@ -485,7 +610,130 @@ export default function Admin() {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+          </Card>
+
+          {/* Listino Accessori Stand */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Listino Accessori Stand</CardTitle>
+                <CardDescription>Gestione accessori stand con relativi costi</CardDescription>
+              </div>
+              <Button size="sm" onClick={() => setShowAddAccessorio((v) => !v)}>
+                {showAddAccessorio ? 'Annulla' : 'Aggiungi accessorio'}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {showAddAccessorio && (
+                <div className="mb-4 flex items-end gap-2">
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="newAccessorioNome">Nome accessorio</Label>
+                    <Input
+                      id="newAccessorioNome"
+                      type="text"
+                      placeholder="Nome accessorio"
+                      value={newAccessorioNome}
+                      onChange={(e) => setNewAccessorioNome(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newAccessorioCosto">Costo unitario (€)</Label>
+                    <Input
+                      id="newAccessorioCosto"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="100,00"
+                      value={newAccessorioCosto}
+                      onChange={(e) => setNewAccessorioCosto(e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                  <Button size="sm" onClick={handleAddAccessorioSave} disabled={addAccessorioMutation.isPending}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleAddAccessorioCancel}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Costo unitario</TableHead>
+                    <TableHead className="w-[100px]">Azioni</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoadingAccessori ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center">Caricamento...</TableCell>
+                    </TableRow>
+                  ) : accessoriStand.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center">Nessun accessorio trovato</TableCell>
+                    </TableRow>
+                  ) : (
+                    accessoriStand.map((accessorio) => (
+                      <TableRow key={accessorio.id}>
+                        <TableCell>
+                          {editingAccessorioId === accessorio.id ? (
+                            <Input
+                              value={editAccessorioNome}
+                              onChange={(e) => setEditAccessorioNome(e.target.value)}
+                              className="w-full"
+                            />
+                          ) : (
+                            accessorio.nome
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingAccessorioId === accessorio.id ? (
+                            <div className="flex items-center gap-2">
+                              <span>€</span>
+                              <Input
+                                value={editAccessorioCosto}
+                                onChange={(e) => setEditAccessorioCosto(e.target.value)}
+                                className="w-24"
+                              />
+                            </div>
+                          ) : (
+                            `€ ${accessorio.costo_unitario.toString().replace('.', ',')}`
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingAccessorioId === accessorio.id ? (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" onClick={handleAccessorioSave} disabled={updateAccessorioMutation.isPending}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={handleAccessorioCancel}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="outline" onClick={() => handleEditAccessorio(accessorio)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => deleteAccessorioMutation.mutate(accessorio.id)}
+                                disabled={deleteAccessorioMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
