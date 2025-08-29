@@ -16,9 +16,10 @@ interface StorageSectionProps {
   };
   setFormData: (data: any) => void;
   profiliDistribuzioneMap: Record<number, number>;
+  parametri: any[];
 }
 
-export function StorageSection({ formData, setFormData, profiliDistribuzioneMap }: StorageSectionProps) {
+export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri }: StorageSectionProps) {
   // Calcolo degli elementi fisici per Storage
   const storageElements = useMemo(() => {
     if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione) {
@@ -73,6 +74,46 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap 
       numero_pezzi
     };
   }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.layout_storage, formData.distribuzione, profiliDistribuzioneMap]);
+
+  // Calcolo dei costi Storage
+  const storageCosts = useMemo(() => {
+    if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !parametri.length) {
+      return {
+        costo_struttura_storage: 0,
+        costo_grafica_storage: 0,
+        costo_premontaggio_storage: 0,
+        costo_totale_storage: 0
+      };
+    }
+
+    const altezza = parseFloat(formData.alt_storage);
+    
+    // Trova i parametri necessari
+    const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
+    const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
+
+    // Costo struttura a terra storage: sviluppo lineare * costo struttura al m/l in funzione altezza
+    const costo_struttura_storage = costoAltezzaParam ? 
+      storageElements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+
+    // Costo grafica storage con cordino cucito: superficie stampa * costo stampa grafica al mq
+    const costo_grafica_storage = costoStampaParam ? 
+      storageElements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+
+    // Costo premontaggio storage: numero pezzi * costo premontaggio al pezzo
+    const costo_premontaggio_storage = costoPremontaggio ? 
+      storageElements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+
+    const costo_totale_storage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
+
+    return {
+      costo_struttura_storage,
+      costo_grafica_storage,
+      costo_premontaggio_storage,
+      costo_totale_storage
+    };
+  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, storageElements, parametri]);
 
   return (
     <div className="space-y-6">
@@ -194,6 +235,68 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap 
             <CardContent>
               <div className="text-2xl font-bold">{storageElements.numero_pezzi.toFixed(0)}</div>
               <p className="text-xs text-muted-foreground">N</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Calcolo Costi Storage */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Calculator className="h-5 w-5" />
+          <h4 className="text-md font-semibold">Calcolo Costi Storage</h4>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="relative">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start">
+                Costo struttura a terra storage
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex flex-col justify-end h-[3rem]">
+                <div className="text-2xl font-bold text-right">€{storageCosts.costo_struttura_storage.toFixed(2)}</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="relative">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start">
+                Costo grafica con cordino cucito storage
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex flex-col justify-end h-[3rem]">
+                <div className="text-2xl font-bold text-right">€{storageCosts.costo_grafica_storage.toFixed(2)}</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="relative">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start">
+                Costo premontaggio storage
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex flex-col justify-end h-[3rem]">
+                <div className="text-2xl font-bold text-right">€{storageCosts.costo_premontaggio_storage.toFixed(2)}</div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="relative border-2 border-primary">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start text-primary">
+                Costo totale storage
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="flex flex-col justify-end h-[3rem]">
+                <div className="text-2xl font-bold text-right text-primary">€{storageCosts.costo_totale_storage.toFixed(2)}</div>
+              </div>
             </CardContent>
           </Card>
         </div>
