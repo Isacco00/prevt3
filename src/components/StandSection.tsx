@@ -326,33 +326,45 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
             </CardContent>
           </Card>
 
-          <Card className="h-24">
-            <CardHeader className="pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium leading-tight">Grafica con cordino cucito</CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3 px-3 flex items-end h-full">
-              <div className="text-xl font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
-            </CardContent>
-          </Card>
+         <Card className="h-24 flex flex-col overflow-hidden">
+    <CardHeader className="pb-1 pt-3 px-3">
+      <CardTitle className="text-xs font-medium leading-tight">
+        Grafica con cordino cucito
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="mt-auto pb-3 px-3">
+      <div className="text-xl font-bold leading-none tabular-nums truncate">
+        €{costs.grafica_cordino.toFixed(2)}
+      </div>
+    </CardContent>
+  </Card>
 
-          <Card className="h-24">
-            <CardHeader className="pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium leading-tight">Retroilluminazione</CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3 px-3 flex items-end h-full">
-              <div className="text-xl font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
-            </CardContent>
-          </Card>
+  <Card className="h-24 flex flex-col overflow-hidden">
+    <CardHeader className="pb-1 pt-3 px-3">
+      <CardTitle className="text-xs font-medium leading-tight">
+        Retroilluminazione
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="mt-auto pb-3 px-3">
+      <div className="text-xl font-bold leading-none tabular-nums truncate">
+        €{costs.retroilluminazione.toFixed(2)}
+      </div>
+    </CardContent>
+  </Card>
 
-          <Card className="h-24">
-            <CardHeader className="pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium leading-tight">Costo Accessori</CardTitle>
-            </CardHeader>
-            <CardContent className="pb-3 px-3 flex items-end h-full">
-              <div className="text-xl font-bold">€{costs.costi_accessori.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-        </div>
+  <Card className="h-24 flex flex-col overflow-hidden">
+    <CardHeader className="pb-1 pt-3 px-3">
+      <CardTitle className="text-xs font-medium leading-tight">
+        Costo Accessori
+      </CardTitle>
+    </CardHeader>
+    <CardContent className="mt-auto pb-3 px-3">
+      <div className="text-xl font-bold leading-none tabular-nums truncate">
+        €{costs.costi_accessori.toFixed(2)}
+      </div>
+    </CardContent>
+  </Card>
+</div>
 
         {/* Seconda riga - Premontaggio, Extra (%), Extra per struttura complessa */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
