@@ -366,50 +366,48 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
   </Card>
 </div>
 
-       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-  <Card className="h-24 flex flex-col overflow-hidden">
-    <CardHeader className="pb-1 pt-3 px-3">
-      <CardTitle className="text-xs font-medium leading-tight">
-        Premontaggio
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="mt-auto pb-3 px-3">
-      <div className="text-xl font-bold leading-none tabular-nums truncate">
-        €{costs.premontaggio.toFixed(2)}
-      </div>
-    </CardContent>
-  </Card>
 
-  <Card className="h-24 flex flex-col overflow-hidden">
-    <CardHeader className="pb-1 pt-3 px-3">
-      <CardTitle className="text-xs font-medium leading-tight">
-        Extra (%)
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="mt-auto pb-3 px-3">
-      <Input
-        id="extra_perc_complex"
-        type="number"
-        step="0.1"
-        min="0"
-        max="100"
-        value={formData.extra_perc_complex}
-        onChange={(e) =>
-          setFormData({ ...formData, extra_perc_complex: e.target.value })
-        }
-        placeholder="0.0"
-        className="h-8 text-right font-bold"
-      />
-    </CardContent>
-  </Card>
+  {/* Seconda riga - Premontaggio, Extra (%), Extra per struttura complessa */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+       <Card className="h-24 flex flex-col overflow-hidden">
+          <CardHeader className="pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium leading-tight">Premontaggio</CardTitle>
+          </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
+            <div className="text-xl font-bold leading-none tabular-nums truncate">
+            €{costs.premontaggio.toFixed(2)}</div>
+        </CardContent>
+      </Card>
 
-  <Card className="h-24 flex flex-col overflow-hidden">
-    <CardHeader className="pb-1 pt-3 px-3">
-      <CardTitle className="text-xs font-medium leading-tight">
-        Extra per struttura complessa
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="mt-auto pb-3 px-3">
+      <Card className="h-24 flex flex-col overflow-hidden">
+          <CardHeader className="pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium leading-tight">
+                Extra (%)
+            </CardTitle>
+          </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
+          <Input
+            id="extra_perc_complex"
+            type="number"
+            step="0.1"
+            min="0"
+            max="100"
+            value={formData.extra_perc_complex}
+            onChange={(e) =>
+            setFormData({ ...formData, extra_perc_complex: e.target.value })}
+            placeholder="0.0"
+            className="h-8 text-right font-bold"
+          />
+        </CardContent>
+      </Card>
+
+      <Card className="h-24 flex flex-col overflow-hidden">
+          <CardHeader className="pb-1 pt-3 px-3">
+            <CardTitle className="text-xs font-medium leading-tight">
+            Extra per struttura complessa
+            </CardTitle>
+          </CardHeader>
+        <CardContent className="mt-auto pb-3 px-3">
       <div className="text-xl font-bold leading-none tabular-nums truncate">
         €{costs.extra_stand_complesso.toFixed(2)}
       </div>
