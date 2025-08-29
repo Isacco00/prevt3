@@ -30,18 +30,20 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
   const { user } = useAuth();
 
   // Fetch desk accessories
-  const { data: accessoriDesk } = useQuery({
-    queryKey: ["listino-accessori-desk"],
+  const { data: accessoriDesk = [], isLoading: isLoadingAccessori } = useQuery({
+    queryKey: ["listino-accessori-desk", user?.id],
     queryFn: async () => {
+      if (!user?.id) throw new Error("User not authenticated");
       const { data, error } = await supabase
         .from("listino_accessori_desk")
         .select("*")
+        .eq("user_id", user.id)
         .eq("attivo", true)
         .order("nome");
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   // Fetch desk structure costs by layout
@@ -172,46 +174,46 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
           {/* Accessori Desk */}
           <div className="mt-6">
             <h5 className="text-md font-medium mb-3 text-desk">Accessori Desk</h5>
-            
-            {accessoriDesk && accessoriDesk.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Accessorio</TableHead>
-                      <TableHead className="w-24">Quantità</TableHead>
-                      <TableHead className="w-32 text-right">Costo Unit.</TableHead>
-                      <TableHead className="w-32 text-right">Totale</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {accessoriDesk.map((accessorio) => {
-                      const quantity = data.accessori_desk?.[accessorio.id] || 0;
-                      const total = quantity * Number(accessorio.costo_unitario);
-                      return (
-                        <TableRow key={accessorio.id}>
-                          <TableCell className="font-medium">{accessorio.nome}</TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              min="0"
-                              max="20"
-                              step="1"
-                              value={quantity || ""}
-                              onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
-                              className="w-full"
-                            />
-                          </TableCell>
-                          <TableCell className="text-right">€ {Number(accessorio.costo_unitario).toFixed(2)}</TableCell>
-                          <TableCell className="text-right font-medium">€ {total.toFixed(2)}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+            {isLoadingAccessori ? (
+              <div className="text-center py-4">Caricamento accessori...</div>
             ) : (
-              <p className="text-muted-foreground">Nessun accessorio disponibile</p>
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Accessorio</TableHead>
+                        <TableHead className="text-center">Costo unitario</TableHead>
+                        <TableHead className="text-center w-24">Quantità</TableHead>
+                        <TableHead className="text-right">Costo totale</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accessoriDesk.map((accessorio: any) => {
+                        const quantity = data.accessori_desk?.[accessorio.id] || 0;
+                        const total = quantity * Number(accessorio.costo_unitario);
+                        return (
+                          <TableRow key={accessorio.id}>
+                            <TableCell className="font-medium">{accessorio.nome}</TableCell>
+                            <TableCell className="text-center">€ {Number(accessorio.costo_unitario).toFixed(2).replace('.', ',')}</TableCell>
+                            <TableCell className="text-center">
+                              <Input
+                                type="number"
+                                min="0"
+                                max="99"
+                                value={quantity}
+                                onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
+                                className="w-16 text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="text-right font-medium">€ {total.toFixed(2).replace('.', ',')}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             )}
           </div>
         </CardContent>
