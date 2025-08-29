@@ -185,7 +185,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="numero_porte">Numero pareti da configurare</Label>
+            <Label htmlFor="numero_porte">Numero porte</Label>
             <Select value={formData.numero_porte} onValueChange={(value) => setFormData({ ...formData, numero_porte: value })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona numero porte" />
