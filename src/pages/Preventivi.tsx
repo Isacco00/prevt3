@@ -157,7 +157,7 @@ const Preventivi = () => {
 
   // State per controllare le sezioni collassabili
   const [sectionsOpen, setSectionsOpen] = useState({
-    stand: true,
+    stand: false,
     storage: false,
     desk: false,
     espositori: false,
@@ -1039,7 +1039,7 @@ const Preventivi = () => {
     });
     setEditingPreventivo(null);
     setSectionsOpen({
-      stand: true,
+      stand: false,
       storage: false,
       desk: false,
       espositori: false,
@@ -1110,7 +1110,7 @@ const Preventivi = () => {
       accessori_stand: (preventivo as any).accessori_stand || {},
     });
     setSectionsOpen({
-      stand: true,
+      stand: false,
       storage: false,
       desk: false,
       espositori: false,
@@ -1269,28 +1269,39 @@ const Preventivi = () => {
 
               <Separator />
 
-              {/* Sezione Stand - principale */}
-              <div className="bg-[hsl(var(--section-stand))] border border-[hsl(var(--section-stand-border))] rounded-lg">
-                <div className="p-4 border-b border-[hsl(var(--section-stand-border))]">
-                  <div className="flex items-center gap-3">
-                    <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-stand-foreground))]"></div>
-                    <h3 className="text-lg font-semibold text-[hsl(var(--section-stand-foreground))]">
-                      Stand
-                    </h3>
-                    <span className="ml-auto text-xs bg-[hsl(var(--section-stand-foreground))] text-[hsl(var(--section-stand))] px-2 py-1 rounded-full">
-                      Principale
-                    </span>
-                  </div>
+              {/* Sezione Stand - collassabile */}
+              <Collapsible
+                open={sectionsOpen.stand}
+                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, stand: open }))}
+              >
+                <div className="bg-[hsl(var(--section-stand))] border border-[hsl(var(--section-stand-border))] rounded-lg overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-stand-border))] rounded-none border-0"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-stand-foreground))]"></div>
+                        <span className="font-medium text-[hsl(var(--section-stand-foreground))]">Stand</span>
+                        <span className="ml-2 text-xs bg-[hsl(var(--section-stand-foreground))] text-[hsl(var(--section-stand))] px-2 py-1 rounded-full">
+                          Principale
+                        </span>
+                      </div>
+                      <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-stand-foreground))] ${sectionsOpen.stand ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="border-t border-[hsl(var(--section-stand-border))] bg-card p-6">
+                      <StandSection 
+                        formData={formData}
+                        setFormData={setFormData}
+                        physicalElements={physicalElements}
+                        costs={costs}
+                      />
+                    </div>
+                  </CollapsibleContent>
                 </div>
-                <div className="p-6">
-                  <StandSection 
-                    formData={formData}
-                    setFormData={setFormData}
-                    physicalElements={physicalElements}
-                    costs={costs}
-                  />
-                </div>
-              </div>
+              </Collapsible>
 
               {/* Sezioni aggiuntive collassabili */}
               <div className="space-y-3">
