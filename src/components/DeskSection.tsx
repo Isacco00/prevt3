@@ -280,7 +280,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
     {/* Costo totale Desk */}
     <Card className="w-full h-28 flex flex-col overflow-hidden border-2 rounded-xl">
       <CardContent className="px-4 py-3 flex flex-col">
-          <div className="text-sm font-medium leading-tight">Costo totale Desk</div>
+          <div className="text-lg font-medium leading-tight">Costo totale Desk</div>
           <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
             €{(costiDesk?.totale ?? 0).toFixed(2)}
           </div>
