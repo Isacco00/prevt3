@@ -178,6 +178,7 @@ export type Database = {
       }
       preventivi: {
         Row: {
+          accessori_stand_config: string | null
           alt_storage: number | null
           altezza: number
           baule_trolley: number | null
@@ -260,6 +261,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          accessori_stand_config?: string | null
           alt_storage?: number | null
           altezza: number
           baule_trolley?: number | null
@@ -342,6 +344,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          accessori_stand_config?: string | null
           alt_storage?: number | null
           altezza?: number
           baule_trolley?: number | null

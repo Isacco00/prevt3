@@ -881,16 +881,18 @@ const Preventivi = () => {
         bifaccialita,
         retroilluminazione,
         // Stand accessories
-        borsa_stand: parseInt(formData.borsa_stand) || 0,
-        baule_trolley: parseInt(formData.baule_trolley) || 0,
-        staffa_monitor: parseInt(formData.staffa_monitor) || 0,
-        mensola: parseInt(formData.mensola) || 0,
-        spot_light: parseInt(formData.spot_light) || 0,
-        kit_faro_50w: parseInt(formData.kit_faro_50w) || 0,
-        kit_faro_100w: parseInt(formData.kit_faro_100w) || 0,
-        quadro_elettrico_16a: parseInt(formData.quadro_elettrico_16a) || 0,
-        nicchia: parseInt(formData.nicchia) || 0,
-        pedana: parseInt(formData.pedana) || 0,
+        borsa_stand: parseInt(data.borsa_stand) || 0,
+        baule_trolley: parseInt(data.baule_trolley) || 0,
+        staffa_monitor: parseInt(data.staffa_monitor) || 0,
+        mensola: parseInt(data.mensola) || 0,
+        spot_light: parseInt(data.spot_light) || 0,
+        kit_faro_50w: parseInt(data.kit_faro_50w) || 0,
+        kit_faro_100w: parseInt(data.kit_faro_100w) || 0,
+        quadro_elettrico_16a: parseInt(data.quadro_elettrico_16a) || 0,
+        nicchia: parseInt(data.nicchia) || 0,
+        pedana: parseInt(data.pedana) || 0,
+        // Accessori stand dinamici
+        accessori_stand_config: JSON.stringify(data.accessori_stand || {}),
         // Storage fields
         larg_storage: parseFloat(data.larg_storage) || 0,
         prof_storage: parseFloat(data.prof_storage) || 0,
@@ -1132,8 +1134,14 @@ const Preventivi = () => {
       // Complexity fields
       extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
       costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
-      // Accessori stand dinamici  
-      accessori_stand: (preventivo as any).accessori_stand || {},
+        // Accessori stand dinamici  
+        accessori_stand: (() => {
+          try {
+            return JSON.parse((preventivo as any).accessori_stand_config || '{}');
+          } catch {
+            return {};
+          }
+        })(),
     });
     setSectionsOpen({
       stand: false,
