@@ -126,8 +126,8 @@ const Preventivi = () => {
     alt_storage: '',
     layout_storage: '',
     numero_porte: '',
-    // Desk fields
-    desk_layouts: [{ layout: '', quantity: 0 }],
+     // Desk fields
+     desk_layouts: [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }],
     // Accessori stand dinamici
     accessori_stand: {},
     // Desk accessories (individual fields)
@@ -907,7 +907,7 @@ const Preventivi = () => {
         sviluppo_metri_lineari_storage,
         numero_pezzi_storage,
         // Desk fields
-        desk_layouts: formData.desk_layouts || [{ layout: '', quantity: 0 }],
+        layout_desk: JSON.stringify(formData.desk_layouts || [{ layout: '', quantity: 0 }]),
         // Desk accessories
         porta_scorrevole: formData.porta_scorrevole,
         ripiano_superiore: formData.ripiano_superiore,
@@ -1030,7 +1030,7 @@ const Preventivi = () => {
       layout_storage: '',
       numero_porte: '',
       // Desk fields
-      desk_layouts: [{ layout: '', quantity: 0 }],
+      desk_layouts: [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }],
       // Desk accessories
       porta_scorrevole: 0,
       ripiano_superiore: 0,
@@ -1107,7 +1107,9 @@ const Preventivi = () => {
       layout_storage: (preventivo as any).layout_storage || '',
       numero_porte: (preventivo as any).numero_porte || '',
       // Desk fields
-      desk_layouts: (preventivo as any).desk_layouts || [{ layout: '', quantity: 0 }],
+      desk_layouts: (preventivo as any).layout_desk ? 
+        JSON.parse((preventivo as any).layout_desk) : 
+        [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }],
       // Desk accessories
       porta_scorrevole: (preventivo as any).porta_scorrevole || 0,
       ripiano_superiore: (preventivo as any).ripiano_superiore || 0,

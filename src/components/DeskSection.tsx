@@ -58,16 +58,18 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
 
   // Fetch desk structure costs by layout
   const { data: costiStrutturaDesk } = useQuery({
-    queryKey: ["costi-struttura-desk-layout"],
+    queryKey: ["costi-struttura-desk-layout", user?.id],
     queryFn: async () => {
+      if (!user?.id) throw new Error("User not authenticated");
       const { data, error } = await supabase
         .from("costi_struttura_desk_layout")
         .select("*")
+        .eq("user_id", user.id)
         .eq("attivo", true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   const handleAccessorioChange = (accessorioNome: string, quantity: number) => {
