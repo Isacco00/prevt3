@@ -127,8 +127,7 @@ const Preventivi = () => {
     layout_storage: '',
     numero_porte: '',
     // Desk fields
-    desk_qta: 1,
-    layout_desk: '',
+    desk_layouts: [{ layout: '', quantity: 0 }],
     // Accessori stand dinamici
     accessori_stand: {},
     // Desk accessories (individual fields)
@@ -443,9 +442,10 @@ const Preventivi = () => {
     const costoPremontaggerDesk = parametri.find(p => p.tipo === 'costo_premontaggio');
     
     // Costo struttura desk
-    const costoStrutturaDesk_param = costiStrutturaDesk?.find(c => c.layout_desk === formData.layout_desk);
-    const struttura_terra_desk = costoStrutturaDesk_param ? 
-      formData.desk_qta * (costoStrutturaDesk_param.costo_unitario || 0) : 0;
+    const struttura_terra_desk = formData.desk_layouts?.reduce((total, config) => {
+      const costoLayout = costiStrutturaDesk?.find(c => c.layout_desk === config.layout);
+      return total + (config.quantity * (costoLayout?.costo_unitario || 0));
+    }, 0) || 0;
 
     // Grafica desk con cordino cucito
     const superficie_stampa_desk = calculateSuperficieStampaDesk();
@@ -481,39 +481,45 @@ const Preventivi = () => {
 
   // Funzioni helper per calcolo desk
   const calculateSuperficieStampaDesk = () => {
-    const { desk_qta, layout_desk } = formData;
+    if (!formData.desk_layouts) return 0;
     
-    if (!layout_desk || !desk_qta) return 0;
-    
-    switch (layout_desk) {
-      case "50":
-        return 1.5 * desk_qta;
-      case "100":
-        return 2 * desk_qta;
-      case "150":
-        return 2.5 * desk_qta;
-      case "200":
-        return 3 * desk_qta;
-      default:
-        return 0;
-    }
+    return formData.desk_layouts.reduce((total, config) => {
+      const { layout, quantity } = config;
+      if (!layout || !quantity) return total;
+      
+      switch (layout) {
+        case "50":
+          return total + (1.5 * quantity);
+        case "100":
+          return total + (2 * quantity);
+        case "150":
+          return total + (2.5 * quantity);
+        case "200":
+          return total + (3 * quantity);
+        default:
+          return total;
+      }
+    }, 0);
   };
 
   const calculateNumeroPezziDesk = () => {
-    const { desk_qta, layout_desk } = formData;
+    if (!formData.desk_layouts) return 0;
     
-    if (!layout_desk || !desk_qta) return 0;
-    
-    switch (layout_desk) {
-      case "50":
-      case "100":
-      case "150":
-        return 12 * desk_qta;
-      case "200":
-        return 20 * desk_qta;
-      default:
-        return 0;
-    }
+    return formData.desk_layouts.reduce((total, config) => {
+      const { layout, quantity } = config;
+      if (!layout || !quantity) return total;
+      
+      switch (layout) {
+        case "50":
+        case "100":
+        case "150":
+          return total + (12 * quantity);
+        case "200":
+          return total + (20 * quantity);
+        default:
+          return total;
+      }
+    }, 0);
   };
 
   // Calcola gli elementi fisici per gli espositori
@@ -693,9 +699,7 @@ const Preventivi = () => {
         sviluppo_metri_lineari_storage,
         numero_pezzi_storage,
         // Desk fields
-        desk_qta: parseInt(data.desk_qta) || 0,
-        layout_desk: data.layout_desk || '',
-        accessori_desk: data.accessori_desk || {},
+        desk_layouts: data.desk_layouts || [{ layout: '', quantity: 0 }],
         superficie_stampa_desk,
         numero_pezzi_desk,
         // Espositore fields
@@ -903,8 +907,7 @@ const Preventivi = () => {
         sviluppo_metri_lineari_storage,
         numero_pezzi_storage,
         // Desk fields
-        desk_qta: parseInt(data.desk_qta) || 0,
-        layout_desk: data.layout_desk || '',
+        desk_layouts: formData.desk_layouts || [{ layout: '', quantity: 0 }],
         // Desk accessories
         porta_scorrevole: formData.porta_scorrevole,
         ripiano_superiore: formData.ripiano_superiore,
@@ -1027,8 +1030,7 @@ const Preventivi = () => {
       layout_storage: '',
       numero_porte: '',
       // Desk fields
-      desk_qta: 1,
-      layout_desk: '',
+      desk_layouts: [{ layout: '', quantity: 0 }],
       // Desk accessories
       porta_scorrevole: 0,
       ripiano_superiore: 0,
@@ -1105,8 +1107,7 @@ const Preventivi = () => {
       layout_storage: (preventivo as any).layout_storage || '',
       numero_porte: (preventivo as any).numero_porte || '',
       // Desk fields
-      desk_qta: (preventivo as any).desk_qta || 0,
-      layout_desk: (preventivo as any).layout_desk || '',
+      desk_layouts: (preventivo as any).desk_layouts || [{ layout: '', quantity: 0 }],
       // Desk accessories
       porta_scorrevole: (preventivo as any).porta_scorrevole || 0,
       ripiano_superiore: (preventivo as any).ripiano_superiore || 0,
@@ -1390,8 +1391,7 @@ const Preventivi = () => {
                       <div className="border-t border-[hsl(var(--section-desk-border))] bg-card p-6">
                           <DeskSection 
                             data={{
-                              desk_qta: formData.desk_qta,
-                              layout_desk: formData.layout_desk,
+                              desk_layouts: formData.desk_layouts,
                               porta_scorrevole: formData.porta_scorrevole,
                               ripiano_superiore: formData.ripiano_superiore,
                               ripiano_inferiore: formData.ripiano_inferiore,

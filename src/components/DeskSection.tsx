@@ -7,9 +7,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface DeskLayoutConfig {
+  layout: string;
+  quantity: number;
+}
+
 interface DeskData {
-  desk_qta: number;
-  layout_desk: string;
+  desk_layouts: DeskLayoutConfig[];
   // Accessori desk individuali
   porta_scorrevole: number;
   ripiano_superiore: number;
@@ -82,41 +86,81 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
       onChange(field, quantity);
     }
   };
-  const calculateSuperficieStampa = () => {
-    const { desk_qta, layout_desk } = data;
-    
-    if (!layout_desk || !desk_qta) return 0;
-    
-    switch (layout_desk) {
-      case "50":
-        return 1.5 * desk_qta;
-      case "100":
-        return 2 * desk_qta;
-      case "150":
-        return 2.5 * desk_qta;
-      case "200":
-        return 3 * desk_qta;
-      default:
-        return 0;
+  const handleLayoutChange = (layoutIndex: number, field: 'layout' | 'quantity', value: string | number) => {
+    const updatedLayouts = [...(data.desk_layouts || [])];
+    if (!updatedLayouts[layoutIndex]) {
+      updatedLayouts[layoutIndex] = { layout: '', quantity: 0 };
     }
+    updatedLayouts[layoutIndex] = {
+      ...updatedLayouts[layoutIndex],
+      [field]: value
+    };
+    onChange('desk_layouts' as any, updatedLayouts);
+  };
+
+  const getLayoutCost = (layout: string) => {
+    if (!costiStrutturaDesk) return 0;
+    const costo = costiStrutturaDesk.find(c => c.layout_desk === layout);
+    return costo ? Number(costo.costo_unitario) : 0;
+  };
+
+  const calculateLayoutTotal = (layout: string, quantity: number) => {
+    return getLayoutCost(layout) * quantity;
+  };
+
+  const calculateTotalStructureCost = () => {
+    if (!data.desk_layouts) return 0;
+    return data.desk_layouts.reduce((total, config) => {
+      return total + calculateLayoutTotal(config.layout, config.quantity);
+    }, 0);
+  };
+
+  const calculateSuperficieStampa = () => {
+    if (!data.desk_layouts) return 0;
+    
+    return data.desk_layouts.reduce((total, config) => {
+      const { layout, quantity } = config;
+      if (!layout || !quantity) return total;
+      
+      switch (layout) {
+        case "50":
+          return total + (1.5 * quantity);
+        case "100":
+          return total + (2 * quantity);
+        case "150":
+          return total + (2.5 * quantity);
+        case "200":
+          return total + (3 * quantity);
+        default:
+          return total;
+      }
+    }, 0);
   };
 
   const calculateNumeroPezzi = () => {
-    const { desk_qta, layout_desk } = data;
+    if (!data.desk_layouts) return 0;
     
-    if (!layout_desk || !desk_qta) return 0;
-    
-    switch (layout_desk) {
-      case "50":
-      case "100":
-      case "150":
-        return 12 * desk_qta;
-      case "200":
-        return 20 * desk_qta;
-      default:
-        return 0;
-    }
+    return data.desk_layouts.reduce((total, config) => {
+      const { layout, quantity } = config;
+      if (!layout || !quantity) return total;
+      
+      switch (layout) {
+        case "50":
+        case "100":
+        case "150":
+          return total + (12 * quantity);
+        case "200":
+          return total + (20 * quantity);
+        default:
+          return total;
+      }
+    }, 0);
   };
+
+  // Ensure desk_layouts is initialized
+  if (!data.desk_layouts) {
+    onChange('desk_layouts' as any, [{ layout: '', quantity: 0 }]);
+  }
 
   return (
     <div className="space-y-6">
@@ -125,37 +169,53 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
         <CardContent className="pt-6">
           <h4 className="text-lg font-semibold mb-4 text-desk">Dati di ingresso per Desk</h4>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="desk_qta">Quantità Desk</Label>
-              <Input
-                id="desk_qta"
-                type="number"
-                min="1"
-                max="10"
-                step="1"
-                value={data.desk_qta || ""}
-                onChange={(e) => onChange("desk_qta", parseInt(e.target.value) || 0)}
-                placeholder="1-10"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="layout_desk">Layout Desk</Label>
-              <Select
-                value={data.layout_desk || ""}
-                onValueChange={(value) => onChange("layout_desk", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleziona layout" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="50">50</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                  <SelectItem value="150">150</SelectItem>
-                  <SelectItem value="200">200</SelectItem>
-                </SelectContent>
-              </Select>
+          <div className="space-y-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Layout</TableHead>
+                  <TableHead className="text-center">Quantità</TableHead>
+                  <TableHead className="text-right">Prezzo unitario</TableHead>
+                  <TableHead className="text-right">Costo</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {['50', '100', '150', '200'].map((layout, index) => {
+                  const layoutConfig = data.desk_layouts?.find(l => l.layout === layout) || { layout, quantity: 0 };
+                  const layoutIndex = data.desk_layouts?.findIndex(l => l.layout === layout) ?? index;
+                  const unitCost = getLayoutCost(layout);
+                  const totalCost = calculateLayoutTotal(layout, layoutConfig.quantity);
+                  
+                  return (
+                    <TableRow key={layout}>
+                      <TableCell className="font-medium">Layout {layout}</TableCell>
+                      <TableCell className="text-center">
+                        <Input
+                          type="number"
+                          min="0"
+                          max="10"
+                          value={layoutConfig.quantity || ""}
+                          onChange={(e) => {
+                            const quantity = parseInt(e.target.value) || 0;
+                            handleLayoutChange(layoutIndex >= 0 ? layoutIndex : data.desk_layouts?.length || 0, 'quantity', quantity);
+                            handleLayoutChange(layoutIndex >= 0 ? layoutIndex : data.desk_layouts?.length || 0, 'layout', layout);
+                          }}
+                          className="w-20 text-center"
+                        />
+                      </TableCell>
+                      <TableCell className="text-right">€ {unitCost.toFixed(2).replace('.', ',')}</TableCell>
+                      <TableCell className="text-right font-medium">€ {totalCost.toFixed(2).replace('.', ',')}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+            
+            <div className="pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Totale Struttura Desk:</span>
+                <span className="text-xl font-bold text-desk">€ {calculateTotalStructureCost().toFixed(2).replace('.', ',')}</span>
+              </div>
             </div>
           </div>
         </CardContent>
@@ -227,7 +287,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                                 type="number"
                                 min="0"
                                 max="99"
-                                value={quantity}
+                                value={quantity.toString()}
                                 onChange={(e) => handleAccessorioChange(accessorio.nome, parseInt(e.target.value) || 0)}
                                 className="w-16 text-center"
                               />
