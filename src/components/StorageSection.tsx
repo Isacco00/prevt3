@@ -263,7 +263,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
 
           <Card className="relative">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start">
+              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start">
                 Costo grafica con cordino cucito storage
               </CardTitle>
             </CardHeader>
@@ -276,7 +276,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
 
           <Card className="relative">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start">
+              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start">
                 Costo premontaggio storage
               </CardTitle>
             </CardHeader>
@@ -289,7 +289,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
 
           <Card className="relative border-2 border-primary">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start text-primary">
+              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start text-primary">
                 Costo totale storage
               </CardTitle>
             </CardHeader>
