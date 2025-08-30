@@ -269,7 +269,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-right">€{storageCosts.costo_grafica_storage.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-left">€{storageCosts.costo_grafica_storage.toFixed(2)}</div>
               </div>
             </CardContent>
           </Card>
@@ -282,7 +282,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-right">€{storageCosts.costo_premontaggio_storage.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-left">€{storageCosts.costo_premontaggio_storage.toFixed(2)}</div>
               </div>
             </CardContent>
           </Card>
@@ -295,7 +295,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
             </CardHeader>
             <CardContent className="pt-0">
               <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-right text-primary">€{storageCosts.costo_totale_storage.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-left text-primary">€{storageCosts.costo_totale_storage.toFixed(2)}</div>
               </div>
             </CardContent>
           </Card>
