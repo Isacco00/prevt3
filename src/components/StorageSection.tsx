@@ -250,7 +250,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="relative">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm leading-tight min-h-[2.5rem] flex items-start">
+              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start">
                 Costo struttura a terra storage
               </CardTitle>
             </CardHeader>
