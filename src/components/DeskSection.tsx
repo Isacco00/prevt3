@@ -159,9 +159,14 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
     }, 0);
   };
 
-  // Ensure desk_layouts is initialized
-  if (!data.desk_layouts) {
-    onChange('desk_layouts' as any, [{ layout: '', quantity: 0 }]);
+  // Ensure desk_layouts is initialized safely as an array
+  if (!Array.isArray(data.desk_layouts)) {
+    onChange('desk_layouts' as any, [
+      { layout: '50', quantity: 0 },
+      { layout: '100', quantity: 0 },
+      { layout: '150', quantity: 0 },
+      { layout: '200', quantity: 0 },
+    ]);
   }
 
   return (
@@ -183,8 +188,12 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
               </TableHeader>
               <TableBody>
                 {['50', '100', '150', '200'].map((layout, index) => {
-                  const layoutConfig = data.desk_layouts?.find(l => l.layout === layout) || { layout, quantity: 0 };
-                  const layoutIndex = data.desk_layouts?.findIndex(l => l.layout === layout) ?? index;
+                  const layoutConfig = Array.isArray(data.desk_layouts)
+                    ? (data.desk_layouts.find(l => l.layout === layout) || { layout, quantity: 0 })
+                    : { layout, quantity: 0 };
+                  const layoutIndex = Array.isArray(data.desk_layouts)
+                    ? (data.desk_layouts.findIndex(l => l.layout === layout) ?? index)
+                    : index;
                   const unitCost = getLayoutCost(layout);
                   const totalCost = calculateLayoutTotal(layout, layoutConfig.quantity);
                   
@@ -199,8 +208,9 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                           value={layoutConfig.quantity || ""}
                           onChange={(e) => {
                             const quantity = parseInt(e.target.value) || 0;
-                            handleLayoutChange(layoutIndex >= 0 ? layoutIndex : data.desk_layouts?.length || 0, 'quantity', quantity);
-                            handleLayoutChange(layoutIndex >= 0 ? layoutIndex : data.desk_layouts?.length || 0, 'layout', layout);
+                            const safeIndex = layoutIndex >= 0 ? layoutIndex : (Array.isArray(data.desk_layouts) ? data.desk_layouts.length : 0);
+                            handleLayoutChange(safeIndex, 'quantity', quantity);
+                            handleLayoutChange(safeIndex, 'layout', layout);
                           }}
                           className="w-20 text-center"
                         />

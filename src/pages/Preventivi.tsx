@@ -362,16 +362,18 @@ const Preventivi = () => {
 
   // Fetch costi struttura desk
   const { data: costiStrutturaDesk } = useQuery({
-    queryKey: ["costi-struttura-desk-layout"],
+    queryKey: ["costi-struttura-desk-layout", user?.id],
     queryFn: async () => {
+      if (!user?.id) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from("costi_struttura_desk_layout")
         .select("*")
+        .eq("user_id", user.id)
         .eq("attivo", true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user?.id,
   });
 
   // Calcolo dei costi automatici
@@ -442,10 +444,22 @@ const Preventivi = () => {
     const costoPremontaggerDesk = parametri.find(p => p.tipo === 'costo_premontaggio');
     
     // Costo struttura desk
-    const struttura_terra_desk = formData.desk_layouts?.reduce((total, config) => {
-      const costoLayout = costiStrutturaDesk?.find(c => c.layout_desk === config.layout);
-      return total + (config.quantity * (costoLayout?.costo_unitario || 0));
-    }, 0) || 0;
+    const deskLayoutsArray = Array.isArray(formData.desk_layouts)
+      ? (formData.desk_layouts as any[])
+      : (() => {
+          try {
+            return typeof (formData.desk_layouts as any) === 'string'
+              ? JSON.parse(formData.desk_layouts as any)
+              : [];
+          } catch {
+            return [];
+          }
+        })();
+
+    const struttura_terra_desk = deskLayoutsArray.reduce((total, config: any) => {
+      const costoLayout = costiStrutturaDesk?.find((c: any) => c.layout_desk === config.layout);
+      return total + ((Number(config.quantity) || 0) * (Number(costoLayout?.costo_unitario) || 0));
+    }, 0);
 
     // Grafica desk con cordino cucito
     const superficie_stampa_desk = calculateSuperficieStampaDesk();
@@ -481,9 +495,21 @@ const Preventivi = () => {
 
   // Funzioni helper per calcolo desk
   const calculateSuperficieStampaDesk = () => {
-    if (!formData.desk_layouts) return 0;
+    const arr = Array.isArray(formData.desk_layouts)
+      ? (formData.desk_layouts as any[])
+      : (() => {
+          try {
+            return typeof (formData.desk_layouts as any) === 'string'
+              ? JSON.parse(formData.desk_layouts as any)
+              : [];
+          } catch {
+            return [];
+          }
+        })();
+
+    if (!arr.length) return 0;
     
-    return formData.desk_layouts.reduce((total, config) => {
+    return arr.reduce((total, config: any) => {
       const { layout, quantity } = config;
       if (!layout || !quantity) return total;
       
@@ -503,9 +529,21 @@ const Preventivi = () => {
   };
 
   const calculateNumeroPezziDesk = () => {
-    if (!formData.desk_layouts) return 0;
+    const arr = Array.isArray(formData.desk_layouts)
+      ? (formData.desk_layouts as any[])
+      : (() => {
+          try {
+            return typeof (formData.desk_layouts as any) === 'string'
+              ? JSON.parse(formData.desk_layouts as any)
+              : [];
+          } catch {
+            return [];
+          }
+        })();
+
+    if (!arr.length) return 0;
     
-    return formData.desk_layouts.reduce((total, config) => {
+    return arr.reduce((total, config: any) => {
       const { layout, quantity } = config;
       if (!layout || !quantity) return total;
       
@@ -699,7 +737,7 @@ const Preventivi = () => {
         sviluppo_metri_lineari_storage,
         numero_pezzi_storage,
         // Desk fields
-        desk_layouts: data.desk_layouts || [{ layout: '', quantity: 0 }],
+        layout_desk: JSON.stringify(data.desk_layouts || [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }]),
         superficie_stampa_desk,
         numero_pezzi_desk,
         // Espositore fields
@@ -1107,9 +1145,17 @@ const Preventivi = () => {
       layout_storage: (preventivo as any).layout_storage || '',
       numero_porte: (preventivo as any).numero_porte || '',
       // Desk fields
-      desk_layouts: (preventivo as any).layout_desk ? 
-        JSON.parse((preventivo as any).layout_desk) : 
-        [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }],
+      desk_layouts: (() => {
+        try {
+          if ((preventivo as any).layout_desk) return JSON.parse((preventivo as any).layout_desk);
+          const v = (preventivo as any).desk_layouts;
+          if (Array.isArray(v)) return v;
+          if (typeof v === 'string') return JSON.parse(v);
+          return [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }];
+        } catch {
+          return [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }];
+        }
+      })(),
       // Desk accessories
       porta_scorrevole: (preventivo as any).porta_scorrevole || 0,
       ripiano_superiore: (preventivo as any).ripiano_superiore || 0,
