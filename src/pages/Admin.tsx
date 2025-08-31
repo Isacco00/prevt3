@@ -1055,7 +1055,7 @@ export default function Admin() {
                 <CardDescription>Costo struttura desk in funzione del layout</CardDescription>
               </div>
               <Button size="sm" onClick={() => setShowAddCostoStrutturaDesk((v) => !v)}>
-                {showAddCostoStrutturaDesk ? 'Annulla' : 'Aggiungi layout'}
+                {showAddCostoStrutturaDesk ? 'Annulla' : 'Aggiungi layout Desk'}
               </Button>
             </CardHeader>
             <CardContent>
