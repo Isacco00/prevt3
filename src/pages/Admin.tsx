@@ -813,7 +813,7 @@ export default function Admin() {
                 <CardDescription>Gestione accessori stand con relativi costi</CardDescription>
               </div>
               <Button size="sm" onClick={() => setShowAddAccessorio((v) => !v)}>
-                {showAddAccessorio ? 'Annulla' : 'Aggiungi accessorio'}
+                {showAddAccessorio ? 'Annulla' : 'Aggiungi accessorio Stand'}
               </Button>
             </CardHeader>
             <CardContent>
