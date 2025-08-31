@@ -159,15 +159,8 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
     }, 0);
   };
 
-  // Ensure desk_layouts is initialized safely as an array
-  if (!Array.isArray(data.desk_layouts)) {
-    onChange('desk_layouts' as any, [
-      { layout: '50', quantity: 0 },
-      { layout: '100', quantity: 0 },
-      { layout: '150', quantity: 0 },
-      { layout: '200', quantity: 0 },
-    ]);
-  }
+  // Initialize desk_layouts safely as an array if not already
+  const safeLayouts = Array.isArray(data.desk_layouts) ? data.desk_layouts : [];
 
   return (
     <div className="space-y-6">
@@ -188,12 +181,8 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
               </TableHeader>
               <TableBody>
                 {['50', '100', '150', '200'].map((layout, index) => {
-                  const layoutConfig = Array.isArray(data.desk_layouts)
-                    ? (data.desk_layouts.find(l => l.layout === layout) || { layout, quantity: 0 })
-                    : { layout, quantity: 0 };
-                  const layoutIndex = Array.isArray(data.desk_layouts)
-                    ? (data.desk_layouts.findIndex(l => l.layout === layout) ?? index)
-                    : index;
+                  const layoutConfig = safeLayouts.find(l => l.layout === layout) || { layout, quantity: 0 };
+                  const layoutIndex = safeLayouts.findIndex(l => l.layout === layout);
                   const unitCost = getLayoutCost(layout);
                   const totalCost = calculateLayoutTotal(layout, layoutConfig.quantity);
                   
@@ -205,12 +194,20 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                           type="number"
                           min="0"
                           max="10"
-                          value={layoutConfig.quantity || ""}
+                          value={layoutConfig.quantity || 0}
                           onChange={(e) => {
                             const quantity = parseInt(e.target.value) || 0;
-                            const safeIndex = layoutIndex >= 0 ? layoutIndex : (Array.isArray(data.desk_layouts) ? data.desk_layouts.length : 0);
-                            handleLayoutChange(safeIndex, 'quantity', quantity);
-                            handleLayoutChange(safeIndex, 'layout', layout);
+                            const newLayouts = [...safeLayouts];
+                            
+                            if (layoutIndex >= 0) {
+                              // Update existing layout
+                              newLayouts[layoutIndex] = { layout, quantity };
+                            } else {
+                              // Add new layout
+                              newLayouts.push({ layout, quantity });
+                            }
+                            
+                            onChange('desk_layouts' as any, newLayouts);
                           }}
                           className="w-20 text-center"
                         />
