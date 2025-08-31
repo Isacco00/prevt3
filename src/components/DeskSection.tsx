@@ -111,14 +111,14 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
   };
 
   const calculateTotalStructureCost = () => {
-    if (!data.desk_layouts) return 0;
+    if (!data.desk_layouts || !Array.isArray(data.desk_layouts)) return 0;
     return data.desk_layouts.reduce((total, config) => {
       return total + calculateLayoutTotal(config.layout, config.quantity);
     }, 0);
   };
 
   const calculateSuperficieStampa = () => {
-    if (!data.desk_layouts) return 0;
+    if (!data.desk_layouts || !Array.isArray(data.desk_layouts)) return 0;
     
     return data.desk_layouts.reduce((total, config) => {
       const { layout, quantity } = config;
@@ -140,7 +140,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
   };
 
   const calculateNumeroPezzi = () => {
-    if (!data.desk_layouts) return 0;
+    if (!data.desk_layouts || !Array.isArray(data.desk_layouts)) return 0;
     
     return data.desk_layouts.reduce((total, config) => {
       const { layout, quantity } = config;
