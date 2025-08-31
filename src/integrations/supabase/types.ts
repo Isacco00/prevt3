@@ -101,6 +101,36 @@ export type Database = {
         }
         Relationships: []
       }
+      listino_accessori_espositori: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       listino_accessori_stand: {
         Row: {
           attivo: boolean
@@ -184,6 +214,7 @@ export type Database = {
           baule_trolley: number | null
           bifaccialita: number | null
           borsa: number | null
+          borsa_espositori: number | null
           borsa_stand: number | null
           complementi_config: string | null
           complessita: string | null
@@ -267,6 +298,7 @@ export type Database = {
           baule_trolley?: number | null
           bifaccialita?: number | null
           borsa?: number | null
+          borsa_espositori?: number | null
           borsa_stand?: number | null
           complementi_config?: string | null
           complessita?: string | null
@@ -350,6 +382,7 @@ export type Database = {
           baule_trolley?: number | null
           bifaccialita?: number | null
           borsa?: number | null
+          borsa_espositori?: number | null
           borsa_stand?: number | null
           complementi_config?: string | null
           complessita?: string | null

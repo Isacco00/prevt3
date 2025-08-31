@@ -3,6 +3,9 @@ import { Calculator } from 'lucide-react';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ExpositoreData {
   qta_tipo30: number;
@@ -17,6 +20,7 @@ interface ExpositoreData {
   retroilluminazione_30x30x100h: number;
   retroilluminazione_50x50x100h: number;
   retroilluminazione_100x50x100h: number;
+  borsa_espositori: number;
 }
 
 interface ExpositorePhysicalElements {
@@ -65,6 +69,21 @@ function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElem
 }
 
 export function ExpositoreSection({ formData, setFormData, physicalElements }: EspositoriSectionProps) {
+  // Query for accessories prices
+  const { data: accessoriesData = [] } = useQuery({
+    queryKey: ['listino_accessori_espositori'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('listino_accessori_espositori')
+        .select('*')
+        .eq('attivo', true)
+        .order('nome');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const handleInputChange = (field: keyof ExpositoreData, value: string) => {
     // Rimuovi caratteri non numerici eccetto stringa vuota
     const cleanValue = value.replace(/[^0-9]/g, '');
@@ -74,6 +93,35 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
       [field]: numValue
     });
   };
+
+  // Helper functions for accessories
+  const getAccessoryPrice = (name: string): number => {
+    const accessory = accessoriesData.find(item => item.nome === name);
+    return accessory ? Number(accessory.costo_unitario) : 0;
+  };
+
+  const getAccessoryQuantity = (fieldName: keyof ExpositoreData): number => {
+    return formData[fieldName] || 0;
+  };
+
+  const calculateAccessoryTotal = (fieldName: keyof ExpositoreData, unitPrice: number): number => {
+    const quantity = getAccessoryQuantity(fieldName);
+    return quantity * unitPrice;
+  };
+
+  // Mapping between field names and display names
+  const accessoryMapping = [
+    { field: 'ripiano_30x30' as keyof ExpositoreData, name: 'Ripiano 30x30' },
+    { field: 'ripiano_50x50' as keyof ExpositoreData, name: 'Ripiano 50x50' },
+    { field: 'ripiano_100x50' as keyof ExpositoreData, name: 'Ripiano 100x50' },
+    { field: 'teca_plexiglass_30x30x30' as keyof ExpositoreData, name: 'Teca in plexiglass 30x30x30' },
+    { field: 'teca_plexiglass_50x50x50' as keyof ExpositoreData, name: 'Teca in plexiglass 50x50x50' },
+    { field: 'teca_plexiglass_100x50x30' as keyof ExpositoreData, name: 'Teca in plexiglass 100x50x30' },
+    { field: 'retroilluminazione_30x30x100h' as keyof ExpositoreData, name: 'Retroilluminazione 30x30x100 H' },
+    { field: 'retroilluminazione_50x50x100h' as keyof ExpositoreData, name: 'Retroilluminazione 50x50x100 H' },
+    { field: 'retroilluminazione_100x50x100h' as keyof ExpositoreData, name: 'Retroilluminazione 100x50x100 H' },
+    { field: 'borsa_espositori' as keyof ExpositoreData, name: 'Borsa' },
+  ];
 
   return (
     <div className="space-y-4">
@@ -140,133 +188,54 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
       {/* Elementi Fisici */}
       <EspositorePhysicalElements physicalElements={physicalElements} />
 
-      {/* Accessori Espositori */}
+      {/* Accessori Espositori - Table Format */}
       <Card className="border-l-4 border-l-espositore">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Ripiani */}
-            <div className="space-y-2">
-              <Label htmlFor="ripiano_30x30">Ripiano 30x30</Label>
-              <Input
-                id="ripiano_30x30"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.ripiano_30x30 === 0 ? '' : formData.ripiano_30x30.toString()}
-                onChange={(e) => handleInputChange('ripiano_30x30', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="ripiano_50x50">Ripiano 50x50</Label>
-              <Input
-                id="ripiano_50x50"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.ripiano_50x50 === 0 ? '' : formData.ripiano_50x50.toString()}
-                onChange={(e) => handleInputChange('ripiano_50x50', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="ripiano_100x50">Ripiano 100x50</Label>
-              <Input
-                id="ripiano_100x50"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.ripiano_100x50 === 0 ? '' : formData.ripiano_100x50.toString()}
-                onChange={(e) => handleInputChange('ripiano_100x50', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            {/* Teche in plexiglass */}
-            <div className="space-y-2">
-              <Label htmlFor="teca_plexiglass_30x30x30">Teca in plexiglass 30x30x30</Label>
-              <Input
-                id="teca_plexiglass_30x30x30"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.teca_plexiglass_30x30x30 === 0 ? '' : formData.teca_plexiglass_30x30x30.toString()}
-                onChange={(e) => handleInputChange('teca_plexiglass_30x30x30', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="teca_plexiglass_50x50x50">Teca in plexiglass 50x50x50</Label>
-              <Input
-                id="teca_plexiglass_50x50x50"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.teca_plexiglass_50x50x50 === 0 ? '' : formData.teca_plexiglass_50x50x50.toString()}
-                onChange={(e) => handleInputChange('teca_plexiglass_50x50x50', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="teca_plexiglass_100x50x30">Teca in plexiglass 100x50x30</Label>
-              <Input
-                id="teca_plexiglass_100x50x30"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.teca_plexiglass_100x50x30 === 0 ? '' : formData.teca_plexiglass_100x50x30.toString()}
-                onChange={(e) => handleInputChange('teca_plexiglass_100x50x30', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            {/* Retroilluminazioni */}
-            <div className="space-y-2">
-              <Label htmlFor="retroilluminazione_30x30x100h">Retroilluminazione 30x30x100 H</Label>
-              <Input
-                id="retroilluminazione_30x30x100h"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.retroilluminazione_30x30x100h === 0 ? '' : formData.retroilluminazione_30x30x100h.toString()}
-                onChange={(e) => handleInputChange('retroilluminazione_30x30x100h', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="retroilluminazione_50x50x100h">Retroilluminazione 50x50x100 H</Label>
-              <Input
-                id="retroilluminazione_50x50x100h"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.retroilluminazione_50x50x100h === 0 ? '' : formData.retroilluminazione_50x50x100h.toString()}
-                onChange={(e) => handleInputChange('retroilluminazione_50x50x100h', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="retroilluminazione_100x50x100h">Retroilluminazione 100x50x100 H</Label>
-              <Input
-                id="retroilluminazione_100x50x100h"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.retroilluminazione_100x50x100h === 0 ? '' : formData.retroilluminazione_100x50x100h.toString()}
-                onChange={(e) => handleInputChange('retroilluminazione_100x50x100h', e.target.value)}
-                placeholder="0"
-              />
-            </div>
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Accessorio</TableHead>
+                <TableHead className="text-center">Prezzo unitario</TableHead>
+                <TableHead className="text-center">Quantità</TableHead>
+                <TableHead className="text-center">Costo totale</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {accessoryMapping.map((accessory) => {
+                const unitPrice = getAccessoryPrice(accessory.name);
+                const quantity = getAccessoryQuantity(accessory.field);
+                const total = calculateAccessoryTotal(accessory.field, unitPrice);
+                
+                return (
+                  <TableRow key={accessory.field}>
+                    <TableCell className="font-medium">{accessory.name}</TableCell>
+                    <TableCell className="text-center">
+                      €{unitPrice.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={quantity || 0}
+                        onChange={(e) => {
+                          const newQuantity = parseInt(e.target.value) || 0;
+                          handleInputChange(accessory.field, newQuantity.toString());
+                        }}
+                        className="w-20 text-center"
+                      />
+                    </TableCell>
+                    <TableCell className="text-center font-semibold">
+                      €{total.toFixed(2)}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

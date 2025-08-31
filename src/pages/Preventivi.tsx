@@ -150,6 +150,7 @@ const Preventivi = () => {
     retroilluminazione_30x30x100h: 0,
     retroilluminazione_50x50x100h: 0,
     retroilluminazione_100x50x100h: 0,
+    borsa_espositori: 0,
     // Services fields
     servizio_montaggio_smontaggio: false,
     servizio_certificazioni: false,
@@ -755,6 +756,7 @@ const Preventivi = () => {
         retroilluminazione_30x30x100h: parseInt(data.retroilluminazione_30x30x100h) || 0,
         retroilluminazione_50x50x100h: parseInt(data.retroilluminazione_50x50x100h) || 0,
         retroilluminazione_100x50x100h: parseInt(data.retroilluminazione_100x50x100h) || 0,
+        borsa_espositori: parseInt(data.borsa_espositori) || 0,
         // Services fields
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
@@ -970,6 +972,7 @@ const Preventivi = () => {
         retroilluminazione_30x30x100h: parseInt(data.retroilluminazione_30x30x100h) || 0,
         retroilluminazione_50x50x100h: parseInt(data.retroilluminazione_50x50x100h) || 0,
         retroilluminazione_100x50x100h: parseInt(data.retroilluminazione_100x50x100h) || 0,
+        borsa_espositori: parseInt(data.borsa_espositori) || 0,
         // Services fields
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
@@ -1089,6 +1092,7 @@ const Preventivi = () => {
       retroilluminazione_30x30x100h: 0,
       retroilluminazione_50x50x100h: 0,
       retroilluminazione_100x50x100h: 0,
+      borsa_espositori: 0,
       // Services fields
       servizio_montaggio_smontaggio: false,
       servizio_certificazioni: false,
@@ -1176,6 +1180,7 @@ const Preventivi = () => {
       retroilluminazione_30x30x100h: (preventivo as any).retroilluminazione_30x30x100h || 0,
       retroilluminazione_50x50x100h: (preventivo as any).retroilluminazione_50x50x100h || 0,
       retroilluminazione_100x50x100h: (preventivo as any).retroilluminazione_100x50x100h || 0,
+      borsa_espositori: (preventivo as any).borsa_espositori || 0,
       // Services
       servizio_montaggio_smontaggio: (preventivo as any).servizio_montaggio_smontaggio || false,
       servizio_certificazioni: (preventivo as any).servizio_certificazioni || false,
