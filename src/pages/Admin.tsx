@@ -43,9 +43,11 @@ export default function Admin() {
   const [newRetroCost, setNewRetroCost] = useState('');
   const [editingAccessorio, setEditingAccessorio] = useState<any>(null);
   const [editingAccessorioDesk, setEditingAccessorioDesk] = useState<any>(null);
+  const [editingAccessorioEspositori, setEditingAccessorioEspositori] = useState<any>(null);
   const [editingCostoStrutturaDesk, setEditingCostoStrutturaDesk] = useState<any>(null);
   const [showAddAccessorio, setShowAddAccessorio] = useState(false);
   const [showAddAccessorioDesk, setShowAddAccessorioDesk] = useState(false);
+  const [showAddAccessorioEspositori, setShowAddAccessorioEspositori] = useState(false);
   const [showAddCostoStrutturaDesk, setShowAddCostoStrutturaDesk] = useState(false);
   const [newAccessorioNome, setNewAccessorioNome] = useState('');
   const [newAccessorioCosto, setNewAccessorioCosto] = useState('');
@@ -56,6 +58,10 @@ export default function Admin() {
   // Desk accessories states
   const [newAccessorioDeskNome, setNewAccessorioDeskNome] = useState('');
   const [newAccessorioDeskCosto, setNewAccessorioDeskCosto] = useState('');
+  
+  // Espositori accessories states
+  const [newAccessorioEspositoriNome, setNewAccessorioEspositoriNome] = useState('');
+  const [newAccessorioEspositoriCosto, setNewAccessorioEspositoriCosto] = useState('');
   
   // Desk structure costs states
   const [newLayoutDesk, setNewLayoutDesk] = useState('');
@@ -187,6 +193,21 @@ export default function Admin() {
         .select('*')
         .eq('attivo', true)
         .order('layout_desk');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Fetch listino accessori espositori
+  const { data: accessoriEspositori = [] } = useQuery({
+    queryKey: ['listino-accessori-espositori'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('listino_accessori_espositori')
+        .select('*')
+        .eq('attivo', true)
+        .order('nome');
       if (error) throw error;
       return data;
     },
@@ -534,6 +555,78 @@ export default function Admin() {
     setShowAddCostoStrutturaDesk(false);
     setNewLayoutDesk('');
     setNewCostoStrutturaDesk('');
+  };
+
+  // Espositori accessories mutations
+  const addAccessorioEspositoriMutation = useMutation({
+    mutationFn: async ({ nome, costo_unitario }: { nome: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('listino_accessori_espositori')
+        .insert({ nome, costo_unitario });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-espositori'] });
+      toast({ title: 'Accessorio Espositori aggiunto', description: 'Accessorio Espositori aggiunto con successo.' });
+      setShowAddAccessorioEspositori(false);
+      setNewAccessorioEspositoriNome('');
+      setNewAccessorioEspositoriCosto('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere accessorio Espositori.', variant: 'destructive' });
+    },
+  });
+
+  const updateAccessorioEspositoriMutation = useMutation({
+    mutationFn: async ({ id, nome, costo_unitario }: { id: string; nome: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('listino_accessori_espositori')
+        .update({ nome, costo_unitario })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-espositori'] });
+      toast({ title: 'Accessorio Espositori aggiornato', description: 'Accessorio Espositori aggiornato con successo.' });
+      setEditingAccessorioEspositori(null);
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiornare accessorio Espositori.', variant: 'destructive' });
+    },
+  });
+
+  const deleteAccessorioEspositoriMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('listino_accessori_espositori')
+        .update({ attivo: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['listino-accessori-espositori'] });
+      toast({ title: 'Accessorio Espositori eliminato', description: 'Accessorio Espositori eliminato con successo.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile eliminare accessorio Espositori.', variant: 'destructive' });
+    },
+  });
+
+  // Espositori accessories handlers
+  const handleAddAccessorioEspositoriSave = () => {
+    const cNorm = newAccessorioEspositoriCosto.trim().replace(',', '.');
+    const cVal = parseFloat(cNorm);
+    if (isNaN(cVal) || !newAccessorioEspositoriNome.trim()) {
+      toast({ title: 'Errore', description: 'Inserisci nome e costo validi.', variant: 'destructive' });
+      return;
+    }
+    addAccessorioEspositoriMutation.mutate({ nome: newAccessorioEspositoriNome.trim(), costo_unitario: cVal });
+  };
+
+  const handleAddAccessorioEspositoriCancel = () => {
+    setShowAddAccessorioEspositori(false);
+    setNewAccessorioEspositoriNome('');
+    setNewAccessorioEspositoriCosto('');
   };
   const costoStampa = parametri.filter(p => p.tipo === 'costo_stampa');
   const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
@@ -1024,6 +1117,124 @@ export default function Admin() {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={3} className="text-center">Nessun accessorio desk trovato</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Listino Accessori Espositori */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Listino Accessori Espositori</CardTitle>
+                <CardDescription>Gestione accessori espositori con relativi costi</CardDescription>
+              </div>
+              <Button size="sm" onClick={() => setShowAddAccessorioEspositori((v) => !v)}>
+                {showAddAccessorioEspositori ? 'Annulla' : 'Aggiungi accessorio Espositori'}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {showAddAccessorioEspositori && (
+                <div className="mb-4 flex items-end gap-2">
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="newAccessorioEspositoriNome">Nome accessorio</Label>
+                    <Input
+                      id="newAccessorioEspositoriNome"
+                      type="text"
+                      placeholder="Nome accessorio"
+                      value={newAccessorioEspositoriNome}
+                      onChange={(e) => setNewAccessorioEspositoriNome(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newAccessorioEspositoriCosto">Costo unitario (€)</Label>
+                    <Input
+                      id="newAccessorioEspositoriCosto"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="100,00"
+                      value={newAccessorioEspositoriCosto}
+                      onChange={(e) => setNewAccessorioEspositoriCosto(e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                  <Button size="sm" onClick={handleAddAccessorioEspositoriSave} disabled={addAccessorioEspositoriMutation.isPending}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleAddAccessorioEspositoriCancel}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Costo unitario</TableHead>
+                    <TableHead className="w-[100px]">Azioni</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {accessoriEspositori && accessoriEspositori.length > 0 ? (
+                    accessoriEspositori.map((accessorio) => (
+                      <TableRow key={accessorio.id}>
+                        <TableCell>
+                          {editingAccessorioEspositori?.id === accessorio.id ? (
+                            <Input
+                              value={editingAccessorioEspositori.nome}
+                              onChange={(e) => setEditingAccessorioEspositori({...editingAccessorioEspositori, nome: e.target.value})}
+                            />
+                          ) : (
+                            accessorio.nome
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingAccessorioEspositori?.id === accessorio.id ? (
+                            <div className="flex items-center gap-2">
+                              <span>€</span>
+                              <Input
+                                value={editingAccessorioEspositori.costo_unitario.toString().replace('.', ',')}
+                                onChange={(e) => setEditingAccessorioEspositori({...editingAccessorioEspositori, costo_unitario: parseFloat(e.target.value.replace(',', '.')) || 0})}
+                                className="w-24"
+                              />
+                            </div>
+                          ) : (
+                            `€ ${accessorio.costo_unitario.toString().replace('.', ',')}`
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingAccessorioEspositori?.id === accessorio.id ? (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" onClick={() => updateAccessorioEspositoriMutation.mutate(editingAccessorioEspositori)} disabled={updateAccessorioEspositoriMutation.isPending}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingAccessorioEspositori(null)}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="outline" onClick={() => setEditingAccessorioEspositori(accessorio)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => deleteAccessorioEspositoriMutation.mutate(accessorio.id)}
+                                disabled={deleteAccessorioEspositoriMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center">Nessun accessorio espositori trovato</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
