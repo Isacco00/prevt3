@@ -239,81 +239,77 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
         </CardContent>
       </Card>
 
-{/* Righe Aggiunte Massimo Piva */}
-<Card>
-  <CardContent className="pt-6">
-    <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Desk</h4>
-
-    {/* 4 cards principali */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Struttura a terra Desk
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(1234.56).toFixed(2)}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Grafica con cordino cucito Desk
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(123.45).toFixed(2)}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Premontaggio Desk
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(12.34).toFixed(2)}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Costi totali Accessori Desk
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(123.45).toFixed(2)}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-
-    {/* Costo totale Desk */}
-    <Card className="w-full h-28 flex flex-col overflow-hidden border-2 rounded-xl">
-      <CardContent className="px-4 py-3 flex flex-col">
-          <div className="text-lg font-medium leading-tight">Costo totale Desk</div>
-          <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
-            €{(4321.00).toFixed(2)}
-          </div>
-      </CardContent>
-    </Card>
-  </CardContent>
-</Card>
+      {/* Calcolo costi Esporitori */}
+      <Card>
+        <CardContent className="pt-6">
+          <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Espositori</h4>
+    
+          {/* 4 cards principali */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+            <Card className="h-24 flex flex-col overflow-hidden">
+              <CardHeader className="pb-1 pt-3 px-3">
+                <CardTitle className="text-xs font-medium leading-tight">
+                  Struttura a terra Espositori
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="mt-auto pb-3 px-3">
+                <div className="text-xl font-bold leading-none tabular-nums truncate">
+                  €{(1234.56).toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
       
-{/* FINE Righe Aggiunte Massimo Piva */}     
-
+            <Card className="h-24 flex flex-col overflow-hidden">
+              <CardHeader className="pb-1 pt-3 px-3">
+                <CardTitle className="text-xs font-medium leading-tight">
+                  Grafica con cordino cucito Espositori
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="mt-auto pb-3 px-3">
+                <div className="text-xl font-bold leading-none tabular-nums truncate">
+                  €{(123.45).toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
       
+            <Card className="h-24 flex flex-col overflow-hidden">
+              <CardHeader className="pb-1 pt-3 px-3">
+                <CardTitle className="text-xs font-medium leading-tight">
+                  Premontaggio Espositori
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="mt-auto pb-3 px-3">
+                <div className="text-xl font-bold leading-none tabular-nums truncate">
+                  €{(12.34).toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
+      
+            <Card className="h-24 flex flex-col overflow-hidden">
+              <CardHeader className="pb-1 pt-3 px-3">
+                <CardTitle className="text-xs font-medium leading-tight">
+                  Costi totali Accessori Espositori
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="mt-auto pb-3 px-3">
+                <div className="text-xl font-bold leading-none tabular-nums truncate">
+                  €{(123.45).toFixed(2)}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+      
+          {/* Costo totale Espositori */}
+          <Card className="w-full h-28 flex flex-col overflow-hidden border-2 rounded-xl">
+            <CardContent className="px-4 py-3 flex flex-col">
+                <div className="text-lg font-medium leading-tight">Costo totale Espositori</div>
+                <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
+                  €{(4321.00).toFixed(2)}
+                </div>
+            </CardContent>
+          </Card>
+        </CardContent>
+      </Card>
     </div>
   );
 }
