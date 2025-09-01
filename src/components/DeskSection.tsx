@@ -253,7 +253,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
 
           {/* Accessori Desk */}
           <div className="mt-6">
-            <h5 className="text-md font-medium mb-3 text-desk">Accessori Desk</h5>
+            <h5 className="text-lg font-semibold mb-4 text-desk">Accessori Desk</h5>
             {isLoadingAccessori ? (
               <div className="text-center py-4">Caricamento accessori...</div>
             ) : (
