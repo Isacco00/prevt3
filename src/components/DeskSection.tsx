@@ -41,35 +41,31 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
 
   // Fetch desk accessories
   const { data: accessoriDesk = [], isLoading: isLoadingAccessori } = useQuery({
-    queryKey: ["listino-accessori-desk", user?.id],
+    queryKey: ["listino-accessori-desk"],
     queryFn: async () => {
-      if (!user?.id) throw new Error("User not authenticated");
       const { data, error } = await supabase
         .from("listino_accessori_desk")
         .select("*")
-        .eq("user_id", user.id)
         .eq("attivo", true)
         .order("nome");
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Fetch desk structure costs by layout
   const { data: costiStrutturaDesk } = useQuery({
-    queryKey: ["costi-struttura-desk-layout", user?.id],
+    queryKey: ["costi-struttura-desk-layout"],
     queryFn: async () => {
-      if (!user?.id) throw new Error("User not authenticated");
       const { data, error } = await supabase
         .from("costi_struttura_desk_layout")
         .select("*")
-        .eq("user_id", user.id)
         .eq("attivo", true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   const handleAccessorioChange = (accessorioNome: string, quantity: number) => {

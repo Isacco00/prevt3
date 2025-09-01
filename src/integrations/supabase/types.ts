@@ -21,7 +21,6 @@ export type Database = {
           created_at: string
           id: string
           updated_at: string
-          user_id: string
         }
         Insert: {
           altezza: number
@@ -29,7 +28,6 @@ export type Database = {
           created_at?: string
           id?: string
           updated_at?: string
-          user_id: string
         }
         Update: {
           altezza?: number
@@ -37,7 +35,6 @@ export type Database = {
           created_at?: string
           id?: string
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -49,7 +46,6 @@ export type Database = {
           id: string
           layout_desk: string
           updated_at: string
-          user_id: string
         }
         Insert: {
           attivo?: boolean
@@ -58,7 +54,6 @@ export type Database = {
           id?: string
           layout_desk: string
           updated_at?: string
-          user_id: string
         }
         Update: {
           attivo?: boolean
@@ -67,7 +62,6 @@ export type Database = {
           id?: string
           layout_desk?: string
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -79,7 +73,6 @@ export type Database = {
           id: string
           nome: string
           updated_at: string
-          user_id: string
         }
         Insert: {
           attivo?: boolean
@@ -88,7 +81,6 @@ export type Database = {
           id?: string
           nome: string
           updated_at?: string
-          user_id: string
         }
         Update: {
           attivo?: boolean
@@ -97,7 +89,6 @@ export type Database = {
           id?: string
           nome?: string
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -109,7 +100,6 @@ export type Database = {
           id: string
           nome: string
           updated_at: string
-          user_id: string
         }
         Insert: {
           attivo?: boolean
@@ -118,7 +108,6 @@ export type Database = {
           id?: string
           nome: string
           updated_at?: string
-          user_id: string
         }
         Update: {
           attivo?: boolean
@@ -127,7 +116,6 @@ export type Database = {
           id?: string
           nome?: string
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -139,7 +127,6 @@ export type Database = {
           id: string
           nome: string
           updated_at: string
-          user_id: string
         }
         Insert: {
           attivo?: boolean
@@ -148,7 +135,6 @@ export type Database = {
           id?: string
           nome: string
           updated_at?: string
-          user_id: string
         }
         Update: {
           attivo?: boolean
@@ -157,7 +143,6 @@ export type Database = {
           id?: string
           nome?: string
           updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -171,7 +156,6 @@ export type Database = {
           ordine: number | null
           tipo: string
           updated_at: string
-          user_id: string
           valore: number | null
           valore_chiave: string | null
           valore_testo: string | null
@@ -185,7 +169,6 @@ export type Database = {
           ordine?: number | null
           tipo: string
           updated_at?: string
-          user_id: string
           valore?: number | null
           valore_chiave?: string | null
           valore_testo?: string | null
@@ -199,7 +182,6 @@ export type Database = {
           ordine?: number | null
           tipo?: string
           updated_at?: string
-          user_id?: string
           valore?: number | null
           valore_chiave?: string | null
           valore_testo?: string | null

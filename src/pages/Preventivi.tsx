@@ -271,7 +271,6 @@ const Preventivi = () => {
       const { data, error } = await supabase
         .from('parametri')
         .select('*')
-        .eq('user_id', user.id)
         .order('tipo', { ascending: true })
         .order('ordine', { ascending: true });
       
@@ -289,7 +288,6 @@ const Preventivi = () => {
       const { data, error } = await supabase
         .from('costi_retroilluminazione')
         .select('*')
-        .eq('user_id', user.id)
         .order('altezza');
       
       if (error) throw error;
@@ -338,7 +336,6 @@ const Preventivi = () => {
       const { data, error } = await supabase
         .from('listino_accessori_stand')
         .select('*')
-        .eq('user_id', user.id)
         .eq('attivo', true);
       if (error) throw error;
       return data;
@@ -369,12 +366,11 @@ const Preventivi = () => {
       const { data, error } = await supabase
         .from("costi_struttura_desk_layout")
         .select("*")
-        .eq("user_id", user.id)
         .eq("attivo", true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Calcolo dei costi automatici

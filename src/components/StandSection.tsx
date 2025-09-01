@@ -48,17 +48,15 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
   const { data: accessoriStand = [], isLoading } = useQuery({
     queryKey: ['listino-accessori-stand'],
     queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from('listino_accessori_stand')
         .select('*')
-        .eq('user_id', user.id)
         .eq('attivo', true)
         .order('nome');
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   const handleAccessorioChange = (accessorioId: string, quantity: number) => {

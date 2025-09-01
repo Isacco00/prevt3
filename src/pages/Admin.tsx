@@ -63,39 +63,33 @@ export default function Admin() {
 
   // Fetch parameters
   const { data: parametri = [], isLoading } = useQuery({
-    queryKey: ['parametri', user?.id],
+    queryKey: ['parametri'],
     queryFn: async () => {
-      if (!user?.id) return [];
-      
       const { data, error } = await supabase
         .from('parametri')
         .select('*')
-        .eq('user_id', user.id)
         .order('tipo', { ascending: true })
         .order('ordine', { ascending: true });
 
       if (error) throw error;
       return data as Parametro[];
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Fetch retroilluminazione costs
   const { data: costiRetroilluminazione = [] } = useQuery({
-    queryKey: ['costi-retroilluminazione', user?.id],
+    queryKey: ['costi-retroilluminazione'],
     queryFn: async () => {
-      if (!user?.id) return [];
-      
       const { data, error } = await supabase
         .from('costi_retroilluminazione')
         .select('*')
-        .eq('user_id', user.id)
         .order('altezza');
 
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Update parameter mutation
@@ -158,60 +152,53 @@ export default function Admin() {
   const { data: accessoriStand = [], isLoading: isLoadingAccessori } = useQuery({
     queryKey: ['listino-accessori-stand'],
     queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from('listino_accessori_stand')
         .select('*')
-        .eq('user_id', user.id)
         .eq('attivo', true)
         .order('nome');
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Fetch listino accessori desk
   const { data: accessoriDesk = [] } = useQuery({
     queryKey: ['listino-accessori-desk'],
     queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from('listino_accessori_desk')
         .select('*')
-        .eq('user_id', user.id)
         .eq('attivo', true)
         .order('nome');
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Fetch costi struttura desk
   const { data: costiStrutturaDesk = [] } = useQuery({
     queryKey: ['costi-struttura-desk-layout'],
     queryFn: async () => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { data, error } = await supabase
         .from('costi_struttura_desk_layout')
         .select('*')
-        .eq('user_id', user.id)
         .eq('attivo', true)
         .order('layout_desk');
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user,
   });
 
   // Add retroilluminazione mutation
   const addRetroMutation = useMutation({
     mutationFn: async ({ altezza, costo_al_metro }: { altezza: number; costo_al_metro: number }) => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { error } = await supabase
         .from('costi_retroilluminazione')
-        .insert({ user_id: user.id, altezza, costo_al_metro });
+        .insert({ altezza, costo_al_metro });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -229,10 +216,9 @@ export default function Admin() {
   // Add accessorio mutation
   const addAccessorioMutation = useMutation({
     mutationFn: async ({ nome, costo_unitario }: { nome: string; costo_unitario: number }) => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { error } = await supabase
         .from('listino_accessori_stand')
-        .insert({ user_id: user.id, nome, costo_unitario });
+        .insert({ nome, costo_unitario });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -289,10 +275,9 @@ export default function Admin() {
   // Desk accessories mutations
   const addAccessorioDeskMutation = useMutation({
     mutationFn: async ({ nome, costo_unitario }: { nome: string; costo_unitario: number }) => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { error } = await supabase
         .from('listino_accessori_desk')
-        .insert({ user_id: user.id, nome, costo_unitario });
+        .insert({ nome, costo_unitario });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -345,10 +330,9 @@ export default function Admin() {
   // Desk structure costs mutations
   const addCostoStrutturaDeskMutation = useMutation({
     mutationFn: async ({ layout_desk, costo_unitario }: { layout_desk: string; costo_unitario: number }) => {
-      if (!user?.id) throw new Error('User not authenticated');
       const { error } = await supabase
         .from('costi_struttura_desk_layout')
-        .insert({ user_id: user.id, layout_desk, costo_unitario });
+        .insert({ layout_desk, costo_unitario });
       if (error) throw error;
     },
     onSuccess: () => {
