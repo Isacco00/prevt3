@@ -254,7 +254,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
         </CardHeader>
         <CardContent className="mt-auto pb-3 px-3">
           <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(costiDesk?.struttura_terra ?? 0).toFixed(2)}
+            €{(1234.56).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -267,7 +267,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
         </CardHeader>
         <CardContent className="mt-auto pb-3 px-3">
           <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(costiDesk?.grafica_cordino ?? 0).toFixed(2)}
+            €{(123.45).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -280,7 +280,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
         </CardHeader>
         <CardContent className="mt-auto pb-3 px-3">
           <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(costiDesk?.premontaggio ?? 0).toFixed(2)}
+            €{(12.34).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -293,7 +293,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
         </CardHeader>
         <CardContent className="mt-auto pb-3 px-3">
           <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(costiAccessori ?? 0).toFixed(2)}
+            €{(123.45).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -304,7 +304,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
       <CardContent className="px-4 py-3 flex flex-col">
           <div className="text-lg font-medium leading-tight">Costo totale Desk</div>
           <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
-            €{(costiDesk?.totale ?? 0).toFixed(2)}
+            €{(4321.00).toFixed(2)}
           </div>
       </CardContent>
     </Card>
