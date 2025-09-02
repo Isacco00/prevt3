@@ -65,6 +65,33 @@ export type Database = {
         }
         Relationships: []
       }
+      costi_struttura_espositori_layout: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          layout_espositore: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          layout_espositore: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          layout_espositore?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       listino_accessori_desk: {
         Row: {
           attivo: boolean

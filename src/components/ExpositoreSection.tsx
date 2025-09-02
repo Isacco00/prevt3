@@ -84,6 +84,36 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
     },
   });
 
+  // Query for expositor layout costs
+  const { data: layoutCostsData = [] } = useQuery({
+    queryKey: ['costi_struttura_espositori_layout'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('costi_struttura_espositori_layout')
+        .select('*')
+        .eq('attivo', true)
+        .order('layout_espositore');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Query for parameters
+  const { data: parametersData = [] } = useQuery({
+    queryKey: ['parametri'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parametri')
+        .select('*')
+        .eq('attivo', true)
+        .order('nome');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const handleInputChange = (field: keyof ExpositoreData, value: string) => {
     // Rimuovi caratteri non numerici eccetto stringa vuota
     const cleanValue = value.replace(/[^0-9]/g, '');
@@ -107,6 +137,49 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
   const calculateAccessoryTotal = (fieldName: keyof ExpositoreData, unitPrice: number): number => {
     const quantity = getAccessoryQuantity(fieldName);
     return quantity * unitPrice;
+  };
+
+  // Helper function to get parameter value
+  const getParameterValue = (parameterName: string): number => {
+    const parameter = parametersData.find(p => p.nome === parameterName);
+    return parameter ? Number(parameter.valore) : 0;
+  };
+
+  // Helper function to get layout cost
+  const getLayoutCost = (layout: string): number => {
+    const layoutCost = layoutCostsData.find(l => l.layout_espositore === layout);
+    return layoutCost ? Number(layoutCost.costo_unitario) : 0;
+  };
+
+  // Calculate costs
+  const calculateStructureCost = (): number => {
+    return (
+      (formData.qta_tipo30 || 0) * getLayoutCost('30') +
+      (formData.qta_tipo50 || 0) * getLayoutCost('50') +
+      (formData.qta_tipo100 || 0) * getLayoutCost('100')
+    );
+  };
+
+  const calculateGraphicsCost = (): number => {
+    const costoStampaGrafica = getParameterValue('Costo stampa grafica al metro quadro');
+    return physicalElements.superficie_stampa_espositori * costoStampaGrafica;
+  };
+
+  const calculatePreassemblyCost = (): number => {
+    const costoPremontaggio = getParameterValue('Costo Premontaggio al pezzo');
+    return physicalElements.numero_pezzi_espositori * costoPremontaggio;
+  };
+
+  const calculateAccessoriesTotal = (): number => {
+    return accessoryMapping.reduce((total, accessory) => {
+      const unitPrice = getAccessoryPrice(accessory.name);
+      const quantity = getAccessoryQuantity(accessory.field);
+      return total + (quantity * unitPrice);
+    }, 0);
+  };
+
+  const calculateTotalCost = (): number => {
+    return calculateStructureCost() + calculateGraphicsCost() + calculatePreassemblyCost() + calculateAccessoriesTotal();
   };
 
   // Mapping between field names and display names
@@ -254,7 +327,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
               </CardHeader>
               <CardContent className="mt-auto pb-3 px-3">
                 <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{(1234.56).toFixed(2)}
+                  €{calculateStructureCost().toFixed(2)}
                 </div>
               </CardContent>
             </Card>
@@ -267,7 +340,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
               </CardHeader>
               <CardContent className="mt-auto pb-3 px-3">
                 <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{(123.45).toFixed(2)}
+                  €{calculateGraphicsCost().toFixed(2)}
                 </div>
               </CardContent>
             </Card>
@@ -280,7 +353,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
               </CardHeader>
               <CardContent className="mt-auto pb-3 px-3">
                 <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{(12.34).toFixed(2)}
+                  €{calculatePreassemblyCost().toFixed(2)}
                 </div>
               </CardContent>
             </Card>
@@ -293,7 +366,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
               </CardHeader>
               <CardContent className="mt-auto pb-3 px-3">
                 <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{(123.45).toFixed(2)}
+                  €{calculateAccessoriesTotal().toFixed(2)}
                 </div>
               </CardContent>
             </Card>
@@ -304,7 +377,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
             <CardContent className="px-4 py-3 flex flex-col">
                 <div className="text-lg font-medium leading-tight">Costo totale Espositori</div>
                 <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
-                  €{(4321.00).toFixed(2)}
+                  €{calculateTotalCost().toFixed(2)}
                 </div>
             </CardContent>
           </Card>
