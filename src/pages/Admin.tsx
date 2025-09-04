@@ -45,10 +45,12 @@ export default function Admin() {
   const [editingAccessorioDesk, setEditingAccessorioDesk] = useState<any>(null);
   const [editingAccessorioEspositori, setEditingAccessorioEspositori] = useState<any>(null);
   const [editingCostoStrutturaDesk, setEditingCostoStrutturaDesk] = useState<any>(null);
+  const [editingCostoStrutturaEspositori, setEditingCostoStrutturaEspositori] = useState<any>(null);
   const [showAddAccessorio, setShowAddAccessorio] = useState(false);
   const [showAddAccessorioDesk, setShowAddAccessorioDesk] = useState(false);
   const [showAddAccessorioEspositori, setShowAddAccessorioEspositori] = useState(false);
   const [showAddCostoStrutturaDesk, setShowAddCostoStrutturaDesk] = useState(false);
+  const [showAddCostoStrutturaEspositori, setShowAddCostoStrutturaEspositori] = useState(false);
   const [newAccessorioNome, setNewAccessorioNome] = useState('');
   const [newAccessorioCosto, setNewAccessorioCosto] = useState('');
   const [editingAccessorioId, setEditingAccessorioId] = useState<string | null>(null);
@@ -66,6 +68,10 @@ export default function Admin() {
   // Desk structure costs states
   const [newLayoutDesk, setNewLayoutDesk] = useState('');
   const [newCostoStrutturaDesk, setNewCostoStrutturaDesk] = useState('');
+  
+  // Expositor structure costs states
+  const [newLayoutEspositore, setNewLayoutEspositore] = useState('');
+  const [newCostoStrutturaEspositori, setNewCostoStrutturaEspositori] = useState('');
 
   // Fetch parameters
   const { data: parametri = [], isLoading } = useQuery({
@@ -193,6 +199,21 @@ export default function Admin() {
         .select('*')
         .eq('attivo', true)
         .order('layout_desk');
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Fetch costi struttura espositori
+  const { data: costiStrutturaEspositori = [] } = useQuery({
+    queryKey: ['costi-struttura-espositori-layout'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('costi_struttura_espositori_layout')
+        .select('*')
+        .eq('attivo', true)
+        .order('layout_espositore');
       if (error) throw error;
       return data;
     },
@@ -403,6 +424,61 @@ export default function Admin() {
     },
   });
 
+  // Expositor structure costs mutations
+  const addCostoStrutturaEspositoreMutation = useMutation({
+    mutationFn: async ({ layout_espositore, costo_unitario }: { layout_espositore: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('costi_struttura_espositori_layout')
+        .insert({ layout_espositore, costo_unitario });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-struttura-espositori-layout'] });
+      toast({ title: 'Costo struttura Espositore aggiunto', description: 'Costo struttura Espositore aggiunto con successo.' });
+      setShowAddCostoStrutturaEspositori(false);
+      setNewLayoutEspositore('');
+      setNewCostoStrutturaEspositori('');
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiungere costo struttura Espositore.', variant: 'destructive' });
+    },
+  });
+
+  const updateCostoStrutturaEspositoreMutation = useMutation({
+    mutationFn: async ({ id, layout_espositore, costo_unitario }: { id: string; layout_espositore: string; costo_unitario: number }) => {
+      const { error } = await supabase
+        .from('costi_struttura_espositori_layout')
+        .update({ layout_espositore, costo_unitario })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-struttura-espositori-layout'] });
+      toast({ title: 'Costo struttura Espositore aggiornato', description: 'Costo struttura Espositore aggiornato con successo.' });
+      setEditingCostoStrutturaEspositori(null);
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile aggiornare costo struttura Espositore.', variant: 'destructive' });
+    },
+  });
+
+  const deleteCostoStrutturaEspositoreMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('costi_struttura_espositori_layout')
+        .update({ attivo: false })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['costi-struttura-espositori-layout'] });
+      toast({ title: 'Costo struttura Espositore eliminato', description: 'Costo struttura Espositore eliminato con successo.' });
+    },
+    onError: (error: any) => {
+      toast({ title: 'Errore', description: error?.message || 'Impossibile eliminare costo struttura Espositore.', variant: 'destructive' });
+    },
+  });
+
   const handleEdit = (parametro: Parametro) => {
     setEditingParameter(parametro.id);
     setEditValue(parametro.valore?.toString() || '');
@@ -551,10 +627,26 @@ export default function Admin() {
     addCostoStrutturaDeskMutation.mutate({ layout_desk: newLayoutDesk.trim(), costo_unitario: cVal });
   };
 
+  const handleAddCostoStrutturaEspositoreSave = () => {
+    const cNorm = newCostoStrutturaEspositori.trim().replace(',', '.');
+    const cVal = parseFloat(cNorm);
+    if (isNaN(cVal) || !newLayoutEspositore.trim()) {
+      toast({ title: 'Errore', description: 'Inserisci layout e costo validi.', variant: 'destructive' });
+      return;
+    }
+    addCostoStrutturaEspositoreMutation.mutate({ layout_espositore: newLayoutEspositore.trim(), costo_unitario: cVal });
+  };
+
   const handleAddCostoStrutturaDeskCancel = () => {
     setShowAddCostoStrutturaDesk(false);
     setNewLayoutDesk('');
     setNewCostoStrutturaDesk('');
+  };
+
+  const handleAddCostoStrutturaEspositoreCancel = () => {
+    setShowAddCostoStrutturaEspositori(false);
+    setNewLayoutEspositore('');
+    setNewCostoStrutturaEspositori('');
   };
 
   // Espositori accessories mutations
@@ -1355,6 +1447,126 @@ export default function Admin() {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={3} className="text-center">Nessun costo struttura desk trovato</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
+          {/* Costi Struttura Espositori per Layout */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Costi Struttura Espositori per Layout</CardTitle>
+                <CardDescription>Costo struttura espositori in funzione del layout</CardDescription>
+              </div>
+              <Button size="sm" onClick={() => setShowAddCostoStrutturaEspositori((v) => !v)}>
+                {showAddCostoStrutturaEspositori ? 'Annulla' : 'Aggiungi layout Espositore'}
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {showAddCostoStrutturaEspositori && (
+                <div className="mb-4 flex items-end gap-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="newLayoutEspositore">Layout Espositore</Label>
+                    <Input
+                      id="newLayoutEspositore"
+                      type="text"
+                      placeholder="30"
+                      value={newLayoutEspositore}
+                      onChange={(e) => setNewLayoutEspositore(e.target.value)}
+                      className="w-24"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newCostoStrutturaEspositori">Costo unitario (€)</Label>
+                    <Input
+                      id="newCostoStrutturaEspositori"
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="193,00"
+                      value={newCostoStrutturaEspositori}
+                      onChange={(e) => setNewCostoStrutturaEspositori(e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                  <Button size="sm" onClick={handleAddCostoStrutturaEspositoreSave} disabled={addCostoStrutturaEspositoreMutation.isPending}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={handleAddCostoStrutturaEspositoreCancel}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Layout Espositore</TableHead>
+                    <TableHead>Costo unitario</TableHead>
+                    <TableHead className="w-[100px]">Azioni</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {costiStrutturaEspositori && costiStrutturaEspositori.length > 0 ? (
+                    costiStrutturaEspositori.map((costo) => (
+                      <TableRow key={costo.id}>
+                        <TableCell>
+                          {editingCostoStrutturaEspositori?.id === costo.id ? (
+                            <Input
+                              value={editingCostoStrutturaEspositori.layout_espositore}
+                              onChange={(e) => setEditingCostoStrutturaEspositori({...editingCostoStrutturaEspositori, layout_espositore: e.target.value})}
+                              className="w-24"
+                            />
+                          ) : (
+                            costo.layout_espositore
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingCostoStrutturaEspositori?.id === costo.id ? (
+                            <div className="flex items-center gap-2">
+                              <span>€</span>
+                              <Input
+                                value={editingCostoStrutturaEspositori.costo_unitario.toString().replace('.', ',')}
+                                onChange={(e) => setEditingCostoStrutturaEspositori({...editingCostoStrutturaEspositori, costo_unitario: parseFloat(e.target.value.replace(',', '.')) || 0})}
+                                className="w-24"
+                              />
+                            </div>
+                          ) : (
+                            `€ ${costo.costo_unitario.toString().replace('.', ',')}`
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {editingCostoStrutturaEspositori?.id === costo.id ? (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" onClick={() => updateCostoStrutturaEspositoreMutation.mutate(editingCostoStrutturaEspositori)} disabled={updateCostoStrutturaEspositoreMutation.isPending}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setEditingCostoStrutturaEspositori(null)}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Button size="sm" variant="outline" onClick={() => setEditingCostoStrutturaEspositori(costo)}>
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => deleteCostoStrutturaEspositoreMutation.mutate(costo.id)}
+                                disabled={deleteCostoStrutturaEspositoreMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center">Nessun costo struttura espositori trovato</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
