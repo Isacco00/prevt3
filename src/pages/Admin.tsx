@@ -861,8 +861,8 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Parametro</TableHead>
-                    <TableHead>Valore</TableHead>
+                    <TableHead className="w-[250px]">Parametro</TableHead>
+                    <TableHead className="w-[200px]">Valore</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -882,8 +882,8 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Parametro</TableHead>
-                    <TableHead>Valore</TableHead>
+                    <TableHead className="w-[250px]">Parametro</TableHead>
+                    <TableHead className="w-[200px]">Valore</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -903,8 +903,8 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Distribuzione</TableHead>
-                    <TableHead>Numero di Profili m/l</TableHead>
+                    <TableHead className="w-[250px]">Distribuzione</TableHead>
+                    <TableHead className="w-[200px]">Numero di Profili m/l</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -963,8 +963,8 @@ export default function Admin() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Altezza</TableHead>
-                <TableHead>Costo per m/l</TableHead>
+                <TableHead className="w-[250px]">Altezza</TableHead>
+                <TableHead className="w-[200px]">Costo per m/l</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -1021,9 +1021,9 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Costo unitario</TableHead>
-                    <TableHead className="w-[100px]">Azioni</TableHead>
+                    <TableHead className="w-[250px]">Nome</TableHead>
+                    <TableHead className="w-[200px]">Costo unitario</TableHead>
+                    <TableHead className="w-[120px]">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1144,9 +1144,9 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Costo unitario</TableHead>
-                    <TableHead className="w-[100px]">Azioni</TableHead>
+                    <TableHead className="w-[250px]">Nome</TableHead>
+                    <TableHead className="w-[200px]">Costo unitario</TableHead>
+                    <TableHead className="w-[120px]">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1263,9 +1263,9 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Costo unitario</TableHead>
-                    <TableHead className="w-[100px]">Azioni</TableHead>
+                    <TableHead className="w-[250px]">Nome</TableHead>
+                    <TableHead className="w-[200px]">Costo unitario</TableHead>
+                    <TableHead className="w-[120px]">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1382,9 +1382,9 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Layout Desk</TableHead>
-                    <TableHead>Costo unitario</TableHead>
-                    <TableHead className="w-[100px]">Azioni</TableHead>
+                    <TableHead className="w-[250px]">Layout Desk</TableHead>
+                    <TableHead className="w-[200px]">Costo unitario</TableHead>
+                    <TableHead className="w-[120px]">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -1502,9 +1502,9 @@ export default function Admin() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Layout Espositore</TableHead>
-                    <TableHead>Costo unitario</TableHead>
-                    <TableHead className="w-[100px]">Azioni</TableHead>
+                    <TableHead className="w-[250px]">Layout Espositore</TableHead>
+                    <TableHead className="w-[200px]">Costo unitario</TableHead>
+                    <TableHead className="w-[120px]">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
