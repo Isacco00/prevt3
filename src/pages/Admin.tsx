@@ -905,6 +905,7 @@ export default function Admin() {
                   <TableRow>
                     <TableHead className="w-[250px]">Distribuzione</TableHead>
                     <TableHead className="w-[200px]">Numero di Profili m/l</TableHead>
+                    <TableHead className="w-[120px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -916,14 +917,18 @@ export default function Admin() {
 
           {/* Costo Retroilluminazione */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Costo Retroilluminazione</CardTitle>
-                <CardDescription>Costo retroilluminazione al metro lineare in funzione dell'altezza</CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Costo Retroilluminazione</CardTitle>
+                  <CardDescription>Costo retroilluminazione al metro lineare in funzione dell'altezza</CardDescription>
+                </div>
+                <div className="w-[120px] flex justify-end">
+                  <Button size="sm" onClick={() => setShowAddRetro((v) => !v)}>
+                    {showAddRetro ? 'Annulla' : 'Aggiungi riga'}
+                  </Button>
+                </div>
               </div>
-              <Button size="sm" onClick={() => setShowAddRetro((v) => !v)}>
-                {showAddRetro ? 'Annulla' : 'Aggiungi riga'}
-              </Button>
             </CardHeader>
         <CardContent>
           {showAddRetro && (
@@ -965,6 +970,7 @@ export default function Admin() {
               <TableRow>
                 <TableHead className="w-[250px]">Altezza</TableHead>
                 <TableHead className="w-[200px]">Costo per m/l</TableHead>
+                <TableHead className="w-[120px]">Azioni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -976,14 +982,18 @@ export default function Admin() {
 
           {/* Listino Accessori Stand */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Listino Accessori Stand</CardTitle>
-                <CardDescription>Gestione accessori stand con relativi costi</CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Listino Accessori Stand</CardTitle>
+                  <CardDescription>Gestione accessori stand con relativi costi</CardDescription>
+                </div>
+                <div className="w-[120px] flex justify-end">
+                  <Button size="sm" onClick={() => setShowAddAccessorio((v) => !v)}>
+                    {showAddAccessorio ? 'Annulla' : 'Aggiungi accessorio Stand'}
+                  </Button>
+                </div>
               </div>
-              <Button size="sm" onClick={() => setShowAddAccessorio((v) => !v)}>
-                {showAddAccessorio ? 'Annulla' : 'Aggiungi accessorio Stand'}
-              </Button>
             </CardHeader>
             <CardContent>
               {showAddAccessorio && (
@@ -1099,14 +1109,18 @@ export default function Admin() {
 
           {/* Listino Accessori Desk */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Listino Accessori Desk</CardTitle>
-                <CardDescription>Gestione accessori desk con relativi costi</CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Listino Accessori Desk</CardTitle>
+                  <CardDescription>Gestione accessori desk con relativi costi</CardDescription>
+                </div>
+                <div className="w-[120px] flex justify-end">
+                  <Button size="sm" onClick={() => setShowAddAccessorioDesk((v) => !v)}>
+                    {showAddAccessorioDesk ? 'Annulla' : 'Aggiungi accessorio desk'}
+                  </Button>
+                </div>
               </div>
-              <Button size="sm" onClick={() => setShowAddAccessorioDesk((v) => !v)}>
-                {showAddAccessorioDesk ? 'Annulla' : 'Aggiungi accessorio desk'}
-              </Button>
             </CardHeader>
             <CardContent>
               {showAddAccessorioDesk && (
@@ -1218,14 +1232,18 @@ export default function Admin() {
 
           {/* Listino Accessori Espositori */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Listino Accessori Espositori</CardTitle>
-                <CardDescription>Gestione accessori espositori con relativi costi</CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Listino Accessori Espositori</CardTitle>
+                  <CardDescription>Gestione accessori espositori con relativi costi</CardDescription>
+                </div>
+                <div className="w-[120px] flex justify-end">
+                  <Button size="sm" onClick={() => setShowAddAccessorioEspositori((v) => !v)}>
+                    {showAddAccessorioEspositori ? 'Annulla' : 'Aggiungi accessorio Espositori'}
+                  </Button>
+                </div>
               </div>
-              <Button size="sm" onClick={() => setShowAddAccessorioEspositori((v) => !v)}>
-                {showAddAccessorioEspositori ? 'Annulla' : 'Aggiungi accessorio Espositori'}
-              </Button>
             </CardHeader>
             <CardContent>
               {showAddAccessorioEspositori && (
@@ -1336,14 +1354,18 @@ export default function Admin() {
 
           {/* Costi Struttura Desk per Layout */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Costi Struttura Desk per Layout</CardTitle>
-                <CardDescription>Costo struttura desk in funzione del layout</CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Costi Struttura Desk per Layout</CardTitle>
+                  <CardDescription>Costo struttura desk in funzione del layout</CardDescription>
+                </div>
+                <div className="w-[120px] flex justify-end">
+                  <Button size="sm" onClick={() => setShowAddCostoStrutturaDesk((v) => !v)}>
+                    {showAddCostoStrutturaDesk ? 'Annulla' : 'Aggiungi layout Desk'}
+                  </Button>
+                </div>
               </div>
-              <Button size="sm" onClick={() => setShowAddCostoStrutturaDesk((v) => !v)}>
-                {showAddCostoStrutturaDesk ? 'Annulla' : 'Aggiungi layout Desk'}
-              </Button>
             </CardHeader>
             <CardContent>
               {showAddCostoStrutturaDesk && (
@@ -1456,14 +1478,18 @@ export default function Admin() {
 
           {/* Costi Struttura Espositori per Layout */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Costi Struttura Espositori per Layout</CardTitle>
-                <CardDescription>Costo struttura espositori in funzione del layout</CardDescription>
+            <CardHeader>
+              <div className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Costi Struttura Espositori per Layout</CardTitle>
+                  <CardDescription>Costo struttura espositori in funzione del layout</CardDescription>
+                </div>
+                <div className="w-[120px] flex justify-end">
+                  <Button size="sm" onClick={() => setShowAddCostoStrutturaEspositori((v) => !v)}>
+                    {showAddCostoStrutturaEspositori ? 'Annulla' : 'Aggiungi layout Espositore'}
+                  </Button>
+                </div>
               </div>
-              <Button size="sm" onClick={() => setShowAddCostoStrutturaEspositori((v) => !v)}>
-                {showAddCostoStrutturaEspositori ? 'Annulla' : 'Aggiungi layout Espositore'}
-              </Button>
             </CardHeader>
             <CardContent>
               {showAddCostoStrutturaEspositori && (
