@@ -17,7 +17,6 @@ export type Database = {
       costi_retroilluminazione: {
         Row: {
           altezza: number
-          attivo: boolean
           costo_al_metro: number
           created_at: string
           id: string
@@ -25,7 +24,6 @@ export type Database = {
         }
         Insert: {
           altezza: number
-          attivo?: boolean
           costo_al_metro: number
           created_at?: string
           id?: string
@@ -33,7 +31,6 @@ export type Database = {
         }
         Update: {
           altezza?: number
-          attivo?: boolean
           costo_al_metro?: number
           created_at?: string
           id?: string
@@ -52,7 +49,7 @@ export type Database = {
         }
         Insert: {
           attivo?: boolean
-          costo_unitario: number
+          costo_unitario?: number
           created_at?: string
           id?: string
           layout_desk: string
@@ -79,7 +76,7 @@ export type Database = {
         }
         Insert: {
           attivo?: boolean
-          costo_unitario: number
+          costo_unitario?: number
           created_at?: string
           id?: string
           layout_espositore: string
@@ -106,7 +103,7 @@ export type Database = {
         }
         Insert: {
           attivo?: boolean
-          costo_unitario: number
+          costo_unitario?: number
           created_at?: string
           id?: string
           nome: string
@@ -133,7 +130,7 @@ export type Database = {
         }
         Insert: {
           attivo?: boolean
-          costo_unitario: number
+          costo_unitario?: number
           created_at?: string
           id?: string
           nome: string
@@ -160,7 +157,7 @@ export type Database = {
         }
         Insert: {
           attivo?: boolean
-          costo_unitario: number
+          costo_unitario?: number
           created_at?: string
           id?: string
           nome: string
@@ -183,7 +180,7 @@ export type Database = {
           descrizione: string | null
           id: string
           nome: string
-          ordine: number
+          ordine: number | null
           tipo: string
           updated_at: string
           valore: number | null
@@ -196,7 +193,7 @@ export type Database = {
           descrizione?: string | null
           id?: string
           nome: string
-          ordine?: number
+          ordine?: number | null
           tipo: string
           updated_at?: string
           valore?: number | null
@@ -209,7 +206,7 @@ export type Database = {
           descrizione?: string | null
           id?: string
           nome?: string
-          ordine?: number
+          ordine?: number | null
           tipo?: string
           updated_at?: string
           valore?: number | null
@@ -220,13 +217,16 @@ export type Database = {
       }
       preventivi: {
         Row: {
-          accessori_stand: Json | null
+          accessori_stand_config: string | null
           alt_storage: number | null
           altezza: number
+          baule_trolley: number | null
           bifaccialita: number | null
           borsa: number | null
           borsa_espositori: number | null
-          complessita: string
+          borsa_stand: number | null
+          complementi_config: string | null
+          complessita: string | null
           costo_fisso: number
           costo_grafica: number | null
           costo_mc: number
@@ -238,27 +238,39 @@ export type Database = {
           created_at: string
           data_scadenza: string | null
           descrizione: string | null
-          desk_layouts: Json | null
-          distribuzione: number
+          desk_qta: number | null
+          distribuzione: number | null
+          espositori_config: string | null
           extra_perc_complex: number | null
+          extra_stand_complesso: number | null
           fronte_luminoso: number | null
           id: string
+          kit_faro_100w: number | null
+          kit_faro_50w: number | null
           larg_storage: number | null
           larghezza: number
-          layout: string
+          layout: string | null
+          layout_desk: string | null
           layout_storage: string | null
+          mensola: number | null
+          nicchia: number | null
           note: string | null
           numero_pezzi: number | null
-          numero_porte: number | null
+          numero_pezzi_desk: number | null
+          numero_pezzi_espositori: number | null
+          numero_pezzi_storage: number | null
+          numero_porte: string | null
           numero_preventivo: string
+          pedana: number | null
           porta_scorrevole: number | null
           prof_storage: number | null
-          profondita: number
+          profondita: number | null
           prospect_id: string | null
           qta_tipo100: number | null
           qta_tipo30: number | null
           qta_tipo50: number | null
-          retroilluminazione: string | null
+          quadro_elettrico_16a: number | null
+          retroilluminazione: number | null
           retroilluminazione_100x50x100h: number | null
           retroilluminazione_30x30x100h: number | null
           retroilluminazione_50x50x100h: number | null
@@ -270,10 +282,15 @@ export type Database = {
           servizio_certificazioni: boolean | null
           servizio_istruzioni_assistenza: boolean | null
           servizio_montaggio_smontaggio: boolean | null
+          spot_light: number | null
+          staffa_monitor: number | null
           status: string
-          superficie: number | null
           superficie_stampa: number | null
+          superficie_stampa_desk: number | null
+          superficie_stampa_espositori: number | null
+          superficie_stampa_storage: number | null
           sviluppo_lineare: number | null
+          sviluppo_metri_lineari_storage: number | null
           teca_plexiglass: number | null
           teca_plexiglass_100x50x30: number | null
           teca_plexiglass_30x30x30: number | null
@@ -282,16 +299,18 @@ export type Database = {
           totale: number | null
           updated_at: string
           user_id: string
-          volume: number | null
         }
         Insert: {
-          accessori_stand?: Json | null
+          accessori_stand_config?: string | null
           alt_storage?: number | null
           altezza: number
+          baule_trolley?: number | null
           bifaccialita?: number | null
           borsa?: number | null
           borsa_espositori?: number | null
-          complessita?: string
+          borsa_stand?: number | null
+          complementi_config?: string | null
+          complessita?: string | null
           costo_fisso?: number
           costo_grafica?: number | null
           costo_mc?: number
@@ -303,27 +322,39 @@ export type Database = {
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
-          desk_layouts?: Json | null
-          distribuzione: number
+          desk_qta?: number | null
+          distribuzione?: number | null
+          espositori_config?: string | null
           extra_perc_complex?: number | null
+          extra_stand_complesso?: number | null
           fronte_luminoso?: number | null
           id?: string
+          kit_faro_100w?: number | null
+          kit_faro_50w?: number | null
           larg_storage?: number | null
           larghezza: number
-          layout: string
+          layout?: string | null
+          layout_desk?: string | null
           layout_storage?: string | null
+          mensola?: number | null
+          nicchia?: number | null
           note?: string | null
           numero_pezzi?: number | null
-          numero_porte?: number | null
+          numero_pezzi_desk?: number | null
+          numero_pezzi_espositori?: number | null
+          numero_pezzi_storage?: number | null
+          numero_porte?: string | null
           numero_preventivo: string
+          pedana?: number | null
           porta_scorrevole?: number | null
           prof_storage?: number | null
-          profondita: number
+          profondita?: number | null
           prospect_id?: string | null
           qta_tipo100?: number | null
           qta_tipo30?: number | null
           qta_tipo50?: number | null
-          retroilluminazione?: string | null
+          quadro_elettrico_16a?: number | null
+          retroilluminazione?: number | null
           retroilluminazione_100x50x100h?: number | null
           retroilluminazione_30x30x100h?: number | null
           retroilluminazione_50x50x100h?: number | null
@@ -335,10 +366,15 @@ export type Database = {
           servizio_certificazioni?: boolean | null
           servizio_istruzioni_assistenza?: boolean | null
           servizio_montaggio_smontaggio?: boolean | null
+          spot_light?: number | null
+          staffa_monitor?: number | null
           status?: string
-          superficie?: number | null
           superficie_stampa?: number | null
+          superficie_stampa_desk?: number | null
+          superficie_stampa_espositori?: number | null
+          superficie_stampa_storage?: number | null
           sviluppo_lineare?: number | null
+          sviluppo_metri_lineari_storage?: number | null
           teca_plexiglass?: number | null
           teca_plexiglass_100x50x30?: number | null
           teca_plexiglass_30x30x30?: number | null
@@ -347,16 +383,18 @@ export type Database = {
           totale?: number | null
           updated_at?: string
           user_id: string
-          volume?: number | null
         }
         Update: {
-          accessori_stand?: Json | null
+          accessori_stand_config?: string | null
           alt_storage?: number | null
           altezza?: number
+          baule_trolley?: number | null
           bifaccialita?: number | null
           borsa?: number | null
           borsa_espositori?: number | null
-          complessita?: string
+          borsa_stand?: number | null
+          complementi_config?: string | null
+          complessita?: string | null
           costo_fisso?: number
           costo_grafica?: number | null
           costo_mc?: number
@@ -368,27 +406,39 @@ export type Database = {
           created_at?: string
           data_scadenza?: string | null
           descrizione?: string | null
-          desk_layouts?: Json | null
-          distribuzione?: number
+          desk_qta?: number | null
+          distribuzione?: number | null
+          espositori_config?: string | null
           extra_perc_complex?: number | null
+          extra_stand_complesso?: number | null
           fronte_luminoso?: number | null
           id?: string
+          kit_faro_100w?: number | null
+          kit_faro_50w?: number | null
           larg_storage?: number | null
           larghezza?: number
-          layout?: string
+          layout?: string | null
+          layout_desk?: string | null
           layout_storage?: string | null
+          mensola?: number | null
+          nicchia?: number | null
           note?: string | null
           numero_pezzi?: number | null
-          numero_porte?: number | null
+          numero_pezzi_desk?: number | null
+          numero_pezzi_espositori?: number | null
+          numero_pezzi_storage?: number | null
+          numero_porte?: string | null
           numero_preventivo?: string
+          pedana?: number | null
           porta_scorrevole?: number | null
           prof_storage?: number | null
-          profondita?: number
+          profondita?: number | null
           prospect_id?: string | null
           qta_tipo100?: number | null
           qta_tipo30?: number | null
           qta_tipo50?: number | null
-          retroilluminazione?: string | null
+          quadro_elettrico_16a?: number | null
+          retroilluminazione?: number | null
           retroilluminazione_100x50x100h?: number | null
           retroilluminazione_30x30x100h?: number | null
           retroilluminazione_50x50x100h?: number | null
@@ -400,10 +450,15 @@ export type Database = {
           servizio_certificazioni?: boolean | null
           servizio_istruzioni_assistenza?: boolean | null
           servizio_montaggio_smontaggio?: boolean | null
+          spot_light?: number | null
+          staffa_monitor?: number | null
           status?: string
-          superficie?: number | null
           superficie_stampa?: number | null
+          superficie_stampa_desk?: number | null
+          superficie_stampa_espositori?: number | null
+          superficie_stampa_storage?: number | null
           sviluppo_lineare?: number | null
+          sviluppo_metri_lineari_storage?: number | null
           teca_plexiglass?: number | null
           teca_plexiglass_100x50x30?: number | null
           teca_plexiglass_30x30x30?: number | null
@@ -412,7 +467,6 @@ export type Database = {
           totale?: number | null
           updated_at?: string
           user_id?: string
-          volume?: number | null
         }
         Relationships: [
           {
@@ -465,15 +519,15 @@ export type Database = {
       }
       prospects: {
         Row: {
-          cap: string
-          citta: string
+          cap: string | null
+          citta: string | null
           codice_fiscale: string | null
           created_at: string
           email: string | null
           id: string
-          indirizzo: string
+          indirizzo: string | null
           partita_iva: string
-          provincia: string
+          provincia: string | null
           ragione_sociale: string
           telefono: string | null
           tipo: string
@@ -481,15 +535,15 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          cap: string
-          citta: string
+          cap?: string | null
+          citta?: string | null
           codice_fiscale?: string | null
           created_at?: string
           email?: string | null
           id?: string
-          indirizzo: string
+          indirizzo?: string | null
           partita_iva: string
-          provincia: string
+          provincia?: string | null
           ragione_sociale: string
           telefono?: string | null
           tipo?: string
@@ -497,15 +551,15 @@ export type Database = {
           user_id: string
         }
         Update: {
-          cap?: string
-          citta?: string
+          cap?: string | null
+          citta?: string | null
           codice_fiscale?: string | null
           created_at?: string
           email?: string | null
           id?: string
-          indirizzo?: string
+          indirizzo?: string | null
           partita_iva?: string
-          provincia?: string
+          provincia?: string | null
           ragione_sociale?: string
           telefono?: string | null
           tipo?: string
@@ -519,8 +573,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_user_by_admin: {
+        Args: {
+          email: string
+          first_name: string
+          last_name: string
+          password: string
+          user_role?: string
+        }
+        Returns: string
+      }
       is_admin: {
-        Args: Record<PropertyKey, never>
+        Args: { _user_id: string }
         Returns: boolean
       }
     }
