@@ -218,6 +218,212 @@ export type Database = {
         }
         Relationships: []
       }
+      preventivi: {
+        Row: {
+          accessori_stand: Json | null
+          alt_storage: number | null
+          altezza: number
+          bifaccialita: number | null
+          borsa: number | null
+          borsa_espositori: number | null
+          complessita: string
+          costo_fisso: number
+          costo_grafica: number | null
+          costo_mc: number
+          costo_mq: number
+          costo_premontaggio: number | null
+          costo_retroilluminazione: number | null
+          costo_struttura: number | null
+          costo_totale: number | null
+          created_at: string
+          data_scadenza: string | null
+          descrizione: string | null
+          desk_layouts: Json | null
+          distribuzione: number
+          extra_perc_complex: number | null
+          fronte_luminoso: number | null
+          id: string
+          larg_storage: number | null
+          larghezza: number
+          layout: string
+          layout_storage: string | null
+          note: string | null
+          numero_pezzi: number | null
+          numero_porte: number | null
+          numero_preventivo: string
+          porta_scorrevole: number | null
+          prof_storage: number | null
+          profondita: number
+          prospect_id: string | null
+          qta_tipo100: number | null
+          qta_tipo30: number | null
+          qta_tipo50: number | null
+          retroilluminazione: string | null
+          retroilluminazione_100x50x100h: number | null
+          retroilluminazione_30x30x100h: number | null
+          retroilluminazione_50x50x100h: number | null
+          ripiano_100x50: number | null
+          ripiano_30x30: number | null
+          ripiano_50x50: number | null
+          ripiano_inferiore: number | null
+          ripiano_superiore: number | null
+          servizio_certificazioni: boolean | null
+          servizio_istruzioni_assistenza: boolean | null
+          servizio_montaggio_smontaggio: boolean | null
+          status: string
+          superficie: number | null
+          superficie_stampa: number | null
+          sviluppo_lineare: number | null
+          teca_plexiglass: number | null
+          teca_plexiglass_100x50x30: number | null
+          teca_plexiglass_30x30x30: number | null
+          teca_plexiglass_50x50x50: number | null
+          titolo: string
+          totale: number | null
+          updated_at: string
+          user_id: string
+          volume: number | null
+        }
+        Insert: {
+          accessori_stand?: Json | null
+          alt_storage?: number | null
+          altezza: number
+          bifaccialita?: number | null
+          borsa?: number | null
+          borsa_espositori?: number | null
+          complessita?: string
+          costo_fisso?: number
+          costo_grafica?: number | null
+          costo_mc?: number
+          costo_mq?: number
+          costo_premontaggio?: number | null
+          costo_retroilluminazione?: number | null
+          costo_struttura?: number | null
+          costo_totale?: number | null
+          created_at?: string
+          data_scadenza?: string | null
+          descrizione?: string | null
+          desk_layouts?: Json | null
+          distribuzione: number
+          extra_perc_complex?: number | null
+          fronte_luminoso?: number | null
+          id?: string
+          larg_storage?: number | null
+          larghezza: number
+          layout: string
+          layout_storage?: string | null
+          note?: string | null
+          numero_pezzi?: number | null
+          numero_porte?: number | null
+          numero_preventivo: string
+          porta_scorrevole?: number | null
+          prof_storage?: number | null
+          profondita: number
+          prospect_id?: string | null
+          qta_tipo100?: number | null
+          qta_tipo30?: number | null
+          qta_tipo50?: number | null
+          retroilluminazione?: string | null
+          retroilluminazione_100x50x100h?: number | null
+          retroilluminazione_30x30x100h?: number | null
+          retroilluminazione_50x50x100h?: number | null
+          ripiano_100x50?: number | null
+          ripiano_30x30?: number | null
+          ripiano_50x50?: number | null
+          ripiano_inferiore?: number | null
+          ripiano_superiore?: number | null
+          servizio_certificazioni?: boolean | null
+          servizio_istruzioni_assistenza?: boolean | null
+          servizio_montaggio_smontaggio?: boolean | null
+          status?: string
+          superficie?: number | null
+          superficie_stampa?: number | null
+          sviluppo_lineare?: number | null
+          teca_plexiglass?: number | null
+          teca_plexiglass_100x50x30?: number | null
+          teca_plexiglass_30x30x30?: number | null
+          teca_plexiglass_50x50x50?: number | null
+          titolo: string
+          totale?: number | null
+          updated_at?: string
+          user_id: string
+          volume?: number | null
+        }
+        Update: {
+          accessori_stand?: Json | null
+          alt_storage?: number | null
+          altezza?: number
+          bifaccialita?: number | null
+          borsa?: number | null
+          borsa_espositori?: number | null
+          complessita?: string
+          costo_fisso?: number
+          costo_grafica?: number | null
+          costo_mc?: number
+          costo_mq?: number
+          costo_premontaggio?: number | null
+          costo_retroilluminazione?: number | null
+          costo_struttura?: number | null
+          costo_totale?: number | null
+          created_at?: string
+          data_scadenza?: string | null
+          descrizione?: string | null
+          desk_layouts?: Json | null
+          distribuzione?: number
+          extra_perc_complex?: number | null
+          fronte_luminoso?: number | null
+          id?: string
+          larg_storage?: number | null
+          larghezza?: number
+          layout?: string
+          layout_storage?: string | null
+          note?: string | null
+          numero_pezzi?: number | null
+          numero_porte?: number | null
+          numero_preventivo?: string
+          porta_scorrevole?: number | null
+          prof_storage?: number | null
+          profondita?: number
+          prospect_id?: string | null
+          qta_tipo100?: number | null
+          qta_tipo30?: number | null
+          qta_tipo50?: number | null
+          retroilluminazione?: string | null
+          retroilluminazione_100x50x100h?: number | null
+          retroilluminazione_30x30x100h?: number | null
+          retroilluminazione_50x50x100h?: number | null
+          ripiano_100x50?: number | null
+          ripiano_30x30?: number | null
+          ripiano_50x50?: number | null
+          ripiano_inferiore?: number | null
+          ripiano_superiore?: number | null
+          servizio_certificazioni?: boolean | null
+          servizio_istruzioni_assistenza?: boolean | null
+          servizio_montaggio_smontaggio?: boolean | null
+          status?: string
+          superficie?: number | null
+          superficie_stampa?: number | null
+          sviluppo_lineare?: number | null
+          teca_plexiglass?: number | null
+          teca_plexiglass_100x50x30?: number | null
+          teca_plexiglass_30x30x30?: number | null
+          teca_plexiglass_50x50x50?: number | null
+          titolo?: string
+          totale?: number | null
+          updated_at?: string
+          user_id?: string
+          volume?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "preventivi_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
+            referencedRelation: "prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           active: boolean
@@ -252,6 +458,57 @@ export type Database = {
           id?: string
           last_name?: string | null
           role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      prospects: {
+        Row: {
+          cap: string
+          citta: string
+          codice_fiscale: string | null
+          created_at: string
+          email: string | null
+          id: string
+          indirizzo: string
+          partita_iva: string
+          provincia: string
+          ragione_sociale: string
+          telefono: string | null
+          tipo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cap: string
+          citta: string
+          codice_fiscale?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          indirizzo: string
+          partita_iva: string
+          provincia: string
+          ragione_sociale: string
+          telefono?: string | null
+          tipo?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cap?: string
+          citta?: string
+          codice_fiscale?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          indirizzo?: string
+          partita_iva?: string
+          provincia?: string
+          ragione_sociale?: string
+          telefono?: string | null
+          tipo?: string
           updated_at?: string
           user_id?: string
         }
