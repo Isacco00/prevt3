@@ -14,13 +14,258 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      costi_retroilluminazione: {
+        Row: {
+          altezza: number
+          attivo: boolean
+          costo_al_metro: number
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          altezza: number
+          attivo?: boolean
+          costo_al_metro: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          altezza?: number
+          attivo?: boolean
+          costo_al_metro?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      costi_struttura_desk_layout: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          layout_desk: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario: number
+          created_at?: string
+          id?: string
+          layout_desk: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          layout_desk?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      costi_struttura_espositori_layout: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          layout_espositore: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario: number
+          created_at?: string
+          id?: string
+          layout_espositore: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          layout_espositore?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      listino_accessori_desk: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario: number
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      listino_accessori_espositori: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario: number
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      listino_accessori_stand: {
+        Row: {
+          attivo: boolean
+          costo_unitario: number
+          created_at: string
+          id: string
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          costo_unitario: number
+          created_at?: string
+          id?: string
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          costo_unitario?: number
+          created_at?: string
+          id?: string
+          nome?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      parametri: {
+        Row: {
+          attivo: boolean
+          created_at: string
+          descrizione: string | null
+          id: string
+          nome: string
+          ordine: number
+          tipo: string
+          updated_at: string
+          valore: number | null
+          valore_chiave: string | null
+          valore_testo: string | null
+        }
+        Insert: {
+          attivo?: boolean
+          created_at?: string
+          descrizione?: string | null
+          id?: string
+          nome: string
+          ordine?: number
+          tipo: string
+          updated_at?: string
+          valore?: number | null
+          valore_chiave?: string | null
+          valore_testo?: string | null
+        }
+        Update: {
+          attivo?: boolean
+          created_at?: string
+          descrizione?: string | null
+          id?: string
+          nome?: string
+          ordine?: number
+          tipo?: string
+          updated_at?: string
+          valore?: number | null
+          valore_chiave?: string | null
+          valore_testo?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          active: boolean
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
