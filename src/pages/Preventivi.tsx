@@ -1564,46 +1564,43 @@ const Preventivi = () => {
                     }
                     
                     const storageElements = (() => {
-                      const larghezza = parseFloat(formData.larg_storage);
-                      const profondita = parseFloat(formData.prof_storage);
-                      const altezza = parseFloat(formData.alt_storage);
-                      const layoutValue = formData.layout_storage;
+                      const larg = parseFloat(formData.larg_storage);
+                      const prof = parseFloat(formData.prof_storage);
+                      const alt = parseFloat(formData.alt_storage);
+                      const layout = formData.layout_storage;
                       const distribuzione = parseInt(formData.distribuzione);
-                      const profiliDistribuzioneValue = profiliDistribuzioneMap[distribuzione] || 1;
                       
+                      // Calcolo superficie di stampa come in StorageSection
                       let superficie_stampa = 0;
-                      let sviluppo_lineare = 0;
-                      let numero_pezzi = 0;
-                      
-                      if (layoutValue === '0') { // Solo perimetrali
-                        superficie_stampa = altezza * (larghezza + profondita) * 2;
-                        sviluppo_lineare = (larghezza + profondita) * 2;
-                        numero_pezzi = Math.ceil(sviluppo_lineare / profiliDistribuzioneValue) * 2;
-                      } else if (layoutValue === '1') { // Perimetrali + 1 interna
-                        const perim_superficie = altezza * (larghezza + profondita) * 2;
-                        const int1_superficie = altezza * larghezza;
-                        superficie_stampa = perim_superficie + int1_superficie;
-                        
-                        const perim_sviluppo = (larghezza + profondita) * 2;
-                        const int1_sviluppo = larghezza;
-                        sviluppo_lineare = perim_sviluppo + int1_sviluppo;
-                        
-                        const perim_pezzi = Math.ceil(perim_sviluppo / profiliDistribuzioneValue) * 2;
-                        const int1_pezzi = Math.ceil(int1_sviluppo / profiliDistribuzioneValue) * 2;
-                        numero_pezzi = perim_pezzi + int1_pezzi;
-                      } else if (layoutValue === '2') { // Perimetrali + 2 interne
-                        const perim_superficie = altezza * (larghezza + profondita) * 2;
-                        const int_superficie = altezza * larghezza * 2;
-                        superficie_stampa = perim_superficie + int_superficie;
-                        
-                        const perim_sviluppo = (larghezza + profondita) * 2;
-                        const int_sviluppo = larghezza * 2;
-                        sviluppo_lineare = perim_sviluppo + int_sviluppo;
-                        
-                        const perim_pezzi = Math.ceil(perim_sviluppo / profiliDistribuzioneValue) * 2;
-                        const int_pezzi = Math.ceil(int_sviluppo / profiliDistribuzioneValue) * 2;
-                        numero_pezzi = perim_pezzi + int_pezzi;
+                      switch (layout) {
+                        case '0':
+                          superficie_stampa = (2 * larg + 2 * prof) * alt;
+                          break;
+                        case '1':
+                          superficie_stampa = (2 * larg + 2 * prof) * alt + 2;
+                          break;
+                        case '2':
+                          superficie_stampa = (larg + prof) * alt + 2;
+                          break;
                       }
+                      
+                      // Calcolo sviluppo lineare come in StorageSection
+                      let sviluppo_lineare = 0;
+                      switch (layout) {
+                        case '0':
+                          sviluppo_lineare = larg + prof;
+                          break;
+                        case '1':
+                          sviluppo_lineare = 2 * larg + 2 * prof;
+                          break;
+                        case '2':
+                          sviluppo_lineare = larg + prof + 1;
+                          break;
+                      }
+                      
+                      // Numero di pezzi come in StorageSection
+                      const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
+                      const numero_pezzi = sviluppo_lineare * fattoreDistribuzione;
                       
                       return { superficie_stampa, sviluppo_lineare, numero_pezzi };
                     })();
