@@ -17,9 +17,10 @@ interface StorageSectionProps {
   setFormData: (data: any) => void;
   profiliDistribuzioneMap: Record<number, number>;
   parametri: any[];
+  accessoriStand: any[];
 }
 
-export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri }: StorageSectionProps) {
+export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand }: StorageSectionProps) {
   // Calcolo degli elementi fisici per Storage
   const storageElements = useMemo(() => {
     if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione) {
@@ -93,9 +94,16 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
     const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
 
-    // Costo struttura a terra storage: sviluppo lineare * costo struttura al m/l in funzione altezza
-    const costo_struttura_storage = costoAltezzaParam ? 
+    // Trova il costo della porta dagli accessori stand
+    const portaAccessorio = accessoriStand.find(acc => acc.nome?.toLowerCase().includes('porta'));
+    const costoPorta = portaAccessorio ? portaAccessorio.costo_unitario : 0;
+    const numeroPorte = parseInt(formData.numero_porte) || 0;
+
+    // Costo struttura a terra storage: sviluppo lineare * costo struttura al m/l in funzione altezza + numero porte * costo porta
+    const costoStrutturaBase = costoAltezzaParam ? 
       storageElements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+    const costoPorte = numeroPorte * costoPorta;
+    const costo_struttura_storage = costoStrutturaBase + costoPorte;
 
     // Costo grafica storage con cordino cucito: superficie stampa * costo stampa grafica al mq
     const costo_grafica_storage = costoStampaParam ? 
@@ -113,7 +121,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       costo_premontaggio_storage,
       costo_totale_storage
     };
-  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, storageElements, parametri]);
+  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.numero_porte, storageElements, parametri, accessoriStand]);
 
   return (
     <div className="space-y-6">

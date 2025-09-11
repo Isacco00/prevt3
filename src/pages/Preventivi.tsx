@@ -1413,6 +1413,7 @@ const Preventivi = () => {
                           setFormData={setFormData}
                           profiliDistribuzioneMap={profiliDistribuzioneMap}
                           parametri={parametri}
+                          accessoriStand={accessoriStand}
                         />
                       </div>
                     </CollapsibleContent>
