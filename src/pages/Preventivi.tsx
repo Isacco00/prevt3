@@ -176,6 +176,14 @@ const Preventivi = () => {
     costo_premontaggio_storage: 0,
     costo_totale_storage: 0,
   });
+  // Totali Espositori “lifted” dalla sezione Espositori
+  const [expositoreCostsLifted, setExpositoreCostsLifted] = useState({
+    struttura_espositori: 0,
+    grafica_espositori: 0,
+    premontaggio_espositori: 0,
+    accessori_espositori: 0,
+    costo_totale_espositori: 0,
+  });
 
   // Calcoli automatici degli elementi fisici
   const calculatePhysicalElements = (profiliDistribuzioneMap: Record<number, number>) => {
@@ -1523,6 +1531,7 @@ const Preventivi = () => {
                            formData={formData}
                            setFormData={setFormData}
                            physicalElements={espositorePhysicalElements}
+                           onCostsChange={setExpositoreCostsLifted}
                          />
                        </div>
                     </CollapsibleContent>
@@ -1569,71 +1578,8 @@ const Preventivi = () => {
                   // Usa i costi calcolati direttamente dalla sezione Storage per evitare ricalcoli incoerenti
                   const costiStorage = storageCostsLifted;
 
-                  // Calcolo costi espositori
-                  const costiEspositori = (() => {
-                    const qta30 = parseInt((formData.qta_tipo30 || 0).toString()) || 0;
-                    const qta50 = parseInt((formData.qta_tipo50 || 0).toString()) || 0;
-                    const qta100 = parseInt((formData.qta_tipo100 || 0).toString()) || 0;
-                    
-                    if (qta30 === 0 && qta50 === 0 && qta100 === 0) {
-                      return {
-                        struttura_espositori: 0,
-                        grafica_espositori: 0,
-                        premontaggio_espositori: 0,
-                        accessori_espositori: 0,
-                        costo_totale_espositori: 0
-                      };
-                    }
-                    
-                    // Elementi fisici espositori
-                    const numero_pezzi_esp = (qta30 * 4) + (qta50 * 4) + (qta100 * 4);
-                    const superficie_stampa_esp = (qta30 * 0.3 * 0.3 * 4) + (qta50 * 0.5 * 0.5 * 4) + (qta100 * 1 * 0.5 * 4);
-                    
-                    // Costi struttura espositori
-                    const layoutCosto30 = layoutCostsEspositori?.find(l => l.layout_espositore === '30')?.costo_unitario || 0;
-                    const layoutCosto50 = layoutCostsEspositori?.find(l => l.layout_espositore === '50')?.costo_unitario || 0;
-                    const layoutCosto100 = layoutCostsEspositori?.find(l => l.layout_espositore === '100')?.costo_unitario || 0;
-                    const struttura_espositori = (qta30 * layoutCosto30) + (qta50 * layoutCosto50) + (qta100 * layoutCosto100);
-                    
-                    // Costi grafica espositori
-                    const costoStampaParam = parametri.find(p => p.nome === 'Costo stampa grafica al metro quadro');
-                    const grafica_espositori = costoStampaParam ? superficie_stampa_esp * (costoStampaParam.valore || 0) : 0;
-                    
-                    // Costi premontaggio espositori
-                    const costoPremontaggio = parametri.find(p => p.nome === 'Costo Premontaggio al pezzo');
-                    const premontaggio_espositori = costoPremontaggio ? numero_pezzi_esp * (costoPremontaggio.valore || 0) : 0;
-                    
-                    // Costi accessori espositori
-                    const accessoriEspMapping = [
-                      { field: 'ripiano_30x30', name: 'Ripiano 30x30' },
-                      { field: 'ripiano_50x50', name: 'Ripiano 50x50' },
-                      { field: 'ripiano_100x50', name: 'Ripiano 100x50' },
-                      { field: 'teca_plexiglass_30x30x30', name: 'Teca in plexiglass 30x30x30' },
-                      { field: 'teca_plexiglass_50x50x50', name: 'Teca in plexiglass 50x50x50' },
-                      { field: 'teca_plexiglass_100x50x30', name: 'Teca in plexiglass 100x50x30' },
-                      { field: 'retroilluminazione_30x30x100h', name: 'Retroilluminazione 30x30x100 H' },
-                      { field: 'retroilluminazione_50x50x100h', name: 'Retroilluminazione 50x50x100 H' },
-                      { field: 'retroilluminazione_100x50x100h', name: 'Retroilluminazione 100x50x100 H' },
-                      { field: 'borsa_espositori', name: 'Borsa' }
-                    ];
-                    
-                    const accessori_espositori = accessoriEspMapping.reduce((total, accessory) => {
-                      const accessoryData = accessoriEspositori?.find(item => item.nome === accessory.name);
-                      const unitPrice = accessoryData ? Number(accessoryData.costo_unitario) : 0;
-                      const quantity = parseInt((formData[accessory.field] || 0).toString()) || 0;
-                      return total + (quantity * unitPrice);
-                    }, 0);
-                    
-                    const costo_totale_espositori = struttura_espositori + grafica_espositori + premontaggio_espositori + accessori_espositori;
-                    
-                    return {
-                      struttura_espositori,
-                      grafica_espositori,
-                      premontaggio_espositori,
-                      accessori_espositori,
-                      costo_totale_espositori
-                    };
-                  })();
+                  // Costi Espositori “lifted” dalla sezione Espositori
+                  const costiEspositori = expositoreCostsLifted;
 
                   // Totali per tipologia
                   const totaleStrutturaATerra = costs.struttura_terra + costiStorage.costo_struttura_storage + (costs.costi_desk?.struttura_terra || 0) + costiEspositori.struttura_espositori;

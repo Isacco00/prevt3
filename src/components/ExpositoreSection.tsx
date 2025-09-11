@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Calculator } from 'lucide-react';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -36,6 +36,13 @@ interface EspositoriSectionProps {
   formData: ExpositoreData;
   setFormData: (data: any) => void;
   physicalElements: ExpositorePhysicalElements;
+  onCostsChange?: (costs: {
+    struttura_espositori: number;
+    grafica_espositori: number;
+    premontaggio_espositori: number;
+    accessori_espositori: number;
+    costo_totale_espositori: number;
+  }) => void;
 }
 
 function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElementsProps) {
@@ -68,7 +75,7 @@ function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElem
   );
 }
 
-export function ExpositoreSection({ formData, setFormData, physicalElements }: EspositoriSectionProps) {
+export function ExpositoreSection({ formData, setFormData, physicalElements, onCostsChange }: EspositoriSectionProps) {
   // Query for accessories prices
   const { data: accessoriesData = [] } = useQuery({
     queryKey: ['listino_accessori_espositori'],
@@ -195,6 +202,18 @@ export function ExpositoreSection({ formData, setFormData, physicalElements }: E
     { field: 'retroilluminazione_100x50x100h' as keyof ExpositoreData, name: 'Retroilluminazione 100x50x100 H' },
     { field: 'borsa_espositori' as keyof ExpositoreData, name: 'Borsa' },
   ];
+
+  const expositoriCosts = useMemo(() => ({
+    struttura_espositori: calculateStructureCost(),
+    grafica_espositori: calculateGraphicsCost(),
+    premontaggio_espositori: calculatePreassemblyCost(),
+    accessori_espositori: calculateAccessoriesTotal(),
+    costo_totale_espositori: calculateTotalCost(),
+  }), [formData, physicalElements, accessoriesData, layoutCostsData, parametersData]);
+
+  useEffect(() => {
+    onCostsChange?.(expositoriCosts);
+  }, [expositoriCosts, onCostsChange]);
 
   return (
     <div className="space-y-4">
