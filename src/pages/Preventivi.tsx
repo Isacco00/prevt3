@@ -169,6 +169,14 @@ const Preventivi = () => {
     servizi: false,
   });
 
+  // Totali Storage “lifted” dalla sezione Storage
+  const [storageCostsLifted, setStorageCostsLifted] = useState({
+    costo_struttura_storage: 0,
+    costo_grafica_storage: 0,
+    costo_premontaggio_storage: 0,
+    costo_totale_storage: 0,
+  });
+
   // Calcoli automatici degli elementi fisici
   const calculatePhysicalElements = (profiliDistribuzioneMap: Record<number, number>) => {
     if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione) {
@@ -1446,6 +1454,7 @@ const Preventivi = () => {
                           profiliDistribuzioneMap={profiliDistribuzioneMap}
                           parametri={parametri}
                           accessoriStand={accessoriStand}
+                          onCostsChange={setStorageCostsLifted}
                         />
                       </div>
                     </CollapsibleContent>
@@ -1557,70 +1566,8 @@ const Preventivi = () => {
                 </div>
 
                 {(() => {
-                  // Calcolo costi Storage
-                  const costiStorage = (() => {
-                    if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione || !parametri.length) {
-                      return { costo_struttura_storage: 0, costo_grafica_storage: 0, costo_premontaggio_storage: 0, costo_totale_storage: 0 };
-                    }
-                    
-                    const storageElements = (() => {
-                      const larg = parseFloat(formData.larg_storage);
-                      const prof = parseFloat(formData.prof_storage);
-                      const alt = parseFloat(formData.alt_storage);
-                      const layout = formData.layout_storage;
-                      const distribuzione = parseInt(formData.distribuzione);
-                      
-                      // Calcolo superficie di stampa come in StorageSection
-                      let superficie_stampa = 0;
-                      switch (layout) {
-                        case '0':
-                          superficie_stampa = (2 * larg + 2 * prof) * alt;
-                          break;
-                        case '1':
-                          superficie_stampa = (2 * larg + 2 * prof) * alt + 2;
-                          break;
-                        case '2':
-                          superficie_stampa = (larg + prof) * alt + 2;
-                          break;
-                      }
-                      
-                      // Calcolo sviluppo lineare come in StorageSection
-                      let sviluppo_lineare = 0;
-                      switch (layout) {
-                        case '0':
-                          sviluppo_lineare = larg + prof;
-                          break;
-                        case '1':
-                          sviluppo_lineare = 2 * larg + 2 * prof;
-                          break;
-                        case '2':
-                          sviluppo_lineare = larg + prof + 1;
-                          break;
-                      }
-                      
-                      // Numero di pezzi come in StorageSection
-                      const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
-                      const numero_pezzi = sviluppo_lineare * fattoreDistribuzione;
-                      
-                      return { superficie_stampa, sviluppo_lineare, numero_pezzi };
-                    })();
-                    
-                    const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
-                    const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
-                    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
-                    const portaAccessorio = accessoriStand?.find(acc => acc.nome?.toLowerCase().includes('porta'));
-                    const costoPorta = portaAccessorio ? portaAccessorio.costo_unitario : 0;
-                    const numeroPorte = parseInt(formData.numero_porte) || 0;
-                    
-                    const costoStrutturaBase = costoAltezzaParam ? storageElements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
-                    const costoPorte = numeroPorte * costoPorta;
-                    const costo_struttura_storage = costoStrutturaBase + costoPorte;
-                    const costo_grafica_storage = costoStampaParam ? storageElements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
-                    const costo_premontaggio_storage = costoPremontaggio ? storageElements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
-                    const costo_totale_storage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
-                    
-                    return { costo_struttura_storage, costo_grafica_storage, costo_premontaggio_storage, costo_totale_storage };
-                  })();
+                  // Usa i costi calcolati direttamente dalla sezione Storage per evitare ricalcoli incoerenti
+                  const costiStorage = storageCostsLifted;
 
                   // Calcolo costi espositori
                   const costiEspositori = (() => {

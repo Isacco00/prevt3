@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,9 +18,15 @@ interface StorageSectionProps {
   profiliDistribuzioneMap: Record<number, number>;
   parametri: any[];
   accessoriStand: any[];
+  onCostsChange?: (costs: {
+    costo_struttura_storage: number;
+    costo_grafica_storage: number;
+    costo_premontaggio_storage: number;
+    costo_totale_storage: number;
+  }) => void;
 }
 
-export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand }: StorageSectionProps) {
+export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand, onCostsChange }: StorageSectionProps) {
   // Calcolo degli elementi fisici per Storage
   const storageElements = useMemo(() => {
     if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione) {
@@ -122,6 +128,10 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       costo_totale_storage
     };
   }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.numero_porte, storageElements, parametri, accessoriStand]);
+
+  useEffect(() => {
+    onCostsChange?.(storageCosts);
+  }, [storageCosts, onCostsChange]);
 
   return (
     <div className="space-y-6">
