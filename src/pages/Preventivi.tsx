@@ -1517,21 +1517,211 @@ const Preventivi = () => {
                 </Collapsible>
               </div>
 
-              {/* Sezione Totale Generale */}
+              {/* Sezione Totale Generale Costi Fornitura */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">Totale Generale Preventivo</h3>
+                  <h3 className="text-lg font-semibold">Totale generale costi fornitura</h3>
                 </div>
 
-                <Card className="border-2 border-primary">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg">Totale Preventivo</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-4xl font-bold text-primary">€{costs.totale.toFixed(2)}</div>
-                  </CardContent>
-                </Card>
+                {(() => {
+                  // Calcolo costi Storage
+                  const costiStorage = (() => {
+                    if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione || !parametri.length) {
+                      return { costo_struttura_storage: 0, costo_grafica_storage: 0, costo_premontaggio_storage: 0, costo_totale_storage: 0 };
+                    }
+                    
+                    const storageElements = (() => {
+                      const larghezza = parseFloat(formData.larg_storage);
+                      const profondita = parseFloat(formData.prof_storage);
+                      const altezza = parseFloat(formData.alt_storage);
+                      const layoutValue = formData.layout_storage;
+                      const distribuzione = parseInt(formData.distribuzione);
+                      const profiliDistribuzioneValue = profiliDistribuzioneMap[distribuzione] || 1;
+                      
+                      let superficie_stampa = 0;
+                      let sviluppo_lineare = 0;
+                      let numero_pezzi = 0;
+                      
+                      if (layoutValue === '0') { // Solo perimetrali
+                        superficie_stampa = altezza * (larghezza + profondita) * 2;
+                        sviluppo_lineare = (larghezza + profondita) * 2;
+                        numero_pezzi = Math.ceil(sviluppo_lineare / profiliDistribuzioneValue) * 2;
+                      } else if (layoutValue === '1') { // Perimetrali + 1 interna
+                        const perim_superficie = altezza * (larghezza + profondita) * 2;
+                        const int1_superficie = altezza * larghezza;
+                        superficie_stampa = perim_superficie + int1_superficie;
+                        
+                        const perim_sviluppo = (larghezza + profondita) * 2;
+                        const int1_sviluppo = larghezza;
+                        sviluppo_lineare = perim_sviluppo + int1_sviluppo;
+                        
+                        const perim_pezzi = Math.ceil(perim_sviluppo / profiliDistribuzioneValue) * 2;
+                        const int1_pezzi = Math.ceil(int1_sviluppo / profiliDistribuzioneValue) * 2;
+                        numero_pezzi = perim_pezzi + int1_pezzi;
+                      } else if (layoutValue === '2') { // Perimetrali + 2 interne
+                        const perim_superficie = altezza * (larghezza + profondita) * 2;
+                        const int_superficie = altezza * larghezza * 2;
+                        superficie_stampa = perim_superficie + int_superficie;
+                        
+                        const perim_sviluppo = (larghezza + profondita) * 2;
+                        const int_sviluppo = larghezza * 2;
+                        sviluppo_lineare = perim_sviluppo + int_sviluppo;
+                        
+                        const perim_pezzi = Math.ceil(perim_sviluppo / profiliDistribuzioneValue) * 2;
+                        const int_pezzi = Math.ceil(int_sviluppo / profiliDistribuzioneValue) * 2;
+                        numero_pezzi = perim_pezzi + int_pezzi;
+                      }
+                      
+                      return { superficie_stampa, sviluppo_lineare, numero_pezzi };
+                    })();
+                    
+                    const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
+                    const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+                    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
+                    const portaAccessorio = accessoriStand?.find(acc => acc.nome?.toLowerCase().includes('porta'));
+                    const costoPorta = portaAccessorio ? portaAccessorio.costo_unitario : 0;
+                    const numeroPorte = parseInt(formData.numero_porte) || 0;
+                    
+                    const costoStrutturaBase = costoAltezzaParam ? storageElements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+                    const costoPorte = numeroPorte * costoPorta;
+                    const costo_struttura_storage = costoStrutturaBase + costoPorte;
+                    const costo_grafica_storage = costoStampaParam ? storageElements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+                    const costo_premontaggio_storage = costoPremontaggio ? storageElements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+                    const costo_totale_storage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
+                    
+                    return { costo_struttura_storage, costo_grafica_storage, costo_premontaggio_storage, costo_totale_storage };
+                  })();
+
+                  // Costi espositori (per ora usiamo valori placeholder, sarà implementato completamente in seguito)
+                  const costiEspositori = {
+                    struttura_espositori: 0,
+                    grafica_espositori: 0,
+                    premontaggio_espositori: 0,
+                    accessori_espositori: 0,
+                    costo_totale_espositori: 0
+                  };
+
+                  // Totali per tipologia
+                  const totaleStrutturaATerra = costs.struttura_terra + costiStorage.costo_struttura_storage + (costs.costi_desk?.struttura_terra || 0) + costiEspositori.struttura_espositori;
+                  const totaleGrafiche = costs.grafica_cordino + costiStorage.costo_grafica_storage + (costs.costi_desk?.grafica_cordino || 0) + costiEspositori.grafica_espositori;
+                  const retroilluminazione = costs.retroilluminazione; // Valore unico
+                  const extraStrutturaComplessa = costs.extra_stand_complesso; // Valore unico
+                  const totaleAccessori = costs.costi_accessori + costs.costi_accessori_desk + costiEspositori.accessori_espositori;
+                  const totalePremontaggi = costs.premontaggio + costiStorage.costo_premontaggio_storage + (costs.costi_desk?.premontaggio || 0) + costiEspositori.premontaggio_espositori;
+                  const totaleServizi = 1000; // Valore costante per ora
+                  
+                  // Costo totale fornitura
+                  const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori;
+                  
+                  return (
+                    <div className="space-y-6">
+                      {/* Grid con i totali per tipologia */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <Card className="h-20 flex flex-col overflow-hidden">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Totale Struttura a terra
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{totaleStrutturaATerra.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Totale grafiche
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{totaleGrafiche.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Retroilluminazione
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{retroilluminazione.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Extra per struttura complessa
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{extraStrutturaComplessa.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Totali accessori
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{totaleAccessori.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Totali Premontaggi
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{totalePremontaggi.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden col-span-1 md:col-span-2 lg:col-span-1">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Totali Servizi
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{totaleServizi.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Card finale con il totale */}
+                      <Card className="border-2 border-primary">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-lg">Totali costo fornitura</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-4xl font-bold text-primary">€{costoTotaleFornitura.toFixed(2)}</div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })()}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
