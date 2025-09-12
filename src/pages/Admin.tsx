@@ -902,9 +902,9 @@ export default function Admin() {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[300px]">Parametro</TableHead>
-                    <TableHead className="w-[100px]">U.M.</TableHead>
-                    <TableHead className="w-[150px]">Valore</TableHead>
-                    <TableHead className="w-[100px]">Azioni</TableHead>
+                    <TableHead className="w-[100px] text-center">U.M.</TableHead>
+                    <TableHead className="w-[150px] text-center">Valore</TableHead>
+                    <TableHead className="w-[100px] text-center">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
