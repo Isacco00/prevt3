@@ -215,6 +215,36 @@ export type Database = {
         }
         Relationships: []
       }
+      parametri_a_costi_unitari: {
+        Row: {
+          attivo: boolean
+          created_at: string
+          id: string
+          parametro: string
+          unita_misura: string
+          updated_at: string
+          valore: number
+        }
+        Insert: {
+          attivo?: boolean
+          created_at?: string
+          id?: string
+          parametro: string
+          unita_misura: string
+          updated_at?: string
+          valore?: number
+        }
+        Update: {
+          attivo?: boolean
+          created_at?: string
+          id?: string
+          parametro?: string
+          unita_misura?: string
+          updated_at?: string
+          valore?: number
+        }
+        Relationships: []
+      }
       preventivi: {
         Row: {
           accessori_stand_config: string | null

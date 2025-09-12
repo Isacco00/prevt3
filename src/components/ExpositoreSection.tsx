@@ -106,15 +106,15 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
     },
   });
 
-  // Query for parameters
-  const { data: parametersData = [] } = useQuery({
-    queryKey: ['parametri'],
+  // Query for unit cost parameters
+  const { data: parametriCostiUnitari = [] } = useQuery({
+    queryKey: ['parametri-costi-unitari'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('parametri')
+        .from('parametri_a_costi_unitari')
         .select('*')
         .eq('attivo', true)
-        .order('nome');
+        .order('parametro');
       
       if (error) throw error;
       return data;
@@ -148,7 +148,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
 
   // Helper function to get parameter value
   const getParameterValue = (parameterName: string): number => {
-    const parameter = parametersData.find(p => p.nome === parameterName);
+    const parameter = parametriCostiUnitari.find(p => p.parametro === parameterName);
     return parameter ? Number(parameter.valore) : 0;
   };
 
@@ -168,12 +168,12 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
   };
 
   const calculateGraphicsCost = (): number => {
-    const costoStampaGrafica = getParameterValue('Costo stampa grafica al metro quadro');
+    const costoStampaGrafica = getParameterValue('Costo Stampa Grafica');
     return physicalElements.superficie_stampa_espositori * costoStampaGrafica;
   };
 
   const calculatePreassemblyCost = (): number => {
-    const costoPremontaggio = getParameterValue('Costo Premontaggio al pezzo');
+    const costoPremontaggio = getParameterValue('Costo Premontaggio');
     return physicalElements.numero_pezzi_espositori * costoPremontaggio;
   };
 
@@ -209,7 +209,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
     premontaggio_espositori: calculatePreassemblyCost(),
     accessori_espositori: calculateAccessoriesTotal(),
     costo_totale_espositori: calculateTotalCost(),
-  }), [formData, physicalElements, accessoriesData, layoutCostsData, parametersData]);
+  }), [formData, physicalElements, accessoriesData, layoutCostsData, parametriCostiUnitari]);
 
   useEffect(() => {
     onCostsChange?.(expositoriCosts);

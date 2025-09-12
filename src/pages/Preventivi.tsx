@@ -296,6 +296,22 @@ const Preventivi = () => {
     enabled: !!user,
   });
 
+  // Query per recuperare i parametri a costi unitari
+  const { data: parametriCostiUnitari = [] } = useQuery({
+    queryKey: ['parametri-costi-unitari'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parametri_a_costi_unitari')
+        .select('*')
+        .eq('attivo', true)
+        .order('parametro');
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Query per recuperare i costi retroilluminazione
   const { data: costiRetroilluminazione = [] } = useQuery({
     queryKey: ['costi-retroilluminazione'],
@@ -438,21 +454,21 @@ const Preventivi = () => {
     const elements = physicalElements;
     
     // Trova i parametri necessari
-    const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
-    const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.altezza);
 
     // Struttura a terra: sviluppo lineare * costo per m/l in base all'altezza
     const struttura_terra = costoAltezzaParam ? 
       elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
 
-    // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
-    const grafica_cordino = costoStampaParam ? 
-      elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+      // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
+      const grafica_cordino = costoStampaParam ? 
+        elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
 
-    // Premontaggio: numero pezzi * costo premontaggio al pezzo
-    const premontaggio = costoPremontaggio ? 
-      elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+      // Premontaggio: numero pezzi * costo premontaggio al pezzo
+      const premontaggio = costoPremontaggio ? 
+        elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
     // Retroilluminazione: metri retroilluminazione * costo per m/l in base all'altezza
     const costoRetroilluminazioneParam = costiRetroilluminazione.find(c => c.altezza === parseFloat(formData.altezza));
@@ -486,7 +502,7 @@ const Preventivi = () => {
 
     // Calcolo costi desk
     const costoStampaDeskParam = parametri.find(p => p.tipo === 'costo_stampa');
-    const costoPremontaggerDesk = parametri.find(p => p.tipo === 'costo_premontaggio');
+    const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     
     // Costo struttura desk
     const deskLayoutsArray = Array.isArray(formData.desk_layouts)
@@ -643,8 +659,8 @@ const Preventivi = () => {
       const volume = superficie * altezza;
 
       // Calcolo dei costi usando i parametri
-      const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
-      const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
       const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === data.altezza);
 
       const struttura_terra = costoAltezzaParam ? 
@@ -852,8 +868,8 @@ const Preventivi = () => {
       const volume = superficie * altezza;
 
       // Calcolo dei costi usando i parametri
-      const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
-      const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
       const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === data.altezza);
 
       const struttura_terra = costoAltezzaParam ? 

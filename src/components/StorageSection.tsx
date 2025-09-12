@@ -1,4 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +30,23 @@ interface StorageSectionProps {
 }
 
 export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand, onCostsChange }: StorageSectionProps) {
+  const { user } = useAuth();
+
+  // Fetch parametri a costi unitari
+  const { data: parametriCostiUnitari = [] } = useQuery({
+    queryKey: ['parametri-costi-unitari'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parametri_a_costi_unitari')
+        .select('*')
+        .eq('attivo', true)
+        .order('parametro');
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
   // Calcolo degli elementi fisici per Storage
   const storageElements = useMemo(() => {
     if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione) {
@@ -96,8 +116,8 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
     const altezza = parseFloat(formData.alt_storage);
     
     // Trova i parametri necessari
-    const costoStampaParam = parametri.find(p => p.tipo === 'costo_stampa');
-    const costoPremontaggio = parametri.find(p => p.tipo === 'costo_premontaggio');
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
 
     // Trova il costo della porta dagli accessori stand
@@ -127,7 +147,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       costo_premontaggio_storage,
       costo_totale_storage
     };
-  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.numero_porte, storageElements, parametri, accessoriStand]);
+  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.numero_porte, storageElements, parametri, parametriCostiUnitari, accessoriStand]);
 
   useEffect(() => {
     onCostsChange?.(storageCosts);

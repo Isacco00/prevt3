@@ -89,6 +89,48 @@ export default function Admin() {
     enabled: !!user,
   });
 
+  // Fetch parametri a costi unitari
+  const { data: parametriCostiUnitari = [] } = useQuery({
+    queryKey: ['parametri-costi-unitari'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parametri_a_costi_unitari')
+        .select('*')
+        .eq('attivo', true)
+        .order('parametro');
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Update unit cost parameter mutation
+  const updateParametriCostiUnitariMutation = useMutation({
+    mutationFn: async ({ id, valore }: { id: string; valore: number }) => {
+      const { error } = await supabase
+        .from('parametri_a_costi_unitari')
+        .update({ valore })
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['parametri-costi-unitari'] });
+      toast({
+        title: "Parametro aggiornato",
+        description: "Il parametro è stato aggiornato con successo.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Errore",
+        description: "Errore nell'aggiornamento del parametro.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Fetch retroilluminazione costs
   const { data: costiRetroilluminazione = [] } = useQuery({
     queryKey: ['costi-retroilluminazione'],
@@ -720,8 +762,6 @@ export default function Admin() {
     setNewAccessorioEspositoriNome('');
     setNewAccessorioEspositoriCosto('');
   };
-  const costoStampa = parametri.filter(p => p.tipo === 'costo_stampa');
-  const costoPremontaggio = parametri.filter(p => p.tipo === 'costo_premontaggio');
   const profiliDistribuzione = parametri.filter(p => p.tipo === 'profili_distribuzione');
   const costoAltezza = parametri.filter(p => p.tipo === 'costo_altezza');
 
@@ -851,43 +891,83 @@ export default function Admin() {
         </TabsContent>
         
         <TabsContent value="parametri" className="space-y-6">
-          {/* Costo stampa grafica */}
+          {/* Parametri a costo unitario */}
           <Card>
             <CardHeader>
-              <CardTitle>Costo Stampa Grafica</CardTitle>
-              <CardDescription>Costo per la stampa grafica al metro quadro</CardDescription>
+              <CardTitle>Parametri a costo unitario</CardTitle>
+              <CardDescription>Personalizzare i parametri elencati</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Parametro</TableHead>
-                    <TableHead className="w-[200px]">Valore</TableHead>
+                    <TableHead className="w-[300px]">Parametro</TableHead>
+                    <TableHead className="w-[100px]">U.M.</TableHead>
+                    <TableHead className="w-[150px]">Valore</TableHead>
+                    <TableHead className="w-[100px]">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {costoStampa.map(parametro => renderParameterRow(parametro))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-
-          {/* Costo premontaggio */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Costo Premontaggio</CardTitle>
-              <CardDescription>Costo per il premontaggio al pezzo</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[250px]">Parametro</TableHead>
-                    <TableHead className="w-[200px]">Valore</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {costoPremontaggio.map(parametro => renderParameterRow(parametro))}
+                  {parametriCostiUnitari.map(parametro => (
+                    <TableRow key={parametro.id}>
+                      <TableCell className="font-medium">{parametro.parametro}</TableCell>
+                      <TableCell className="text-center">{parametro.unita_misura}</TableCell>
+                      <TableCell className="text-center">
+                        {editingParameter === parametro.id ? (
+                          <Input
+                            type="number"
+                            step="0.01"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            className="w-20"
+                          />
+                        ) : (
+                          <div className="text-center">€ {parametro.valore?.toFixed(2)}</div>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {editingParameter === parametro.id ? (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const value = parseFloat(editValue);
+                                if (!isNaN(value)) {
+                                  updateParametriCostiUnitariMutation.mutate({ id: parametro.id, valore: value });
+                                  setEditingParameter(null);
+                                  setEditValue('');
+                                }
+                              }}
+                            >
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setEditingParameter(null);
+                                setEditValue('');
+                              }}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setEditingParameter(parametro.id);
+                              setEditValue(parametro.valore?.toString() || '');
+                            }}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </CardContent>
