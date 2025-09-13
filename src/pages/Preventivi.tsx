@@ -11,6 +11,9 @@ import { StorageSection } from '@/components/StorageSection';
 import { DeskSection } from '@/components/DeskSection';
 import { ExpositoreSection } from '@/components/ExpositoreSection';
 import { ServicesSection } from '@/components/ServicesSection';
+import { Settings } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -1573,10 +1576,98 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
-                        <ServicesSection 
-                          formData={formData}
-                          setFormData={setFormData}
-                        />
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2">
+                            <Settings className="h-5 w-5" />
+                            <h4 className="text-md font-semibold">Dati di Ingresso per Servizi</h4>
+                          </div>
+                          
+                          <Card className="border-l-4 border-l-complement">
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-sm text-complement">Servizi Aggiuntivi</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="flex items-start space-x-3">
+                                  <Checkbox
+                                    id="servizio_montaggio_smontaggio"
+                                    checked={formData.servizio_montaggio_smontaggio}
+                                    onCheckedChange={(checked) => setFormData({
+                                      ...formData,
+                                      servizio_montaggio_smontaggio: checked as boolean
+                                    })}
+                                    className="mt-1"
+                                  />
+                                  <div className="grid gap-1.5 leading-none flex-1">
+                                    <Label 
+                                      htmlFor="servizio_montaggio_smontaggio"
+                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                    >
+                                      Montaggio/Smontaggio
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">
+                                      Servizio di montaggio e smontaggio della struttura
+                                    </p>
+                                    {formData.servizio_montaggio_smontaggio && (
+                                      <div className="mt-2">
+                                        <Link 
+                                          to={`/servizio-montaggio/${editingPreventivo?.id || 'new'}`}
+                                          className="inline-flex items-center px-3 py-2 text-xs font-medium text-primary bg-primary/10 rounded-md hover:bg-primary/20 transition-colors"
+                                        >
+                                          Configura
+                                        </Link>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-start space-x-3">
+                                  <Checkbox
+                                    id="servizio_certificazioni"
+                                    checked={formData.servizio_certificazioni}
+                                    onCheckedChange={(checked) => setFormData({
+                                      ...formData,
+                                      servizio_certificazioni: checked as boolean
+                                    })}
+                                    className="mt-1"
+                                  />
+                                  <div className="grid gap-1.5 leading-none">
+                                    <Label 
+                                      htmlFor="servizio_certificazioni"
+                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                    >
+                                      Certificazioni
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">
+                                      Documentazione e certificazioni necessarie
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="flex items-start space-x-3">
+                                  <Checkbox
+                                    id="servizio_istruzioni_assistenza"
+                                    checked={formData.servizio_istruzioni_assistenza}
+                                    onCheckedChange={(checked) => setFormData({
+                                      ...formData,
+                                      servizio_istruzioni_assistenza: checked as boolean
+                                    })}
+                                    className="mt-1"
+                                  />
+                                  <div className="grid gap-1.5 leading-none">
+                                    <Label 
+                                      htmlFor="servizio_istruzioni_assistenza"
+                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                    >
+                                      Istruzioni e assistenza
+                                    </Label>
+                                    <p className="text-xs text-muted-foreground">
+                                      Supporto tecnico e documentazione operativa
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </div>
                       </div>
                     </CollapsibleContent>
                   </div>

@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Prospects from "./pages/Prospects";
 import Preventivi from "./pages/Preventivi";
+import ServizioMontaggio from "./pages/ServizioMontaggio";
 import Admin from "./pages/Admin";
 import { Profile } from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
@@ -61,6 +62,13 @@ const App = () => (
               <ProtectedRoute>
                 <AppLayout>
                   <Preventivi />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/servizio-montaggio/:preventivo_id" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <ServizioMontaggio />
                 </AppLayout>
               </ProtectedRoute>
             } />

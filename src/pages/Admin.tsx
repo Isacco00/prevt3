@@ -36,6 +36,12 @@ export default function Admin() {
   const queryClient = useQueryClient();
   const [editingParameter, setEditingParameter] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<string>('');
+  const [editingParameterId, setEditingParameterId] = useState<string | null>(null);
+  const [editingParameterValue, setEditingParameterValue] = useState<string>('');
+  const [editingVoloId, setEditingVoloId] = useState<string | null>(null);
+  const [editingVoloValue, setEditingVoloValue] = useState<string>('');
+  const [editingExtraId, setEditingExtraId] = useState<string | null>(null);
+  const [editingExtraValue, setEditingExtraValue] = useState<string>('');
   const [editingRetroId, setEditingRetroId] = useState<string | null>(null);
   const [editRetroCost, setEditRetroCost] = useState<string>('');
   const [showAddRetro, setShowAddRetro] = useState(false);
