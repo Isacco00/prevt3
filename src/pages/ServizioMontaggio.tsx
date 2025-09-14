@@ -319,7 +319,7 @@ export default function ServizioMontaggio() {
                   <p className="text-xs text-right text-muted-foreground">Nr.</p>
                 </div>
                 <div>
-                  <Label htmlFor="ore_lavoro">Ore montaggio per persona</Label>
+                  <Label htmlFor="ore_lavoro">Ore montaggio in cantiere per persona</Label>
                   <Input
                     id="ore_lavoro"
                     type="number"
@@ -374,7 +374,7 @@ export default function ServizioMontaggio() {
               </div>
 
               <div>
-                <Label htmlFor="ore_viaggio">Ore viaggio trasferta montatori (treno/aereo, no camion)</Label>
+                <Label htmlFor="ore_viaggio">Ore viaggio montatori (treno/aereo)</Label>
                 <Input
                   id="ore_viaggio"
                   type="number"
