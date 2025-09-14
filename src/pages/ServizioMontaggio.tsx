@@ -150,7 +150,7 @@ export default function ServizioMontaggio() {
       return extra ? parseFloat(extra.costo_extra_mont.toString()) : 0;
     };
 
-    const costXkm = getParameterValue('Costo per km');
+    const costmontXkm = getParameterValue('Costo montatori xkm');
     const costoPasto = getParameterValue('Costo pasto');
     const costoAlloggio = getParameterValue('Costo alloggio');
     const costoKmTreno = getParameterValue('Costo treno al km');
@@ -159,7 +159,7 @@ export default function ServizioMontaggio() {
 
     // Calcoli
     const totCostOreMont = formData.personale_mont * formData.costo_orario_mont * formData.giorni_montaggio * formData.ore_lavoro_cantxper_mont;
-    const totCostKmMont = formData.km_AR_mont * costXkm;
+    const totCostKmMont = formData.km_AR_mont * costmontXkmXkm;
     const numVitti = 2 * formData.personale_mont * formData.giorni_montaggio;
     const numAlloggi = formData.giorni_montaggio === 1 ? 0 : (formData.giorni_montaggio - 1) * formData.personale_mont;
     const totCostVittAll = numVitti * costoPasto + numAlloggi * costoAlloggio;
@@ -451,18 +451,21 @@ export default function ServizioMontaggio() {
                   <span className="text-sm">Costo ore montatori</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostOreMont?.toFixed(2) || '0.00'}</span>
+                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo km montaggio</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostKmMont?.toFixed(2) || '0.00'}</span>
+                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Numero dei pasti previsti</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">{costs.numVitti || 0}</span>
+                    <p className="text-xs text-muted-foreground">Nr.</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
