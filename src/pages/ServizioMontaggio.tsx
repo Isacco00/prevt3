@@ -237,6 +237,8 @@ export default function ServizioMontaggio() {
         totale_costo_montaggio: data.costs.totaleCostoMontaggio,
         preventivo_montaggio: data.costs.preventivoMontaggio
       };
+      
+      // Save to preventivi_servizi table
       if (data.id) {
         const {
           error
@@ -248,6 +250,14 @@ export default function ServizioMontaggio() {
         } = await supabase.from('preventivi_servizi').insert(payload);
         if (error) throw error;
       }
+      
+      // Update the main preventivi table to mark service as selected
+      const { error: preventivoError } = await supabase
+        .from('preventivi')
+        .update({ servizio_montaggio_smontaggio: true })
+        .eq('id', data.preventivo_id);
+      
+      if (preventivoError) throw preventivoError;
     },
     onSuccess: () => {
       toast.success('Servizio montaggio salvato con successo');
