@@ -465,7 +465,6 @@ export default function ServizioMontaggio() {
                   <span className="text-sm">Numero dei pasti previsti</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">{costs.numVitti || 0}</span>
-                    <p className="text-xs text-muted-foreground">Nr.</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
