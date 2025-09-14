@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { ArrowLeft, Settings, Calculator } from 'lucide-react';
-
 interface ServizioData {
   id?: string;
   preventivo_id: string;
@@ -29,12 +28,14 @@ interface ServizioData {
   extra_km_trasp_tir_mont: number;
   ricarico_montaggio: number;
 }
-
 export default function ServizioMontaggio() {
-  const { preventivo_id } = useParams<{ preventivo_id: string }>();
+  const {
+    preventivo_id
+  } = useParams<{
+    preventivo_id: string;
+  }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
   const [formData, setFormData] = useState<ServizioData>({
     preventivo_id: preventivo_id || '',
     personale_mont: 0,
@@ -50,61 +51,68 @@ export default function ServizioMontaggio() {
     extra_costi_trasferta_mont: 'NO',
     extra_km_trasp_furg_mont: 0,
     extra_km_trasp_tir_mont: 0,
-    ricarico_montaggio: 30,
+    ricarico_montaggio: 30
   });
 
   // Fetch existing service data
-  const { data: servizioData } = useQuery({
+  const {
+    data: servizioData
+  } = useQuery({
     queryKey: ['preventivi_servizi', preventivo_id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('preventivi_servizi')
-        .select('*')
-        .eq('preventivo_id', preventivo_id)
-        .maybeSingle();
+      const {
+        data,
+        error
+      } = await supabase.from('preventivi_servizi').select('*').eq('preventivo_id', preventivo_id).maybeSingle();
       if (error) throw error;
       return data;
     },
-    enabled: !!preventivo_id,
+    enabled: !!preventivo_id
   });
 
   // Fetch parameters
-  const { data: parametri } = useQuery({
+  const {
+    data: parametri
+  } = useQuery({
     queryKey: ['parametri_a_costi_unitari'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('parametri_a_costi_unitari')
-        .select('*')
-        .eq('attivo', true);
+      const {
+        data,
+        error
+      } = await supabase.from('parametri_a_costi_unitari').select('*').eq('attivo', true);
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   // Fetch flight costs
-  const { data: costiVolo } = useQuery({
+  const {
+    data: costiVolo
+  } = useQuery({
     queryKey: ['costi_volo_ar'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('costi_volo_ar')
-        .select('*')
-        .eq('attivo', true);
+      const {
+        data,
+        error
+      } = await supabase.from('costi_volo_ar').select('*').eq('attivo', true);
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   // Fetch extra costs
-  const { data: costiExtra } = useQuery({
+  const {
+    data: costiExtra
+  } = useQuery({
     queryKey: ['costi_extra_trasf_mont'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('costi_extra_trasf_mont')
-        .select('*')
-        .eq('attivo', true);
+      const {
+        data,
+        error
+      } = await supabase.from('costi_extra_trasf_mont').select('*').eq('attivo', true);
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   // Load existing data
@@ -126,7 +134,7 @@ export default function ServizioMontaggio() {
         extra_costi_trasferta_mont: servizioData.extra_costi_trasferta_mont || 'NO',
         extra_km_trasp_furg_mont: servizioData.extra_km_trasp_furg_mont || 0,
         extra_km_trasp_tir_mont: servizioData.extra_km_trasp_tir_mont || 0,
-        ricarico_montaggio: servizioData.ricarico_montaggio || 30,
+        ricarico_montaggio: servizioData.ricarico_montaggio || 30
       });
     }
   }, [servizioData]);
@@ -134,22 +142,18 @@ export default function ServizioMontaggio() {
   // Calculate costs
   const calculateCosts = () => {
     if (!parametri || !costiVolo || !costiExtra) return {};
-
     const getParameterValue = (name: string) => {
       const param = parametri.find(p => p.parametro === name);
       return param ? parseFloat(param.valore.toString()) : 0;
     };
-
     const getFlightCost = (type: string) => {
       const flight = costiVolo.find(v => v.tipologia === type);
       return flight ? parseFloat(flight.costo_volo_ar.toString()) : 0;
     };
-
     const getExtraCost = (level: string) => {
       const extra = costiExtra.find(e => e.livello === level);
       return extra ? parseFloat(extra.costo_extra_mont.toString()) : 0;
     };
-
     const costMontXkm = getParameterValue('Costo montatori xkm');
     const costoPasto = getParameterValue('Costo pasto');
     const costoAlloggio = getParameterValue('Costo alloggio');
@@ -158,7 +162,6 @@ export default function ServizioMontaggio() {
     const costoFissoConsegna = getParameterValue('Costo fisso consegna');
     const costoFurgXKm = getParameterValue('Costo furgone al km');
     const costoTirXKm = getParameterValue('Costo TIR al km');
-
 
     // Calcoli
     const totCostOreMont = formData.personale_mont * formData.costo_orario_mont * formData.giorni_montaggio * formData.ore_lavoro_cantxper_mont;
@@ -174,10 +177,8 @@ export default function ServizioMontaggio() {
     const totCostiExtraKmTraspFurgMont = formData.extra_km_trasp_furg_mont * costoFurgXKm;
     const totCostiExtraKmTraspTirMont = formData.extra_km_trasp_tir_mont * costoTirXKm;
     const totCostiConsegnaCantiere = formData.conseg_cant ? costoFissoConsegna : 0;
-
     const totaleCostoMontaggio = totCostOreMont + totCostKmMont + totCostVittAll + totCostoVoloAR + totCostoTreno + totCostoTrasfPers + totCostiAuto + totCostiExtraTrasfMont + totCostiExtraKmTraspFurgMont + totCostiExtraKmTraspTirMont + totCostiConsegnaCantiere;
     const preventivoMontaggio = totaleCostoMontaggio * (1 + formData.ricarico_montaggio / 100);
-
     return {
       totCostOreMont,
       totCostKmMont,
@@ -193,15 +194,16 @@ export default function ServizioMontaggio() {
       totCostiExtraKmTraspTirMont,
       totCostiConsegnaCantiere,
       totaleCostoMontaggio,
-      preventivoMontaggio,
+      preventivoMontaggio
     };
   };
-
   const costs = calculateCosts();
 
   // Save mutation
   const saveMutation = useMutation({
-    mutationFn: async (data: ServizioData & { costs: any }) => {
+    mutationFn: async (data: ServizioData & {
+      costs: any;
+    }) => {
       const payload = {
         preventivo_id: data.preventivo_id,
         montaggio_smontaggio: true,
@@ -233,38 +235,38 @@ export default function ServizioMontaggio() {
         tot_costi_extra_km_trasp_tir_mont: data.costs.totCostiExtraKmTraspTirMont,
         tot_costi_consegna_cantiere: data.costs.totCostiConsegnaCantiere,
         totale_costo_montaggio: data.costs.totaleCostoMontaggio,
-        preventivo_montaggio: data.costs.preventivoMontaggio,
+        preventivo_montaggio: data.costs.preventivoMontaggio
       };
-
       if (data.id) {
-        const { error } = await supabase
-          .from('preventivi_servizi')
-          .update(payload)
-          .eq('id', data.id);
+        const {
+          error
+        } = await supabase.from('preventivi_servizi').update(payload).eq('id', data.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('preventivi_servizi')
-          .insert(payload);
+        const {
+          error
+        } = await supabase.from('preventivi_servizi').insert(payload);
         if (error) throw error;
       }
     },
     onSuccess: () => {
       toast.success('Servizio montaggio salvato con successo');
-      queryClient.invalidateQueries({ queryKey: ['preventivi_servizi'] });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi_servizi']
+      });
       navigate('/preventivi');
     },
-    onError: (error) => {
+    onError: error => {
       toast.error('Errore nel salvataggio: ' + error.message);
-    },
+    }
   });
-
   const handleSave = () => {
-    saveMutation.mutate({ ...formData, costs });
+    saveMutation.mutate({
+      ...formData,
+      costs
+    });
   };
-
-  return (
-    <div className="min-h-screen bg-background p-6">
+  return <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" onClick={() => navigate('/preventivi')}>
@@ -290,72 +292,63 @@ export default function ServizioMontaggio() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="personale">Personale</Label>
-                  <Input
-                    id="personale"
-                    type="number"
-                    value={formData.personale_mont}
-                    onChange={(e) => setFormData({ ...formData, personale_mont: parseInt(e.target.value) || 0 })}
-                  />
-                  <p className="text-xs text-right text-muted-foreground">Nr.</p>
+                  <Input id="personale" type="number" value={formData.personale_mont} onChange={e => setFormData({
+                  ...formData,
+                  personale_mont: parseInt(e.target.value) || 0
+                })} />
+                  
                 </div>
                 <div>
                   <Label htmlFor="costo_orario">Costo orario personale</Label>
-                  <Input
-                    id="costo_orario"
-                    type="number"
-                    value={formData.costo_orario_mont}
-                    onChange={(e) => setFormData({ ...formData, costo_orario_mont: parseFloat(e.target.value) || 0 })}
-                  />
-                  <p className="text-xs text-right text-muted-foreground">€</p>
+                  <Input id="costo_orario" type="number" value={formData.costo_orario_mont} onChange={e => setFormData({
+                  ...formData,
+                  costo_orario_mont: parseFloat(e.target.value) || 0
+                })} />
+                  
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="giorni">Giorni per il montaggio + viaggio</Label>
-                  <Input
-                    id="giorni"
-                    type="number"
-                    value={formData.giorni_montaggio}
-                    onChange={(e) => setFormData({ ...formData, giorni_montaggio: parseInt(e.target.value) || 0 })}
-                  />
-                  <p className="text-xs text-right text-muted-foreground">Nr.</p>
+                  <Input id="giorni" type="number" value={formData.giorni_montaggio} onChange={e => setFormData({
+                  ...formData,
+                  giorni_montaggio: parseInt(e.target.value) || 0
+                })} />
+                  
                 </div>
                 <div>
                   <Label htmlFor="ore_lavoro">Ore montaggio in cantiere per persona</Label>
-                  <Input
-                    id="ore_lavoro"
-                    type="number"
-                    value={formData.ore_lavoro_cantxper_mont}
-                    onChange={(e) => setFormData({ ...formData, ore_lavoro_cantxper_mont: parseFloat(e.target.value) || 0 })}
-                  />
-                  <p className="text-xs text-right text-muted-foreground">h</p>
+                  <Input id="ore_lavoro" type="number" value={formData.ore_lavoro_cantxper_mont} onChange={e => setFormData({
+                  ...formData,
+                  ore_lavoro_cantxper_mont: parseFloat(e.target.value) || 0
+                })} />
+                  
                 </div>
               </div>
 
               <div className="flex items-center justify-between py-2">
                 <Label htmlFor="km_ar" className="text-left">Km Viaggio montaggio A+R</Label>
-                <Input
-                  id="km_ar"
-                  type="number"
-                  value={formData.km_AR_mont}
-                  onChange={(e) => setFormData({ ...formData, km_AR_mont: parseFloat(e.target.value) || 0 })}
-                  className="w-32 text-right"
-                />
+                <Input id="km_ar" type="number" value={formData.km_AR_mont} onChange={e => setFormData({
+                ...formData,
+                km_AR_mont: parseFloat(e.target.value) || 0
+              })} className="w-32 text-right" />
               </div>
 
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="consegna"
-                  checked={formData.conseg_cant}
-                  onCheckedChange={(checked) => setFormData({ ...formData, conseg_cant: checked as boolean })}
-                />
+                <Checkbox id="consegna" checked={formData.conseg_cant} onCheckedChange={checked => setFormData({
+                ...formData,
+                conseg_cant: checked as boolean
+              })} />
                 <Label htmlFor="consegna">Consegna cantiere (SI/NO)</Label>
               </div>
 
               <div className="flex items-center justify-between py-2">
                 <Label htmlFor="volo" className="text-left">Volo</Label>
-                <Select value={formData.volo_mont} onValueChange={(value) => setFormData({ ...formData, volo_mont: value })}>
+                <Select value={formData.volo_mont} onValueChange={value => setFormData({
+                ...formData,
+                volo_mont: value
+              })}>
                   <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
@@ -369,37 +362,35 @@ export default function ServizioMontaggio() {
               </div>
 
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="treno"
-                  checked={formData.treno_mont}
-                  onCheckedChange={(checked) => setFormData({ ...formData, treno_mont: checked as boolean })}
-                />
+                <Checkbox id="treno" checked={formData.treno_mont} onCheckedChange={checked => setFormData({
+                ...formData,
+                treno_mont: checked as boolean
+              })} />
                 <Label htmlFor="treno">Treno</Label>
               </div>
 
               <div className="flex items-center justify-between py-2">
                 <Label htmlFor="ore_viaggio" className="text-left">Ore viaggio trasferta montatori (treno/aereo, no camion)</Label>
-                <Input
-                  id="ore_viaggio"
-                  type="number"
-                  value={formData.ore_viaggio_trasferta_mont}
-                  onChange={(e) => setFormData({ ...formData, ore_viaggio_trasferta_mont: parseFloat(e.target.value) || 0 })}
-                  className="w-32 text-right"
-                />
+                <Input id="ore_viaggio" type="number" value={formData.ore_viaggio_trasferta_mont} onChange={e => setFormData({
+                ...formData,
+                ore_viaggio_trasferta_mont: parseFloat(e.target.value) || 0
+              })} className="w-32 text-right" />
               </div>
 
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="auto_com"
-                  checked={formData.viaggio_auto_com_mont}
-                  onCheckedChange={(checked) => setFormData({ ...formData, viaggio_auto_com_mont: checked as boolean })}
-                />
+                <Checkbox id="auto_com" checked={formData.viaggio_auto_com_mont} onCheckedChange={checked => setFormData({
+                ...formData,
+                viaggio_auto_com_mont: checked as boolean
+              })} />
                 <Label htmlFor="auto_com">Viaggio Auto commerciale</Label>
               </div>
 
               <div className="flex items-center justify-between py-2">
                 <Label htmlFor="extra_costi" className="text-left">Extra (park,metro, taxi, materiali di consumo)</Label>
-                <Select value={formData.extra_costi_trasferta_mont} onValueChange={(value) => setFormData({ ...formData, extra_costi_trasferta_mont: value })}>
+                <Select value={formData.extra_costi_trasferta_mont} onValueChange={value => setFormData({
+                ...formData,
+                extra_costi_trasferta_mont: value
+              })}>
                   <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
@@ -415,23 +406,19 @@ export default function ServizioMontaggio() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="extra_furg">Km. extra Trasporto Furgone &lt; 35 q.li</Label>
-                  <Input
-                    id="extra_furg"
-                    type="number"
-                    value={formData.extra_km_trasp_furg_mont}
-                    onChange={(e) => setFormData({ ...formData, extra_km_trasp_furg_mont: parseFloat(e.target.value) || 0 })}
-                  />
-                  <p className="text-xs text-right text-muted-foreground">€</p>
+                  <Input id="extra_furg" type="number" value={formData.extra_km_trasp_furg_mont} onChange={e => setFormData({
+                  ...formData,
+                  extra_km_trasp_furg_mont: parseFloat(e.target.value) || 0
+                })} />
+                  
                 </div>
                 <div>
                   <Label htmlFor="extra_tir">Km. extra trasporto camion &gt; 35 q.li</Label>
-                  <Input
-                    id="extra_tir"
-                    type="number"
-                    value={formData.extra_km_trasp_tir_mont}
-                    onChange={(e) => setFormData({ ...formData, extra_km_trasp_tir_mont: parseFloat(e.target.value) || 0 })}
-                  />
-                  <p className="text-xs text-right text-muted-foreground">€</p>
+                  <Input id="extra_tir" type="number" value={formData.extra_km_trasp_tir_mont} onChange={e => setFormData({
+                  ...formData,
+                  extra_km_trasp_tir_mont: parseFloat(e.target.value) || 0
+                })} />
+                  
                 </div>
               </div>
             </CardContent>
@@ -454,21 +441,21 @@ export default function ServizioMontaggio() {
                   <span className="text-sm">Costo ore montatori</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostOreMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
+                    
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo km montaggio</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostKmMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
+                    
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Numero dei pasti previsti</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">{costs.numVitti || 0}</span>
-                    <p className="text-xs text-muted-foreground">Nr.</p>
+                    
                   </div>
                 </div>
                 <div className="flex justify-between">
@@ -542,13 +529,10 @@ export default function ServizioMontaggio() {
                 <div className="flex justify-between items-center">
                   <Label htmlFor="ricarico">Ricarico</Label>
                   <div className="flex items-center gap-2">
-                    <Input
-                      id="ricarico"
-                      type="number"
-                      value={formData.ricarico_montaggio}
-                      onChange={(e) => setFormData({ ...formData, ricarico_montaggio: parseFloat(e.target.value) || 0 })}
-                      className="w-20 text-right"
-                    />
+                    <Input id="ricarico" type="number" value={formData.ricarico_montaggio} onChange={e => setFormData({
+                    ...formData,
+                    ricarico_montaggio: parseFloat(e.target.value) || 0
+                  })} className="w-20 text-right" />
                     <span>%</span>
                   </div>
                 </div>
@@ -570,6 +554,5 @@ export default function ServizioMontaggio() {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
