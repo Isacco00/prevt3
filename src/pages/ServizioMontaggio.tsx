@@ -319,7 +319,7 @@ export default function ServizioMontaggio() {
                   <p className="text-xs text-right text-muted-foreground">Nr.</p>
                 </div>
                 <div>
-                  <Label htmlFor="ore_lavoro">Ore lavoro montaggio in cantiere per persona</Label>
+                  <Label htmlFor="ore_lavoro">Ore montaggio in cantiere per persona</Label>
                   <Input
                     id="ore_lavoro"
                     type="number"
