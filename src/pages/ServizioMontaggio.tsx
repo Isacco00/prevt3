@@ -150,16 +150,19 @@ export default function ServizioMontaggio() {
       return extra ? parseFloat(extra.costo_extra_mont.toString()) : 0;
     };
 
-    const costXkm = getParameterValue('Costo montatori xkm');
+    const costMontXkm = getParameterValue('Costo montatori xkm');
     const costoPasto = getParameterValue('Costo pasto');
     const costoAlloggio = getParameterValue('Costo alloggio');
     const costoKmTreno = getParameterValue('Costo treno al km');
     const costoKmAuto = getParameterValue('Costo auto al km');
     const costoFissoConsegna = getParameterValue('Costo fisso consegna');
+    const costoFurgXKm = getParameterValue('Costo furgone al km');
+    const costoTirXKm = getParameterValue('Costo TIR al km');
+
 
     // Calcoli
     const totCostOreMont = formData.personale_mont * formData.costo_orario_mont * formData.giorni_montaggio * formData.ore_lavoro_cantxper_mont;
-    const totCostKmMont = formData.km_AR_mont * costXkm;
+    const totCostKmMont = formData.km_AR_mont * costMontXkm;
     const numVitti = 2 * formData.personale_mont * formData.giorni_montaggio;
     const numAlloggi = formData.giorni_montaggio === 1 ? 0 : (formData.giorni_montaggio - 1) * formData.personale_mont;
     const totCostVittAll = numVitti * costoPasto + numAlloggi * costoAlloggio;
@@ -168,8 +171,8 @@ export default function ServizioMontaggio() {
     const totCostoTrasfPers = formData.personale_mont * formData.ore_viaggio_trasferta_mont * formData.costo_orario_mont;
     const totCostiAuto = formData.viaggio_auto_com_mont ? formData.km_AR_mont * costoKmAuto : 0;
     const totCostiExtraTrasfMont = formData.extra_costi_trasferta_mont !== 'NO' ? getExtraCost(formData.extra_costi_trasferta_mont) * formData.giorni_montaggio * formData.personale_mont : 0;
-    const totCostiExtraKmTraspFurgMont = formData.extra_km_trasp_furg_mont;
-    const totCostiExtraKmTraspTirMont = formData.extra_km_trasp_tir_mont;
+    const totCostiExtraKmTraspFurgMont = formData.extra_km_trasp_furg_mont * costoFurgXKm;
+    const totCostiExtraKmTraspTirMont = formData.extra_km_trasp_tir_mont * costoTirXKm;
     const totCostiConsegnaCantiere = formData.conseg_cant ? costoFissoConsegna : 0;
 
     const totaleCostoMontaggio = totCostOreMont + totCostKmMont + totCostVittAll + totCostoVoloAR + totCostoTreno + totCostoTrasfPers + totCostiAuto + totCostiExtraTrasfMont + totCostiExtraKmTraspFurgMont + totCostiExtraKmTraspTirMont + totCostiConsegnaCantiere;
