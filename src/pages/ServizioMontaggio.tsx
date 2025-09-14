@@ -159,7 +159,7 @@ export default function ServizioMontaggio() {
 
     // Calcoli
     const totCostOreMont = formData.personale_mont * formData.costo_orario_mont * formData.giorni_montaggio * formData.ore_lavoro_cantxper_mont;
-    const totCostKmMont = formData.km_AR_mont * costmontXkmXkm;
+    const totCostKmMont = formData.km_AR_mont * costmontXkm;
     const numVitti = 2 * formData.personale_mont * formData.giorni_montaggio;
     const numAlloggi = formData.giorni_montaggio === 1 ? 0 : (formData.giorni_montaggio - 1) * formData.personale_mont;
     const totCostVittAll = numVitti * costoPasto + numAlloggi * costoAlloggio;
