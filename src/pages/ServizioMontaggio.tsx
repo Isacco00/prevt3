@@ -150,7 +150,7 @@ export default function ServizioMontaggio() {
       return extra ? parseFloat(extra.costo_extra_mont.toString()) : 0;
     };
 
-    const costXkm = getParameterValue('Costo per km');
+    const costXkm = getParameterValue('costo montatori xkm');
     const costoPasto = getParameterValue('Costo pasto');
     const costoAlloggio = getParameterValue('Costo alloggio');
     const costoKmTreno = getParameterValue('Costo treno al km');
