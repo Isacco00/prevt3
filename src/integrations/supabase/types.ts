@@ -567,115 +567,193 @@ export type Database = {
           certificazioni: boolean | null
           conseg_cant: boolean | null
           costo_orario_mont: number | null
+          costo_orario_smon: number | null
           created_at: string
           extra_costi_trasferta_mont: string | null
+          extra_costi_trasferta_smon: string | null
           extra_km_trasp_furg_mont: number | null
+          extra_km_trasp_furg_smon: number | null
           extra_km_trasp_tir_mont: number | null
+          extra_km_trasp_tir_smon: number | null
           giorni_montaggio: number | null
+          giorni_smontaggio_viaggio: number | null
           id: string
           istruzioni_assistenza: boolean | null
           km_ar_mont: number | null
+          km_ar_smon: number | null
           montaggio_smontaggio: boolean | null
           num_alloggi: number | null
+          num_alloggi_smon: number | null
           num_vitti: number | null
+          num_vitti_smon: number | null
           ore_lavoro_cantxper_mont: number | null
+          ore_lavoro_cantxper_smon: number | null
           ore_viaggio_trasferta_mont: number | null
+          ore_viaggio_trasferta_smon: number | null
           personale_mont: number | null
+          personale_smon: number | null
           preventivo_id: string
           preventivo_montaggio: number | null
+          preventivo_smontaggio: number | null
           ricarico_montaggio: number | null
           tot_cost_km_mont: number | null
+          tot_cost_km_smon: number | null
           tot_cost_ore_mont: number | null
+          tot_cost_ore_smon: number | null
           tot_cost_vittall: number | null
+          tot_cost_vittall_smon: number | null
           tot_costi_auto: number | null
+          tot_costi_auto_smon: number | null
           tot_costi_consegna_cantiere: number | null
           tot_costi_extra_km_trasp_furg_mont: number | null
+          tot_costi_extra_km_trasp_furg_smon: number | null
           tot_costi_extra_km_trasp_tir_mont: number | null
+          tot_costi_extra_km_trasp_tir_smon: number | null
           tot_costi_extra_trasf_mont: number | null
+          tot_costi_extra_trasf_smon: number | null
           tot_costo_trasf_pers: number | null
+          tot_costo_trasf_pers_smon: number | null
           tot_costo_treno: number | null
+          tot_costo_treno_smon: number | null
           tot_costo_volo_ar: number | null
+          tot_costo_volo_ar_smon: number | null
           totale_costo_montaggio: number | null
+          totale_costo_smontaggio: number | null
           treno_mont: boolean | null
+          treno_smon: boolean | null
           updated_at: string
           viaggio_auto_com_mont: boolean | null
+          viaggio_auto_com_smon: boolean | null
           volo_mont: string | null
+          volo_smon: string | null
         }
         Insert: {
           certificazioni?: boolean | null
           conseg_cant?: boolean | null
           costo_orario_mont?: number | null
+          costo_orario_smon?: number | null
           created_at?: string
           extra_costi_trasferta_mont?: string | null
+          extra_costi_trasferta_smon?: string | null
           extra_km_trasp_furg_mont?: number | null
+          extra_km_trasp_furg_smon?: number | null
           extra_km_trasp_tir_mont?: number | null
+          extra_km_trasp_tir_smon?: number | null
           giorni_montaggio?: number | null
+          giorni_smontaggio_viaggio?: number | null
           id?: string
           istruzioni_assistenza?: boolean | null
           km_ar_mont?: number | null
+          km_ar_smon?: number | null
           montaggio_smontaggio?: boolean | null
           num_alloggi?: number | null
+          num_alloggi_smon?: number | null
           num_vitti?: number | null
+          num_vitti_smon?: number | null
           ore_lavoro_cantxper_mont?: number | null
+          ore_lavoro_cantxper_smon?: number | null
           ore_viaggio_trasferta_mont?: number | null
+          ore_viaggio_trasferta_smon?: number | null
           personale_mont?: number | null
+          personale_smon?: number | null
           preventivo_id: string
           preventivo_montaggio?: number | null
+          preventivo_smontaggio?: number | null
           ricarico_montaggio?: number | null
           tot_cost_km_mont?: number | null
+          tot_cost_km_smon?: number | null
           tot_cost_ore_mont?: number | null
+          tot_cost_ore_smon?: number | null
           tot_cost_vittall?: number | null
+          tot_cost_vittall_smon?: number | null
           tot_costi_auto?: number | null
+          tot_costi_auto_smon?: number | null
           tot_costi_consegna_cantiere?: number | null
           tot_costi_extra_km_trasp_furg_mont?: number | null
+          tot_costi_extra_km_trasp_furg_smon?: number | null
           tot_costi_extra_km_trasp_tir_mont?: number | null
+          tot_costi_extra_km_trasp_tir_smon?: number | null
           tot_costi_extra_trasf_mont?: number | null
+          tot_costi_extra_trasf_smon?: number | null
           tot_costo_trasf_pers?: number | null
+          tot_costo_trasf_pers_smon?: number | null
           tot_costo_treno?: number | null
+          tot_costo_treno_smon?: number | null
           tot_costo_volo_ar?: number | null
+          tot_costo_volo_ar_smon?: number | null
           totale_costo_montaggio?: number | null
+          totale_costo_smontaggio?: number | null
           treno_mont?: boolean | null
+          treno_smon?: boolean | null
           updated_at?: string
           viaggio_auto_com_mont?: boolean | null
+          viaggio_auto_com_smon?: boolean | null
           volo_mont?: string | null
+          volo_smon?: string | null
         }
         Update: {
           certificazioni?: boolean | null
           conseg_cant?: boolean | null
           costo_orario_mont?: number | null
+          costo_orario_smon?: number | null
           created_at?: string
           extra_costi_trasferta_mont?: string | null
+          extra_costi_trasferta_smon?: string | null
           extra_km_trasp_furg_mont?: number | null
+          extra_km_trasp_furg_smon?: number | null
           extra_km_trasp_tir_mont?: number | null
+          extra_km_trasp_tir_smon?: number | null
           giorni_montaggio?: number | null
+          giorni_smontaggio_viaggio?: number | null
           id?: string
           istruzioni_assistenza?: boolean | null
           km_ar_mont?: number | null
+          km_ar_smon?: number | null
           montaggio_smontaggio?: boolean | null
           num_alloggi?: number | null
+          num_alloggi_smon?: number | null
           num_vitti?: number | null
+          num_vitti_smon?: number | null
           ore_lavoro_cantxper_mont?: number | null
+          ore_lavoro_cantxper_smon?: number | null
           ore_viaggio_trasferta_mont?: number | null
+          ore_viaggio_trasferta_smon?: number | null
           personale_mont?: number | null
+          personale_smon?: number | null
           preventivo_id?: string
           preventivo_montaggio?: number | null
+          preventivo_smontaggio?: number | null
           ricarico_montaggio?: number | null
           tot_cost_km_mont?: number | null
+          tot_cost_km_smon?: number | null
           tot_cost_ore_mont?: number | null
+          tot_cost_ore_smon?: number | null
           tot_cost_vittall?: number | null
+          tot_cost_vittall_smon?: number | null
           tot_costi_auto?: number | null
+          tot_costi_auto_smon?: number | null
           tot_costi_consegna_cantiere?: number | null
           tot_costi_extra_km_trasp_furg_mont?: number | null
+          tot_costi_extra_km_trasp_furg_smon?: number | null
           tot_costi_extra_km_trasp_tir_mont?: number | null
+          tot_costi_extra_km_trasp_tir_smon?: number | null
           tot_costi_extra_trasf_mont?: number | null
+          tot_costi_extra_trasf_smon?: number | null
           tot_costo_trasf_pers?: number | null
+          tot_costo_trasf_pers_smon?: number | null
           tot_costo_treno?: number | null
+          tot_costo_treno_smon?: number | null
           tot_costo_volo_ar?: number | null
+          tot_costo_volo_ar_smon?: number | null
           totale_costo_montaggio?: number | null
+          totale_costo_smontaggio?: number | null
           treno_mont?: boolean | null
+          treno_smon?: boolean | null
           updated_at?: string
           viaggio_auto_com_mont?: boolean | null
+          viaggio_auto_com_smon?: boolean | null
           volo_mont?: string | null
+          volo_smon?: string | null
         }
         Relationships: []
       }
