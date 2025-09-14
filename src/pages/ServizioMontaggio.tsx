@@ -420,7 +420,7 @@ export default function ServizioMontaggio() {
       queryClient.invalidateQueries({
         queryKey: ['preventivi_servizi'],
       });
-      navigate(`/preventivi/${preventivo_id}/edit`);
+      navigate(`/preventivi/${preventivo_id}/edit#servizi`);
     },
     onError: (error) => {
       toast.error('Errore nel salvataggio: ' + error.message);
@@ -439,13 +439,19 @@ export default function ServizioMontaggio() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" onClick={() => navigate(`/preventivi/${preventivo_id}/edit`)}>
+          <Button variant="ghost" onClick={() => navigate(`/preventivi/${preventivo_id}/edit#servizi`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             ← Torna al preventivo {preventivoInfo?.numero_preventivo}
           </Button>
+          
+          {/* Project info in top right */}
           <div className="text-right">
-            <h2 className="text-sm text-muted-foreground">Preventivo N. {preventivoInfo?.numero_preventivo}</h2>
-            <p className="font-medium">{(preventivoInfo?.prospects as any)?.ragione_sociale || preventivoInfo?.titolo}</p>
+            <div className="text-sm text-muted-foreground">
+              {preventivoInfo?.titolo}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {(preventivoInfo?.prospects as any)?.ragione_sociale}
+            </div>
           </div>
         </div>
 
@@ -1109,20 +1115,29 @@ export default function ServizioMontaggio() {
           </Card>
         </div>
 
-        {/* TOTAL COMBINED */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-center text-2xl">Totale preventivo montaggio/smontaggio</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <div className="text-4xl font-bold text-primary">{costs.totaleCombinato?.toFixed(2) || '0.00'}€</div>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-center">
-          <Button onClick={handleSave} disabled={saveMutation.isPending} size="lg">
-            {saveMutation.isPending ? 'Salvataggio...' : 'Salva Configurazione'}
-          </Button>
+        {/* Footer with total and buttons on same line */}
+        <div className="flex items-center justify-between bg-muted/30 p-6 rounded-lg">
+          <div className="flex-1">
+            <div className="text-lg font-medium">Totale preventivo montaggio/smontaggio</div>
+            <div className="text-3xl font-bold text-primary">{costs.totaleCombinato?.toFixed(2) || '0.00'}€</div>
+          </div>
+          
+          <div className="flex gap-4">
+            <Button 
+              variant="outline" 
+              size="lg" 
+              onClick={() => navigate(`/preventivi/${preventivo_id}/edit#servizi`)}
+            >
+              Annulla
+            </Button>
+            <Button 
+              onClick={handleSave} 
+              disabled={saveMutation.isPending} 
+              size="lg"
+            >
+              {saveMutation.isPending ? 'Salvataggio...' : 'Salva Configurazione'}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
