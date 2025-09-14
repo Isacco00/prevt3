@@ -374,7 +374,7 @@ export default function ServizioMontaggio() {
               </div>
 
               <div>
-                <Label htmlFor="ore_viaggio">Ore viaggio montatori (treno/aereo)</Label>
+                <Label htmlFor="ore_viaggio">Ore viaggio trasferta montatori (treno/aereo, no camion)</Label>
                 <Input
                   id="ore_viaggio"
                   type="number"
@@ -393,7 +393,7 @@ export default function ServizioMontaggio() {
               </div>
 
               <div>
-                <Label htmlFor="extra_costi">Extra (park,metro, taxi, materiali di consumo)</Label>
+                <Label htmlFor="extra_costi">Extra (Park, metro, taxi, ...)</Label>
                 <Select value={formData.extra_costi_trasferta_mont} onValueChange={(value) => setFormData({ ...formData, extra_costi_trasferta_mont: value })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -509,7 +509,7 @@ export default function ServizioMontaggio() {
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm">Costi extra (park,metro, taxi, materiali di consumo)</span>
+                  <span className="text-sm">Costi extra (Park, metro, taxi, ...)</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiExtraTrasfMont?.toFixed(2) || '0.00'}</span>
                     <p className="text-xs text-muted-foreground">€</p>
