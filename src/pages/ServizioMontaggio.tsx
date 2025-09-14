@@ -451,14 +451,12 @@ export default function ServizioMontaggio() {
                   <span className="text-sm">Costo ore montatori</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostOreMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo km montaggio</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostKmMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
