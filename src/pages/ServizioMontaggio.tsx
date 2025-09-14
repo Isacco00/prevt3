@@ -330,13 +330,14 @@ export default function ServizioMontaggio() {
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="km_ar">Km Viaggio montaggio A+R</Label>
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor="km_ar" className="text-left">Km Viaggio montaggio A+R</Label>
                 <Input
                   id="km_ar"
                   type="number"
                   value={formData.km_AR_mont}
                   onChange={(e) => setFormData({ ...formData, km_AR_mont: parseFloat(e.target.value) || 0 })}
+                  className="w-32 text-right"
                 />
               </div>
 
@@ -349,10 +350,10 @@ export default function ServizioMontaggio() {
                 <Label htmlFor="consegna">Consegna cantiere (SI/NO)</Label>
               </div>
 
-              <div>
-                <Label htmlFor="volo">Volo</Label>
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor="volo" className="text-left">Volo</Label>
                 <Select value={formData.volo_mont} onValueChange={(value) => setFormData({ ...formData, volo_mont: value })}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -373,13 +374,14 @@ export default function ServizioMontaggio() {
                 <Label htmlFor="treno">Treno</Label>
               </div>
 
-              <div>
-                <Label htmlFor="ore_viaggio">Ore viaggio trasferta montatori (treno/aereo, no camion)</Label>
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor="ore_viaggio" className="text-left">Ore viaggio trasferta montatori (treno/aereo, no camion)</Label>
                 <Input
                   id="ore_viaggio"
                   type="number"
                   value={formData.ore_viaggio_trasferta_mont}
                   onChange={(e) => setFormData({ ...formData, ore_viaggio_trasferta_mont: parseFloat(e.target.value) || 0 })}
+                  className="w-32 text-right"
                 />
               </div>
 
@@ -392,10 +394,10 @@ export default function ServizioMontaggio() {
                 <Label htmlFor="auto_com">Viaggio Auto commerciale</Label>
               </div>
 
-              <div>
-                <Label htmlFor="extra_costi">Extra (Park, metro, taxi, ...)</Label>
+              <div className="flex items-center justify-between py-2">
+                <Label htmlFor="extra_costi" className="text-left">Extra (park,metro, taxi, materiali di consumo)</Label>
                 <Select value={formData.extra_costi_trasferta_mont} onValueChange={(value) => setFormData({ ...formData, extra_costi_trasferta_mont: value })}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-32">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
