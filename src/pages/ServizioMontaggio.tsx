@@ -150,14 +150,12 @@ export default function ServizioMontaggio() {
       return extra ? parseFloat(extra.costo_extra_mont.toString()) : 0;
     };
 
-    const costXkm = getParameterValue('Costo montatori xkm');
+    const costXkm = getParameterValue('Costo per km');
     const costoPasto = getParameterValue('Costo pasto');
     const costoAlloggio = getParameterValue('Costo alloggio');
     const costoKmTreno = getParameterValue('Costo treno al km');
     const costoKmAuto = getParameterValue('Costo auto al km');
     const costoFissoConsegna = getParameterValue('Costo fisso consegna');
-    const costoFurgoneKm = getParameterValue('Costo furgone al km');
-    const costoTirKm = getParameterValue('Costo TIR al km');
 
     // Calcoli
     const totCostOreMont = formData.personale_mont * formData.costo_orario_mont * formData.giorni_montaggio * formData.ore_lavoro_cantxper_mont;
@@ -170,8 +168,8 @@ export default function ServizioMontaggio() {
     const totCostoTrasfPers = formData.personale_mont * formData.ore_viaggio_trasferta_mont * formData.costo_orario_mont;
     const totCostiAuto = formData.viaggio_auto_com_mont ? formData.km_AR_mont * costoKmAuto : 0;
     const totCostiExtraTrasfMont = formData.extra_costi_trasferta_mont !== 'NO' ? getExtraCost(formData.extra_costi_trasferta_mont) * formData.giorni_montaggio * formData.personale_mont : 0;
-    const totCostiExtraKmTraspFurgMont = formData.extra_km_trasp_furg_mont * costoFurgoneKm;
-    const totCostiExtraKmTraspTirMont = formData.extra_km_trasp_tir_mont * costoTirKm;
+    const totCostiExtraKmTraspFurgMont = formData.extra_km_trasp_furg_mont;
+    const totCostiExtraKmTraspTirMont = formData.extra_km_trasp_tir_mont;
     const totCostiConsegnaCantiere = formData.conseg_cant ? costoFissoConsegna : 0;
 
     const totaleCostoMontaggio = totCostOreMont + totCostKmMont + totCostVittAll + totCostoVoloAR + totCostoTreno + totCostoTrasfPers + totCostiAuto + totCostiExtraTrasfMont + totCostiExtraKmTraspFurgMont + totCostiExtraKmTraspTirMont + totCostiConsegnaCantiere;
@@ -395,7 +393,7 @@ export default function ServizioMontaggio() {
               </div>
 
               <div>
-                <Label htmlFor="extra_costi">Extra (park,metro, taxi, materiali di consumo)</Label>
+                <Label htmlFor="extra_costi">Extra (Park, metro, taxi, ...)</Label>
                 <Select value={formData.extra_costi_trasferta_mont} onValueChange={(value) => setFormData({ ...formData, extra_costi_trasferta_mont: value })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -455,7 +453,7 @@ export default function ServizioMontaggio() {
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm">Costo km montatori</span>
+                  <span className="text-sm">Costo km montaggio</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostKmMont?.toFixed(2) || '0.00'}</span>
                     <p className="text-xs text-muted-foreground">€</p>
@@ -511,7 +509,7 @@ export default function ServizioMontaggio() {
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm">Costi extra (park,metro, taxi, materiali di consumo)</span>
+                  <span className="text-sm">Costi extra (Park, metro, taxi, ...)</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiExtraTrasfMont?.toFixed(2) || '0.00'}</span>
                     <p className="text-xs text-muted-foreground">€</p>
