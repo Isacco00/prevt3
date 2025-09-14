@@ -319,7 +319,7 @@ export default function ServizioMontaggio() {
                   <p className="text-xs text-right text-muted-foreground">Nr.</p>
                 </div>
                 <div>
-                  <Label htmlFor="ore_lavoro">Ore montaggio in cantiere per persona</Label>
+                  <Label htmlFor="ore_lavoro">Ore montaggio per persona</Label>
                   <Input
                     id="ore_lavoro"
                     type="number"
@@ -393,7 +393,7 @@ export default function ServizioMontaggio() {
               </div>
 
               <div>
-                <Label htmlFor="extra_costi">Extra (Park, metro, taxi, ...)</Label>
+                <Label htmlFor="extra_costi">Extra (park,metro, taxi, materiali di consumo)</Label>
                 <Select value={formData.extra_costi_trasferta_mont} onValueChange={(value) => setFormData({ ...formData, extra_costi_trasferta_mont: value })}>
                   <SelectTrigger>
                     <SelectValue />
@@ -509,7 +509,7 @@ export default function ServizioMontaggio() {
                   </div>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm">Costi extra (Park, metro, taxi, ...)</span>
+                  <span className="text-sm">Costi extra (park,metro, taxi, materiali di consumo)</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiExtraTrasfMont?.toFixed(2) || '0.00'}</span>
                     <p className="text-xs text-muted-foreground">€</p>
