@@ -472,70 +472,60 @@ export default function ServizioMontaggio() {
                   <span className="text-sm">Numero dei pernottamenti previsti</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">{costs.numAlloggi || 0}</span>
-                    <p className="text-xs text-muted-foreground">Nr.</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo vitto e alloggio montatori</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostVittAll?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo volo aereo A/R</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostoVoloAR?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo treno A/R</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostoTreno?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo di trasferta del personale</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostoTrasfPers?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costo viaggio in auto</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiAuto?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costi extra (park,metro, taxi, materiali di consumo)</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiExtraTrasfMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costi trasporto legati ad utilizzo di mezzo leggero (&lt;35q.li)</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiExtraKmTraspFurgMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costi trasporto legati ad utilizzo di mezzo pesante (&gt;35q.li)</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiExtraKmTraspTirMont?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Costi per consegna merce in cantiere</span>
                   <div className="text-right">
                     <span className="text-sm font-medium">€ {costs.totCostiConsegnaCantiere?.toFixed(2) || '0.00'}</span>
-                    <p className="text-xs text-muted-foreground">€</p>
                   </div>
                 </div>
               </div>
