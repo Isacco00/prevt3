@@ -13,6 +13,7 @@ import { ArrowLeft, Settings, Calculator } from 'lucide-react';
 interface ServizioData {
   id?: string;
   preventivo_id: string;
+  // Montaggio fields
   personale_mont: number;
   costo_orario_mont: number;
   giorni_montaggio: number;
@@ -27,6 +28,19 @@ interface ServizioData {
   extra_km_trasp_furg_mont: number;
   extra_km_trasp_tir_mont: number;
   ricarico_montaggio: number;
+  // Smontaggio fields
+  personale_smon: number;
+  costo_orario_smon: number;
+  giorni_smontaggio_viaggio: number;
+  ore_lavoro_cantxper_smon: number;
+  km_AR_smon: number;
+  volo_smon: string;
+  treno_smon: boolean;
+  ore_viaggio_trasferta_smon: number;
+  viaggio_auto_com_smon: boolean;
+  extra_costi_trasferta_smon: string;
+  extra_km_trasp_furg_smon: number;
+  extra_km_trasp_tir_smon: number;
 }
 export default function ServizioMontaggio() {
   const {
@@ -38,6 +52,7 @@ export default function ServizioMontaggio() {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<ServizioData>({
     preventivo_id: preventivo_id || '',
+    // Montaggio defaults
     personale_mont: 0,
     costo_orario_mont: 20,
     giorni_montaggio: 0,
@@ -51,7 +66,20 @@ export default function ServizioMontaggio() {
     extra_costi_trasferta_mont: 'NO',
     extra_km_trasp_furg_mont: 0,
     extra_km_trasp_tir_mont: 0,
-    ricarico_montaggio: 30
+    ricarico_montaggio: 30,
+    // Smontaggio defaults
+    personale_smon: 0,
+    costo_orario_smon: 20,
+    giorni_smontaggio_viaggio: 0,
+    ore_lavoro_cantxper_smon: 0,
+    km_AR_smon: 0,
+    volo_smon: 'NO',
+    treno_smon: false,
+    ore_viaggio_trasferta_smon: 0,
+    viaggio_auto_com_smon: false,
+    extra_costi_trasferta_smon: 'NO',
+    extra_km_trasp_furg_smon: 0,
+    extra_km_trasp_tir_smon: 0
   });
 
   // Fetch existing service data
@@ -121,6 +149,7 @@ export default function ServizioMontaggio() {
       setFormData({
         id: servizioData.id,
         preventivo_id: servizioData.preventivo_id,
+        // Montaggio data
         personale_mont: servizioData.personale_mont || 0,
         costo_orario_mont: servizioData.costo_orario_mont || 20,
         giorni_montaggio: servizioData.giorni_montaggio || 0,
@@ -134,7 +163,20 @@ export default function ServizioMontaggio() {
         extra_costi_trasferta_mont: servizioData.extra_costi_trasferta_mont || 'NO',
         extra_km_trasp_furg_mont: servizioData.extra_km_trasp_furg_mont || 0,
         extra_km_trasp_tir_mont: servizioData.extra_km_trasp_tir_mont || 0,
-        ricarico_montaggio: servizioData.ricarico_montaggio || 30
+        ricarico_montaggio: servizioData.ricarico_montaggio || 30,
+        // Smontaggio data with defaults
+        personale_smon: servizioData.personale_smon || 0,
+        costo_orario_smon: servizioData.costo_orario_smon || 20,
+        giorni_smontaggio_viaggio: servizioData.giorni_smontaggio_viaggio || 0,
+        ore_lavoro_cantxper_smon: servizioData.ore_lavoro_cantxper_smon || 0,
+        km_AR_smon: servizioData.km_ar_smon || 0,
+        volo_smon: servizioData.volo_smon || 'NO',
+        treno_smon: servizioData.treno_smon || false,
+        ore_viaggio_trasferta_smon: servizioData.ore_viaggio_trasferta_smon || 0,
+        viaggio_auto_com_smon: servizioData.viaggio_auto_com_smon || false,
+        extra_costi_trasferta_smon: servizioData.extra_costi_trasferta_smon || 'NO',
+        extra_km_trasp_furg_smon: servizioData.extra_km_trasp_furg_smon || 0,
+        extra_km_trasp_tir_smon: servizioData.extra_km_trasp_tir_smon || 0
       });
     }
   }, [servizioData]);
