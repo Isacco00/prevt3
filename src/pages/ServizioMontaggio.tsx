@@ -439,7 +439,7 @@ export default function ServizioMontaggio() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" onClick={() => navigate(`/preventivi/${preventivo_id}`)}>
+          <Button variant="ghost" onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivo_id, focusSection: 'servizi' } })}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Torna al preventivo {preventivoInfo?.numero_preventivo}
           </Button>
@@ -1126,7 +1126,7 @@ export default function ServizioMontaggio() {
             <Button 
               variant="outline" 
               size="lg" 
-              onClick={() => navigate(`/preventivi/${preventivo_id}`)}
+              onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivo_id, focusSection: 'servizi' } })}
             >
               Annulla
             </Button>

@@ -13,7 +13,7 @@ import { ExpositoreSection } from '@/components/ExpositoreSection';
 import { ServicesSection } from '@/components/ServicesSection';
 import { Settings } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -88,6 +88,7 @@ interface Prospect {
 }
 
 const Preventivi = () => {
+  const location = useLocation();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -1269,6 +1270,20 @@ const Preventivi = () => {
     });
     setIsDialogOpen(true);
   };
+
+  // Reopen specific preventivo when arriving from service configuration
+  React.useEffect(() => {
+    const state = (location as any).state as any;
+    if (state?.openPreventivoId && preventivi.length) {
+      const p = preventivi.find((x) => x.id === state.openPreventivoId);
+      if (p) {
+        openEditDialog(p);
+        setSectionsOpen({ stand: false, storage: false, desk: false, espositori: false, servizi: true });
+        // Clear navigation state to avoid reopening on refresh
+        window.history.replaceState({}, '', '/preventivi');
+      }
+    }
+  }, [location, preventivi]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
