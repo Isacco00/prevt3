@@ -441,7 +441,7 @@ export default function ServizioMontaggio() {
         <div className="flex items-center justify-between mb-6">
           <Button variant="ghost" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            ← Torna al preventivo {preventivoInfo?.numero_preventivo}
+            Torna al preventivo {preventivoInfo?.numero_preventivo}
           </Button>
           
           {/* Project info in top right */}
