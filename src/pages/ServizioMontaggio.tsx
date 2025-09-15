@@ -420,7 +420,7 @@ export default function ServizioMontaggio() {
       queryClient.invalidateQueries({
         queryKey: ['preventivi_servizi'],
       });
-      navigate(-1);
+      // Stay on the same page after successful save
     },
     onError: (error) => {
       toast.error('Errore nel salvataggio: ' + error.message);
@@ -439,7 +439,7 @@ export default function ServizioMontaggio() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
+          <Button variant="ghost" onClick={() => navigate(`/preventivi/${preventivo_id}`)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Torna al preventivo {preventivoInfo?.numero_preventivo}
           </Button>
@@ -1126,7 +1126,7 @@ export default function ServizioMontaggio() {
             <Button 
               variant="outline" 
               size="lg" 
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(`/preventivi/${preventivo_id}`)}
             >
               Annulla
             </Button>
