@@ -89,6 +89,28 @@ interface Prospect {
 
 const Preventivi = () => {
   const location = useLocation();
+  
+  // Fetch service costs for totals calculation
+  const { data: serviceCosts } = useQuery({
+    queryKey: ['service-costs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('parametri_a_costi_unitari')
+        .select('*')
+        .in('parametro', ['Costo_certificazione', 'Costo_istruzionieassistenza'])
+        .eq('attivo', true);
+      
+      if (error) throw error;
+      
+      const costs: { [key: string]: number } = {};
+      data.forEach(item => {
+        costs[item.parametro] = item.valore;
+      });
+      
+      return costs;
+    }
+  });
+  
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -96,6 +118,26 @@ const Preventivi = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPreventivo, setEditingPreventivo] = useState<Preventivo | null>(null);
+  
+  // Fetch preventivi servizi data
+  const { data: preventivoServizi } = useQuery({
+    queryKey: ['preventivo-servizi', editingPreventivo?.id],
+    queryFn: async () => {
+      if (!editingPreventivo?.id) return null;
+      
+      const { data, error } = await supabase
+        .from('preventivi_servizi')
+        .select('*')
+        .eq('preventivo_id', editingPreventivo.id)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
+      
+      return data;
+    },
+    enabled: !!editingPreventivo?.id
+  });
+  
   const [deletePreventivo, setDeletePreventivo] = useState<Preventivo | null>(null);
   const [formData, setFormData] = useState({
     numero_preventivo: '',
@@ -1589,102 +1631,15 @@ const Preventivi = () => {
                         <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-complement-foreground))] ${sectionsOpen.servizi ? 'rotate-180' : ''}`} />
                       </Button>
                     </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-2">
-                            <Settings className="h-5 w-5" />
-                            <h4 className="text-md font-semibold">Dati di Ingresso per Servizi</h4>
-                          </div>
-                          
-                          <Card className="border-l-4 border-l-complement">
-                            <CardHeader className="pb-3">
-                              <CardTitle className="text-sm text-complement">Servizi Aggiuntivi</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="flex items-start space-x-3">
-                                  <Checkbox
-                                    id="servizio_montaggio_smontaggio"
-                                    checked={formData.servizio_montaggio_smontaggio}
-                                    onCheckedChange={(checked) => setFormData({
-                                      ...formData,
-                                      servizio_montaggio_smontaggio: checked as boolean
-                                    })}
-                                    className="mt-1"
-                                  />
-                                  <div className="grid gap-1.5 leading-none flex-1">
-                                    <Label 
-                                      htmlFor="servizio_montaggio_smontaggio"
-                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                    >
-                                      Montaggio/Smontaggio
-                                    </Label>
-                                    <p className="text-xs text-muted-foreground">
-                                      Servizio di montaggio e smontaggio della struttura
-                                    </p>
-                                    {formData.servizio_montaggio_smontaggio && (
-                                      <div className="mt-2">
-                                        <Link 
-                                          to={`/servizio-montaggio/${editingPreventivo?.id || 'new'}`}
-                                          className="inline-flex items-center px-3 py-2 text-xs font-medium text-primary bg-primary/10 rounded-md hover:bg-primary/20 transition-colors"
-                                        >
-                                          Configura
-                                        </Link>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="flex items-start space-x-3">
-                                  <Checkbox
-                                    id="servizio_certificazioni"
-                                    checked={formData.servizio_certificazioni}
-                                    onCheckedChange={(checked) => setFormData({
-                                      ...formData,
-                                      servizio_certificazioni: checked as boolean
-                                    })}
-                                    className="mt-1"
-                                  />
-                                  <div className="grid gap-1.5 leading-none">
-                                    <Label 
-                                      htmlFor="servizio_certificazioni"
-                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                    >
-                                      Certificazioni
-                                    </Label>
-                                    <p className="text-xs text-muted-foreground">
-                                      Documentazione e certificazioni necessarie
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="flex items-start space-x-3">
-                                  <Checkbox
-                                    id="servizio_istruzioni_assistenza"
-                                    checked={formData.servizio_istruzioni_assistenza}
-                                    onCheckedChange={(checked) => setFormData({
-                                      ...formData,
-                                      servizio_istruzioni_assistenza: checked as boolean
-                                    })}
-                                    className="mt-1"
-                                  />
-                                  <div className="grid gap-1.5 leading-none">
-                                    <Label 
-                                      htmlFor="servizio_istruzioni_assistenza"
-                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                                    >
-                                      Istruzioni e assistenza
-                                    </Label>
-                                    <p className="text-xs text-muted-foreground">
-                                      Supporto tecnico e documentazione operativa
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      </div>
-                    </CollapsibleContent>
+                     <CollapsibleContent>
+                       <div className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
+                         <ServicesSection 
+                           formData={formData}
+                           setFormData={setFormData}
+                           preventivo_id={editingPreventivo?.id}
+                         />
+                       </div>
+                     </CollapsibleContent>
                   </div>
                 </Collapsible>
               </div>
@@ -1710,10 +1665,15 @@ const Preventivi = () => {
                   const extraStrutturaComplessa = costs.extra_stand_complesso; // Valore unico
                   const totaleAccessori = costs.costi_accessori + costs.costi_accessori_desk + costiEspositori.accessori_espositori;
                   const totalePremontaggi = costs.premontaggio + costiStorage.costo_premontaggio_storage + (costs.costi_desk?.premontaggio || 0) + costiEspositori.premontaggio_espositori;
-                  const totaleServizi = 1000; // Valore costante per ora
                   
-                  // Costo totale fornitura
-                  const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori;
+                  // Calculate service costs
+                  const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.preventivo_montaggio || 0) + (preventivoServizi?.preventivo_smontaggio || 0) : 0;
+                  const costoCertificazioni = formData.servizio_certificazioni ? (serviceCosts?.['Costo_certificazione'] || 0) : 0;
+                  const costoIstruzioni = formData.servizio_istruzioni_assistenza ? (serviceCosts?.['Costo_istruzionieassistenza'] || 0) : 0;
+                  const totaleServizi = costoMontaggio + costoCertificazioni + costoIstruzioni;
+                  
+                  // Costo totale fornitura (includes services now)
+                  const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori + totaleServizi;
                   
                   return (
                     <div className="space-y-6">
