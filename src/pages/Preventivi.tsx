@@ -85,6 +85,7 @@ interface Preventivo {
 interface Prospect {
   id: string;
   ragione_sociale: string;
+  tipo_prospect?: string;
 }
 
 const Preventivi = () => {
@@ -156,6 +157,12 @@ const Preventivi = () => {
     bifaccialita: '0',
     retroilluminazione: '',
     premontaggio: true,
+    // Stand margins
+    marginalita_struttura: 50,
+    marginalita_grafica: 50,
+    marginalita_retroilluminazione: 50,
+    marginalita_accessori: 50,
+    marginalita_premontaggio: 50,
     // Stand accessories
     borsa_stand: '',
     baule_trolley: '',
@@ -390,6 +397,44 @@ const Preventivi = () => {
   // Elementi fisici calcolati (dipendono dai parametri)
   const physicalElements = calculatePhysicalElements(profiliDistribuzioneMap);
 
+  // Function to update margins based on prospect type
+  const updateMarginsBasedOnProspect = (prospectId: string) => {
+    const selectedProspect = prospects.find((p: any) => p.id === prospectId);
+    if (selectedProspect && marginalitaProspect.length > 0) {
+      const defaultMargin = marginalitaProspect.find(
+        (m: any) => m.tipo_prospect === selectedProspect.tipo_prospect
+      );
+      if (defaultMargin) {
+        setFormData(prev => ({
+          ...prev,
+          prospect_id: prospectId,
+          marginalita_struttura: defaultMargin.marginalita,
+          marginalita_grafica: defaultMargin.marginalita,
+          marginalita_retroilluminazione: defaultMargin.marginalita,
+          marginalita_accessori: defaultMargin.marginalita,
+          marginalita_premontaggio: defaultMargin.marginalita,
+        }));
+        return;
+      }
+    }
+    // Fallback if no default found
+    setFormData(prev => ({ ...prev, prospect_id: prospectId }));
+  };
+
+  // Query per recuperare le marginalità per prospect
+  const { data: marginalitaProspect = [] } = useQuery({
+    queryKey: ['marginalita-per-prospect'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('marginalita_per_prospect')
+        .select('*')
+        .eq('attivo', true);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
   // Query per recuperare le anagrafiche
   const { data: prospects = [] } = useQuery({
     queryKey: ['prospects-for-preventivi'],
@@ -397,7 +442,7 @@ const Preventivi = () => {
       if (!user) return [];
       const { data, error } = await supabase
         .from('prospects')
-        .select('id, ragione_sociale')
+        .select('id, ragione_sociale, tipo_prospect')
         .eq('user_id', user.id)
         .order('ragione_sociale');
       
@@ -494,6 +539,16 @@ const Preventivi = () => {
         retroilluminazione: 0,
         extra_stand_complesso: 0,
         costi_accessori: 0,
+        // Preventivo values
+        preventivo_struttura: 0,
+        preventivo_grafica: 0,
+        preventivo_retroilluminazione: 0,
+        preventivo_accessori: 0,
+        preventivo_premontaggio: 0,
+        // Summary values
+        totale_preventivo_stand: 0,
+        totale_costi_stand: 0,
+        marginalita_media: 0,
         totale: 0
       };
     }
@@ -583,6 +638,18 @@ const Preventivi = () => {
 
     const totale = struttura_terra + grafica_cordino + premontaggio + retroilluminazione + costi_accessori + extra_stand_complesso;
 
+    // Calculate preventivos (quotes) based on costs and margins
+    const preventivo_struttura = struttura_terra * (1 + formData.marginalita_struttura / 100);
+    const preventivo_grafica = grafica_cordino * (1 + formData.marginalita_grafica / 100);
+    const preventivo_retroilluminazione = retroilluminazione * (1 + formData.marginalita_retroilluminazione / 100);
+    const preventivo_accessori = costi_accessori * (1 + formData.marginalita_accessori / 100);
+    const preventivo_premontaggio = premontaggio * (1 + formData.marginalita_premontaggio / 100);
+    
+    // Total preventivo and total costs for summary
+    const totale_preventivo_stand = preventivo_struttura + preventivo_grafica + preventivo_retroilluminazione + preventivo_accessori + preventivo_premontaggio + extra_stand_complesso;
+    const totale_costi_stand = struttura_terra + grafica_cordino + retroilluminazione + costi_accessori + premontaggio;
+    const marginalita_media = totale_costi_stand > 0 ? ((totale_preventivo_stand - totale_costi_stand) / totale_costi_stand) * 100 : 0;
+
     return {
       struttura_terra,
       grafica_cordino,
@@ -590,6 +657,16 @@ const Preventivi = () => {
       retroilluminazione,
       extra_stand_complesso,
       costi_accessori,
+      // Preventivo values
+      preventivo_struttura,
+      preventivo_grafica,
+      preventivo_retroilluminazione,
+      preventivo_accessori,
+      preventivo_premontaggio,
+      // Summary values
+      totale_preventivo_stand,
+      totale_costi_stand,
+      marginalita_media,
       costi_accessori_desk,
       costi_desk: {
         struttura_terra: struttura_terra_desk,
@@ -1209,6 +1286,12 @@ const Preventivi = () => {
       // Complexity fields
         extra_perc_complex: '',
         costo_retroilluminazione: 0,
+        // Stand margins
+        marginalita_struttura: 50,
+        marginalita_grafica: 50,
+        marginalita_retroilluminazione: 50,
+        marginalita_accessori: 50,
+        marginalita_premontaggio: 50,
         // Accessori stand dinamici
         accessori_stand: {},
     });
@@ -1298,6 +1381,12 @@ const Preventivi = () => {
       // Complexity fields
       extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
       costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
+        // Stand margins
+        marginalita_struttura: (preventivo as any).marginalita_struttura || 50,
+        marginalita_grafica: (preventivo as any).marginalita_grafica || 50,
+        marginalita_retroilluminazione: (preventivo as any).marginalita_retroilluminazione || 50,
+        marginalita_accessori: (preventivo as any).marginalita_accessori || 50,
+        marginalita_premontaggio: (preventivo as any).marginalita_premontaggio || 50,
         // Accessori stand dinamici  
         accessori_stand: (() => {
           try {
@@ -1437,7 +1526,7 @@ const Preventivi = () => {
                   
                   <div className="space-y-2">
                     <Label htmlFor="prospect_id">Cliente</Label>
-                    <Select value={formData.prospect_id} onValueChange={(value) => setFormData({ ...formData, prospect_id: value })}>
+                    <Select value={formData.prospect_id} onValueChange={updateMarginsBasedOnProspect}>
                       <SelectTrigger>
                         <SelectValue placeholder="Seleziona un cliente" />
                       </SelectTrigger>

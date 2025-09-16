@@ -227,6 +227,33 @@ export type Database = {
         }
         Relationships: []
       }
+      marginalita_per_prospect: {
+        Row: {
+          attivo: boolean
+          created_at: string
+          id: string
+          marginalita: number
+          tipo_prospect: string
+          updated_at: string
+        }
+        Insert: {
+          attivo?: boolean
+          created_at?: string
+          id?: string
+          marginalita?: number
+          tipo_prospect: string
+          updated_at?: string
+        }
+        Update: {
+          attivo?: boolean
+          created_at?: string
+          id?: string
+          marginalita?: number
+          tipo_prospect?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       parametri: {
         Row: {
           attivo: boolean
@@ -336,6 +363,11 @@ export type Database = {
           layout: string | null
           layout_desk: string | null
           layout_storage: string | null
+          marginalita_accessori: number | null
+          marginalita_grafica: number | null
+          marginalita_premontaggio: number | null
+          marginalita_retroilluminazione: number | null
+          marginalita_struttura: number | null
           mensola: number | null
           nicchia: number | null
           note: string | null
@@ -421,6 +453,11 @@ export type Database = {
           layout?: string | null
           layout_desk?: string | null
           layout_storage?: string | null
+          marginalita_accessori?: number | null
+          marginalita_grafica?: number | null
+          marginalita_premontaggio?: number | null
+          marginalita_retroilluminazione?: number | null
+          marginalita_struttura?: number | null
           mensola?: number | null
           nicchia?: number | null
           note?: string | null
@@ -506,6 +543,11 @@ export type Database = {
           layout?: string | null
           layout_desk?: string | null
           layout_storage?: string | null
+          marginalita_accessori?: number | null
+          marginalita_grafica?: number | null
+          marginalita_premontaggio?: number | null
+          marginalita_retroilluminazione?: number | null
+          marginalita_struttura?: number | null
           mensola?: number | null
           nicchia?: number | null
           note?: string | null

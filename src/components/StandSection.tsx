@@ -21,6 +21,12 @@ interface StandSectionProps {
     retroilluminazione: string;
     premontaggio: boolean;
     extra_perc_complex: string;
+    // Stand margins
+    marginalita_struttura: number;
+    marginalita_grafica: number;
+    marginalita_retroilluminazione: number;
+    marginalita_accessori: number;
+    marginalita_premontaggio: number;
     // Accessori stand dinamici
     accessori_stand: Record<string, number>;
   };
@@ -38,6 +44,16 @@ interface StandSectionProps {
     retroilluminazione: number;
     extra_stand_complesso: number;
     costi_accessori: number;
+    // Preventivo values
+    preventivo_struttura: number;
+    preventivo_grafica: number;
+    preventivo_retroilluminazione: number;
+    preventivo_accessori: number;
+    preventivo_premontaggio: number;
+    // Summary values
+    totale_preventivo_stand: number;
+    totale_costi_stand: number;
+    marginalita_media: number;
     totale: number;
   };
 }
@@ -330,112 +346,175 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <h4 className="text-md font-semibold">Calcolo Costi Stand</h4>
         </div>
         
-        {/* Prima riga - 4 cards principali */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          <Card className="h-24 flex flex-col overflow-hidden">
-            <CardHeader className="pb-1 pt-3 px-3">
-              <CardTitle className="text-xs font-medium leading-tight">Struttura a terra</CardTitle>
+        {/* Prima riga - Struttura e Grafica */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Struttura a terra */}
+          <Card className="space-y-3">
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm font-medium">Struttura a terra</CardTitle>
             </CardHeader>
-            <CardContent className="mt-auto pb-3 px-3">
-              <div className="text-xl font-bold leading-none tabular-nums truncate">€{costs.struttura_terra.toFixed(2)}</div>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="text-lg font-bold">€{costs.struttura_terra.toFixed(2)}</div>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Ricarico</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={formData.marginalita_struttura}
+                  onChange={(e) => setFormData({ ...formData, marginalita_struttura: parseFloat(e.target.value) || 0 })}
+                  className="w-16 h-6 text-xs text-center"
+                />
+                <span className="text-xs">%</span>
+              </div>
+              <div className="text-lg font-bold text-primary">€{costs.preventivo_struttura.toFixed(2)}</div>
             </CardContent>
           </Card>
 
-         <Card className="h-24 flex flex-col overflow-hidden">
-    <CardHeader className="pb-1 pt-3 px-3">
-      <CardTitle className="text-xs font-medium leading-tight">
-        Grafica con cordino cucito
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="mt-auto pb-3 px-3">
-      <div className="text-xl font-bold leading-none tabular-nums truncate">
-        €{costs.grafica_cordino.toFixed(2)}
-      </div>
-    </CardContent>
-  </Card>
+          {/* Grafica con cordino a terra */}
+          <Card className="space-y-3">
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm font-medium">Grafica con cordino a terra</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="text-lg font-bold">€{costs.grafica_cordino.toFixed(2)}</div>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Ricarico</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={formData.marginalita_grafica}
+                  onChange={(e) => setFormData({ ...formData, marginalita_grafica: parseFloat(e.target.value) || 0 })}
+                  className="w-16 h-6 text-xs text-center"
+                />
+                <span className="text-xs">%</span>
+              </div>
+              <div className="text-lg font-bold text-primary">€{costs.preventivo_grafica.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+        </div>
 
-  <Card className="h-24 flex flex-col overflow-hidden">
-    <CardHeader className="pb-1 pt-3 px-3">
-      <CardTitle className="text-xs font-medium leading-tight">
-        Retroilluminazione
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="mt-auto pb-3 px-3">
-      <div className="text-xl font-bold leading-none tabular-nums truncate">
-        €{costs.retroilluminazione.toFixed(2)}
-      </div>
-    </CardContent>
-  </Card>
+        {/* Seconda riga - Retroilluminazione e Accessori */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Retroilluminazione */}
+          <Card className="space-y-3">
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm font-medium">Retroilluminazione</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="text-lg font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Ricarico</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={formData.marginalita_retroilluminazione}
+                  onChange={(e) => setFormData({ ...formData, marginalita_retroilluminazione: parseFloat(e.target.value) || 0 })}
+                  className="w-16 h-6 text-xs text-center"
+                />
+                <span className="text-xs">%</span>
+              </div>
+              <div className="text-lg font-bold text-primary">€{costs.preventivo_retroilluminazione.toFixed(2)}</div>
+            </CardContent>
+          </Card>
 
-  <Card className="h-24 flex flex-col overflow-hidden">
-    <CardHeader className="pb-1 pt-3 px-3">
-      <CardTitle className="text-xs font-medium leading-tight">
-        Costo Accessori
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="mt-auto pb-3 px-3">
-      <div className="text-xl font-bold leading-none tabular-nums truncate">
-        €{costs.costi_accessori.toFixed(2)}
-      </div>
-    </CardContent>
-  </Card>
-</div>
+          {/* Accessori */}
+          <Card className="space-y-3">
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm font-medium">Accessori</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="text-lg font-bold">€{costs.costi_accessori.toFixed(2)}</div>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Ricarico</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={formData.marginalita_accessori}
+                  onChange={(e) => setFormData({ ...formData, marginalita_accessori: parseFloat(e.target.value) || 0 })}
+                  className="w-16 h-6 text-xs text-center"
+                />
+                <span className="text-xs">%</span>
+              </div>
+              <div className="text-lg font-bold text-primary">€{costs.preventivo_accessori.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+        </div>
 
+        {/* Terza riga - Extra e Premontaggio */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Extra per struttura complessa */}
+          <Card className="space-y-3">
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm font-medium">Extra per struttura complessa</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Extra % su costo struttura</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={formData.extra_perc_complex}
+                  onChange={(e) => setFormData({ ...formData, extra_perc_complex: e.target.value })}
+                  className="w-16 h-6 text-xs text-center"
+                />
+                <span className="text-xs">%</span>
+              </div>
+              <div className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</div>
+            </CardContent>
+          </Card>
 
-  {/* Seconda riga - Premontaggio, Extra (%), Extra per struttura complessa */}
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-       <Card className="h-24 flex flex-col overflow-hidden">
-          <CardHeader className="pb-1 pt-3 px-3">
-            <CardTitle className="text-xs font-medium leading-tight">Premontaggio</CardTitle>
-          </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-            <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{costs.premontaggio.toFixed(2)}</div>
-        </CardContent>
-      </Card>
+          {/* Premontaggio */}
+          <Card className="space-y-3">
+            <CardHeader className="pb-2 pt-4 px-4">
+              <CardTitle className="text-sm font-medium">Premontaggio</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 px-4 pb-4">
+              <div className="text-lg font-bold">€{costs.premontaggio.toFixed(2)}</div>
+              <div className="flex items-center gap-2">
+                <Label className="text-xs">Ricarico</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={formData.marginalita_premontaggio}
+                  onChange={(e) => setFormData({ ...formData, marginalita_premontaggio: parseFloat(e.target.value) || 0 })}
+                  className="w-16 h-6 text-xs text-center"
+                />
+                <span className="text-xs">%</span>
+              </div>
+              <div className="text-lg font-bold text-primary">€{costs.preventivo_premontaggio.toFixed(2)}</div>
+            </CardContent>
+          </Card>
+        </div>
 
-      <Card className="h-24 flex flex-col overflow-hidden">
-          <CardHeader className="pb-1 pt-3 px-3">
-            <CardTitle className="text-xs font-medium leading-tight">
-                Extra (%)
-            </CardTitle>
-          </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <Input
-            id="extra_perc_complex"
-            type="number"
-            step="0.1"
-            min="0"
-            max="100"
-            value={formData.extra_perc_complex}
-            onChange={(e) =>
-            setFormData({ ...formData, extra_perc_complex: e.target.value })}
-            placeholder="0.0"
-            className="h-8 text-right font-bold"
-          />
-        </CardContent>
-      </Card>
-
-      <Card className="h-24 flex flex-col overflow-hidden">
-          <CardHeader className="pb-1 pt-3 px-3">
-            <CardTitle className="text-xs font-medium leading-tight">
-            Extra per struttura complessa
-            </CardTitle>
-          </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-      <div className="text-xl font-bold leading-none tabular-nums truncate">
-        €{costs.extra_stand_complesso.toFixed(2)}
-      </div>
-    </CardContent>
-  </Card>
-</div>
-
+        {/* Totali */}
         <Card className="border-2 border-primary">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Totale Stand</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-primary">€{costs.totale.toFixed(2)}</div>
+          <CardContent className="p-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">Totale preventivo stand</div>
+                <div className="text-2xl font-bold text-primary">€{costs.totale_preventivo_stand.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">Totale costi</div>
+                <div className="text-xl font-bold">€{costs.totale_costi_stand.toFixed(2)}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">Marginalità Media (%)</div>
+                <div className="text-xl font-bold">{costs.marginalita_media.toFixed(1)}%</div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
