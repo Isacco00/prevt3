@@ -24,6 +24,7 @@ interface Prospect {
   telefono?: string;
   email?: string;
   tipo: 'prospect' | 'cliente';
+  tipo_prospect?: 'Professional' | 'Finale';
   created_at: string;
   updated_at: string;
 }
@@ -47,7 +48,8 @@ const Prospects = () => {
     provincia: '',
     telefono: '',
     email: '',
-    tipo: 'prospect' as 'prospect' | 'cliente'
+    tipo: 'prospect' as 'prospect' | 'cliente',
+    tipo_prospect: 'Professional' as 'Professional' | 'Finale'
   });
 
   useEffect(() => {
@@ -177,7 +179,8 @@ const Prospects = () => {
       provincia: '',
       telefono: '',
       email: '',
-      tipo: 'prospect'
+      tipo: 'prospect',
+      tipo_prospect: 'Professional'
     });
     setEditingProspect(null);
   };
@@ -193,7 +196,8 @@ const Prospects = () => {
       provincia: prospect.provincia,
       telefono: prospect.telefono || '',
       email: prospect.email || '',
-      tipo: prospect.tipo
+      tipo: prospect.tipo,
+      tipo_prospect: prospect.tipo_prospect || 'Professional'
     });
     setEditingProspect(prospect);
     setIsDialogOpen(true);
@@ -339,6 +343,19 @@ const Prospects = () => {
                     <SelectContent>
                       <SelectItem value="prospect">Prospect</SelectItem>
                       <SelectItem value="cliente">Cliente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="col-span-2">
+                  <Label htmlFor="tipo_prospect">Relazione *</Label>
+                  <Select value={formData.tipo_prospect} onValueChange={(value: 'Professional' | 'Finale') => setFormData({...formData, tipo_prospect: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Professional">Professional</SelectItem>
+                      <SelectItem value="Finale">Finale</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

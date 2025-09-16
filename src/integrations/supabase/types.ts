@@ -810,6 +810,7 @@ export type Database = {
           ragione_sociale: string
           telefono: string | null
           tipo: string
+          tipo_prospect: string | null
           updated_at: string
           user_id: string
         }
@@ -826,6 +827,7 @@ export type Database = {
           ragione_sociale: string
           telefono?: string | null
           tipo?: string
+          tipo_prospect?: string | null
           updated_at?: string
           user_id: string
         }
@@ -842,6 +844,7 @@ export type Database = {
           ragione_sociale?: string
           telefono?: string | null
           tipo?: string
+          tipo_prospect?: string | null
           updated_at?: string
           user_id?: string
         }
