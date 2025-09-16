@@ -347,6 +347,7 @@ export type Database = {
           numero_preventivo: string
           pedana: number | null
           porta_scorrevole: number | null
+          premontaggio: boolean | null
           prof_storage: number | null
           profondita: number | null
           prospect_id: string | null
@@ -431,6 +432,7 @@ export type Database = {
           numero_preventivo: string
           pedana?: number | null
           porta_scorrevole?: number | null
+          premontaggio?: boolean | null
           prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null
@@ -515,6 +517,7 @@ export type Database = {
           numero_preventivo?: string
           pedana?: number | null
           porta_scorrevole?: number | null
+          premontaggio?: boolean | null
           prof_storage?: number | null
           profondita?: number | null
           prospect_id?: string | null

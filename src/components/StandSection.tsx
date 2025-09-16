@@ -19,6 +19,7 @@ interface StandSectionProps {
     complessita: string;
     bifaccialita: string;
     retroilluminazione: string;
+    premontaggio: boolean;
     extra_perc_complex: string;
     // Accessori stand dinamici
     accessori_stand: Record<string, number>;
@@ -171,7 +172,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="bifaccialita">Bifaccialità (m)</Label>
             <Input
@@ -198,6 +199,22 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               onChange={(e) => setFormData({ ...formData, retroilluminazione: e.target.value })}
               placeholder="0.0"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="premontaggio">Premontaggio</Label>
+            <Select 
+              value={formData.premontaggio ? "SI" : "NO"} 
+              onValueChange={(value) => setFormData({ ...formData, premontaggio: value === "SI" })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SI">SI</SelectItem>
+                <SelectItem value="NO">NO</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

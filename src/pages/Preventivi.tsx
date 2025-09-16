@@ -155,6 +155,7 @@ const Preventivi = () => {
     note: '',
     bifaccialita: '0',
     retroilluminazione: '',
+    premontaggio: true,
     // Stand accessories
     borsa_stand: '',
     baule_trolley: '',
@@ -512,8 +513,8 @@ const Preventivi = () => {
       const grafica_cordino = costoStampaParam ? 
         elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
 
-      // Premontaggio: numero pezzi * costo premontaggio al pezzo
-      const premontaggio = costoPremontaggio ? 
+      // Premontaggio: numero pezzi * costo premontaggio al pezzo (solo se premontaggio è attivo)
+      const premontaggio = (costoPremontaggio && formData.premontaggio) ? 
         elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
     // Retroilluminazione: metri retroilluminazione * costo per m/l in base all'altezza
@@ -713,7 +714,7 @@ const Preventivi = () => {
         elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
       const grafica_cordino = costoStampaParam ? 
         elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
-      const premontaggio = costoPremontaggio ? 
+      const premontaggio = (costoPremontaggio && data.premontaggio) ? 
         elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
       const costo_totale = struttura_terra + grafica_cordino + premontaggio;
@@ -922,7 +923,7 @@ const Preventivi = () => {
         elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
       const grafica_cordino = costoStampaParam ? 
         elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
-      const premontaggio = costoPremontaggio ? 
+      const premontaggio = (costoPremontaggio && data.premontaggio) ? 
         elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
       const costo_totale = struttura_terra + grafica_cordino + premontaggio;
@@ -1030,6 +1031,7 @@ const Preventivi = () => {
         totale: costo_totale,
         bifaccialita,
         retroilluminazione,
+        premontaggio: data.premontaggio,
         // Stand accessories
         borsa_stand: parseInt(data.borsa_stand) || 0,
         baule_trolley: parseInt(data.baule_trolley) || 0,
@@ -1159,6 +1161,7 @@ const Preventivi = () => {
       note: '',
       bifaccialita: '0',
       retroilluminazione: '',
+      premontaggio: true,
       // Stand accessories
       borsa_stand: '',
       baule_trolley: '',
@@ -1237,6 +1240,7 @@ const Preventivi = () => {
       note: preventivo.note || '',
       bifaccialita: (preventivo as any).bifaccialita?.toString() || '0',
       retroilluminazione: (preventivo as any).retroilluminazione?.toString() || '',
+      premontaggio: (preventivo as any).premontaggio ?? true,
       // Stand accessories
       borsa_stand: (preventivo as any).borsa_stand?.toString() || '',
       baule_trolley: (preventivo as any).baule_trolley?.toString() || '',
