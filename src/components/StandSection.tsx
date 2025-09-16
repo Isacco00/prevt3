@@ -365,7 +365,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     step="1"
                     value={formData.marginalita_struttura}
                     onChange={(e) => setFormData({ ...formData, marginalita_struttura: parseFloat(e.target.value) || 0 })}
-                    className="w-12 h-6 text-xs text-center"
+                    className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
@@ -391,7 +391,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     step="1"
                     value={formData.marginalita_grafica}
                     onChange={(e) => setFormData({ ...formData, marginalita_grafica: parseFloat(e.target.value) || 0 })}
-                    className="w-12 h-6 text-xs text-center"
+                    className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
@@ -417,7 +417,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     step="1"
                     value={formData.marginalita_retroilluminazione}
                     onChange={(e) => setFormData({ ...formData, marginalita_retroilluminazione: parseFloat(e.target.value) || 0 })}
-                    className="w-12 h-6 text-xs text-center"
+                    className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
@@ -446,7 +446,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     step="1"
                     value={formData.marginalita_accessori}
                     onChange={(e) => setFormData({ ...formData, marginalita_accessori: parseFloat(e.target.value) || 0 })}
-                    className="w-12 h-6 text-xs text-center"
+                    className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
@@ -472,7 +472,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     step="1"
                     value={formData.marginalita_premontaggio}
                     onChange={(e) => setFormData({ ...formData, marginalita_premontaggio: parseFloat(e.target.value) || 0 })}
-                    className="w-12 h-6 text-xs text-center"
+                    className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
