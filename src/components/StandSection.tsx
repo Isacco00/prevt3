@@ -343,7 +343,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Calculator className="h-5 w-5" />
-          <h4 className="text-md font-semibold">Calcolo Costi Stand</h4>
+          <h4 className="text-md font-semibold">Calcolo Preventivo Stand</h4>
         </div>
         
         {/* Layout 3x2 - Prima riga */}
