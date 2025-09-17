@@ -50,21 +50,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
     enabled: !!user,
   });
 
-  // Set default margins based on prospect type
-  useEffect(() => {
-    if (prospect?.tipo_prospect && marginalitaData.length > 0) {
-      const marginalitaConfig = marginalitaData.find(m => m.tipo_prospect === prospect.tipo_prospect);
-      if (marginalitaConfig) {
-        const defaultMargin = marginalitaConfig.marginalita;
-        setFormData({
-          ...formData,
-          marginalita_struttura_storage: formData.marginalita_struttura_storage ?? defaultMargin,
-          marginalita_grafica_storage: formData.marginalita_grafica_storage ?? defaultMargin,
-          marginalita_premontaggio_storage: formData.marginalita_premontaggio_storage ?? defaultMargin,
-        });
-      }
-    }
-  }, [prospect?.tipo_prospect, marginalitaData]);
+  // Note: Default margins are set in the parent component when creating new preventivo
 
   // Fetch parametri a costi unitari
   const { data: parametriCostiUnitari = [] } = useQuery({
@@ -316,7 +302,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Calculator className="h-5 w-5" />
-          <h4 className="text-md font-semibold">Calcolo Costi Storage</h4>
+          <h4 className="text-md font-semibold">Calcolo Preventivo Storage</h4>
         </div>
         
         {/* Cost cards layout matching StandSection */}

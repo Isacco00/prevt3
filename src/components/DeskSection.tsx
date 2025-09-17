@@ -60,19 +60,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
     enabled: !!user,
   });
 
-  // Set default margins based on prospect type
-  useEffect(() => {
-    if (prospect?.tipo_prospect && marginalitaData.length > 0) {
-      const marginalitaConfig = marginalitaData.find(m => m.tipo_prospect === prospect.tipo_prospect);
-      if (marginalitaConfig) {
-        const defaultMargin = marginalitaConfig.marginalita;
-        onChange('marginalita_struttura_desk' as any, data.marginalita_struttura_desk ?? defaultMargin);
-        onChange('marginalita_grafica_desk' as any, data.marginalita_grafica_desk ?? defaultMargin);
-        onChange('marginalita_premontaggio_desk' as any, data.marginalita_premontaggio_desk ?? defaultMargin);
-        onChange('marginalita_accessori_desk' as any, data.marginalita_accessori_desk ?? defaultMargin);
-      }
-    }
-  }, [prospect?.tipo_prospect, marginalitaData]);
+  // Note: Default margins are set in the parent component when creating new preventivo
 
   // Fetch desk accessories
   const { data: accessoriDesk = [], isLoading: isLoadingAccessori } = useQuery({
@@ -348,7 +336,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
      {/* Calcolo Costi Desk */}
 <Card>
   <CardContent className="pt-6">
-    <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Desk</h4>
+    <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Preventivo Desk</h4>
 
     {/* Cost cards in 3x2 layout (4 items in 2 rows) */}
     <div className="grid grid-cols-2 gap-4 mb-4">
@@ -368,7 +356,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
+                step="1"
                 value={data.marginalita_struttura_desk || 50}
                 onChange={(e) => onChange('marginalita_struttura_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
@@ -398,7 +386,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
+                step="1"
                 value={data.marginalita_grafica_desk || 50}
                 onChange={(e) => onChange('marginalita_grafica_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
@@ -428,7 +416,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
+                step="1"
                 value={data.marginalita_premontaggio_desk || 50}
                 onChange={(e) => onChange('marginalita_premontaggio_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
@@ -458,7 +446,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
+                step="1"
                 value={data.marginalita_accessori_desk || 50}
                 onChange={(e) => onChange('marginalita_accessori_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
