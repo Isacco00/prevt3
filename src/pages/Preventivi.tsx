@@ -470,36 +470,8 @@ const Preventivi = () => {
     enabled: !!user,
   });
 
-  // Effect to update margins when editing an existing preventivo and prospect data is loaded
-  React.useEffect(() => {
-    if (editingPreventivo && formData.prospect_id && prospects.length > 0 && marginalitaProspect.length > 0) {
-      // Check if margins are still at default values (meaning they need to be updated)
-      const hasDefaultMargins = formData.marginalita_struttura === 50 && 
-                               formData.marginalita_grafica === 50 && 
-                               formData.marginalita_retroilluminazione === 50 && 
-                               formData.marginalita_accessori === 50 && 
-                               formData.marginalita_premontaggio === 50;
-      
-      if (hasDefaultMargins) {
-        const selectedProspect = prospects.find((p: any) => p.id === formData.prospect_id);
-        if (selectedProspect) {
-          const defaultMargin = marginalitaProspect.find(
-            (m: any) => m.tipo_prospect === selectedProspect.tipo_prospect
-          );
-          if (defaultMargin && defaultMargin.marginalita !== 50) {
-            setFormData(prev => ({
-              ...prev,
-              marginalita_struttura: defaultMargin.marginalita,
-              marginalita_grafica: defaultMargin.marginalita,
-              marginalita_retroilluminazione: defaultMargin.marginalita,
-              marginalita_accessori: defaultMargin.marginalita,
-              marginalita_premontaggio: defaultMargin.marginalita,
-            }));
-          }
-        }
-      }
-    }
-  }, [editingPreventivo, formData.prospect_id, prospects, marginalitaProspect]);
+  // Note: Default margins are only applied when creating new preventivo via updateMarginsBasedOnProspect function
+  // When editing existing preventivo, all margin values are loaded from database and should not be overridden
 
   // Fetch accessori stand for cost calculation
   const { data: accessoriStand = [] } = useQuery({
