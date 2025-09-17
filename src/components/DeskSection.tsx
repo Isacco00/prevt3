@@ -357,7 +357,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 min="0"
                 max="200"
                 step="1"
-                value={data.marginalita_struttura_desk || 50}
+                value={data.marginalita_struttura_desk ?? 50}
                 onChange={(e) => onChange('marginalita_struttura_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
               />
@@ -365,7 +365,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             </div>
           </div>
           <div className="text-right text-lg font-bold text-primary">
-            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100)).toFixed(2)}
+            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
