@@ -368,8 +368,8 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
-                value={data.marginalita_struttura_desk || 50}
+                step="1"
+                value={data.marginalita_struttura_desk ?? 50}
                 onChange={(e) => onChange('marginalita_struttura_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
               />
@@ -377,7 +377,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             </div>
           </div>
           <div className="text-right text-lg font-bold text-primary">
-            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100)).toFixed(2)}
+            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -398,8 +398,8 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
-                value={data.marginalita_grafica_desk || 50}
+                step="1"
+                value={data.marginalita_grafica_desk ?? 50}
                 onChange={(e) => onChange('marginalita_grafica_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
               />
@@ -407,7 +407,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             </div>
           </div>
           <div className="text-right text-lg font-bold text-primary">
-            €{((costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk || 50) / 100)).toFixed(2)}
+            €{((costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -428,8 +428,8 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
-                value={data.marginalita_premontaggio_desk || 50}
+                step="1"
+                value={data.marginalita_premontaggio_desk ?? 50}
                 onChange={(e) => onChange('marginalita_premontaggio_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
               />
@@ -437,7 +437,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             </div>
           </div>
           <div className="text-right text-lg font-bold text-primary">
-            €{((costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk || 50) / 100)).toFixed(2)}
+            €{((costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -458,8 +458,8 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 type="number"
                 min="0"
                 max="200"
-                step="5"
-                value={data.marginalita_accessori_desk || 50}
+                step="1"
+                value={data.marginalita_accessori_desk ?? 50}
                 onChange={(e) => onChange('marginalita_accessori_desk' as any, parseFloat(e.target.value) || 0)}
                 className="w-16 h-6 text-xs text-center"
               />
@@ -467,7 +467,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             </div>
           </div>
           <div className="text-right text-lg font-bold text-primary">
-            €{((costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 50) / 100)).toFixed(2)}
+            €{((costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
@@ -482,10 +482,10 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             <div className="text-2xl font-bold text-primary">
               €{(() => {
                 const totalePreventivo = 
-                  (costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100) +
-                  (costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk || 50) / 100) +
-                  (costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk || 50) / 100) +
-                  (costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 50) / 100);
+                  (costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk) / 100) +
+                  (costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk) / 100) +
+                  (costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk) / 100) +
+                  (costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk) / 100);
                 return totalePreventivo.toFixed(2);
               })()}
             </div>
@@ -503,10 +503,10 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 const totaleCosti = (costiDesk?.struttura_terra ?? 0) + (costiDesk?.grafica_cordino ?? 0) + (costiDesk?.premontaggio ?? 0) + (costiAccessori ?? 0);
                 if (totaleCosti === 0) return '0.0%';
                 const totalePreventivo = 
-                  (costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100) +
-                  (costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk || 50) / 100) +
-                  (costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk || 50) / 100) +
-                  (costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 50) / 100);
+                  (costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk) / 100) +
+                  (costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk) / 100) +
+                  (costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk) / 100) +
+                  (costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk) / 100);
                 const marginalitaMedia = ((totalePreventivo - totaleCosti) / totaleCosti * 100);
                 return marginalitaMedia.toFixed(1) + '%';
               })()}
