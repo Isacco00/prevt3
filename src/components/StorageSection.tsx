@@ -319,25 +319,23 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
           <h4 className="text-md font-semibold">Calcolo Costi Storage</h4>
         </div>
         
-        {/* Cost cards in 3x2 layout */}
-        <div className="grid grid-cols-3 gap-4">
+        {/* Cost cards layout matching StandSection */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Struttura storage */}
-          <Card className="border border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium">Struttura storage</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-right text-lg font-bold">
-                €{storageCosts.costo_struttura_storage.toFixed(2)}
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Ricarico</span>
+          <Card className="p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div className="text-sm font-medium">Struttura storage</div>
+              <div className="text-lg font-bold">€{storageCosts.costo_struttura_storage.toFixed(2)}</div>
+            </div>
+            <div className="flex justify-between items-end">
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
                   <Input
                     type="number"
                     min="0"
                     max="200"
-                    step="5"
+                    step="1"
                     value={formData.marginalita_struttura_storage || 50}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -348,29 +346,25 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-right text-lg font-bold text-primary">
-                €{(storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100)).toFixed(2)}
-              </div>
-            </CardContent>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100)).toFixed(2)}</div>
+            </div>
           </Card>
 
           {/* Grafica storage */}
-          <Card className="border border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium">Grafica storage</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-right text-lg font-bold">
-                €{storageCosts.costo_grafica_storage.toFixed(2)}
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Ricarico</span>
+          <Card className="p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div className="text-sm font-medium">Grafica storage</div>
+              <div className="text-lg font-bold">€{storageCosts.costo_grafica_storage.toFixed(2)}</div>
+            </div>
+            <div className="flex justify-between items-end">
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
                   <Input
                     type="number"
                     min="0"
                     max="200"
-                    step="5"
+                    step="1"
                     value={formData.marginalita_grafica_storage || 50}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -381,29 +375,25 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-right text-lg font-bold text-primary">
-                €{(storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100)).toFixed(2)}
-              </div>
-            </CardContent>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100)).toFixed(2)}</div>
+            </div>
           </Card>
 
           {/* Premontaggio storage */}
-          <Card className="border border-border/50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium">Premontaggio Storage</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <div className="text-right text-lg font-bold">
-                €{storageCosts.costo_premontaggio_storage.toFixed(2)}
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">Ricarico</span>
+          <Card className="p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div className="text-sm font-medium">Premontaggio Storage</div>
+              <div className="text-lg font-bold">€{storageCosts.costo_premontaggio_storage.toFixed(2)}</div>
+            </div>
+            <div className="flex justify-between items-end">
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
                   <Input
                     type="number"
                     min="0"
                     max="200"
-                    step="5"
+                    step="1"
                     value={formData.marginalita_premontaggio_storage || 50}
                     onChange={(e) => setFormData({
                       ...formData,
@@ -414,10 +404,8 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-right text-lg font-bold text-primary">
-                €{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100)).toFixed(2)}
-              </div>
-            </CardContent>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100)).toFixed(2)}</div>
+            </div>
           </Card>
         </div>
 
