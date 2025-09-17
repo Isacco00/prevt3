@@ -346,7 +346,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100)).toFixed(2)}</div>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage ?? 50) / 100)).toFixed(2)}</div>
             </div>
           </Card>
 
@@ -375,7 +375,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100)).toFixed(2)}</div>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage ?? 50) / 100)).toFixed(2)}</div>
             </div>
           </Card>
 
@@ -404,7 +404,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100)).toFixed(2)}</div>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage ?? 50) / 100)).toFixed(2)}</div>
             </div>
           </Card>
         </div>
@@ -418,9 +418,9 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                 <div className="text-2xl font-bold text-primary">
                   €{(() => {
                     const totalePreventivo = 
-                      storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100) +
-                      storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100) +
-                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100);
+                      storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage) / 100) +
+                      storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage) / 100) +
+                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage) / 100);
                     return totalePreventivo.toFixed(2);
                   })()}
                 </div>
