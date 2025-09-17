@@ -357,7 +357,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
                 min="0"
                 max="200"
                 step="1"
-                value={data.marginalita_struttura_desk}
+                value={data.marginalita_struttura_desk ?? 50}
                 onChange={(e) => setFormData({...formData,marginalita_struttura_desk: parseFloat(e.target.value) || 0})}
                 className="w-16 h-6 text-xs text-center"
               />
