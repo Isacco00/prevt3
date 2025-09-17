@@ -336,7 +336,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_struttura_storage || 50}
+                    value={formData.marginalita_struttura_storage ?? 50}
                     onChange={(e) => setFormData({
                       ...formData,
                       marginalita_struttura_storage: parseFloat(e.target.value) || 0
