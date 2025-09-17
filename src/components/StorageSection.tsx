@@ -365,7 +365,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_grafica_storage || 50}
+                    value={formData.marginalita_grafica_storage ?? 50}
                     onChange={(e) => setFormData({
                       ...formData,
                       marginalita_grafica_storage: parseFloat(e.target.value) || 0
@@ -394,7 +394,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_premontaggio_storage || 50}
+                    value={formData.marginalita_premontaggio_storage ?? 50}
                     onChange={(e) => setFormData({
                       ...formData,
                       marginalita_premontaggio_storage: parseFloat(e.target.value) || 0
