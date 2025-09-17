@@ -163,6 +163,15 @@ const Preventivi = () => {
     marginalita_retroilluminazione: 50,
     marginalita_accessori: 50,
     marginalita_premontaggio: 50,
+    // Storage margins
+    marginalita_struttura_storage: 50,
+    marginalita_grafica_storage: 50,
+    marginalita_premontaggio_storage: 50,
+    // Desk margins
+    marginalita_struttura_desk: 50,
+    marginalita_grafica_desk: 50,
+    marginalita_premontaggio_desk: 50,
+    marginalita_accessori_desk: 50,
     // Stand accessories
     borsa_stand: '',
     baule_trolley: '',
@@ -413,6 +422,15 @@ const Preventivi = () => {
           marginalita_retroilluminazione: defaultMargin.marginalita,
           marginalita_accessori: defaultMargin.marginalita,
           marginalita_premontaggio: defaultMargin.marginalita,
+          // Storage margins
+          marginalita_struttura_storage: defaultMargin.marginalita,
+          marginalita_grafica_storage: defaultMargin.marginalita,
+          marginalita_premontaggio_storage: defaultMargin.marginalita,
+          // Desk margins
+          marginalita_struttura_desk: defaultMargin.marginalita,
+          marginalita_grafica_desk: defaultMargin.marginalita,
+          marginalita_premontaggio_desk: defaultMargin.marginalita,
+          marginalita_accessori_desk: defaultMargin.marginalita,
         }));
         return;
       }
@@ -932,6 +950,21 @@ const Preventivi = () => {
         totale: costo_totale,
         bifaccialita,
         retroilluminazione,
+        // Stand margins
+        marginalita_struttura: data.marginalita_struttura || 50,
+        marginalita_grafica: data.marginalita_grafica || 50,
+        marginalita_retroilluminazione: data.marginalita_retroilluminazione || 50,
+        marginalita_accessori: data.marginalita_accessori || 50,
+        marginalita_premontaggio: data.marginalita_premontaggio || 50,
+        // Storage margins
+        marginalita_struttura_storage: data.marginalita_struttura_storage || 50,
+        marginalita_grafica_storage: data.marginalita_grafica_storage || 50,
+        marginalita_premontaggio_storage: data.marginalita_premontaggio_storage || 50,
+        // Desk margins
+        marginalita_struttura_desk: data.marginalita_struttura_desk || 50,
+        marginalita_grafica_desk: data.marginalita_grafica_desk || 50,
+        marginalita_premontaggio_desk: data.marginalita_premontaggio_desk || 50,
+        marginalita_accessori_desk: data.marginalita_accessori_desk || 50,
         // Stand accessories
         borsa_stand: parseInt(formData.borsa_stand) || 0,
         baule_trolley: parseInt(formData.baule_trolley) || 0,
@@ -1140,6 +1173,21 @@ const Preventivi = () => {
         bifaccialita,
         retroilluminazione,
         premontaggio: data.premontaggio,
+        // Stand margins
+        marginalita_struttura: data.marginalita_struttura || 50,
+        marginalita_grafica: data.marginalita_grafica || 50,
+        marginalita_retroilluminazione: data.marginalita_retroilluminazione || 50,
+        marginalita_accessori: data.marginalita_accessori || 50,
+        marginalita_premontaggio: data.marginalita_premontaggio || 50,
+        // Storage margins
+        marginalita_struttura_storage: data.marginalita_struttura_storage || 50,
+        marginalita_grafica_storage: data.marginalita_grafica_storage || 50,
+        marginalita_premontaggio_storage: data.marginalita_premontaggio_storage || 50,
+        // Desk margins
+        marginalita_struttura_desk: data.marginalita_struttura_desk || 50,
+        marginalita_grafica_desk: data.marginalita_grafica_desk || 50,
+        marginalita_premontaggio_desk: data.marginalita_premontaggio_desk || 50,
+        marginalita_accessori_desk: data.marginalita_accessori_desk || 50,
         // Stand accessories
         borsa_stand: parseInt(data.borsa_stand) || 0,
         baule_trolley: parseInt(data.baule_trolley) || 0,
@@ -1323,6 +1371,15 @@ const Preventivi = () => {
         marginalita_retroilluminazione: 50,
         marginalita_accessori: 50,
         marginalita_premontaggio: 50,
+        // Storage margins
+        marginalita_struttura_storage: 50,
+        marginalita_grafica_storage: 50,
+        marginalita_premontaggio_storage: 50,
+        // Desk margins
+        marginalita_struttura_desk: 50,
+        marginalita_grafica_desk: 50,
+        marginalita_premontaggio_desk: 50,
+        marginalita_accessori_desk: 50,
         // Accessori stand dinamici
         accessori_stand: {},
     });
@@ -1418,6 +1475,15 @@ const Preventivi = () => {
         marginalita_retroilluminazione: (preventivo as any).marginalita_retroilluminazione || 50,
         marginalita_accessori: (preventivo as any).marginalita_accessori || 50,
         marginalita_premontaggio: (preventivo as any).marginalita_premontaggio || 50,
+        // Storage margins
+        marginalita_struttura_storage: (preventivo as any).marginalita_struttura_storage || 50,
+        marginalita_grafica_storage: (preventivo as any).marginalita_grafica_storage || 50,
+        marginalita_premontaggio_storage: (preventivo as any).marginalita_premontaggio_storage || 50,
+        // Desk margins
+        marginalita_struttura_desk: (preventivo as any).marginalita_struttura_desk || 50,
+        marginalita_grafica_desk: (preventivo as any).marginalita_grafica_desk || 50,
+        marginalita_premontaggio_desk: (preventivo as any).marginalita_premontaggio_desk || 50,
+        marginalita_accessori_desk: (preventivo as any).marginalita_accessori_desk || 50,
         // Accessori stand dinamici  
         accessori_stand: (() => {
           try {
