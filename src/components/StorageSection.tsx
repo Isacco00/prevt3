@@ -437,9 +437,9 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   {(() => {
                     if (storageCosts.costo_totale_storage === 0) return '0.0%';
                     const totalePreventivo = 
-                      storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100) +
-                      storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100) +
-                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100);
+                      storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage) / 100) +
+                      storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage) / 100) +
+                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage) / 100);
                     const marginalitaMedia = ((totalePreventivo - storageCosts.costo_totale_storage) / storageCosts.costo_totale_storage * 100);
                     return marginalitaMedia.toFixed(1) + '%';
                   })()}
