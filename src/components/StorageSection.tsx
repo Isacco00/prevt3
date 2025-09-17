@@ -16,11 +16,15 @@ interface StorageSectionProps {
     layout_storage: string;
     numero_porte: string;
     distribuzione: string;
+    marginalita_struttura_storage?: number;
+    marginalita_grafica_storage?: number;
+    marginalita_premontaggio_storage?: number;
   };
   setFormData: (data: any) => void;
   profiliDistribuzioneMap: Record<number, number>;
   parametri: any[];
   accessoriStand: any[];
+  prospect?: { tipo_prospect?: string };
   onCostsChange?: (costs: {
     costo_struttura_storage: number;
     costo_grafica_storage: number;
@@ -29,8 +33,38 @@ interface StorageSectionProps {
   }) => void;
 }
 
-export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand, onCostsChange }: StorageSectionProps) {
+export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand, prospect, onCostsChange }: StorageSectionProps) {
   const { user } = useAuth();
+
+  // Fetch marginality data
+  const { data: marginalitaData = [] } = useQuery({
+    queryKey: ['marginalita-per-prospect'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('marginalita_per_prospect')
+        .select('*')
+        .eq('attivo', true);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Set default margins based on prospect type
+  useEffect(() => {
+    if (prospect?.tipo_prospect && marginalitaData.length > 0) {
+      const marginalitaConfig = marginalitaData.find(m => m.tipo_prospect === prospect.tipo_prospect);
+      if (marginalitaConfig) {
+        const defaultMargin = marginalitaConfig.marginalita;
+        setFormData({
+          ...formData,
+          marginalita_struttura_storage: formData.marginalita_struttura_storage ?? defaultMargin,
+          marginalita_grafica_storage: formData.marginalita_grafica_storage ?? defaultMargin,
+          marginalita_premontaggio_storage: formData.marginalita_premontaggio_storage ?? defaultMargin,
+        });
+      }
+    }
+  }, [prospect?.tipo_prospect, marginalitaData]);
 
   // Fetch parametri a costi unitari
   const { data: parametriCostiUnitari = [] } = useQuery({
@@ -285,59 +319,147 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
           <h4 className="text-md font-semibold">Calcolo Costi Storage</h4>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="relative">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start">
-                Costo struttura a terra storage
-              </CardTitle>
+        {/* Cost cards in 3x2 layout */}
+        <div className="grid grid-cols-3 gap-4">
+          {/* Struttura storage */}
+          <Card className="border border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-medium">Struttura storage</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-left">€{storageCosts.costo_struttura_storage.toFixed(2)}</div>
+            <CardContent className="space-y-2">
+              <div className="text-right text-lg font-bold">
+                €{storageCosts.costo_struttura_storage.toFixed(2)}
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Ricarico</span>
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    step="5"
+                    value={formData.marginalita_struttura_storage || 50}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      marginalita_struttura_storage: parseFloat(e.target.value) || 0
+                    })}
+                    className="w-16 h-6 text-xs text-center"
+                  />
+                  <span className="text-xs">%</span>
+                </div>
+              </div>
+              <div className="text-right text-lg font-bold text-primary">
+                €{(storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100)).toFixed(2)}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start">
-                Costo grafica con cordino cucito storage
-              </CardTitle>
+          {/* Grafica storage */}
+          <Card className="border border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-medium">Grafica storage</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-left">€{storageCosts.costo_grafica_storage.toFixed(2)}</div>
+            <CardContent className="space-y-2">
+              <div className="text-right text-lg font-bold">
+                €{storageCosts.costo_grafica_storage.toFixed(2)}
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Ricarico</span>
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    step="5"
+                    value={formData.marginalita_grafica_storage || 50}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      marginalita_grafica_storage: parseFloat(e.target.value) || 0
+                    })}
+                    className="w-16 h-6 text-xs text-center"
+                  />
+                  <span className="text-xs">%</span>
+                </div>
+              </div>
+              <div className="text-right text-lg font-bold text-primary">
+                €{(storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100)).toFixed(2)}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="relative">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start">
-                Costo premontaggio storage
-              </CardTitle>
+          {/* Premontaggio storage */}
+          <Card className="border border-border/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xs font-medium">Premontaggio Storage</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-left">€{storageCosts.costo_premontaggio_storage.toFixed(2)}</div>
+            <CardContent className="space-y-2">
+              <div className="text-right text-lg font-bold">
+                €{storageCosts.costo_premontaggio_storage.toFixed(2)}
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="relative border-2 border-primary">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xs leading-tight min-h-[2.5rem] flex items-start text-primary">
-                Costo totale storage
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="flex flex-col justify-end h-[3rem]">
-                <div className="text-2xl font-bold text-left text-primary">€{storageCosts.costo_totale_storage.toFixed(2)}</div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Ricarico</span>
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    step="5"
+                    value={formData.marginalita_premontaggio_storage || 50}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      marginalita_premontaggio_storage: parseFloat(e.target.value) || 0
+                    })}
+                    className="w-16 h-6 text-xs text-center"
+                  />
+                  <span className="text-xs">%</span>
+                </div>
+              </div>
+              <div className="text-right text-lg font-bold text-primary">
+                €{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100)).toFixed(2)}
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Summary */}
+        <Card className="border-2 border-primary/20 bg-primary/5">
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Totale preventivo storage</div>
+                <div className="text-2xl font-bold text-primary">
+                  €{(() => {
+                    const totalePreventivo = 
+                      storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100) +
+                      storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100) +
+                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100);
+                    return totalePreventivo.toFixed(2);
+                  })()}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Totale costi storage</div>
+                <div className="text-2xl font-bold">
+                  €{storageCosts.costo_totale_storage.toFixed(2)}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {(() => {
+                    if (storageCosts.costo_totale_storage === 0) return '0.0%';
+                    const totalePreventivo = 
+                      storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 50) / 100) +
+                      storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 50) / 100) +
+                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 50) / 100);
+                    const marginalitaMedia = ((totalePreventivo - storageCosts.costo_totale_storage) / storageCosts.costo_totale_storage * 100);
+                    return marginalitaMedia.toFixed(1) + '%';
+                  })()}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

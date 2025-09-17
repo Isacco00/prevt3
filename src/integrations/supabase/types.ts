@@ -364,10 +364,17 @@ export type Database = {
           layout_desk: string | null
           layout_storage: string | null
           marginalita_accessori: number | null
+          marginalita_accessori_desk: number | null
           marginalita_grafica: number | null
+          marginalita_grafica_desk: number | null
+          marginalita_grafica_storage: number | null
           marginalita_premontaggio: number | null
+          marginalita_premontaggio_desk: number | null
+          marginalita_premontaggio_storage: number | null
           marginalita_retroilluminazione: number | null
           marginalita_struttura: number | null
+          marginalita_struttura_desk: number | null
+          marginalita_struttura_storage: number | null
           mensola: number | null
           nicchia: number | null
           note: string | null
@@ -454,10 +461,17 @@ export type Database = {
           layout_desk?: string | null
           layout_storage?: string | null
           marginalita_accessori?: number | null
+          marginalita_accessori_desk?: number | null
           marginalita_grafica?: number | null
+          marginalita_grafica_desk?: number | null
+          marginalita_grafica_storage?: number | null
           marginalita_premontaggio?: number | null
+          marginalita_premontaggio_desk?: number | null
+          marginalita_premontaggio_storage?: number | null
           marginalita_retroilluminazione?: number | null
           marginalita_struttura?: number | null
+          marginalita_struttura_desk?: number | null
+          marginalita_struttura_storage?: number | null
           mensola?: number | null
           nicchia?: number | null
           note?: string | null
@@ -544,10 +558,17 @@ export type Database = {
           layout_desk?: string | null
           layout_storage?: string | null
           marginalita_accessori?: number | null
+          marginalita_accessori_desk?: number | null
           marginalita_grafica?: number | null
+          marginalita_grafica_desk?: number | null
+          marginalita_grafica_storage?: number | null
           marginalita_premontaggio?: number | null
+          marginalita_premontaggio_desk?: number | null
+          marginalita_premontaggio_storage?: number | null
           marginalita_retroilluminazione?: number | null
           marginalita_struttura?: number | null
+          marginalita_struttura_desk?: number | null
+          marginalita_struttura_storage?: number | null
           mensola?: number | null
           nicchia?: number | null
           note?: string | null

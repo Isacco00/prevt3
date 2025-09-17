@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 interface DeskLayoutConfig {
   layout: string;
@@ -21,6 +22,11 @@ interface DeskData {
   teca_plexiglass: number;
   fronte_luminoso: number;
   borsa: number;
+  // Marginalità
+  marginalita_struttura_desk?: number;
+  marginalita_grafica_desk?: number;
+  marginalita_premontaggio_desk?: number;
+  marginalita_accessori_desk?: number;
 }
 
 interface DeskSectionProps {
@@ -34,10 +40,39 @@ interface DeskSectionProps {
     premontaggio: number;
     totale: number;
   };
+  prospect?: { tipo_prospect?: string };
 }
 
-export function DeskSection({ data, onChange, parametri, costiAccessori = 0, costiDesk }: DeskSectionProps) {
+export function DeskSection({ data, onChange, parametri, costiAccessori = 0, costiDesk, prospect }: DeskSectionProps) {
   const { user } = useAuth();
+
+  // Fetch marginality data
+  const { data: marginalitaData = [] } = useQuery({
+    queryKey: ['marginalita-per-prospect'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('marginalita_per_prospect')
+        .select('*')
+        .eq('attivo', true);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Set default margins based on prospect type
+  useEffect(() => {
+    if (prospect?.tipo_prospect && marginalitaData.length > 0) {
+      const marginalitaConfig = marginalitaData.find(m => m.tipo_prospect === prospect.tipo_prospect);
+      if (marginalitaConfig) {
+        const defaultMargin = marginalitaConfig.marginalita;
+        onChange('marginalita_struttura_desk' as any, data.marginalita_struttura_desk ?? defaultMargin);
+        onChange('marginalita_grafica_desk' as any, data.marginalita_grafica_desk ?? defaultMargin);
+        onChange('marginalita_premontaggio_desk' as any, data.marginalita_premontaggio_desk ?? defaultMargin);
+        onChange('marginalita_accessori_desk' as any, data.marginalita_accessori_desk ?? defaultMargin);
+      }
+    }
+  }, [prospect?.tipo_prospect, marginalitaData]);
 
   // Fetch desk accessories
   const { data: accessoriDesk = [], isLoading: isLoadingAccessori } = useQuery({
@@ -315,68 +350,169 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
   <CardContent className="pt-6">
     <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Desk</h4>
 
-    {/* 4 cards principali */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Struttura a terra Desk
-          </CardTitle>
+    {/* Cost cards in 3x2 layout (4 items in 2 rows) */}
+    <div className="grid grid-cols-2 gap-4 mb-4">
+      {/* Struttura desk */}
+      <Card className="border border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-medium">Struttura desk</CardTitle>
         </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
+        <CardContent className="space-y-2">
+          <div className="text-right text-lg font-bold">
             €{(costiDesk?.struttura_terra ?? 0).toFixed(2)}
           </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Ricarico</span>
+            <div className="flex items-center gap-1">
+              <Input
+                type="number"
+                min="0"
+                max="200"
+                step="5"
+                value={data.marginalita_struttura_desk || 50}
+                onChange={(e) => onChange('marginalita_struttura_desk' as any, parseFloat(e.target.value) || 0)}
+                className="w-16 h-6 text-xs text-center"
+              />
+              <span className="text-xs">%</span>
+            </div>
+          </div>
+          <div className="text-right text-lg font-bold text-primary">
+            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100)).toFixed(2)}
+          </div>
         </CardContent>
       </Card>
 
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Grafica con cordino cucito Desk
-          </CardTitle>
+      {/* Grafica desk */}
+      <Card className="border border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-medium">Grafica desk</CardTitle>
         </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
+        <CardContent className="space-y-2">
+          <div className="text-right text-lg font-bold">
             €{(costiDesk?.grafica_cordino ?? 0).toFixed(2)}
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Premontaggio Desk
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
-            €{(costiDesk?.premontaggio ?? 0).toFixed(2)}
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Ricarico</span>
+            <div className="flex items-center gap-1">
+              <Input
+                type="number"
+                min="0"
+                max="200"
+                step="5"
+                value={data.marginalita_grafica_desk || 50}
+                onChange={(e) => onChange('marginalita_grafica_desk' as any, parseFloat(e.target.value) || 0)}
+                className="w-16 h-6 text-xs text-center"
+              />
+              <span className="text-xs">%</span>
+            </div>
+          </div>
+          <div className="text-right text-lg font-bold text-primary">
+            €{((costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk || 50) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
 
-      <Card className="h-24 flex flex-col overflow-hidden">
-        <CardHeader className="pb-1 pt-3 px-3">
-          <CardTitle className="text-xs font-medium leading-tight">
-            Costi totali Accessori Desk
-          </CardTitle>
+      {/* Premontaggio desk */}
+      <Card className="border border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-medium">Premontaggio desk</CardTitle>
         </CardHeader>
-        <CardContent className="mt-auto pb-3 px-3">
-          <div className="text-xl font-bold leading-none tabular-nums truncate">
+        <CardContent className="space-y-2">
+          <div className="text-right text-lg font-bold">
+            €{(costiDesk?.premontaggio ?? 0).toFixed(2)}
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Ricarico</span>
+            <div className="flex items-center gap-1">
+              <Input
+                type="number"
+                min="0"
+                max="200"
+                step="5"
+                value={data.marginalita_premontaggio_desk || 50}
+                onChange={(e) => onChange('marginalita_premontaggio_desk' as any, parseFloat(e.target.value) || 0)}
+                className="w-16 h-6 text-xs text-center"
+              />
+              <span className="text-xs">%</span>
+            </div>
+          </div>
+          <div className="text-right text-lg font-bold text-primary">
+            €{((costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk || 50) / 100)).toFixed(2)}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Accessori desk */}
+      <Card className="border border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xs font-medium">Accessori desk</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="text-right text-lg font-bold">
             €{(costiAccessori ?? 0).toFixed(2)}
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Ricarico</span>
+            <div className="flex items-center gap-1">
+              <Input
+                type="number"
+                min="0"
+                max="200"
+                step="5"
+                value={data.marginalita_accessori_desk || 50}
+                onChange={(e) => onChange('marginalita_accessori_desk' as any, parseFloat(e.target.value) || 0)}
+                className="w-16 h-6 text-xs text-center"
+              />
+              <span className="text-xs">%</span>
+            </div>
+          </div>
+          <div className="text-right text-lg font-bold text-primary">
+            €{((costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 50) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
     </div>
 
-    {/* Costo totale Desk */}
-    <Card className="w-full h-28 flex flex-col overflow-hidden border-2 rounded-xl">
-      <CardContent className="px-4 py-3 flex flex-col">
-          <div className="text-lg font-medium leading-tight">Costo totale Desk</div>
-          <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
-            €{(costiDesk?.totale ?? 0).toFixed(2)}
+    {/* Summary */}
+    <Card className="border-2 border-primary/20 bg-primary/5">
+      <CardContent className="pt-4">
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div>
+            <div className="text-sm text-muted-foreground mb-1">Totale preventivo desk</div>
+            <div className="text-2xl font-bold text-primary">
+              €{(() => {
+                const totalePreventivo = 
+                  (costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100) +
+                  (costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk || 50) / 100) +
+                  (costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk || 50) / 100) +
+                  (costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 50) / 100);
+                return totalePreventivo.toFixed(2);
+              })()}
+            </div>
           </div>
+          <div>
+            <div className="text-sm text-muted-foreground mb-1">Totale costi desk</div>
+            <div className="text-2xl font-bold">
+              €{((costiDesk?.struttura_terra ?? 0) + (costiDesk?.grafica_cordino ?? 0) + (costiDesk?.premontaggio ?? 0) + (costiAccessori ?? 0)).toFixed(2)}
+            </div>
+          </div>
+          <div>
+            <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
+            <div className="text-2xl font-bold text-green-600">
+              {(() => {
+                const totaleCosti = (costiDesk?.struttura_terra ?? 0) + (costiDesk?.grafica_cordino ?? 0) + (costiDesk?.premontaggio ?? 0) + (costiAccessori ?? 0);
+                if (totaleCosti === 0) return '0.0%';
+                const totalePreventivo = 
+                  (costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk || 50) / 100) +
+                  (costiDesk?.grafica_cordino ?? 0) * (1 + (data.marginalita_grafica_desk || 50) / 100) +
+                  (costiDesk?.premontaggio ?? 0) * (1 + (data.marginalita_premontaggio_desk || 50) / 100) +
+                  (costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 50) / 100);
+                const marginalitaMedia = ((totalePreventivo - totaleCosti) / totaleCosti * 100);
+                return marginalitaMedia.toFixed(1) + '%';
+              })()}
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   </CardContent>
