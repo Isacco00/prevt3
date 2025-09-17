@@ -365,7 +365,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             </div>
           </div>
           <div className="text-right text-lg font-bold text-primary">
-            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk) / 100)).toFixed(2)}
+            €{((costiDesk?.struttura_terra ?? 0) * (1 + (data.marginalita_struttura_desk ?? 50) / 100)).toFixed(2)}
           </div>
         </CardContent>
       </Card>
