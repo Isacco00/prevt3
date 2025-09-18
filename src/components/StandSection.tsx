@@ -363,7 +363,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_struttura}
+                    value={formData.marginalita_struttura || 0}
                     onChange={(e) => setFormData({ ...formData, marginalita_struttura: parseFloat(e.target.value) || 0 })}
                     className="w-16 h-6 text-xs text-center"
                   />
@@ -389,7 +389,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_grafica}
+                    value={formData.marginalita_grafica || 0}
                     onChange={(e) => setFormData({ ...formData, marginalita_grafica: parseFloat(e.target.value) || 0 })}
                     className="w-16 h-6 text-xs text-center"
                   />
@@ -415,7 +415,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_retroilluminazione}
+                    value={formData.marginalita_retroilluminazione || 0}
                     onChange={(e) => setFormData({ ...formData, marginalita_retroilluminazione: parseFloat(e.target.value) || 0 })}
                     className="w-16 h-6 text-xs text-center"
                   />
@@ -444,7 +444,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_accessori}
+                    value={formData.marginalita_accessori || 0}
                     onChange={(e) => setFormData({ ...formData, marginalita_accessori: parseFloat(e.target.value) || 0 })}
                     className="w-16 h-6 text-xs text-center"
                   />
@@ -470,7 +470,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_premontaggio}
+                    value={formData.marginalita_premontaggio || 0}
                     onChange={(e) => setFormData({ ...formData, marginalita_premontaggio: parseFloat(e.target.value) || 0 })}
                     className="w-16 h-6 text-xs text-center"
                   />
@@ -481,48 +481,45 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
             </div>
           </Card>
 
-          {/* Placeholder for extra space or future use */}
-          <div></div>
+          {/* Extra Stand Complesso */}
+          <Card className="p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div className="text-sm font-medium">Extra Stand Complesso</div>
+              <div className="text-lg font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
+            </div>
+            <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
+              <span className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</span>
+            </div>
+          </Card>
         </div>
 
-        {/* Extra per struttura complessa - Separata */}
-        <Card className="p-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <div className="text-sm font-medium">Extra per struttura complessa</div>
-              <div className="flex items-center gap-2">
-                <Label className="text-xs">Extra % su costo struttura</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={formData.extra_perc_complex}
-                  onChange={(e) => setFormData({ ...formData, extra_perc_complex: e.target.value })}
-                  className="w-16 h-6 text-xs text-center"
-                />
-                <span className="text-xs">%</span>
-              </div>
-            </div>
-            <div className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</div>
-          </div>
-        </Card>
-
-        {/* Totali */}
-        <Card className="border-2 border-primary">
-          <CardContent className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+        {/* Summary */}
+        <Card className="border-2 border-primary/20 bg-primary/5">
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-4 gap-4 text-center">
               <div>
-                <div className="text-sm font-medium text-muted-foreground">Totale preventivo stand</div>
-                <div className="text-2xl font-bold text-primary">€{costs.totale_preventivo_stand.toFixed(2)}</div>
+                <div className="text-sm text-muted-foreground mb-1">Totale</div>
+                <div className="text-2xl font-bold text-primary">
+                  €{costs.totale.toFixed(2)}
+                </div>
               </div>
               <div>
-                <div className="text-sm font-medium text-muted-foreground">Totale costi</div>
-                <div className="text-xl font-bold">€{costs.totale_costi_stand.toFixed(2)}</div>
+                <div className="text-sm text-muted-foreground mb-1">Totale preventivo stand</div>
+                <div className="text-2xl font-bold text-primary">
+                  €{costs.totale_preventivo_stand.toFixed(2)}
+                </div>
               </div>
               <div>
-                <div className="text-sm font-medium text-muted-foreground">Marginalità Media (%)</div>
-                <div className="text-xl font-bold">{costs.marginalita_media.toFixed(1)}%</div>
+                <div className="text-sm text-muted-foreground mb-1">Totale costi stand</div>
+                <div className="text-2xl font-bold">
+                  €{costs.totale_costi_stand.toFixed(2)}
+                </div>
+              </div>
+              <div>
+                <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {costs.marginalita_media.toFixed(1)}%
+                </div>
               </div>
             </div>
           </CardContent>
