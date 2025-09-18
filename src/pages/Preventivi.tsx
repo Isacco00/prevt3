@@ -1442,11 +1442,11 @@ const Preventivi = () => {
       extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
       costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
         // Stand margins
-        marginalita_struttura: (preventivo as any).marginalita_struttura || 50,
-        marginalita_grafica: (preventivo as any).marginalita_grafica || 50,
-        marginalita_retroilluminazione: (preventivo as any).marginalita_retroilluminazione || 50,
-        marginalita_accessori: (preventivo as any).marginalita_accessori || 50,
-        marginalita_premontaggio: (preventivo as any).marginalita_premontaggio || 50,
+        marginalita_struttura: (preventivo as any).marginalita_struttura,
+        marginalita_grafica: (preventivo as any).marginalita_grafica,
+        marginalita_retroilluminazione: (preventivo as any).marginalita_retroilluminazione,
+        marginalita_accessori: (preventivo as any).marginalita_accessori,
+        marginalita_premontaggio: (preventivo as any).marginalita_premontaggio,
         // Storage margins
         marginalita_struttura_storage: (preventivo as any).marginalita_struttura_storage || 50,
         marginalita_grafica_storage: (preventivo as any).marginalita_grafica_storage || 50,
