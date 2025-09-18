@@ -1146,11 +1146,11 @@ const Preventivi = () => {
         retroilluminazione,
         premontaggio: data.premontaggio,
         // Stand margins
-        marginalita_struttura: data.marginalita_struttura || 50,
-        marginalita_grafica: data.marginalita_grafica || 50,
-        marginalita_retroilluminazione: data.marginalita_retroilluminazione || 50,
-        marginalita_accessori: data.marginalita_accessori || 50,
-        marginalita_premontaggio: data.marginalita_premontaggio || 50,
+        marginalita_struttura: data.marginalita_struttura,
+        marginalita_grafica: data.marginalita_grafica,
+        marginalita_retroilluminazione: data.marginalita_retroilluminazione,
+        marginalita_accessori: data.marginalita_accessori,
+        marginalita_premontaggio: data.marginalita_premontaggio,
         // Storage margins
         marginalita_struttura_storage: data.marginalita_struttura_storage || 50,
         marginalita_grafica_storage: data.marginalita_grafica_storage || 50,
