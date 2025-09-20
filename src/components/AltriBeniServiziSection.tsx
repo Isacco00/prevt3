@@ -205,6 +205,15 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
   }
 
   return (
+
+
+
+
+
+
+    
+{/* INIZIO ROUTINE OLD
+    
     <Card className="w-full bg-gradient-to-br from-hsl(var(--section-services)) to-hsl(var(--section-services))/80 border-hsl(var(--section-services-border))">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-semibold text-hsl(var(--section-services-foreground)) flex items-center gap-2">
@@ -307,7 +316,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
                 </TableRow>
               ))}
               
-              {/* Total row */}
+             // Total row
               <TableRow className="bg-hsl(var(--section-services))/40 border-t-2 border-hsl(var(--section-services-border))">
                 <TableCell colSpan={6} className="text-right font-semibold">
                   Totale Altri Beni/Servizi:
@@ -322,5 +331,8 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         </div>
       </CardContent>
     </Card>
+
+FINE ROUTINE OLD */}
+    
   );
 };
