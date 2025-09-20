@@ -624,7 +624,7 @@ const Preventivi = () => {
     }
 
     // Calcolo costi desk
-    const costoStampaDeskParam = parametri.find(p => p.tipo === 'costo_stampa');
+    const costoStampaDeskParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
     const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     
     // Costo struttura desk
