@@ -105,6 +105,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         return data;
       }
     },
+    
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['altri-beni-servizi', preventivoId] });
       if (data) {
