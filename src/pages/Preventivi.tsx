@@ -15,32 +15,9 @@ import { AltriBeniServiziSection } from '@/components/AltriBeniServiziSection';
 import { Settings } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link, useLocation } from 'react-router-dom';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,7 +25,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
-
 interface Preventivo {
   id: string;
   numero_preventivo: string;
@@ -82,81 +58,80 @@ interface Preventivo {
     ragione_sociale: string;
   };
 }
-
 interface Prospect {
   id: string;
   ragione_sociale: string;
   tipo_prospect?: string;
 }
-
 const Preventivi = () => {
   const location = useLocation();
-  
+
   // Fetch service costs for totals calculation
-  const { data: serviceCosts } = useQuery({
+  const {
+    data: serviceCosts
+  } = useQuery({
     queryKey: ['service-costs'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('parametri_a_costi_unitari')
-        .select('*')
-        .in('parametro', ['Costo_certificazione', 'Costo_istruzionieassistenza'])
-        .eq('attivo', true);
-      
+      const {
+        data,
+        error
+      } = await supabase.from('parametri_a_costi_unitari').select('*').in('parametro', ['Costo_certificazione', 'Costo_istruzionieassistenza']).eq('attivo', true);
       if (error) throw error;
-      
-      const costs: { [key: string]: number } = {};
+      const costs: {
+        [key: string]: number;
+      } = {};
       data.forEach(item => {
         costs[item.parametro] = item.valore;
       });
-      
       return costs;
     }
   });
-  
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPreventivo, setEditingPreventivo] = useState<Preventivo | null>(null);
-  
+
   // Fetch preventivi servizi data
-  const { data: preventivoServizi } = useQuery({
+  const {
+    data: preventivoServizi
+  } = useQuery({
     queryKey: ['preventivo-servizi', editingPreventivo?.id],
     queryFn: async () => {
       if (!editingPreventivo?.id) return null;
-      
-      const { data, error } = await supabase
-        .from('preventivi_servizi')
-        .select('*')
-        .eq('preventivo_id', editingPreventivo.id)
-        .single();
-      
+      const {
+        data,
+        error
+      } = await supabase.from('preventivi_servizi').select('*').eq('preventivo_id', editingPreventivo.id).single();
       if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows returned
-      
+
       return data;
     },
     enabled: !!editingPreventivo?.id
   });
 
   // Fetch altri beni/servizi for the current preventivo
-  const { data: altriBeniServizi } = useQuery({
+  const {
+    data: altriBeniServizi
+  } = useQuery({
     queryKey: ['altri-beni-servizi', editingPreventivo?.id],
     queryFn: async () => {
       if (!editingPreventivo?.id) return [];
-      
-      const { data, error } = await supabase
-        .from('altri_beni_servizi')
-        .select('*')
-        .eq('preventivo_id', editingPreventivo.id);
-      
+      const {
+        data,
+        error
+      } = await supabase.from('altri_beni_servizi').select('*').eq('preventivo_id', editingPreventivo.id);
       if (error) throw error;
       return data || [];
     },
-    enabled: !!editingPreventivo?.id,
+    enabled: !!editingPreventivo?.id
   });
-  
   const [deletePreventivo, setDeletePreventivo] = useState<Preventivo | null>(null);
   const [formData, setFormData] = useState({
     numero_preventivo: '',
@@ -212,8 +187,20 @@ const Preventivi = () => {
     alt_storage: '',
     layout_storage: '',
     numero_porte: '',
-     // Desk fields
-     desk_layouts: [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }],
+    // Desk fields
+    desk_layouts: [{
+      layout: '50',
+      quantity: 0
+    }, {
+      layout: '100',
+      quantity: 0
+    }, {
+      layout: '150',
+      quantity: 0
+    }, {
+      layout: '200',
+      quantity: 0
+    }],
     // Accessori stand dinamici
     accessori_stand: {},
     // Desk accessories (individual fields)
@@ -242,8 +229,8 @@ const Preventivi = () => {
     servizio_certificazioni: false,
     servizio_istruzioni_assistenza: false,
     // Complexity fields
-          extra_perc_complex: '',
-          costo_retroilluminazione: 0,
+    extra_perc_complex: '',
+    costo_retroilluminazione: 0
   });
 
   // State per controllare le sezioni collassabili
@@ -253,7 +240,7 @@ const Preventivi = () => {
     desk: false,
     espositori: false,
     servizi: false,
-    altri_beni_servizi: false,
+    altri_beni_servizi: false
   });
 
   // Totali Storage “lifted” dalla sezione Storage
@@ -261,7 +248,7 @@ const Preventivi = () => {
     costo_struttura_storage: 0,
     costo_grafica_storage: 0,
     costo_premontaggio_storage: 0,
-    costo_totale_storage: 0,
+    costo_totale_storage: 0
   });
   // Totali Espositori “lifted” dalla sezione Espositori
   const [expositoreCostsLifted, setExpositoreCostsLifted] = useState({
@@ -269,7 +256,7 @@ const Preventivi = () => {
     grafica_espositori: 0,
     premontaggio_espositori: 0,
     accessori_espositori: 0,
-    costo_totale_espositori: 0,
+    costo_totale_espositori: 0
   });
 
   // Calcoli automatici degli elementi fisici
@@ -282,7 +269,6 @@ const Preventivi = () => {
         numero_pezzi: 0
       };
     }
-
     const profondita = parseFloat(formData.profondita);
     const larghezza = parseFloat(formData.larghezza);
     const altezza = parseFloat(formData.altezza);
@@ -335,7 +321,6 @@ const Preventivi = () => {
     // Numero di pezzi
     const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
     const numero_pezzi = sviluppo_lineare * fattoreDistribuzione + bifaccialita * (distribuzione + 1);
-
     return {
       superficie_stampa,
       superficie_mq,
@@ -347,80 +332,88 @@ const Preventivi = () => {
   // physicalElements calcolati dopo il caricamento dei parametri
 
   // Query per recuperare i preventivi
-  const { data: preventivi = [], isLoading } = useQuery({
+  const {
+    data: preventivi = [],
+    isLoading
+  } = useQuery({
     queryKey: ['preventivi'],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from('preventivi')
-        .select(`
+      const {
+        data,
+        error
+      } = await supabase.from('preventivi').select(`
           *,
           prospects:prospect_id (ragione_sociale)
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-      
+        `).eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       return data as Preventivo[];
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Query per recuperare i parametri
-  const { data: parametri = [] } = useQuery({
+  const {
+    data: parametri = []
+  } = useQuery({
     queryKey: ['parametri-for-preventivi'],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from('parametri')
-        .select('*')
-        .order('tipo', { ascending: true })
-        .order('ordine', { ascending: true });
-      
+      const {
+        data,
+        error
+      } = await supabase.from('parametri').select('*').order('tipo', {
+        ascending: true
+      }).order('ordine', {
+        ascending: true
+      });
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Query per recuperare i parametri a costi unitari
-  const { data: parametriCostiUnitari = [] } = useQuery({
+  const {
+    data: parametriCostiUnitari = []
+  } = useQuery({
     queryKey: ['parametri-costi-unitari'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('parametri_a_costi_unitari')
-        .select('*')
-        .eq('attivo', true)
-        .order('parametro');
-
+      const {
+        data,
+        error
+      } = await supabase.from('parametri_a_costi_unitari').select('*').eq('attivo', true).order('parametro');
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Query per recuperare i costi retroilluminazione
-  const { data: costiRetroilluminazione = [] } = useQuery({
+  const {
+    data: costiRetroilluminazione = []
+  } = useQuery({
     queryKey: ['costi-retroilluminazione'],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from('costi_retroilluminazione')
-        .select('*')
-        .order('altezza');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('costi_retroilluminazione').select('*').order('altezza');
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Mappa dinamica profili per distribuzione dai parametri
   const profiliDistribuzioneMap = React.useMemo(() => {
     const map: Record<number, number> = {};
-    for (const p of (parametri as any[])) {
+    for (const p of parametri as any[]) {
       if (p.tipo === 'profili_distribuzione') {
-        const key = parseInt((p.nome as string) || '', 10);
+        const key = parseInt(p.nome as string || '', 10);
         if (!isNaN(key)) map[key] = Number(p.valore) || 0;
       }
     }
@@ -434,9 +427,7 @@ const Preventivi = () => {
   const updateMarginsBasedOnProspect = (prospectId: string) => {
     const selectedProspect = prospects.find((p: any) => p.id === prospectId);
     if (selectedProspect && marginalitaProspect.length > 0) {
-      const defaultMargin = marginalitaProspect.find(
-        (m: any) => m.tipo_prospect === selectedProspect.tipo_prospect
-      );
+      const defaultMargin = marginalitaProspect.find((m: any) => m.tipo_prospect === selectedProspect.tipo_prospect);
       if (defaultMargin) {
         setFormData(prev => ({
           ...prev,
@@ -459,124 +450,134 @@ const Preventivi = () => {
           marginalita_struttura_espositori: defaultMargin.marginalita,
           marginalita_grafica_espositori: defaultMargin.marginalita,
           marginalita_premontaggio_espositori: defaultMargin.marginalita,
-          marginalita_accessori_espositori: defaultMargin.marginalita,
+          marginalita_accessori_espositori: defaultMargin.marginalita
         }));
         return;
       }
     }
     // Fallback if no default found
-    setFormData(prev => ({ ...prev, prospect_id: prospectId }));
+    setFormData(prev => ({
+      ...prev,
+      prospect_id: prospectId
+    }));
   };
 
   // Query per recuperare le marginalità per prospect
-  const { data: marginalitaProspect = [] } = useQuery({
+  const {
+    data: marginalitaProspect = []
+  } = useQuery({
     queryKey: ['marginalita-per-prospect'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('marginalita_per_prospect')
-        .select('*')
-        .eq('attivo', true);
+      const {
+        data,
+        error
+      } = await supabase.from('marginalita_per_prospect').select('*').eq('attivo', true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Query per recuperare le anagrafiche
-  const { data: prospects = [] } = useQuery({
+  const {
+    data: prospects = []
+  } = useQuery({
     queryKey: ['prospects-for-preventivi'],
     queryFn: async () => {
       if (!user) return [];
-      const { data, error } = await supabase
-        .from('prospects')
-        .select('id, ragione_sociale, tipo_prospect')
-        .eq('user_id', user.id)
-        .order('ragione_sociale');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('prospects').select('id, ragione_sociale, tipo_prospect').eq('user_id', user.id).order('ragione_sociale');
       if (error) throw error;
       return data as Prospect[];
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Note: Default margins are only applied when creating new preventivo via updateMarginsBasedOnProspect function
   // When editing existing preventivo, all margin values are loaded from database and should not be overridden
 
   // Fetch accessori stand for cost calculation
-  const { data: accessoriStand = [] } = useQuery({
+  const {
+    data: accessoriStand = []
+  } = useQuery({
     queryKey: ['listino-accessori-stand'],
     queryFn: async () => {
       if (!user?.id) throw new Error('User not authenticated');
-      const { data, error } = await supabase
-        .from('listino_accessori_stand')
-        .select('*')
-        .eq('attivo', true);
+      const {
+        data,
+        error
+      } = await supabase.from('listino_accessori_stand').select('*').eq('attivo', true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id
   });
 
   // Fetch listino accessori desk
-  const { data: accessoriDesk } = useQuery({
+  const {
+    data: accessoriDesk
+  } = useQuery({
     queryKey: ["listino-accessori-desk"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("listino_accessori_desk")
-        .select("*")
-        .eq("attivo", true)
-        .order("nome");
+      const {
+        data,
+        error
+      } = await supabase.from("listino_accessori_desk").select("*").eq("attivo", true).order("nome");
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Fetch costi struttura desk
-  const { data: costiStrutturaDesk } = useQuery({
+  const {
+    data: costiStrutturaDesk
+  } = useQuery({
     queryKey: ["costi-struttura-desk-layout", user?.id],
     queryFn: async () => {
       if (!user?.id) throw new Error('User not authenticated');
-      const { data, error } = await supabase
-        .from("costi_struttura_desk_layout")
-        .select("*")
-        .eq("attivo", true);
+      const {
+        data,
+        error
+      } = await supabase.from("costi_struttura_desk_layout").select("*").eq("attivo", true);
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Query per accessori espositori
-  const { data: accessoriEspositori = [] } = useQuery({
+  const {
+    data: accessoriEspositori = []
+  } = useQuery({
     queryKey: ['listino-accessori-espositori'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('listino_accessori_espositori')
-        .select('*')
-        .eq('attivo', true)
-        .order('nome');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('listino_accessori_espositori').select('*').eq('attivo', true).order('nome');
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Query per layout costs espositori
-  const { data: layoutCostsEspositori = [] } = useQuery({
+  const {
+    data: layoutCostsEspositori = []
+  } = useQuery({
     queryKey: ['costi-struttura-espositori-layout'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('costi_struttura_espositori_layout')
-        .select('*')
-        .eq('attivo', true)
-        .order('layout_espositore');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('costi_struttura_espositori_layout').select('*').eq('attivo', true).order('layout_espositore');
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
 
   // Calcolo dei costi automatici
@@ -602,30 +603,25 @@ const Preventivi = () => {
         totale: 0
       };
     }
-
     const elements = physicalElements;
-    
+
     // Trova i parametri necessari
     const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
     const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.altezza);
 
     // Struttura a terra: sviluppo lineare * costo per m/l in base all'altezza
-    const struttura_terra = costoAltezzaParam ? 
-      elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+    const struttura_terra = costoAltezzaParam ? elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
 
-      // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
-      const grafica_cordino = costoStampaParam ? 
-        elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+    // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
+    const grafica_cordino = costoStampaParam ? elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
 
-      // Premontaggio: numero pezzi * costo premontaggio al pezzo (solo se premontaggio è attivo)
-      const premontaggio = (costoPremontaggio && formData.premontaggio) ? 
-        elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+    // Premontaggio: numero pezzi * costo premontaggio al pezzo (solo se premontaggio è attivo)
+    const premontaggio = costoPremontaggio && formData.premontaggio ? elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
 
     // Retroilluminazione: metri retroilluminazione * costo per m/l in base all'altezza
     const costoRetroilluminazioneParam = costiRetroilluminazione.find(c => c.altezza === parseFloat(formData.altezza));
-    const retroilluminazione = costoRetroilluminazioneParam ? 
-      parseFloat(formData.retroilluminazione || '0') * (costoRetroilluminazioneParam.costo_al_metro || 0) : 0;
+    const retroilluminazione = costoRetroilluminazioneParam ? parseFloat(formData.retroilluminazione || '0') * (costoRetroilluminazioneParam.costo_al_metro || 0) : 0;
 
     // Extra per struttura complessa: percentuale sui costi di struttura a terra
     const extraPercComplex = parseFloat(formData.extra_perc_complex || '0') || 0;
@@ -655,37 +651,28 @@ const Preventivi = () => {
     // Calcolo costi desk
     const costoStampaDeskParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
     const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
-    
-    // Costo struttura desk
-    const deskLayoutsArray = Array.isArray(formData.desk_layouts)
-      ? (formData.desk_layouts as any[])
-      : (() => {
-          try {
-            return typeof (formData.desk_layouts as any) === 'string'
-              ? JSON.parse(formData.desk_layouts as any)
-              : [];
-          } catch {
-            return [];
-          }
-        })();
 
+    // Costo struttura desk
+    const deskLayoutsArray = Array.isArray(formData.desk_layouts) ? formData.desk_layouts as any[] : (() => {
+      try {
+        return typeof (formData.desk_layouts as any) === 'string' ? JSON.parse(formData.desk_layouts as any) : [];
+      } catch {
+        return [];
+      }
+    })();
     const struttura_terra_desk = deskLayoutsArray.reduce((total, config: any) => {
       const costoLayout = costiStrutturaDesk?.find((c: any) => c.layout_desk === config.layout);
-      return total + ((Number(config.quantity) || 0) * (Number(costoLayout?.costo_unitario) || 0));
+      return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costo_unitario) || 0);
     }, 0);
 
     // Grafica desk con cordino cucito
     const superficie_stampa_desk = calculateSuperficieStampaDesk();
-    const grafica_cordino_desk = costoStampaDeskParam ? 
-      superficie_stampa_desk * (costoStampaDeskParam.valore || 0) : 0;
+    const grafica_cordino_desk = costoStampaDeskParam ? superficie_stampa_desk * (costoStampaDeskParam.valore || 0) : 0;
 
     // Premontaggio desk
     const numero_pezzi_desk = calculateNumeroPezziDesk();
-    const premontaggio_desk = costoPremontaggerDesk ? 
-      numero_pezzi_desk * (costoPremontaggerDesk.valore || 0) : 0;
-
+    const premontaggio_desk = costoPremontaggerDesk ? numero_pezzi_desk * (costoPremontaggerDesk.valore || 0) : 0;
     const totale_desk = struttura_terra_desk + grafica_cordino_desk + premontaggio_desk + costi_accessori_desk;
-
     const totale = struttura_terra + grafica_cordino + premontaggio + retroilluminazione + costi_accessori + extra_stand_complesso;
 
     // Calculate preventivos (quotes) based on costs and margins
@@ -694,12 +681,11 @@ const Preventivi = () => {
     const preventivo_retroilluminazione = retroilluminazione * (1 + formData.marginalita_retroilluminazione / 100);
     const preventivo_accessori = costi_accessori * (1 + formData.marginalita_accessori / 100);
     const preventivo_premontaggio = premontaggio * (1 + formData.marginalita_premontaggio / 100);
-    
+
     // Total preventivo and total costs for summary
     const totale_preventivo_stand = preventivo_struttura + preventivo_grafica + preventivo_retroilluminazione + preventivo_accessori + preventivo_premontaggio + extra_stand_complesso;
     const totale_costi_stand = struttura_terra + grafica_cordino + retroilluminazione + costi_accessori + premontaggio;
-    const marginalita_media = totale_costi_stand > 0 ? ((totale_preventivo_stand - totale_costi_stand) / totale_costi_stand) * 100 : 0;
-
+    const marginalita_media = totale_costi_stand > 0 ? (totale_preventivo_stand - totale_costi_stand) / totale_costi_stand * 100 : 0;
     return {
       struttura_terra,
       grafica_cordino,
@@ -730,65 +716,56 @@ const Preventivi = () => {
 
   // Funzioni helper per calcolo desk
   const calculateSuperficieStampaDesk = () => {
-    const arr = Array.isArray(formData.desk_layouts)
-      ? (formData.desk_layouts as any[])
-      : (() => {
-          try {
-            return typeof (formData.desk_layouts as any) === 'string'
-              ? JSON.parse(formData.desk_layouts as any)
-              : [];
-          } catch {
-            return [];
-          }
-        })();
-
+    const arr = Array.isArray(formData.desk_layouts) ? formData.desk_layouts as any[] : (() => {
+      try {
+        return typeof (formData.desk_layouts as any) === 'string' ? JSON.parse(formData.desk_layouts as any) : [];
+      } catch {
+        return [];
+      }
+    })();
     if (!arr.length) return 0;
-    
     return arr.reduce((total, config: any) => {
-      const { layout, quantity } = config;
+      const {
+        layout,
+        quantity
+      } = config;
       if (!layout || !quantity) return total;
-      
       switch (layout) {
         case "50":
-          return total + (1.5 * quantity);
+          return total + 1.5 * quantity;
         case "100":
-          return total + (2 * quantity);
+          return total + 2 * quantity;
         case "150":
-          return total + (2.5 * quantity);
+          return total + 2.5 * quantity;
         case "200":
-          return total + (3 * quantity);
+          return total + 3 * quantity;
         default:
           return total;
       }
     }, 0);
   };
-
   const calculateNumeroPezziDesk = () => {
-    const arr = Array.isArray(formData.desk_layouts)
-      ? (formData.desk_layouts as any[])
-      : (() => {
-          try {
-            return typeof (formData.desk_layouts as any) === 'string'
-              ? JSON.parse(formData.desk_layouts as any)
-              : [];
-          } catch {
-            return [];
-          }
-        })();
-
+    const arr = Array.isArray(formData.desk_layouts) ? formData.desk_layouts as any[] : (() => {
+      try {
+        return typeof (formData.desk_layouts as any) === 'string' ? JSON.parse(formData.desk_layouts as any) : [];
+      } catch {
+        return [];
+      }
+    })();
     if (!arr.length) return 0;
-    
     return arr.reduce((total, config: any) => {
-      const { layout, quantity } = config;
+      const {
+        layout,
+        quantity
+      } = config;
       if (!layout || !quantity) return total;
-      
       switch (layout) {
         case "50":
         case "100":
         case "150":
-          return total + (12 * quantity);
+          return total + 12 * quantity;
         case "200":
-          return total + (20 * quantity);
+          return total + 20 * quantity;
         default:
           return total;
       }
@@ -800,16 +777,13 @@ const Preventivi = () => {
     const qta30 = parseInt(formData.qta_tipo30?.toString() || '0') || 0;
     const qta50 = parseInt(formData.qta_tipo50?.toString() || '0') || 0;
     const qta100 = parseInt(formData.qta_tipo100?.toString() || '0') || 0;
-
     const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
     const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
-
     return {
       numero_pezzi_espositori,
       superficie_stampa_espositori
     };
   };
-
   const espositorePhysicalElements = calculateExpositorePhysicalElements();
   const costs = calculateCosts();
 
@@ -817,18 +791,17 @@ const Preventivi = () => {
   const createPreventivoMutation = useMutation({
     mutationFn: async (data: any) => {
       if (!user) throw new Error('User not authenticated');
-      
+
       // Calcoli automatici
       const profondita = parseFloat(data.profondita);
       const larghezza = parseFloat(data.larghezza);
       const altezza = parseFloat(data.altezza);
       const distribuzione = parseInt(data.distribuzione);
-      const bifaccialita = parseFloat((data.bifaccialita ?? '0')) || 0;
-      const retroilluminazione = parseFloat((data.retroilluminazione ?? '0')) || 0;
-      
+      const bifaccialita = parseFloat(data.bifaccialita ?? '0') || 0;
+      const retroilluminazione = parseFloat(data.retroilluminazione ?? '0') || 0;
+
       // Calcolo elementi fisici
       const elements = calculatePhysicalElements(profiliDistribuzioneMap);
-      
       const superficie = larghezza * profondita;
       const volume = superficie * altezza;
 
@@ -836,22 +809,17 @@ const Preventivi = () => {
       const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
       const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
       const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === data.altezza);
-
-      const struttura_terra = costoAltezzaParam ? 
-        elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
-      const grafica_cordino = costoStampaParam ? 
-        elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
-      const premontaggio = (costoPremontaggio && data.premontaggio) ? 
-        elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
-
+      const struttura_terra = costoAltezzaParam ? elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+      const grafica_cordino = costoStampaParam ? elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+      const premontaggio = costoPremontaggio && data.premontaggio ? elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
       const costo_totale = struttura_terra + grafica_cordino + premontaggio;
       const superficie_mq = superficie / 10000; // Conversione da cm² a m²
       const volume_mc = volume / 1000000; // Conversione da cm³ a m³
 
       // Evita overflow su colonne numeric(10,2)
       const MAX_NUMERIC = 99999999.99;
-      let costo_mq_value = superficie_mq > 0 ? (costo_totale / superficie_mq) : 0;
-      let costo_mc_value = volume_mc > 0 ? (costo_totale / volume_mc) : 0;
+      let costo_mq_value = superficie_mq > 0 ? costo_totale / superficie_mq : 0;
+      let costo_mc_value = volume_mc > 0 ? costo_totale / volume_mc : 0;
       if (!isFinite(costo_mq_value) || Math.abs(costo_mq_value) > MAX_NUMERIC) costo_mq_value = MAX_NUMERIC;
       if (!isFinite(costo_mc_value) || Math.abs(costo_mc_value) > MAX_NUMERIC) costo_mc_value = MAX_NUMERIC;
 
@@ -859,7 +827,6 @@ const Preventivi = () => {
       let superficie_stampa_storage = 0;
       let sviluppo_metri_lineari_storage = 0;
       let numero_pezzi_storage = 0;
-
       if (data.larg_storage && data.prof_storage && data.alt_storage && data.layout_storage) {
         const larg = parseFloat(data.larg_storage);
         const prof = parseFloat(data.prof_storage);
@@ -891,7 +858,6 @@ const Preventivi = () => {
       // Calcoli Desk
       let superficie_stampa_desk = 0;
       let numero_pezzi_desk = 0;
-
       if (data.desk_qta && data.layout_desk) {
         const qta = parseInt(data.desk_qta);
         const layout = data.layout_desk;
@@ -919,11 +885,11 @@ const Preventivi = () => {
       const qta30 = parseInt(data.qta_tipo30) || 0;
       const qta50 = parseInt(data.qta_tipo50) || 0;
       const qta100 = parseInt(data.qta_tipo100) || 0;
-
       const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
       const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
-
-      const { error } = await supabase.from('preventivi').insert({
+      const {
+        error
+      } = await supabase.from('preventivi').insert({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
         descrizione: data.descrizione,
@@ -992,7 +958,19 @@ const Preventivi = () => {
         sviluppo_metri_lineari_storage,
         numero_pezzi_storage,
         // Desk fields
-        layout_desk: JSON.stringify(data.desk_layouts || [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }]),
+        layout_desk: JSON.stringify(data.desk_layouts || [{
+          layout: '50',
+          quantity: 0
+        }, {
+          layout: '100',
+          quantity: 0
+        }, {
+          layout: '150',
+          quantity: 0
+        }, {
+          layout: '200',
+          quantity: 0
+        }]),
         superficie_stampa_desk,
         numero_pezzi_desk,
         // Espositore fields
@@ -1014,50 +992,58 @@ const Preventivi = () => {
         // Services fields
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
-        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
+        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false
       });
-      
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preventivi'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-count'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-in-corso'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-valore'] });
-      queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-count']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-in-corso']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-valore']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['ultimi-preventivi']
+      });
       setIsDialogOpen(false);
       resetForm();
       toast({
         title: "Successo",
-        description: "Preventivo creato con successo",
+        description: "Preventivo creato con successo"
       });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
         title: "Errore",
         description: "Errore nella creazione del preventivo",
-        variant: "destructive",
+        variant: "destructive"
       });
       console.error('Error creating preventivo:', error);
-    },
+    }
   });
 
   // Mutation per aggiornare un preventivo
   const updatePreventivoMutation = useMutation({
     mutationFn: async (data: any) => {
       if (!user || !editingPreventivo) throw new Error('User not authenticated or no preventivo selected');
-      
+
       // Calcoli automatici
       const profondita = parseFloat(data.profondita);
       const larghezza = parseFloat(data.larghezza);
       const altezza = parseFloat(data.altezza);
       const distribuzione = parseInt(data.distribuzione);
-      const bifaccialita = parseFloat((data.bifaccialita ?? '0')) || 0;
-      const retroilluminazione = parseFloat((data.retroilluminazione ?? '0')) || 0;
-      
+      const bifaccialita = parseFloat(data.bifaccialita ?? '0') || 0;
+      const retroilluminazione = parseFloat(data.retroilluminazione ?? '0') || 0;
+
       // Calcolo elementi fisici
       const elements = calculatePhysicalElements(profiliDistribuzioneMap);
-      
       const superficie = larghezza * profondita;
       const volume = superficie * altezza;
 
@@ -1065,22 +1051,17 @@ const Preventivi = () => {
       const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
       const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
       const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === data.altezza);
-
-      const struttura_terra = costoAltezzaParam ? 
-        elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
-      const grafica_cordino = costoStampaParam ? 
-        elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
-      const premontaggio = (costoPremontaggio && data.premontaggio) ? 
-        elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
-
+      const struttura_terra = costoAltezzaParam ? elements.sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+      const grafica_cordino = costoStampaParam ? elements.superficie_stampa * (costoStampaParam.valore || 0) : 0;
+      const premontaggio = costoPremontaggio && data.premontaggio ? elements.numero_pezzi * (costoPremontaggio.valore || 0) : 0;
       const costo_totale = struttura_terra + grafica_cordino + premontaggio;
       const superficie_mq = superficie / 10000;
       const volume_mc = volume / 1000000;
 
       // Evita overflow su colonne numeric(10,2)
       const MAX_NUMERIC = 99999999.99;
-      let costo_mq_value = superficie_mq > 0 ? (costo_totale / superficie_mq) : 0;
-      let costo_mc_value = volume_mc > 0 ? (costo_totale / volume_mc) : 0;
+      let costo_mq_value = superficie_mq > 0 ? costo_totale / superficie_mq : 0;
+      let costo_mc_value = volume_mc > 0 ? costo_totale / volume_mc : 0;
       if (!isFinite(costo_mq_value) || Math.abs(costo_mq_value) > MAX_NUMERIC) costo_mq_value = MAX_NUMERIC;
       if (!isFinite(costo_mc_value) || Math.abs(costo_mc_value) > MAX_NUMERIC) costo_mc_value = MAX_NUMERIC;
 
@@ -1088,7 +1069,6 @@ const Preventivi = () => {
       let superficie_stampa_storage = 0;
       let sviluppo_metri_lineari_storage = 0;
       let numero_pezzi_storage = 0;
-
       if (data.larg_storage && data.prof_storage && data.alt_storage && data.layout_storage) {
         const larg = parseFloat(data.larg_storage);
         const prof = parseFloat(data.prof_storage);
@@ -1120,7 +1100,6 @@ const Preventivi = () => {
       // Calcoli Desk
       let superficie_stampa_desk = 0;
       let numero_pezzi_desk = 0;
-
       if (data.desk_qta && data.layout_desk) {
         const qta = parseInt(data.desk_qta);
         const layout = data.layout_desk;
@@ -1148,11 +1127,11 @@ const Preventivi = () => {
       const qta30 = parseInt(data.qta_tipo30) || 0;
       const qta50 = parseInt(data.qta_tipo50) || 0;
       const qta100 = parseInt(data.qta_tipo100) || 0;
-
       const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
       const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
-
-      const { error } = await supabase.from('preventivi').update({
+      const {
+        error
+      } = await supabase.from('preventivi').update({
         numero_preventivo: data.numero_preventivo,
         titolo: data.titolo,
         descrizione: data.descrizione,
@@ -1222,7 +1201,10 @@ const Preventivi = () => {
         sviluppo_metri_lineari_storage,
         numero_pezzi_storage,
         // Desk fields
-        layout_desk: JSON.stringify(formData.desk_layouts || [{ layout: '', quantity: 0 }]),
+        layout_desk: JSON.stringify(formData.desk_layouts || [{
+          layout: '',
+          quantity: 0
+        }]),
         // Desk accessories
         porta_scorrevole: formData.porta_scorrevole,
         ripiano_superiore: formData.ripiano_superiore,
@@ -1251,66 +1233,82 @@ const Preventivi = () => {
         // Services fields
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
-        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
+        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false
       }).eq('id', editingPreventivo.id);
-      
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preventivi'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-count'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-in-corso'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-valore'] });
-      queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-count']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-in-corso']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-valore']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['ultimi-preventivi']
+      });
       setIsDialogOpen(false);
       resetForm();
       toast({
-        title: "Successo", 
-        description: "Preventivo aggiornato con successo",
+        title: "Successo",
+        description: "Preventivo aggiornato con successo"
       });
     },
-    onError: (error) => {
+    onError: error => {
       toast({
         title: "Errore",
         description: "Errore nell'aggiornamento del preventivo",
-        variant: "destructive",
+        variant: "destructive"
       });
       console.error('Error updating preventivo:', error);
-    },
+    }
   });
 
   // Mutation per eliminare un preventivo
   const deletePreventivoMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('preventivi')
-        .delete()
-        .eq('id', id);
-      
+      const {
+        error
+      } = await supabase.from('preventivi').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preventivi'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-count'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-in-corso'] });
-      queryClient.invalidateQueries({ queryKey: ['preventivi-valore'] });
-      queryClient.invalidateQueries({ queryKey: ['ultimi-preventivi'] });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-count']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-in-corso']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['preventivi-valore']
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['ultimi-preventivi']
+      });
       setDeletePreventivo(null);
       toast({
         title: "Successo",
-        description: "Preventivo eliminato con successo",
+        description: "Preventivo eliminato con successo"
       });
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error deleting preventivo:', error);
       toast({
         title: "Errore",
         description: "Errore durante l'eliminazione del preventivo",
-        variant: "destructive",
+        variant: "destructive"
       });
-    },
+    }
   });
-
   const resetForm = () => {
     setFormData({
       numero_preventivo: '',
@@ -1347,13 +1345,25 @@ const Preventivi = () => {
       layout_storage: '',
       numero_porte: '',
       // Desk fields
-      desk_layouts: [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }],
+      desk_layouts: [{
+        layout: '50',
+        quantity: 0
+      }, {
+        layout: '100',
+        quantity: 0
+      }, {
+        layout: '150',
+        quantity: 0
+      }, {
+        layout: '200',
+        quantity: 0
+      }],
       // Desk accessories
       porta_scorrevole: 0,
       ripiano_superiore: 0,
       ripiano_inferiore: 0,
       teca_plexiglass: 0,
-      fronte_luminoso: 0,  
+      fronte_luminoso: 0,
       borsa: 0,
       // Espositore fields
       qta_tipo30: 0,
@@ -1374,30 +1384,30 @@ const Preventivi = () => {
       servizio_certificazioni: false,
       servizio_istruzioni_assistenza: false,
       // Complexity fields
-        extra_perc_complex: '',
-        costo_retroilluminazione: 0,
-        // Stand margins
-        marginalita_struttura: 50,
-        marginalita_grafica: 50,
-        marginalita_retroilluminazione: 50,
-        marginalita_accessori: 50,
-        marginalita_premontaggio: 50,
-        // Storage margins
-        marginalita_struttura_storage: 50,
-        marginalita_grafica_storage: 50,
-        marginalita_premontaggio_storage: 50,
-        // Desk margins
-        marginalita_struttura_desk: 50,
-        marginalita_grafica_desk: 50,
-        marginalita_premontaggio_desk: 50,
-        marginalita_accessori_desk: 50,
-        // Espositori margins
-        marginalita_struttura_espositori: 0,
-        marginalita_grafica_espositori: 0,
-        marginalita_premontaggio_espositori: 0,
-        marginalita_accessori_espositori: 0,
-        // Accessori stand dinamici
-        accessori_stand: {},
+      extra_perc_complex: '',
+      costo_retroilluminazione: 0,
+      // Stand margins
+      marginalita_struttura: 50,
+      marginalita_grafica: 50,
+      marginalita_retroilluminazione: 50,
+      marginalita_accessori: 50,
+      marginalita_premontaggio: 50,
+      // Storage margins
+      marginalita_struttura_storage: 50,
+      marginalita_grafica_storage: 50,
+      marginalita_premontaggio_storage: 50,
+      // Desk margins
+      marginalita_struttura_desk: 50,
+      marginalita_grafica_desk: 50,
+      marginalita_premontaggio_desk: 50,
+      marginalita_accessori_desk: 50,
+      // Espositori margins
+      marginalita_struttura_espositori: 0,
+      marginalita_grafica_espositori: 0,
+      marginalita_premontaggio_espositori: 0,
+      marginalita_accessori_espositori: 0,
+      // Accessori stand dinamici
+      accessori_stand: {}
     });
     setEditingPreventivo(null);
     setSectionsOpen({
@@ -1406,10 +1416,9 @@ const Preventivi = () => {
       desk: false,
       espositori: false,
       servizi: false,
-      altri_beni_servizi: false,
+      altri_beni_servizi: false
     });
   };
-
   const openEditDialog = (preventivo: Preventivo) => {
     setEditingPreventivo(preventivo);
     setFormData({
@@ -1453,9 +1462,33 @@ const Preventivi = () => {
           const v = (preventivo as any).desk_layouts;
           if (Array.isArray(v)) return v;
           if (typeof v === 'string') return JSON.parse(v);
-          return [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }];
+          return [{
+            layout: '50',
+            quantity: 0
+          }, {
+            layout: '100',
+            quantity: 0
+          }, {
+            layout: '150',
+            quantity: 0
+          }, {
+            layout: '200',
+            quantity: 0
+          }];
         } catch {
-          return [{ layout: '50', quantity: 0 }, { layout: '100', quantity: 0 }, { layout: '150', quantity: 0 }, { layout: '200', quantity: 0 }];
+          return [{
+            layout: '50',
+            quantity: 0
+          }, {
+            layout: '100',
+            quantity: 0
+          }, {
+            layout: '150',
+            quantity: 0
+          }, {
+            layout: '200',
+            quantity: 0
+          }];
         }
       })(),
       // Desk accessories
@@ -1486,34 +1519,34 @@ const Preventivi = () => {
       // Complexity fields
       extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
       costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
-        // Stand margins
-        marginalita_struttura: (preventivo as any).marginalita_struttura,
-        marginalita_grafica: (preventivo as any).marginalita_grafica,
-        marginalita_retroilluminazione: (preventivo as any).marginalita_retroilluminazione,
-        marginalita_accessori: (preventivo as any).marginalita_accessori,
-        marginalita_premontaggio: (preventivo as any).marginalita_premontaggio,
-        // Storage margins
-        marginalita_struttura_storage: (preventivo as any).marginalita_struttura_storage || 50,
-        marginalita_grafica_storage: (preventivo as any).marginalita_grafica_storage || 50,
-        marginalita_premontaggio_storage: (preventivo as any).marginalita_premontaggio_storage || 50,
-        // Desk margins
-        marginalita_struttura_desk: (preventivo as any).marginalita_struttura_desk || 50,
-        marginalita_grafica_desk: (preventivo as any).marginalita_grafica_desk || 50,
-        marginalita_premontaggio_desk: (preventivo as any).marginalita_premontaggio_desk || 50,
-        marginalita_accessori_desk: (preventivo as any).marginalita_accessori_desk || 50,
-        // Espositori margins
-        marginalita_struttura_espositori: (preventivo as any).marginalita_struttura_espositori || 0,
-        marginalita_grafica_espositori: (preventivo as any).marginalita_grafica_espositori || 0,
-        marginalita_premontaggio_espositori: (preventivo as any).marginalita_premontaggio_espositori || 0,
-        marginalita_accessori_espositori: (preventivo as any).marginalita_accessori_espositori || 0,
-        // Accessori stand dinamici  
-        accessori_stand: (() => {
-          try {
-            return JSON.parse((preventivo as any).accessori_stand_config || '{}');
-          } catch {
-            return {};
-          }
-        })(),
+      // Stand margins
+      marginalita_struttura: (preventivo as any).marginalita_struttura,
+      marginalita_grafica: (preventivo as any).marginalita_grafica,
+      marginalita_retroilluminazione: (preventivo as any).marginalita_retroilluminazione,
+      marginalita_accessori: (preventivo as any).marginalita_accessori,
+      marginalita_premontaggio: (preventivo as any).marginalita_premontaggio,
+      // Storage margins
+      marginalita_struttura_storage: (preventivo as any).marginalita_struttura_storage || 50,
+      marginalita_grafica_storage: (preventivo as any).marginalita_grafica_storage || 50,
+      marginalita_premontaggio_storage: (preventivo as any).marginalita_premontaggio_storage || 50,
+      // Desk margins
+      marginalita_struttura_desk: (preventivo as any).marginalita_struttura_desk || 50,
+      marginalita_grafica_desk: (preventivo as any).marginalita_grafica_desk || 50,
+      marginalita_premontaggio_desk: (preventivo as any).marginalita_premontaggio_desk || 50,
+      marginalita_accessori_desk: (preventivo as any).marginalita_accessori_desk || 50,
+      // Espositori margins
+      marginalita_struttura_espositori: (preventivo as any).marginalita_struttura_espositori || 0,
+      marginalita_grafica_espositori: (preventivo as any).marginalita_grafica_espositori || 0,
+      marginalita_premontaggio_espositori: (preventivo as any).marginalita_premontaggio_espositori || 0,
+      marginalita_accessori_espositori: (preventivo as any).marginalita_accessori_espositori || 0,
+      // Accessori stand dinamici  
+      accessori_stand: (() => {
+        try {
+          return JSON.parse((preventivo as any).accessori_stand_config || '{}');
+        } catch {
+          return {};
+        }
+      })()
     });
     setSectionsOpen({
       stand: false,
@@ -1521,7 +1554,7 @@ const Preventivi = () => {
       desk: false,
       espositori: false,
       servizi: false,
-      altri_beni_servizi: false,
+      altri_beni_servizi: false
     });
     setIsDialogOpen(true);
   };
@@ -1530,29 +1563,34 @@ const Preventivi = () => {
   React.useEffect(() => {
     const state = (location as any).state as any;
     if (state?.openPreventivoId && preventivi.length) {
-      const p = preventivi.find((x) => x.id === state.openPreventivoId);
+      const p = preventivi.find(x => x.id === state.openPreventivoId);
       if (p) {
         openEditDialog(p);
-        setSectionsOpen({ stand: false, storage: false, desk: false, espositori: false, servizi: true, altri_beni_servizi: false });
+        setSectionsOpen({
+          stand: false,
+          storage: false,
+          desk: false,
+          espositori: false,
+          servizi: true,
+          altri_beni_servizi: false
+        });
         // Clear navigation state to avoid reopening on refresh
         window.history.replaceState({}, '', '/preventivi');
       }
     }
   }, [location, preventivi]);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validazione base
     if (!formData.numero_preventivo || !formData.titolo || !formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione) {
       toast({
         title: "Errore",
         description: "Compila tutti i campi obbligatori",
-        variant: "destructive",
+        variant: "destructive"
       });
       return;
     }
-
     if (editingPreventivo) {
       updatePreventivoMutation.mutate(formData);
     } else {
@@ -1561,32 +1599,41 @@ const Preventivi = () => {
   };
 
   // Filtri
-  const filteredPreventivi = preventivi.filter((preventivo) => {
-    const matchesSearch = 
-      preventivo.numero_preventivo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      preventivo.titolo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      preventivo.prospects?.ragione_sociale?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+  const filteredPreventivi = preventivi.filter(preventivo => {
+    const matchesSearch = preventivo.numero_preventivo.toLowerCase().includes(searchTerm.toLowerCase()) || preventivo.titolo.toLowerCase().includes(searchTerm.toLowerCase()) || preventivo.prospects?.ragione_sociale?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || preventivo.status === statusFilter;
-    
     return matchesSearch && matchesStatus;
   });
-
   const getStatusBadge = (status: string) => {
     const statusMap = {
-      bozza: { label: 'Bozza', variant: 'secondary' as const },
-      inviato: { label: 'Inviato', variant: 'default' as const },
-      accettato: { label: 'Accettato', variant: 'default' as const },
-      rifiutato: { label: 'Rifiutato', variant: 'destructive' as const },
-      in_revisione: { label: 'In Revisione', variant: 'outline' as const },
+      bozza: {
+        label: 'Bozza',
+        variant: 'secondary' as const
+      },
+      inviato: {
+        label: 'Inviato',
+        variant: 'default' as const
+      },
+      accettato: {
+        label: 'Accettato',
+        variant: 'default' as const
+      },
+      rifiutato: {
+        label: 'Rifiutato',
+        variant: 'destructive' as const
+      },
+      in_revisione: {
+        label: 'In Revisione',
+        variant: 'outline' as const
+      }
     };
-    
-    const config = statusMap[status as keyof typeof statusMap] || { label: status, variant: 'secondary' as const };
+    const config = statusMap[status as keyof typeof statusMap] || {
+      label: status,
+      variant: 'secondary' as const
+    };
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
-
-  return (
-    <div className="flex-1 space-y-6 p-6">
+  return <div className="flex-1 space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Preventivi</h2>
@@ -1598,10 +1645,10 @@ const Preventivi = () => {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => {
-              setEditingPreventivo(null);
-              resetForm();
-              setIsDialogOpen(true);
-            }}>
+            setEditingPreventivo(null);
+            resetForm();
+            setIsDialogOpen(true);
+          }}>
               <Plus className="mr-2 h-4 w-4" />
               Nuovo Preventivo
             </Button>
@@ -1624,24 +1671,18 @@ const Preventivi = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="numero_preventivo">Numero Preventivo *</Label>
-                    <Input
-                      id="numero_preventivo"
-                      value={formData.numero_preventivo}
-                      onChange={(e) => setFormData({ ...formData, numero_preventivo: e.target.value })}
-                      placeholder="es. PREV-2024-001"
-                      required
-                    />
+                    <Input id="numero_preventivo" value={formData.numero_preventivo} onChange={e => setFormData({
+                    ...formData,
+                    numero_preventivo: e.target.value
+                  })} placeholder="es. PREV-2024-001" required />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="titolo">Titolo *</Label>
-                    <Input
-                      id="titolo"
-                      value={formData.titolo}
-                      onChange={(e) => setFormData({ ...formData, titolo: e.target.value })}
-                      placeholder="Titolo del preventivo"
-                      required
-                    />
+                    <Input id="titolo" value={formData.titolo} onChange={e => setFormData({
+                    ...formData,
+                    titolo: e.target.value
+                  })} placeholder="Titolo del preventivo" required />
                   </div>
                   
                   <div className="space-y-2">
@@ -1651,18 +1692,19 @@ const Preventivi = () => {
                         <SelectValue placeholder="Seleziona un cliente" />
                       </SelectTrigger>
                       <SelectContent>
-                        {prospects.map((prospect) => (
-                          <SelectItem key={prospect.id} value={prospect.id}>
+                        {prospects.map(prospect => <SelectItem key={prospect.id} value={prospect.id}>
                             {prospect.ragione_sociale}
-                          </SelectItem>
-                        ))}
+                          </SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="status">Stato</Label>
-                    <Select value={formData.status} onValueChange={(value) => setFormData({ ...formData, status: value })}>
+                    <Select value={formData.status} onValueChange={value => setFormData({
+                    ...formData,
+                    status: value
+                  })}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -1679,28 +1721,23 @@ const Preventivi = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="descrizione">Descrizione</Label>
-                  <Textarea
-                    id="descrizione"
-                    value={formData.descrizione}
-                    onChange={(e) => setFormData({ ...formData, descrizione: e.target.value })}
-                    placeholder="Descrizione dettagliata del preventivo"
-                  />
+                  <Textarea id="descrizione" value={formData.descrizione} onChange={e => setFormData({
+                  ...formData,
+                  descrizione: e.target.value
+                })} placeholder="Descrizione dettagliata del preventivo" />
                 </div>
               </div>
 
               <Separator />
 
               {/* Sezione Stand - collassabile */}
-              <Collapsible
-                open={sectionsOpen.stand}
-                onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, stand: open }))}
-              >
+              <Collapsible open={sectionsOpen.stand} onOpenChange={open => setSectionsOpen(prev => ({
+              ...prev,
+              stand: open
+            }))}>
                 <div className="bg-[hsl(var(--section-stand))] border border-[hsl(var(--section-stand-border))] rounded-lg overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-stand-border))] rounded-none border-0"
-                    >
+                    <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-stand-border))] rounded-none border-0">
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-stand-foreground))]"></div>
                         <span className="font-medium text-[hsl(var(--section-stand-foreground))]">Stand</span>
@@ -1713,12 +1750,7 @@ const Preventivi = () => {
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <div className="border-t border-[hsl(var(--section-stand-border))] bg-card p-6">
-                      <StandSection 
-                        formData={formData}
-                        setFormData={setFormData}
-                        physicalElements={physicalElements}
-                        costs={costs}
-                      />
+                      <StandSection formData={formData} setFormData={setFormData} physicalElements={physicalElements} costs={costs} />
                     </div>
                   </CollapsibleContent>
                 </div>
@@ -1726,16 +1758,13 @@ const Preventivi = () => {
 
               {/* Sezioni aggiuntive collassabili */}
               <div className="space-y-3">
-                <Collapsible
-                  open={sectionsOpen.storage}
-                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, storage: open }))}
-                >
+                <Collapsible open={sectionsOpen.storage} onOpenChange={open => setSectionsOpen(prev => ({
+                ...prev,
+                storage: open
+              }))}>
                   <div className="bg-[hsl(var(--section-storage))] border border-[hsl(var(--section-storage-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-storage-border))] rounded-none border-0"
-                      >
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-storage-border))] rounded-none border-0">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-storage-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-storage-foreground))]">Storage</span>
@@ -1745,29 +1774,19 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-storage-border))] bg-card p-6">
-                        <StorageSection 
-                          formData={formData}
-                          setFormData={setFormData}
-                          profiliDistribuzioneMap={profiliDistribuzioneMap}
-                          parametri={parametri}
-                          accessoriStand={accessoriStand}
-                          onCostsChange={setStorageCostsLifted}
-                        />
+                        <StorageSection formData={formData} setFormData={setFormData} profiliDistribuzioneMap={profiliDistribuzioneMap} parametri={parametri} accessoriStand={accessoriStand} onCostsChange={setStorageCostsLifted} />
                       </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
 
-                <Collapsible
-                  open={sectionsOpen.desk}
-                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, desk: open }))}
-                >
+                <Collapsible open={sectionsOpen.desk} onOpenChange={open => setSectionsOpen(prev => ({
+                ...prev,
+                desk: open
+              }))}>
                   <div className="bg-[hsl(var(--section-desk))] border border-[hsl(var(--section-desk-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-desk-border))] rounded-none border-0"
-                      >
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-desk-border))] rounded-none border-0">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-desk-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-desk-foreground))]">Desk</span>
@@ -1777,40 +1796,34 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <div className="border-t border-[hsl(var(--section-desk-border))] bg-card p-6">
-                          <DeskSection 
-                            data={{
-                              desk_layouts: formData.desk_layouts,
-                              porta_scorrevole: formData.porta_scorrevole,
-                              ripiano_superiore: formData.ripiano_superiore,
-                              ripiano_inferiore: formData.ripiano_inferiore,
-                              teca_plexiglass: formData.teca_plexiglass,
-                              fronte_luminoso: formData.fronte_luminoso,
-                              borsa: formData.borsa,
-                              marginalita_struttura_desk: formData.marginalita_struttura_desk,
-                              marginalita_grafica_desk: formData.marginalita_grafica_desk,
-                              marginalita_premontaggio_desk: formData.marginalita_premontaggio_desk,
-                              marginalita_accessori_desk: formData.marginalita_accessori_desk,
-                            }}
-                            onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
-                            parametri={parametri}
-                            costiAccessori={calculateCosts().costi_accessori_desk}
-                            costiDesk={calculateCosts().costi_desk}
-                          />
+                          <DeskSection data={{
+                        desk_layouts: formData.desk_layouts,
+                        porta_scorrevole: formData.porta_scorrevole,
+                        ripiano_superiore: formData.ripiano_superiore,
+                        ripiano_inferiore: formData.ripiano_inferiore,
+                        teca_plexiglass: formData.teca_plexiglass,
+                        fronte_luminoso: formData.fronte_luminoso,
+                        borsa: formData.borsa,
+                        marginalita_struttura_desk: formData.marginalita_struttura_desk,
+                        marginalita_grafica_desk: formData.marginalita_grafica_desk,
+                        marginalita_premontaggio_desk: formData.marginalita_premontaggio_desk,
+                        marginalita_accessori_desk: formData.marginalita_accessori_desk
+                      }} onChange={(field, value) => setFormData(prev => ({
+                        ...prev,
+                        [field]: value
+                      }))} parametri={parametri} costiAccessori={calculateCosts().costi_accessori_desk} costiDesk={calculateCosts().costi_desk} />
                        </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
 
-                <Collapsible
-                  open={sectionsOpen.espositori}
-                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, espositori: open }))}
-                >
+                <Collapsible open={sectionsOpen.espositori} onOpenChange={open => setSectionsOpen(prev => ({
+                ...prev,
+                espositori: open
+              }))}>
                   <div className="bg-[hsl(var(--section-expo))] border border-[hsl(var(--section-expo-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-expo-border))] rounded-none border-0"
-                      >
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-expo-border))] rounded-none border-0">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-expo-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-expo-foreground))]">Espositori/Plinto</span>
@@ -1820,41 +1833,34 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                        <div className="border-t border-[hsl(var(--section-expo-border))] bg-card p-6">
-                          <ExpositoreSection 
-                            formData={{
-                              ...formData,
-                              marginalita_struttura_espositori: formData.marginalita_struttura_espositori,
-                              marginalita_grafica_espositori: formData.marginalita_grafica_espositori,
-                              marginalita_premontaggio_espositori: formData.marginalita_premontaggio_espositori,
-                              marginalita_accessori_espositori: formData.marginalita_accessori_espositori,
-                            }}
-                            setFormData={setFormData}
-                            physicalElements={espositorePhysicalElements}
-                            onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
-                            costiEspositori={{
-                              struttura_espositori: expositoreCostsLifted.struttura_espositori,
-                              grafica_espositori: expositoreCostsLifted.grafica_espositori,
-                              premontaggio_espositori: expositoreCostsLifted.premontaggio_espositori,
-                              accessori_espositori: expositoreCostsLifted.accessori_espositori,
-                              totale: expositoreCostsLifted.costo_totale_espositori,
-                            }}
-                            onCostsChange={setExpositoreCostsLifted}
-                          />
+                          <ExpositoreSection formData={{
+                        ...formData,
+                        marginalita_struttura_espositori: formData.marginalita_struttura_espositori,
+                        marginalita_grafica_espositori: formData.marginalita_grafica_espositori,
+                        marginalita_premontaggio_espositori: formData.marginalita_premontaggio_espositori,
+                        marginalita_accessori_espositori: formData.marginalita_accessori_espositori
+                      }} setFormData={setFormData} physicalElements={espositorePhysicalElements} onChange={(field, value) => setFormData(prev => ({
+                        ...prev,
+                        [field]: value
+                      }))} costiEspositori={{
+                        struttura_espositori: expositoreCostsLifted.struttura_espositori,
+                        grafica_espositori: expositoreCostsLifted.grafica_espositori,
+                        premontaggio_espositori: expositoreCostsLifted.premontaggio_espositori,
+                        accessori_espositori: expositoreCostsLifted.accessori_espositori,
+                        totale: expositoreCostsLifted.costo_totale_espositori
+                      }} onCostsChange={setExpositoreCostsLifted} />
                        </div>
                     </CollapsibleContent>
                   </div>
                 </Collapsible>
 
-                <Collapsible
-                  open={sectionsOpen.servizi}
-                  onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, servizi: open }))}
-                >
+                <Collapsible open={sectionsOpen.servizi} onOpenChange={open => setSectionsOpen(prev => ({
+                ...prev,
+                servizi: open
+              }))}>
                   <div className="bg-[hsl(var(--section-complement))] border border-[hsl(var(--section-complement-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-complement-border))] rounded-none border-0"
-                      >
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-complement-border))] rounded-none border-0 px-[15px]">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-complement-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-complement-foreground))]">Servizi</span>
@@ -1864,26 +1870,19 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                      <CollapsibleContent>
                        <div className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
-                         <ServicesSection 
-                           formData={formData}
-                           setFormData={setFormData}
-                           preventivo_id={editingPreventivo?.id}
-                         />
+                         <ServicesSection formData={formData} setFormData={setFormData} preventivo_id={editingPreventivo?.id} />
                        </div>
                      </CollapsibleContent>
                   </div>
                  </Collapsible>
 
-                 <Collapsible
-                   open={sectionsOpen.altri_beni_servizi}
-                   onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, altri_beni_servizi: open }))}
-                 >
+                 <Collapsible open={sectionsOpen.altri_beni_servizi} onOpenChange={open => setSectionsOpen(prev => ({
+                ...prev,
+                altri_beni_servizi: open
+              }))}>
                    <div className="bg-[hsl(var(--section-services))] border border-[hsl(var(--section-services-border))] rounded-lg overflow-hidden">
                      <CollapsibleTrigger asChild>
-                       <Button 
-                         variant="ghost" 
-                         className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-services-border))] rounded-none border-0"
-                       >
+                       <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-services-border))] rounded-none border-0">
                          <div className="flex items-center gap-3">
                            <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-services-foreground))]"></div>
                            <span className="font-medium text-[hsl(var(--section-services-foreground))]">Altri Beni/Servizi</span>
@@ -1892,10 +1891,8 @@ const Preventivi = () => {
                        </Button>
                      </CollapsibleTrigger>
                      <CollapsibleContent>
-                       <div className="border-t border-[hsl(var(--section-services-border))] bg-card p-6">
-                         <AltriBeniServiziSection 
-                           preventivoId={editingPreventivo?.id || ''}
-                         />
+                       <div className="border-t border-[hsl(var(--section-services-border))] bg-card p-6 mx-0 my-0 px-[2px] py-[12px]">
+                         <AltriBeniServiziSection preventivoId={editingPreventivo?.id || ''} />
                        </div>
                      </CollapsibleContent>
                    </div>
@@ -1910,34 +1907,32 @@ const Preventivi = () => {
                 </div>
 
                 {(() => {
-                  // Usa i costi calcolati direttamente dalla sezione Storage per evitare ricalcoli incoerenti
-                  const costiStorage = storageCostsLifted;
+                // Usa i costi calcolati direttamente dalla sezione Storage per evitare ricalcoli incoerenti
+                const costiStorage = storageCostsLifted;
 
-                  // Costi Espositori “lifted” dalla sezione Espositori
-                  const costiEspositori = expositoreCostsLifted;
+                // Costi Espositori “lifted” dalla sezione Espositori
+                const costiEspositori = expositoreCostsLifted;
 
-                  // Totali per tipologia
-                  const totaleStrutturaATerra = costs.struttura_terra + costiStorage.costo_struttura_storage + (costs.costi_desk?.struttura_terra || 0) + costiEspositori.struttura_espositori;
-                  const totaleGrafiche = costs.grafica_cordino + costiStorage.costo_grafica_storage + (costs.costi_desk?.grafica_cordino || 0) + costiEspositori.grafica_espositori;
-                  const retroilluminazione = costs.retroilluminazione; // Valore unico
-                  const extraStrutturaComplessa = costs.extra_stand_complesso; // Valore unico
-                  const totaleAccessori = costs.costi_accessori + costs.costi_accessori_desk + costiEspositori.accessori_espositori;
-                  const totalePremontaggi = costs.premontaggio + costiStorage.costo_premontaggio_storage + (costs.costi_desk?.premontaggio || 0) + costiEspositori.premontaggio_espositori;
-                  
-                  // Calculate service costs
-                  const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.preventivo_montaggio || 0) + (preventivoServizi?.preventivo_smontaggio || 0) : 0;
-                  const costoCertificazioni = formData.servizio_certificazioni ? (serviceCosts?.['Costo_certificazione'] || 0) : 0;
-                  const costoIstruzioni = formData.servizio_istruzioni_assistenza ? (serviceCosts?.['Costo_istruzionieassistenza'] || 0) : 0;
-                  const totaleServizi = costoMontaggio + costoCertificazioni + costoIstruzioni;
+                // Totali per tipologia
+                const totaleStrutturaATerra = costs.struttura_terra + costiStorage.costo_struttura_storage + (costs.costi_desk?.struttura_terra || 0) + costiEspositori.struttura_espositori;
+                const totaleGrafiche = costs.grafica_cordino + costiStorage.costo_grafica_storage + (costs.costi_desk?.grafica_cordino || 0) + costiEspositori.grafica_espositori;
+                const retroilluminazione = costs.retroilluminazione; // Valore unico
+                const extraStrutturaComplessa = costs.extra_stand_complesso; // Valore unico
+                const totaleAccessori = costs.costi_accessori + costs.costi_accessori_desk + costiEspositori.accessori_espositori;
+                const totalePremontaggi = costs.premontaggio + costiStorage.costo_premontaggio_storage + (costs.costi_desk?.premontaggio || 0) + costiEspositori.premontaggio_espositori;
 
-                  // Calculate altri beni/servizi total
-                  const totaleAltriBeniServizi = (altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0);
-                  
-                  // Costo totale fornitura (includes services and altri beni/servizi)
-                  const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori + totaleServizi + totaleAltriBeniServizi;
-                  
-                  return (
-                    <div className="space-y-6">
+                // Calculate service costs
+                const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.preventivo_montaggio || 0) + (preventivoServizi?.preventivo_smontaggio || 0) : 0;
+                const costoCertificazioni = formData.servizio_certificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
+                const costoIstruzioni = formData.servizio_istruzioni_assistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
+                const totaleServizi = costoMontaggio + costoCertificazioni + costoIstruzioni;
+
+                // Calculate altri beni/servizi total
+                const totaleAltriBeniServizi = (altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0);
+
+                // Costo totale fornitura (includes services and altri beni/servizi)
+                const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori + totaleServizi + totaleAltriBeniServizi;
+                return <div className="space-y-6">
                       {/* Grid con i totali per tipologia */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <Card className="h-20 flex flex-col overflow-hidden">
@@ -2054,30 +2049,25 @@ const Preventivi = () => {
                           <div className="text-4xl font-bold text-primary">€{costoTotaleFornitura.toFixed(2)}</div>
                         </CardContent>
                       </Card>
-                    </div>
-                  );
-                })()}
+                    </div>;
+              })()}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="data_scadenza">Data Scadenza</Label>
-                    <Input
-                      id="data_scadenza"
-                      type="date"
-                      value={formData.data_scadenza}
-                      onChange={(e) => setFormData({ ...formData, data_scadenza: e.target.value })}
-                    />
+                    <Input id="data_scadenza" type="date" value={formData.data_scadenza} onChange={e => setFormData({
+                    ...formData,
+                    data_scadenza: e.target.value
+                  })} />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <Label htmlFor="note">Note</Label>
-                  <Textarea
-                    id="note"
-                    value={formData.note}
-                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                    placeholder="Note aggiuntive"
-                  />
+                  <Textarea id="note" value={formData.note} onChange={e => setFormData({
+                  ...formData,
+                  note: e.target.value
+                })} placeholder="Note aggiuntive" />
                 </div>
               </div>
               
@@ -2086,7 +2076,7 @@ const Preventivi = () => {
                   Annulla
                 </Button>
                 <Button type="submit" disabled={createPreventivoMutation.isPending || updatePreventivoMutation.isPending}>
-                  {editingPreventivo ? (updatePreventivoMutation.isPending ? 'Aggiornamento...' : 'Aggiorna') : (createPreventivoMutation.isPending ? 'Salvataggio...' : 'Salva')}
+                  {editingPreventivo ? updatePreventivoMutation.isPending ? 'Aggiornamento...' : 'Aggiorna' : createPreventivoMutation.isPending ? 'Salvataggio...' : 'Salva'}
                 </Button>
               </div>
             </form>
@@ -2108,12 +2098,7 @@ const Preventivi = () => {
           <div className="flex items-center space-x-4 mb-6">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Cerca per numero, titolo o cliente..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
+              <Input placeholder="Cerca per numero, titolo o cliente..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-8" />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-48">
@@ -2130,14 +2115,9 @@ const Preventivi = () => {
             </Select>
           </div>
 
-          {isLoading ? (
-            <div className="text-center py-6">Caricamento...</div>
-          ) : filteredPreventivi.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground">
+          {isLoading ? <div className="text-center py-6">Caricamento...</div> : filteredPreventivi.length === 0 ? <div className="text-center py-6 text-muted-foreground">
               Nessun preventivo trovato
-            </div>
-          ) : (
-            <Table>
+            </div> : <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Numero</TableHead>
@@ -2152,8 +2132,7 @@ const Preventivi = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPreventivi.map((preventivo) => (
-                  <TableRow key={preventivo.id}>
+                {filteredPreventivi.map(preventivo => <TableRow key={preventivo.id}>
                     <TableCell className="font-medium">
                       {preventivo.numero_preventivo}
                     </TableCell>
@@ -2187,28 +2166,17 @@ const Preventivi = () => {
                     </TableCell>
                      <TableCell>
                        <div className="flex gap-1">
-                         <Button
-                           variant="ghost"
-                           size="sm"
-                           onClick={() => openEditDialog(preventivo)}
-                         >
+                         <Button variant="ghost" size="sm" onClick={() => openEditDialog(preventivo)}>
                            <Edit className="h-4 w-4" />
                          </Button>
-                         <Button
-                           variant="ghost"
-                           size="sm"
-                           onClick={() => setDeletePreventivo(preventivo)}
-                           className="text-destructive hover:text-destructive/90"
-                         >
+                         <Button variant="ghost" size="sm" onClick={() => setDeletePreventivo(preventivo)} className="text-destructive hover:text-destructive/90">
                            <Trash2 className="h-4 w-4" />
                          </Button>
                        </div>
                      </TableCell>
-                  </TableRow>
-                ))}
+                  </TableRow>)}
               </TableBody>
-            </Table>
-          )}
+            </Table>}
         </CardContent>
       </Card>
 
@@ -2223,17 +2191,12 @@ const Preventivi = () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Annulla</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={() => deletePreventivo && deletePreventivoMutation.mutate(deletePreventivo.id)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
+            <AlertDialogAction onClick={() => deletePreventivo && deletePreventivoMutation.mutate(deletePreventivo.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Elimina
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Preventivi;
