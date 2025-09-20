@@ -46,7 +46,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
 
   // Initialize items when data is loaded
   useEffect(() => {
-    if (existingItems) {
+    if (existingItems && existingItems.length > 0) {
       setItems(existingItems.map(item => ({
         id: item.id,
         descrizione: item.descrizione,
@@ -57,7 +57,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         totale: item.totale,
       })));
     } else if (!isLoading) {
-      // Start with one empty row if no existing items
+      // Always start with one empty row
       setItems([{
         descrizione: '',
         costo_unitario: 0,
@@ -193,9 +193,11 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
   // Calculate total
   const totalGeneral = items.reduce((sum, item) => sum + item.totale, 0);
 
-  // Show add button if any row has content
-  const showAddButton = items.some(item => 
-    item.descrizione || item.costo_unitario > 0 || item.quantita > 0
+  // Show add button only if the first row has content
+  const showAddButton = items.length > 0 && (
+    items[0].descrizione.trim() !== '' || 
+    items[0].costo_unitario > 0 || 
+    items[0].quantita > 0
   );
 
   if (isLoading) {
@@ -205,27 +207,27 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
   return (
     <Card className="w-full bg-gradient-to-br from-hsl(var(--section-services)) to-hsl(var(--section-services))/80 border-hsl(var(--section-services-border))">
       <CardHeader className="pb-4">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-semibold text-hsl(var(--section-services-foreground)) flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5" />
-            Altri Beni/Servizi
-          </CardTitle>
-          {showAddButton && (
-            <Button
-              onClick={addItem}
-              size="sm"
-              className="flex items-center gap-1"
-              variant="outline"
-            >
-              <Plus className="h-4 w-4" />
-              Aggiungi Bene/Servizio
-            </Button>
-          )}
-        </div>
+        <CardTitle className="text-xl font-semibold text-hsl(var(--section-services-foreground)) flex items-center gap-2">
+          <ShoppingCart className="h-5 w-5" />
+          Altri Beni/Servizi
+        </CardTitle>
       </CardHeader>
       
       <CardContent className="p-4 space-y-4">
         <div className="border rounded-lg overflow-hidden">
+          {showAddButton && (
+            <div className="flex justify-end p-4 bg-hsl(var(--section-services))/20 border-b">
+              <Button
+                onClick={addItem}
+                size="sm"
+                className="flex items-center gap-1"
+                variant="outline"
+              >
+                <Plus className="h-4 w-4" />
+                Aggiungi Bene/Servizio
+              </Button>
+            </div>
+          )}
           <Table>
             <TableHeader>
               <TableRow className="bg-hsl(var(--section-services))/30">
