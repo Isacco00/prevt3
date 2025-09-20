@@ -303,7 +303,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
                     </TableRow>
                   ))}
           
-                  /* Riga Totale */
+                  {/* Riga Totale */}
                   <TableRow className="bg-hsl(var(--section-services))/40 border-t-2 border-hsl(var(--section-services-border))">
                     <TableCell colSpan={6} className="text-right font-semibold">
                       Totale Altri Beni/Servizi:
