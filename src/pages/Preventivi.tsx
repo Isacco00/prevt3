@@ -11,6 +11,7 @@ import { StorageSection } from '@/components/StorageSection';
 import { DeskSection } from '@/components/DeskSection';
 import { ExpositoreSection } from '@/components/ExpositoreSection';
 import { ServicesSection } from '@/components/ServicesSection';
+import { AltriBeniServiziSection } from '@/components/AltriBeniServiziSection';
 import { Settings } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link, useLocation } from 'react-router-dom';
@@ -138,6 +139,23 @@ const Preventivi = () => {
     },
     enabled: !!editingPreventivo?.id
   });
+
+  // Fetch altri beni/servizi for the current preventivo
+  const { data: altriBeniServizi } = useQuery({
+    queryKey: ['altri-beni-servizi', editingPreventivo?.id],
+    queryFn: async () => {
+      if (!editingPreventivo?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('altri_beni_servizi')
+        .select('*')
+        .eq('preventivo_id', editingPreventivo.id);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!editingPreventivo?.id,
+  });
   
   const [deletePreventivo, setDeletePreventivo] = useState<Preventivo | null>(null);
   const [formData, setFormData] = useState({
@@ -235,6 +253,7 @@ const Preventivi = () => {
     desk: false,
     espositori: false,
     servizi: false,
+    altri_beni_servizi: false,
   });
 
   // Totali Storage “lifted” dalla sezione Storage
@@ -1387,6 +1406,7 @@ const Preventivi = () => {
       desk: false,
       espositori: false,
       servizi: false,
+      altri_beni_servizi: false,
     });
   };
 
@@ -1501,6 +1521,7 @@ const Preventivi = () => {
       desk: false,
       espositori: false,
       servizi: false,
+      altri_beni_servizi: false,
     });
     setIsDialogOpen(true);
   };
@@ -1512,7 +1533,7 @@ const Preventivi = () => {
       const p = preventivi.find((x) => x.id === state.openPreventivoId);
       if (p) {
         openEditDialog(p);
-        setSectionsOpen({ stand: false, storage: false, desk: false, espositori: false, servizi: true });
+        setSectionsOpen({ stand: false, storage: false, desk: false, espositori: false, servizi: true, altri_beni_servizi: false });
         // Clear navigation state to avoid reopening on refresh
         window.history.replaceState({}, '', '/preventivi');
       }
@@ -1851,7 +1872,34 @@ const Preventivi = () => {
                        </div>
                      </CollapsibleContent>
                   </div>
-                </Collapsible>
+                 </Collapsible>
+
+                 <Collapsible
+                   open={sectionsOpen.altri_beni_servizi}
+                   onOpenChange={(open) => setSectionsOpen(prev => ({ ...prev, altri_beni_servizi: open }))}
+                 >
+                   <div className="bg-[hsl(var(--section-services))] border border-[hsl(var(--section-services-border))] rounded-lg overflow-hidden">
+                     <CollapsibleTrigger asChild>
+                       <Button 
+                         variant="ghost" 
+                         className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-services-border))] rounded-none border-0"
+                       >
+                         <div className="flex items-center gap-3">
+                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-services-foreground))]"></div>
+                           <span className="font-medium text-[hsl(var(--section-services-foreground))]">Altri Beni/Servizi</span>
+                         </div>
+                         <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-services-foreground))] ${sectionsOpen.altri_beni_servizi ? 'rotate-180' : ''}`} />
+                       </Button>
+                     </CollapsibleTrigger>
+                     <CollapsibleContent>
+                       <div className="border-t border-[hsl(var(--section-services-border))] bg-card p-6">
+                         <AltriBeniServiziSection 
+                           preventivoId={editingPreventivo?.id || ''}
+                         />
+                       </div>
+                     </CollapsibleContent>
+                   </div>
+                 </Collapsible>
               </div>
 
               {/* Sezione Totale Generale Costi Fornitura */}
@@ -1881,9 +1929,12 @@ const Preventivi = () => {
                   const costoCertificazioni = formData.servizio_certificazioni ? (serviceCosts?.['Costo_certificazione'] || 0) : 0;
                   const costoIstruzioni = formData.servizio_istruzioni_assistenza ? (serviceCosts?.['Costo_istruzionieassistenza'] || 0) : 0;
                   const totaleServizi = costoMontaggio + costoCertificazioni + costoIstruzioni;
+
+                  // Calculate altri beni/servizi total
+                  const totaleAltriBeniServizi = (altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0);
                   
-                  // Costo totale fornitura (includes services now)
-                  const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori + totaleServizi;
+                  // Costo totale fornitura (includes services and altri beni/servizi)
+                  const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori + totaleServizi + totaleAltriBeniServizi;
                   
                   return (
                     <div className="space-y-6">
@@ -1976,6 +2027,19 @@ const Preventivi = () => {
                           <CardContent className="mt-auto pb-3 px-4">
                             <div className="text-lg font-bold leading-none tabular-nums">
                               €{totaleServizi.toFixed(2)}
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="h-20 flex flex-col overflow-hidden col-span-1 md:col-span-2 lg:col-span-1">
+                          <CardHeader className="pb-1 pt-3 px-4">
+                            <CardTitle className="text-sm font-medium leading-tight">
+                              Altri Beni/Servizi
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="mt-auto pb-3 px-4">
+                            <div className="text-lg font-bold leading-none tabular-nums">
+                              €{totaleAltriBeniServizi.toFixed(2)}
                             </div>
                           </CardContent>
                         </Card>

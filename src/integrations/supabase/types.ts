@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      altri_beni_servizi: {
+        Row: {
+          costo_unitario: number
+          created_at: string
+          descrizione: string
+          id: string
+          marginalita: number
+          preventivo_id: string
+          prezzo_unitario: number
+          quantita: number
+          totale: number
+          updated_at: string
+        }
+        Insert: {
+          costo_unitario?: number
+          created_at?: string
+          descrizione?: string
+          id?: string
+          marginalita?: number
+          preventivo_id: string
+          prezzo_unitario?: number
+          quantita?: number
+          totale?: number
+          updated_at?: string
+        }
+        Update: {
+          costo_unitario?: number
+          created_at?: string
+          descrizione?: string
+          id?: string
+          marginalita?: number
+          preventivo_id?: string
+          prezzo_unitario?: number
+          quantita?: number
+          totale?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       costi_extra_trasf_mont: {
         Row: {
           attivo: boolean

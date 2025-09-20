@@ -74,6 +74,10 @@ All colors MUST be HSL.
     --section-complement: 320 40% 95%;
     --section-complement-foreground: 320 40% 25%;
     --section-complement-border: 320 40% 85%;
+    
+    --section-services: 25 75% 95%;
+    --section-services-foreground: 25 75% 25%;
+    --section-services-border: 25 75% 85%;
   }
 
   .dark {
@@ -133,6 +137,10 @@ All colors MUST be HSL.
     --section-complement: 320 20% 15%;
     --section-complement-foreground: 320 40% 85%;
     --section-complement-border: 320 20% 25%;
+    
+    --section-services: 25 30% 15%;
+    --section-services-foreground: 25 75% 85%;
+    --section-services-border: 25 30% 25%;
   }
 }
 
