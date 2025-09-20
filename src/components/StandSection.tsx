@@ -107,7 +107,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               value={formData.profondita}
               onChange={(e) => setFormData({ ...formData, profondita: e.target.value })}
               placeholder="0.0"
-              //required
+              required
             />
           </div>
           
@@ -122,7 +122,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               value={formData.larghezza}
               onChange={(e) => setFormData({ ...formData, larghezza: e.target.value })}
               placeholder="0.0"
-              //required
+              required
             />
           </div>
           
