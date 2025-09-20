@@ -342,15 +342,11 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
             min="0"
             max="200"
             step="1"
-            value={data.marginalita_struttura_desk ?? 0}
-            onChange={(e) =>
-              setData(prev => ({
-                ...prev,
-                marginalita_struttura_desk:
-                  e.target.value === '' ? 0 : Number(e.target.value)
-              }))
-            }
-            className="w-16 h-6 text-xs text-center"
+              value={data.marginalita_struttura_desk ?? 0}
+              onChange={(e) =>
+                onChange('marginalita_struttura_desk', e.target.value === '' ? 0 : Number(e.target.value))
+                }
+           className="w-16 h-6 text-xs text-center"
           />
           <span className="text-xs">%</span>
         </div>
