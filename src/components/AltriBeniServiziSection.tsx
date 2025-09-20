@@ -205,120 +205,6 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
   }
 
   return (
-
-
-        <div className="w-full">
-        {showAddButton && (
-          <div className="flex justify-end p-4 border rounded-t-lg">
-            <Button
-              onClick={addItem}
-              size="sm"
-              className="flex items-center gap-1"
-              variant="outline"
-            >
-              <Plus className="h-4 w-4" />
-              Aggiungi Bene/Servizio
-            </Button>
-          </div>
-        )}
-      
-        <div className="w-full border rounded-b-lg overflow-hidden">
-          <Table className="w-full">
-            <TableHeader>
-              <TableRow className="bg-hsl(var(--section-services))/30">
-                <TableHead className="w-12 text-center">ID</TableHead>
-                <TableHead className="min-w-80">Descrizione</TableHead>
-                <TableHead className="w-28 text-center">Costo UM (€)</TableHead>
-                <TableHead className="w-28 text-center">Marginalità (%)</TableHead>
-                <TableHead className="w-32 text-center">Prezzo Unitario (€)</TableHead>
-                <TableHead className="w-20 text-center">QTA</TableHead>
-                <TableHead className="w-32 text-center">Totale (€)</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-      
-            <TableBody>
-              {items.map((item, index) => (
-                <TableRow key={index} className="hover:bg-hsl(var(--section-services))/20">
-                  <TableCell className="text-center text-sm text-muted-foreground">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      value={item.descrizione}
-                      onChange={(e) => updateItem(index, 'descrizione', e.target.value)}
-                      placeholder="Descrizione del bene/servizio"
-                      className="border-0 bg-transparent focus:bg-white/50 resize-none min-h-[60px]"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={item.costo_unitario}
-                      onChange={(e) => updateItem(index, 'costo_unitario', parseFloat(e.target.value) || 0)}
-                      className="border-0 bg-transparent focus:bg-white/50 text-center"
-                      step="0.01"
-                      min="0"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={item.marginalita}
-                      onChange={(e) => updateItem(index, 'marginalita', parseFloat(e.target.value) || 0)}
-                      className="border-0 bg-transparent focus:bg-white/50 text-center"
-                      step="1"
-                      min="0"
-                      max="200"
-                    />
-                  </TableCell>
-                  <TableCell className="text-center font-medium">
-                    €{item.prezzo_unitario.toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      value={item.quantita}
-                      onChange={(e) => updateItem(index, 'quantita', parseFloat(e.target.value) || 0)}
-                      className="border-0 bg-transparent focus:bg-white/50 text-center"
-                      step="1"
-                      min="0"
-                    />
-                  </TableCell>
-                  <TableCell className="text-center font-semibold">
-                    €{item.totale.toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    {items.length > 1 && (
-                      <Button
-                        onClick={() => removeItem(index)}
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-      
-              // Riga Totale
-              <TableRow className="bg-hsl(var(--section-services))/40 border-t-2 border-hsl(var(--section-services-border))">
-                <TableCell colSpan={6} className="text-right font-semibold">
-                  Totale Altri Beni/Servizi:
-                </TableCell>
-                <TableCell className="text-center font-bold text-lg">
-                  €{totalGeneral.toFixed(2)}
-                </TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </div>
-
-    {/*
     <Card className="w-full bg-gradient-to-br from-hsl(var(--section-services)) to-hsl(var(--section-services))/80 border-hsl(var(--section-services-border))">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-semibold text-hsl(var(--section-services-foreground)) flex items-center gap-2">
@@ -421,7 +307,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
                 </TableRow>
               ))}
               
-             // Total row
+              {/* Total row */}
               <TableRow className="bg-hsl(var(--section-services))/40 border-t-2 border-hsl(var(--section-services-border))">
                 <TableCell colSpan={6} className="text-right font-semibold">
                   Totale Altri Beni/Servizi:
@@ -436,8 +322,5 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         </div>
       </CardContent>
     </Card>
-
- */}
-    
   );
 };
