@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';                                         // 👈 aggiungi useRef
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -27,8 +27,9 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
 }) => {
   const [items, setItems] = useState<AltriBeniServiziItem[]>([]);
   const queryClient = useQueryClient();
+  const initializedRef = useRef(false); // 👈 flag
 
-  // Fetch existing items
+// Fetch existing items
   const { data: existingItems, isLoading } = useQuery({
     queryKey: ['altri-beni-servizi', preventivoId],
     queryFn: async () => {
@@ -37,15 +38,17 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         .select('*')
         .eq('preventivo_id', preventivoId)
         .order('created_at', { ascending: true });
-      
       if (error) throw error;
       return data;
     },
     enabled: !!preventivoId,
   });
 
-  // Initialize items when data is loaded
+ // ✅ Inizializza SOLO la prima volta
   useEffect(() => {
+    if (isLoading) return;
+    if (initializedRef.current) return;
+
     if (existingItems && existingItems.length > 0) {
       setItems(existingItems.map(item => ({
         id: item.id,
@@ -56,8 +59,8 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         quantita: item.quantita,
         totale: item.totale,
       })));
-    } else if (!isLoading) {
-      // Always start with one empty row
+    } else {
+      // parti sempre con una riga vuota
       setItems([{
         descrizione: '',
         costo_unitario: 0,
@@ -67,6 +70,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
         totale: 0,
       }]);
     }
+     initializedRef.current = true; // 👈 non sovrascrivere più lo stato locale
   }, [existingItems, isLoading]);
 
   // Save item mutation
