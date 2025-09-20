@@ -464,33 +464,41 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
       </Card>
 
       {/* Accessori desk */}
-      <Card className="border border-border/50">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xs font-medium">Accessori desk</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="text-right text-lg font-bold">
-            €{(costiAccessori ?? 0).toFixed(2)}
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">Ricarico</span>
+      <Card className="p-4">
+        <div className="flex justify-between items-start mb-3">
+          <div className="text-sm font-medium">Accessori desk</div>
+          <div className="text-lg font-bold">€{(costiAccessori ?? 0).toFixed(2)}</div>
+        </div>
+      
+        <div className="flex justify-between items-end">
+          <div className="flex flex-col gap-1">
+            <div className="text-xs text-muted-foreground">Ricarico</div>
             <div className="flex items-center gap-1">
               <Input
                 type="number"
                 min="0"
                 max="200"
                 step="1"
-                value={data.marginalita_accessori_desk || 50}
-                onChange={(e) => onChange('marginalita_accessori_desk' as any, parseFloat(e.target.value) || 0)}
+                value={data.marginalita_accessori_desk ?? 0}
+                onChange={(e) =>
+                  onChange(
+                    'marginalita_accessori_desk',
+                    e.target.value === '' ? 0 : Number(e.target.value)
+                  )
+                }
                 className="w-16 h-6 text-xs text-center"
               />
               <span className="text-xs">%</span>
             </div>
           </div>
-          <div className="text-right text-lg font-bold text-primary">
-            €{((costiAccessori ?? 0) * (1 + (data.marginalita_accessori_desk || 0) / 100)).toFixed(2)}
+      
+          <div className="text-lg font-bold text-primary">
+            €{(
+              (costiAccessori ?? 0) *
+              (1 + ((data.marginalita_accessori_desk ?? 0) / 100))
+            ).toFixed(2)}
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>
 
