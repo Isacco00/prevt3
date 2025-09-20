@@ -206,12 +206,12 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
 
   return (
     <Card className="w-full bg-gradient-to-br from-hsl(var(--section-services)) to-hsl(var(--section-services))/80 border-hsl(var(--section-services-border))">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold text-hsl(var(--section-services-foreground)) flex items-center gap-2">
-          <ShoppingCart className="h-5 w-5" />
-          Altri Beni/Servizi
-        </CardTitle>
-      </CardHeader>
+//      <CardHeader className="pb-4">
+//        <CardTitle className="text-xl font-semibold text-hsl(var(--section-services-foreground)) flex items-center gap-2">
+//          <ShoppingCart className="h-5 w-5" />
+//          Altri Beni/Servizi
+//        </CardTitle>
+//      </CardHeader>
       
       <CardContent className="p-4 space-y-4">
         <div className="border rounded-lg overflow-hidden">
