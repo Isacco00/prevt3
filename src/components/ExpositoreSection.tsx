@@ -33,9 +33,22 @@ interface EspositorePhysicalElementsProps {
 }
 
 interface EspositoriSectionProps {
-  formData: ExpositoreData;
+  formData: ExpositoreData & {
+    marginalita_struttura_espositori?: number;
+    marginalita_grafica_espositori?: number;
+    marginalita_premontaggio_espositori?: number;
+    marginalita_accessori_espositori?: number;
+  };
   setFormData: (data: any) => void;
   physicalElements: ExpositorePhysicalElements;
+  onChange: (field: string, value: any) => void;
+  costiEspositori?: {
+    struttura_espositori: number;
+    grafica_espositori: number;
+    premontaggio_espositori: number;
+    accessori_espositori: number;
+    totale: number;
+  };
   onCostsChange?: (costs: {
     struttura_espositori: number;
     grafica_espositori: number;
@@ -75,7 +88,7 @@ function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElem
   );
 }
 
-export function ExpositoreSection({ formData, setFormData, physicalElements, onCostsChange }: EspositoriSectionProps) {
+export function ExpositoreSection({ formData, setFormData, physicalElements, onChange, costiEspositori, onCostsChange }: EspositoriSectionProps) {
   // Query for accessories prices
   const { data: accessoriesData = [] } = useQuery({
     queryKey: ['listino_accessori_espositori'],
@@ -331,75 +344,173 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
         </CardContent>
       </Card>
 
-      {/* Calcolo costi Esporitori */}
+      {/* Calcolo Costi Espositori */}
       <Card>
         <CardContent className="pt-6">
-          <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Costi Espositori</h4>
+          <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Preventivo Espositori</h4>
     
-          {/* 4 cards principali */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-            <Card className="h-24 flex flex-col overflow-hidden">
-              <CardHeader className="pb-1 pt-3 px-3">
-                <CardTitle className="text-xs font-medium leading-tight">
-                  Struttura a terra Espositori
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="mt-auto pb-3 px-3">
-                <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{calculateStructureCost().toFixed(2)}
+          {/* Cost cards in 2x2 layout (4 items) */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+
+            {/* Struttura espositori */}
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="text-sm font-medium">Struttura espositori</div>
+                <div className="text-lg font-bold">€{(costiEspositori?.struttura_espositori ?? 0).toFixed(2)}</div>
+              </div>
+              <div className="flex justify-between items-end">
+                <div className="flex flex-col gap-1">
+                  <div className="text-xs text-muted-foreground">Ricarico</div>
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="200"
+                      step="1"
+                      value={formData.marginalita_struttura_espositori ?? 0}
+                      onChange={(e) =>
+                        onChange('marginalita_struttura_espositori', e.target.value === '' ? 0 : Number(e.target.value))
+                      }
+                      className="w-16 h-6 text-xs text-center"
+                    />
+                    <span className="text-xs">%</span>
+                  </div>
                 </div>
-              </CardContent>
+                <div className="text-lg font-bold text-primary">
+                  €{((costiEspositori?.struttura_espositori ?? 0) * (1 + ((formData.marginalita_struttura_espositori ?? 0) / 100))).toFixed(2)}
+                </div>
+              </div>
             </Card>
-      
-            <Card className="h-24 flex flex-col overflow-hidden">
-              <CardHeader className="pb-1 pt-3 px-3">
-                <CardTitle className="text-xs font-medium leading-tight">
-                  Grafica con cordino cucito Espositori
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="mt-auto pb-3 px-3">
-                <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{calculateGraphicsCost().toFixed(2)}
+
+            {/* Grafica espositori */}
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="text-sm font-medium">Grafica espositori</div>
+                <div className="text-lg font-bold">€{(costiEspositori?.grafica_espositori ?? 0).toFixed(2)}</div>
+              </div>
+              <div className="flex justify-between items-end">
+                <div className="flex flex-col gap-1">
+                  <div className="text-xs text-muted-foreground">Ricarico</div>
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="200"
+                      step="1"
+                      value={formData.marginalita_grafica_espositori ?? 0}
+                      onChange={(e) =>
+                        onChange('marginalita_grafica_espositori', e.target.value === '' ? 0 : Number(e.target.value))
+                      }
+                      className="w-16 h-6 text-xs text-center"
+                    />
+                    <span className="text-xs">%</span>
+                  </div>
                 </div>
-              </CardContent>
+                <div className="text-lg font-bold text-primary">
+                  €{((costiEspositori?.grafica_espositori ?? 0) * (1 + ((formData.marginalita_grafica_espositori ?? 0) / 100))).toFixed(2)}
+                </div>
+              </div>
             </Card>
-      
-            <Card className="h-24 flex flex-col overflow-hidden">
-              <CardHeader className="pb-1 pt-3 px-3">
-                <CardTitle className="text-xs font-medium leading-tight">
-                  Premontaggio Espositori
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="mt-auto pb-3 px-3">
-                <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{calculatePreassemblyCost().toFixed(2)}
+
+            {/* Premontaggio espositori */}
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="text-sm font-medium">Premontaggio espositori</div>
+                <div className="text-lg font-bold">€{(costiEspositori?.premontaggio_espositori ?? 0).toFixed(2)}</div>
+              </div>
+              <div className="flex justify-between items-end">
+                <div className="flex flex-col gap-1">
+                  <div className="text-xs text-muted-foreground">Ricarico</div>
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="200"
+                      step="1"
+                      value={formData.marginalita_premontaggio_espositori ?? 0}
+                      onChange={(e) =>
+                        onChange('marginalita_premontaggio_espositori', e.target.value === '' ? 0 : Number(e.target.value))
+                      }
+                      className="w-16 h-6 text-xs text-center"
+                    />
+                    <span className="text-xs">%</span>
+                  </div>
                 </div>
-              </CardContent>
+                <div className="text-lg font-bold text-primary">
+                  €{((costiEspositori?.premontaggio_espositori ?? 0) * (1 + ((formData.marginalita_premontaggio_espositori ?? 0) / 100))).toFixed(2)}
+                </div>
+              </div>
             </Card>
-      
-            <Card className="h-24 flex flex-col overflow-hidden">
-              <CardHeader className="pb-1 pt-3 px-3">
-                <CardTitle className="text-xs font-medium leading-tight">
-                  Costi totali Accessori Espositori
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="mt-auto pb-3 px-3">
-                <div className="text-xl font-bold leading-none tabular-nums truncate">
-                  €{calculateAccessoriesTotal().toFixed(2)}
+
+            {/* Accessori espositori */}
+            <Card className="p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="text-sm font-medium">Accessori espositori</div>
+                <div className="text-lg font-bold">€{(costiEspositori?.accessori_espositori ?? 0).toFixed(2)}</div>
+              </div>
+              <div className="flex justify-between items-end">
+                <div className="flex flex-col gap-1">
+                  <div className="text-xs text-muted-foreground">Ricarico</div>
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="200"
+                      step="1"
+                      value={formData.marginalita_accessori_espositori ?? 0}
+                      onChange={(e) =>
+                        onChange('marginalita_accessori_espositori', e.target.value === '' ? 0 : Number(e.target.value))
+                      }
+                      className="w-16 h-6 text-xs text-center"
+                    />
+                    <span className="text-xs">%</span>
+                  </div>
                 </div>
-              </CardContent>
+                <div className="text-lg font-bold text-primary">
+                  €{((costiEspositori?.accessori_espositori ?? 0) * (1 + ((formData.marginalita_accessori_espositori ?? 0) / 100))).toFixed(2)}
+                </div>
+              </div>
             </Card>
           </div>
-      
-          {/* Costo totale Espositori */}
-          <Card className="w-full h-28 flex flex-col overflow-hidden border-2 rounded-xl">
-            <CardContent className="px-4 py-3 flex flex-col">
-                <div className="text-lg font-medium leading-tight">Costo totale Espositori</div>
-                <div className="mt-1 text-3xl md:text-4xl font-bold leading-none tabular-nums">
-                  €{calculateTotalCost().toFixed(2)}
-                </div>
-            </CardContent>
-          </Card>
+
+          {/* Summary cards with totals */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+            <Card className="p-4 bg-primary/5 border-primary/20">
+              <div className="text-sm text-muted-foreground">Totale preventivo espositori</div>
+              <div className="text-2xl font-bold text-primary">
+                €{(
+                  ((costiEspositori?.struttura_espositori ?? 0) * (1 + ((formData.marginalita_struttura_espositori ?? 0) / 100))) +
+                  ((costiEspositori?.grafica_espositori ?? 0) * (1 + ((formData.marginalita_grafica_espositori ?? 0) / 100))) +
+                  ((costiEspositori?.premontaggio_espositori ?? 0) * (1 + ((formData.marginalita_premontaggio_espositori ?? 0) / 100))) +
+                  ((costiEspositori?.accessori_espositori ?? 0) * (1 + ((formData.marginalita_accessori_espositori ?? 0) / 100)))
+                ).toFixed(2)}
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-muted/30">
+              <div className="text-sm text-muted-foreground">Totale costi espositori</div>
+              <div className="text-2xl font-bold">
+                €{((costiEspositori?.struttura_espositori ?? 0) + (costiEspositori?.grafica_espositori ?? 0) + (costiEspositori?.premontaggio_espositori ?? 0) + (costiEspositori?.accessori_espositori ?? 0)).toFixed(2)}
+              </div>
+            </Card>
+
+            <Card className="p-4 bg-green-50 border-green-200">
+              <div className="text-sm text-muted-foreground">Marginalità media</div>
+              <div className="text-2xl font-bold text-green-600">
+                {(() => {
+                  const totalCosts = (costiEspositori?.struttura_espositori ?? 0) + (costiEspositori?.grafica_espositori ?? 0) + (costiEspositori?.premontaggio_espositori ?? 0) + (costiEspositori?.accessori_espositori ?? 0);
+                  const totalQuoted = 
+                    ((costiEspositori?.struttura_espositori ?? 0) * (1 + ((formData.marginalita_struttura_espositori ?? 0) / 100))) +
+                    ((costiEspositori?.grafica_espositori ?? 0) * (1 + ((formData.marginalita_grafica_espositori ?? 0) / 100))) +
+                    ((costiEspositori?.premontaggio_espositori ?? 0) * (1 + ((formData.marginalita_premontaggio_espositori ?? 0) / 100))) +
+                    ((costiEspositori?.accessori_espositori ?? 0) * (1 + ((formData.marginalita_accessori_espositori ?? 0) / 100)));
+                  
+                  const margin = totalCosts > 0 ? ((totalQuoted - totalCosts) / totalCosts) * 100 : 0;
+                  return margin.toFixed(1);
+                })()}%
+              </div>
+            </Card>
+          </div>
         </CardContent>
       </Card>
     </div>

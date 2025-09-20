@@ -172,6 +172,11 @@ const Preventivi = () => {
     marginalita_grafica_desk: 0,
     marginalita_premontaggio_desk: 0,
     marginalita_accessori_desk: 0,
+    // Espositori margins
+    marginalita_struttura_espositori: 0,
+    marginalita_grafica_espositori: 0,
+    marginalita_premontaggio_espositori: 0,
+    marginalita_accessori_espositori: 0,
     // Stand accessories
     borsa_stand: '',
     baule_trolley: '',
@@ -431,6 +436,11 @@ const Preventivi = () => {
           marginalita_grafica_desk: defaultMargin.marginalita,
           marginalita_premontaggio_desk: defaultMargin.marginalita,
           marginalita_accessori_desk: defaultMargin.marginalita,
+          // Espositori margins
+          marginalita_struttura_espositori: defaultMargin.marginalita,
+          marginalita_grafica_espositori: defaultMargin.marginalita,
+          marginalita_premontaggio_espositori: defaultMargin.marginalita,
+          marginalita_accessori_espositori: defaultMargin.marginalita,
         }));
         return;
       }
@@ -937,6 +947,11 @@ const Preventivi = () => {
         marginalita_grafica_desk: data.marginalita_grafica_desk || 50,
         marginalita_premontaggio_desk: data.marginalita_premontaggio_desk || 50,
         marginalita_accessori_desk: data.marginalita_accessori_desk || 50,
+        // Espositori margins
+        marginalita_struttura_espositori: data.marginalita_struttura_espositori || 50,
+        marginalita_grafica_espositori: data.marginalita_grafica_espositori || 50,
+        marginalita_premontaggio_espositori: data.marginalita_premontaggio_espositori || 50,
+        marginalita_accessori_espositori: data.marginalita_accessori_espositori || 50,
         // Stand accessories
         borsa_stand: parseInt(formData.borsa_stand) || 0,
         baule_trolley: parseInt(formData.baule_trolley) || 0,
@@ -1160,6 +1175,11 @@ const Preventivi = () => {
         marginalita_grafica_desk: data.marginalita_grafica_desk || 50,
         marginalita_premontaggio_desk: data.marginalita_premontaggio_desk || 50,
         marginalita_accessori_desk: data.marginalita_accessori_desk || 50,
+        // Espositori margins
+        marginalita_struttura_espositori: data.marginalita_struttura_espositori || 50,
+        marginalita_grafica_espositori: data.marginalita_grafica_espositori || 50,
+        marginalita_premontaggio_espositori: data.marginalita_premontaggio_espositori || 50,
+        marginalita_accessori_espositori: data.marginalita_accessori_espositori || 50,
         // Stand accessories
         borsa_stand: parseInt(data.borsa_stand) || 0,
         baule_trolley: parseInt(data.baule_trolley) || 0,
@@ -1352,6 +1372,11 @@ const Preventivi = () => {
         marginalita_grafica_desk: 50,
         marginalita_premontaggio_desk: 50,
         marginalita_accessori_desk: 50,
+        // Espositori margins
+        marginalita_struttura_espositori: 0,
+        marginalita_grafica_espositori: 0,
+        marginalita_premontaggio_espositori: 0,
+        marginalita_accessori_espositori: 0,
         // Accessori stand dinamici
         accessori_stand: {},
     });
@@ -1456,6 +1481,11 @@ const Preventivi = () => {
         marginalita_grafica_desk: (preventivo as any).marginalita_grafica_desk || 50,
         marginalita_premontaggio_desk: (preventivo as any).marginalita_premontaggio_desk || 50,
         marginalita_accessori_desk: (preventivo as any).marginalita_accessori_desk || 50,
+        // Espositori margins
+        marginalita_struttura_espositori: (preventivo as any).marginalita_struttura_espositori || 0,
+        marginalita_grafica_espositori: (preventivo as any).marginalita_grafica_espositori || 0,
+        marginalita_premontaggio_espositori: (preventivo as any).marginalita_premontaggio_espositori || 0,
+        marginalita_accessori_espositori: (preventivo as any).marginalita_accessori_espositori || 0,
         // Accessori stand dinamici  
         accessori_stand: (() => {
           try {
@@ -1769,12 +1799,26 @@ const Preventivi = () => {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                        <div className="border-t border-[hsl(var(--section-expo-border))] bg-card p-6">
-                         <ExpositoreSection 
-                           formData={formData}
-                           setFormData={setFormData}
-                           physicalElements={espositorePhysicalElements}
-                           onCostsChange={setExpositoreCostsLifted}
-                         />
+                          <ExpositoreSection 
+                            formData={{
+                              ...formData,
+                              marginalita_struttura_espositori: formData.marginalita_struttura_espositori,
+                              marginalita_grafica_espositori: formData.marginalita_grafica_espositori,
+                              marginalita_premontaggio_espositori: formData.marginalita_premontaggio_espositori,
+                              marginalita_accessori_espositori: formData.marginalita_accessori_espositori,
+                            }}
+                            setFormData={setFormData}
+                            physicalElements={espositorePhysicalElements}
+                            onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
+                            costiEspositori={{
+                              struttura_espositori: expositoreCostsLifted.struttura_espositori,
+                              grafica_espositori: expositoreCostsLifted.grafica_espositori,
+                              premontaggio_espositori: expositoreCostsLifted.premontaggio_espositori,
+                              accessori_espositori: expositoreCostsLifted.accessori_espositori,
+                              totale: expositoreCostsLifted.costo_totale_espositori,
+                            }}
+                            onCostsChange={setExpositoreCostsLifted}
+                          />
                        </div>
                     </CollapsibleContent>
                   </div>
