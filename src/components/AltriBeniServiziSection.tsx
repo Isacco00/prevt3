@@ -318,11 +318,8 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
             </div>
           </div>
 
-
-
-
     
-{/* INIZIO ROUTINE OLD
+/* INIZIO ROUTINE OLD
     
     <Card className="w-full bg-gradient-to-br from-hsl(var(--section-services)) to-hsl(var(--section-services))/80 border-hsl(var(--section-services-border))">
       <CardHeader className="pb-4">
@@ -442,7 +439,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
       </CardContent>
     </Card>
 
-FINE ROUTINE OLD */}
+FINE ROUTINE OLD */
     
   );
 };
