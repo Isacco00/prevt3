@@ -491,7 +491,7 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
           </div>
         </div>
       </Card>
-
+    </div>
 
         
     {/* Summary */}
