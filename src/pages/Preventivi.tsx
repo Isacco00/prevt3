@@ -1735,6 +1735,10 @@ const Preventivi = () => {
                               teca_plexiglass: formData.teca_plexiglass,
                               fronte_luminoso: formData.fronte_luminoso,
                               borsa: formData.borsa,
+                              marginalita_struttura_desk: formData.marginalita_struttura_desk,
+                              marginalita_grafica_desk: formData.marginalita_grafica_desk,
+                              marginalita_premontaggio_desk: formData.marginalita_premontaggio_desk,
+                              marginalita_accessori_desk: formData.marginalita_accessori_desk,
                             }}
                             onChange={(field, value) => setFormData(prev => ({...prev, [field]: value}))}
                             parametri={parametri}
