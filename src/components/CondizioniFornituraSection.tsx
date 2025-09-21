@@ -137,7 +137,7 @@ export function CondizioniFornituraSection({ preventivoId }: CondizioniFornitura
   }
 
   return (
-        {/* Contenuto "Condizioni di fornitura" – niente Card/Collapsible interni */}
+     
         <div className="space-y-6">
         {localCondizioni.map((condizione, index) => (
           <div key={`${condizione.voce}-${index}`} className="space-y-2">
