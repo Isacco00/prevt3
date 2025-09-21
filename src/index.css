@@ -78,6 +78,10 @@ All colors MUST be HSL.
     --section-services: 25 75% 95%;
     --section-services-foreground: 25 75% 25%;
     --section-services-border: 25 75% 85%;
+    
+    --section-conditions: 200 50% 95%;
+    --section-conditions-foreground: 200 50% 25%;
+    --section-conditions-border: 200 50% 85%;
   }
 
   .dark {
@@ -141,6 +145,10 @@ All colors MUST be HSL.
     --section-services: 25 30% 15%;
     --section-services-foreground: 25 75% 85%;
     --section-services-border: 25 30% 25%;
+    
+    --section-conditions: 200 25% 15%;
+    --section-conditions-foreground: 200 50% 85%;
+    --section-conditions-border: 200 25% 25%;
   }
 }
 

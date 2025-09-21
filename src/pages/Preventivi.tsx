@@ -12,6 +12,7 @@ import { DeskSection } from '@/components/DeskSection';
 import { ExpositoreSection } from '@/components/ExpositoreSection';
 import { ServicesSection } from '@/components/ServicesSection';
 import { AltriBeniServiziSection } from '@/components/AltriBeniServiziSection';
+import { CondizioniFornituraSection } from '@/components/CondizioniFornituraSection';
 import { Settings } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link, useLocation } from 'react-router-dom';
@@ -240,7 +241,8 @@ const Preventivi = () => {
     desk: false,
     espositori: false,
     servizi: false,
-    altri_beni_servizi: false
+    altri_beni_servizi: false,
+    condizioni_fornitura: false
   });
 
   // Totali Storage “lifted” dalla sezione Storage
@@ -1416,7 +1418,8 @@ const Preventivi = () => {
       desk: false,
       espositori: false,
       servizi: false,
-      altri_beni_servizi: false
+      altri_beni_servizi: false,
+      condizioni_fornitura: false
     });
   };
   const openEditDialog = (preventivo: Preventivo) => {
@@ -1554,7 +1557,8 @@ const Preventivi = () => {
       desk: false,
       espositori: false,
       servizi: false,
-      altri_beni_servizi: false
+      altri_beni_servizi: false,
+      condizioni_fornitura: false
     });
     setIsDialogOpen(true);
   };
@@ -1572,7 +1576,8 @@ const Preventivi = () => {
           desk: false,
           espositori: false,
           servizi: true,
-          altri_beni_servizi: false
+          altri_beni_servizi: false,
+          condizioni_fornitura: false
         });
         // Clear navigation state to avoid reopening on refresh
         window.history.replaceState({}, '', '/preventivi');
@@ -1897,10 +1902,32 @@ const Preventivi = () => {
                        </div>
                      </CollapsibleContent>
                    </div>
-                 </Collapsible>
-              </div>
+                  </Collapsible>
 
-              {/* Sezione Totale Generale Costi Fornitura */}
+                  <Collapsible open={sectionsOpen.condizioni_fornitura} onOpenChange={open => setSectionsOpen(prev => ({
+                 ...prev,
+                 condizioni_fornitura: open
+               }))}>
+                    <div className="bg-[hsl(var(--section-conditions))] border border-[hsl(var(--section-conditions-border))] rounded-lg overflow-hidden">
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-conditions-border))] rounded-none border-0">
+                          <div className="flex items-center gap-3">
+                            <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-conditions-foreground))]"></div>
+                            <span className="font-medium text-[hsl(var(--section-conditions-foreground))]">Condizioni di fornitura</span>
+                          </div>
+                          <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-conditions-foreground))] ${sectionsOpen.condizioni_fornitura ? 'rotate-180' : ''}`} />
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="border-t border-[hsl(var(--section-conditions-border))] bg-card p-6">
+                          <CondizioniFornituraSection preventivoId={editingPreventivo?.id || ''} />
+                        </div>
+                      </CollapsibleContent>
+                    </div>
+                  </Collapsible>
+               </div>
+
+               {/* Sezione Totale Generale Costi Fornitura */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />

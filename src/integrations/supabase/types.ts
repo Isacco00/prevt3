@@ -53,6 +53,69 @@ export type Database = {
         }
         Relationships: []
       }
+      condizioni_fornitura_preventivi: {
+        Row: {
+          created_at: string
+          id: string
+          ordine: number
+          preventivo_id: string
+          selezionato: boolean
+          testo: string
+          updated_at: string
+          voce: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ordine?: number
+          preventivo_id: string
+          selezionato?: boolean
+          testo?: string
+          updated_at?: string
+          voce: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ordine?: number
+          preventivo_id?: string
+          selezionato?: boolean
+          testo?: string
+          updated_at?: string
+          voce?: string
+        }
+        Relationships: []
+      }
+      condizioni_standard_fornitura: {
+        Row: {
+          attivo: boolean
+          created_at: string
+          id: string
+          ordine: number
+          testo_standard: string
+          updated_at: string
+          voce: string
+        }
+        Insert: {
+          attivo?: boolean
+          created_at?: string
+          id?: string
+          ordine?: number
+          testo_standard?: string
+          updated_at?: string
+          voce: string
+        }
+        Update: {
+          attivo?: boolean
+          created_at?: string
+          id?: string
+          ordine?: number
+          testo_standard?: string
+          updated_at?: string
+          voce?: string
+        }
+        Relationships: []
+      }
       costi_extra_trasf_mont: {
         Row: {
           attivo: boolean
