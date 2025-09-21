@@ -137,57 +137,45 @@ export function CondizioniFornituraSection({ preventivoId }: CondizioniFornitura
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader 
-        className="cursor-pointer select-none" 
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <CardTitle className="flex items-center justify-between text-lg">
-          <span>• Condizioni di fornitura</span>
-          {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-        </CardTitle>
-      </CardHeader>
-
-      {isExpanded && (
-        <CardContent className="space-y-6">
-          {localCondizioni.map((condizione, index) => (
-            <div key={`${condizione.voce}-${index}`} className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id={`condizione-${index}`}
-                  checked={condizione.selezionato}
-                  onCheckedChange={(checked) => handleCheckboxChange(index, checked as boolean)}
-                />
-                <Label 
-                  htmlFor={`condizione-${index}`} 
-                  className="text-sm font-medium cursor-pointer"
-                >
-                  {condizione.voce}
-                </Label>
-              </div>
-              
-              <Textarea
-                value={condizione.testo}
-                onChange={(e) => handleTextChange(index, e.target.value)}
-                placeholder="Inserisci testo"
-                className="min-h-[80px] resize-y"
-                rows={3}
+        {/* Contenuto "Condizioni di fornitura" – niente Card/Collapsible interni */}
+        <div className="space-y-6">
+        {localCondizioni.map((condizione, index) => (
+          <div key={`${condizione.voce}-${index}`} className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`condizione-${index}`}
+                checked={condizione.selezionato}
+                onCheckedChange={(checked) => handleCheckboxChange(index, checked as boolean)}
               />
+              <Label htmlFor={`condizione-${index}`} className="text-sm font-medium cursor-pointer">
+                {condizione.voce}
+              </Label>
             </div>
-          ))}
-
-          <div className="flex justify-end pt-4">
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={saveConditionsMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 disabled:opacity-50"
-            >
-              {saveConditionsMutation.isPending ? 'Salvataggio...' : 'Salva Condizioni'}
-            </button>
+      
+            <Textarea
+              value={condizione.testo}
+              onChange={(e) => handleTextChange(index, e.target.value)}
+              placeholder="Inserisci testo"
+              className="min-h-[80px] resize-y"
+              rows={3}
+              onKeyDown={(e) => {
+                // Evita submit del form se l’editor è dentro un <form>
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) return; // consenti invio "intenzionale"
+              }}
+            />
           </div>
-        </CardContent>
-      )}
-    </Card>
+        ))}
+      
+        <div className="flex justify-end pt-4">
+          <Button
+            type="button" // importante: non deve triggerare submit del form esterno
+            onClick={handleSave}
+            disabled={saveConditionsMutation.isPending}
+            className="px-4"
+          >
+            {saveConditionsMutation.isPending ? 'Salvataggio...' : 'Salva Condizioni'}
+          </Button>
+        </div>
+      </div>
   );
 }
