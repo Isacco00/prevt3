@@ -230,7 +230,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
   }
   return <div className="w-full">
       {showAddButton && <div className="flex justify-end p-4 border rounded-t-lg py-[2px]">
-          <Button onClick={addItem} size="sm" className="flex items-center gap-1" variant="outline">
+          <Button type="button" onClick={addItem} size="sm" className="flex items-center gap-1" variant="outline">
             <Plus className="h-4 w-4" />
             Aggiungi Bene/Servizio
           </Button>
