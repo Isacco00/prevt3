@@ -108,11 +108,6 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
       }
     },
     onSuccess: data => {
-      // opzionale: potresti evitare invalidate per non avere flicker
-      queryClient.invalidateQueries({
-        queryKey: ['altri-beni-servizi', preventivoId]
-      });
-
       // Se è un insert, data contiene l'id nuovo → assicuriamoci di averlo nello stato
       if (data && (data as any).id) {
         const newId = (data as any).id;
@@ -147,9 +142,7 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['altri-beni-servizi', preventivoId]
-      });
+      // Rimuovo invalidate per evitare re-render che chiudono la sezione
     },
     onError: () => {
       toast({
