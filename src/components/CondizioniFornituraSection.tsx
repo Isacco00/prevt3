@@ -137,45 +137,40 @@ export function CondizioniFornituraSection({ preventivoId }: CondizioniFornitura
   }
 
   return (
-     
-        <div className="space-y-6">
-        {localCondizioni.map((condizione, index) => (
-          <div key={`${condizione.voce}-${index}`} className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id={`condizione-${index}`}
-                checked={condizione.selezionato}
-                onCheckedChange={(checked) => handleCheckboxChange(index, checked as boolean)}
-              />
-              <Label htmlFor={`condizione-${index}`} className="text-sm font-medium cursor-pointer">
-                {condizione.voce}
-              </Label>
-            </div>
-      
-            <Textarea
-              value={condizione.testo}
-              onChange={(e) => handleTextChange(index, e.target.value)}
-              placeholder="Inserisci testo"
-              className="min-h-[80px] resize-y"
-              rows={3}
-              onKeyDown={(e) => {
-                // Evita submit del form se l’editor è dentro un <form>
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) return; // consenti invio "intenzionale"
-              }}
+    <div className="space-y-6">
+      {localCondizioni.map((condizione, index) => (
+        <div key={`${condizione.voce}-${index}`} className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id={`condizione-${index}`}
+              checked={condizione.selezionato}
+              onCheckedChange={(checked) => handleCheckboxChange(index, checked as boolean)}
             />
+            <Label htmlFor={`condizione-${index}`} className="text-sm font-medium cursor-pointer">
+              {condizione.voce}
+            </Label>
           </div>
-        ))}
-      
-        <div className="flex justify-end pt-4">
-          <Button
-            type="button" // importante: non deve triggerare submit del form esterno
-            onClick={handleSave}
-            disabled={saveConditionsMutation.isPending}
-            className="px-4"
-          >
-            {saveConditionsMutation.isPending ? 'Salvataggio...' : 'Salva Condizioni'}
-          </Button>
+  
+          <Textarea
+            value={condizione.testo}
+            onChange={(e) => handleTextChange(index, e.target.value)}
+            placeholder="Inserisci testo"
+            className="min-h-[80px] resize-y"
+            rows={3}
+          />
         </div>
+      ))}
+  
+      <div className="flex justify-end pt-4">
+        <Button
+          type="button"                 // evita submit del form esterno
+          onClick={handleSave}
+          disabled={saveConditionsMutation.isPending}
+          className="px-4"
+        >
+          {saveConditionsMutation.isPending ? 'Salvataggio...' : 'Salva Condizioni'}
+        </Button>
       </div>
+    </div>
   );
 }
