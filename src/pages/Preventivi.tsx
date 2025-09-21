@@ -1730,6 +1730,7 @@ const Preventivi = () => {
 
               <Separator />
 
+              
               {/* Sezione Stand - collassabile */}
               <Collapsible open={sectionsOpen.stand} onOpenChange={open => setSectionsOpen(prev => ({
               ...prev,
@@ -1737,7 +1738,7 @@ const Preventivi = () => {
             }))}>
                 <div className="bg-[hsl(var(--section-stand))] border border-[hsl(var(--section-stand-border))] rounded-lg overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-stand-border))] rounded-none border-0 bg-blue-300 hover:bg-blue-200">
+                    <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-stand-border))] rounded-none border-0">
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-stand-foreground))]"></div>
                         <span className="font-medium text-[hsl(var(--section-stand-foreground))]">Stand</span>
@@ -1764,7 +1765,7 @@ const Preventivi = () => {
               }))}>
                   <div className="bg-[hsl(var(--section-storage))] border border-[hsl(var(--section-storage-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-storage-border))] rounded-none border-0 bg-yellow-300 hover:bg-yellow-200">
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-storage-border))] rounded-none border-0">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-storage-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-storage-foreground))]">Storage</span>
@@ -1786,7 +1787,7 @@ const Preventivi = () => {
               }))}>
                   <div className="bg-[hsl(var(--section-desk))] border border-[hsl(var(--section-desk-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-desk-border))] rounded-none border-0 bg-lime-300 hover:bg-lime-200">
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-desk-border))] rounded-none border-0">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-desk-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-desk-foreground))]">Desk</span>
@@ -1823,7 +1824,7 @@ const Preventivi = () => {
               }))}>
                   <div className="bg-[hsl(var(--section-expo))] border border-[hsl(var(--section-expo-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-expo-border))] rounded-none border-0 bg-violet-300 hover:bg-violet-200">
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-expo-border))] rounded-none border-0">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-expo-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-expo-foreground))]">Espositori/Plinto</span>
@@ -1860,7 +1861,7 @@ const Preventivi = () => {
               }))}>
                   <div className="bg-[hsl(var(--section-complement))] border border-[hsl(var(--section-complement-border))] rounded-lg overflow-hidden">
                     <CollapsibleTrigger asChild>
-                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-complement-border))] rounded-none border-0 px-[15px] bg-pink-300 hover:bg-pink-200">
+                      <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-complement-border))] rounded-none border-0 px-[15px]">
                         <div className="flex items-center gap-3">
                           <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-complement-foreground))]"></div>
                           <span className="font-medium text-[hsl(var(--section-complement-foreground))]">Servizi</span>
@@ -1903,7 +1904,7 @@ const Preventivi = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">Totale generale costi fornitura</h3>
+                  <h3 className="text-lg font-semibold">Totale Preventivo Generale</h3>
                 </div>
 
                 {(() => {
