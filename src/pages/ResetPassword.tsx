@@ -11,25 +11,36 @@ const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tokens, setTokens] = useState<{accessToken: string, refreshToken: string} | null>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Handle the auth callback
+    // Check if we have the required tokens in the URL hash
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const accessToken = hashParams.get('access_token');
     const refreshToken = hashParams.get('refresh_token');
 
-    if (accessToken && refreshToken) {
-      supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-      });
+    // If no tokens, redirect to auth page
+    if (!accessToken || !refreshToken) {
+      navigate('/auth');
+    } else {
+      // Store tokens but don't authenticate yet
+      setTokens({ accessToken, refreshToken });
     }
-  }, []);
+  }, [navigate]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!tokens) {
+      toast({
+        title: "Errore",
+        description: "Token di reset non valido.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     if (password !== confirmPassword) {
       toast({
@@ -51,22 +62,40 @@ const ResetPassword = () => {
 
     setLoading(true);
 
-    const { error } = await supabase.auth.updateUser({
-      password: password
-    });
-
-    if (error) {
-      toast({
-        title: "Errore",
-        description: error.message,
-        variant: "destructive",
+    try {
+      // First, set the session with the reset tokens
+      const { error: sessionError } = await supabase.auth.setSession({
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken
       });
-    } else {
+
+      if (sessionError) {
+        throw sessionError;
+      }
+
+      // Now update the password
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: password
+      });
+
+      if (updateError) {
+        throw updateError;
+      }
+
       toast({
         title: "Successo",
         description: "Password aggiornata con successo.",
       });
+      
+      // Clear the hash from URL
+      window.location.hash = '';
       navigate('/');
+    } catch (error: any) {
+      toast({
+        title: "Errore",
+        description: error.message || "Errore durante l'aggiornamento della password.",
+        variant: "destructive",
+      });
     }
 
     setLoading(false);
