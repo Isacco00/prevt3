@@ -13,6 +13,7 @@ import { ExpositoreSection } from '@/components/ExpositoreSection';
 import { ServicesSection } from '@/components/ServicesSection';
 import { AltriBeniServiziSection } from '@/components/AltriBeniServiziSection';
 import { CondizioniFornituraSection } from '@/components/CondizioniFornituraSection';
+import { TotalePreventivoSection } from '@/components/TotalePreventivoSection';
 import { Settings } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link, useLocation } from 'react-router-dom';
@@ -26,6 +27,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+
 interface Preventivo {
   id: string;
   numero_preventivo: string;
@@ -59,11 +61,13 @@ interface Preventivo {
     ragione_sociale: string;
   };
 }
+
 interface Prospect {
   id: string;
   ragione_sociale: string;
   tipo_prospect?: string;
 }
+
 const Preventivi = () => {
   const location = useLocation();
 
@@ -87,6 +91,7 @@ const Preventivi = () => {
       return costs;
     }
   });
+  
   const {
     user
   } = useAuth();
@@ -133,6 +138,7 @@ const Preventivi = () => {
     },
     enabled: !!editingPreventivo?.id
   });
+  
   const [deletePreventivo, setDeletePreventivo] = useState<Preventivo | null>(null);
   const [formData, setFormData] = useState({
     numero_preventivo: '',
@@ -245,14 +251,15 @@ const Preventivi = () => {
     condizioni_fornitura: false
   });
 
-  // Totali Storage “lifted” dalla sezione Storage
+  // Totali Storage "lifted" dalla sezione Storage
   const [storageCostsLifted, setStorageCostsLifted] = useState({
     costo_struttura_storage: 0,
     costo_grafica_storage: 0,
     costo_premontaggio_storage: 0,
     costo_totale_storage: 0
   });
-  // Totali Espositori “lifted” dalla sezione Espositori
+  
+  // Totali Espositori "lifted" dalla sezione Espositori
   const [expositoreCostsLifted, setExpositoreCostsLifted] = useState({
     struttura_espositori: 0,
     grafica_espositori: 0,
@@ -1927,177 +1934,77 @@ const Preventivi = () => {
                   </Collapsible>
                </div>
 
-               {/* Sezione Totale Generale Costi Fornitura */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">Totale Preventivo Generale</h3>
-                </div>
+                {/* Sezione Totale Preventivo Fornitura */}
+               <TotalePreventivoSection 
+                 standCosts={{
+                   struttura_terra: costs.struttura_terra,
+                   grafica_cordino: costs.grafica_cordino,
+                   retroilluminazione: costs.retroilluminazione,
+                   extra_stand_complesso: costs.extra_stand_complesso,
+                   costi_accessori: costs.costi_accessori,
+                   premontaggio: costs.premontaggio,
+                   totale: costs.totale
+                 }}
+                 standMargins={{
+                   marginalita_struttura: formData.marginalita_struttura,
+                   marginalita_grafica: formData.marginalita_grafica,
+                   marginalita_retroilluminazione: formData.marginalita_retroilluminazione,
+                   marginalita_accessori: formData.marginalita_accessori,
+                   marginalita_premontaggio: formData.marginalita_premontaggio
+                 }}
+                 storageCosts={storageCostsLifted}
+                 storageMargins={{
+                   marginalita_struttura_storage: formData.marginalita_struttura_storage,
+                   marginalita_grafica_storage: formData.marginalita_grafica_storage,
+                   marginalita_premontaggio_storage: formData.marginalita_premontaggio_storage
+                 }}
+                 deskCosts={costs.costi_desk || {}}
+                 deskMargins={{
+                   marginalita_struttura_desk: formData.marginalita_struttura_desk,
+                   marginalita_grafica_desk: formData.marginalita_grafica_desk,
+                   marginalita_premontaggio_desk: formData.marginalita_premontaggio_desk,
+                   marginalita_accessori_desk: formData.marginalita_accessori_desk
+                 }}
+                 espositoriCosts={expositoreCostsLifted}
+                 espositoriMargins={{
+                   marginalita_struttura_espositori: formData.marginalita_struttura_espositori,
+                   marginalita_grafica_espositori: formData.marginalita_grafica_espositori,
+                   marginalita_premontaggio_espositori: formData.marginalita_premontaggio_espositori,
+                   marginalita_accessori_espositori: formData.marginalita_accessori_espositori
+                 }}
+                 servicesTotal={(() => {
+                   const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.preventivo_montaggio || 0) + (preventivoServizi?.preventivo_smontaggio || 0) : 0;
+                   const costoCertificazioni = formData.servizio_certificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
+                   const costoIstruzioni = formData.servizio_istruzioni_assistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
+                   return costoMontaggio + costoCertificazioni + costoIstruzioni;
+                 })()}
+                 servicesCost={(() => {
+                   const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.totale_costo_montaggio || 0) + (preventivoServizi?.totale_costo_smontaggio || 0) : 0;
+                   const costoCertificazioni = formData.servizio_certificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
+                   const costoIstruzioni = formData.servizio_istruzioni_assistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
+                   return costoMontaggio + costoCertificazioni + costoIstruzioni;
+                 })()}
+                 altriBeniServiziTotal={(altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0)}
+                 altriBeniServiziCost={(altriBeniServizi || []).reduce((sum, item) => sum + ((item.costo_unitario || 0) * (item.quantita || 0)), 0)}
+               />
 
-                {(() => {
-                // Usa i costi calcolati direttamente dalla sezione Storage per evitare ricalcoli incoerenti
-                const costiStorage = storageCostsLifted;
-
-                // Costi Espositori “lifted” dalla sezione Espositori
-                const costiEspositori = expositoreCostsLifted;
-
-                // Totali per tipologia
-                const totaleStrutturaATerra = costs.struttura_terra + costiStorage.costo_struttura_storage + (costs.costi_desk?.struttura_terra || 0) + costiEspositori.struttura_espositori;
-                const totaleGrafiche = costs.grafica_cordino + costiStorage.costo_grafica_storage + (costs.costi_desk?.grafica_cordino || 0) + costiEspositori.grafica_espositori;
-                const retroilluminazione = costs.retroilluminazione; // Valore unico
-                const extraStrutturaComplessa = costs.extra_stand_complesso; // Valore unico
-                const totaleAccessori = costs.costi_accessori + costs.costi_accessori_desk + costiEspositori.accessori_espositori;
-                const totalePremontaggi = costs.premontaggio + costiStorage.costo_premontaggio_storage + (costs.costi_desk?.premontaggio || 0) + costiEspositori.premontaggio_espositori;
-
-                // Calculate service costs
-                const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.preventivo_montaggio || 0) + (preventivoServizi?.preventivo_smontaggio || 0) : 0;
-                const costoCertificazioni = formData.servizio_certificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
-                const costoIstruzioni = formData.servizio_istruzioni_assistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
-                const totaleServizi = costoMontaggio + costoCertificazioni + costoIstruzioni;
-
-                // Calculate altri beni/servizi total
-                const totaleAltriBeniServizi = (altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0);
-
-                // Costo totale fornitura (includes services and altri beni/servizi)
-                const costoTotaleFornitura = costs.totale + costiStorage.costo_totale_storage + (costs.costi_desk?.totale || 0) + costiEspositori.costo_totale_espositori + totaleServizi + totaleAltriBeniServizi;
-                return <div className="space-y-6">
-                      {/* Grid con i totali per tipologia */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <Card className="h-20 flex flex-col overflow-hidden">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Totale Struttura a terra
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{totaleStrutturaATerra.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Totale grafiche
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{totaleGrafiche.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Retroilluminazione
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{retroilluminazione.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Extra per struttura complessa
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{extraStrutturaComplessa.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Totali accessori
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{totaleAccessori.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Totali Premontaggi
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{totalePremontaggi.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden col-span-1 md:col-span-2 lg:col-span-1">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Totali Servizi
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{totaleServizi.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-
-                        <Card className="h-20 flex flex-col overflow-hidden col-span-1 md:col-span-2 lg:col-span-1">
-                          <CardHeader className="pb-1 pt-3 px-4">
-                            <CardTitle className="text-sm font-medium leading-tight">
-                              Altri Beni/Servizi
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className="mt-auto pb-3 px-4">
-                            <div className="text-lg font-bold leading-none tabular-nums">
-                              €{totaleAltriBeniServizi.toFixed(2)}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </div>
-
-                      {/* Card finale con il totale */}
-                      <Card className="border-2 border-primary">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-lg">Totali costo fornitura</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="text-4xl font-bold text-primary">€{costoTotaleFornitura.toFixed(2)}</div>
-                        </CardContent>
-                      </Card>
-                    </div>;
-              })()}
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="data_scadenza">Data Scadenza</Label>
-                    <Input id="data_scadenza" type="date" value={formData.data_scadenza} onChange={e => setFormData({
-                    ...formData,
-                    data_scadenza: e.target.value
-                  })} />
-                  </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="note">Note</Label>
-                  <Textarea id="note" value={formData.note} onChange={e => setFormData({
-                  ...formData,
-                  note: e.target.value
-                })} placeholder="Note aggiuntive" />
-                </div>
-              </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                     <Label htmlFor="data_scadenza">Data Scadenza</Label>
+                     <Input id="data_scadenza" type="date" value={formData.data_scadenza} onChange={e => setFormData({
+                     ...formData,
+                     data_scadenza: e.target.value
+                   })} />
+                   </div>
+                 </div>
+                 
+                 <div className="space-y-2">
+                   <Label htmlFor="note">Note</Label>
+                   <Textarea id="note" value={formData.note} onChange={e => setFormData({
+                   ...formData,
+                   note: e.target.value
+                 })} placeholder="Note aggiuntive" />
+                 </div>
               
               <div className="flex justify-end space-x-2">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
