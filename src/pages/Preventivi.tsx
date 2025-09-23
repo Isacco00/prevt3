@@ -53,6 +53,7 @@ interface Preventivo {
   costo_premontaggio?: number;
   costo_totale?: number;
   totale?: number;
+  totale_preventivo?: number;
   status: string;
   data_scadenza?: string;
   note?: string;
@@ -2090,7 +2091,7 @@ const Preventivi = () => {
                     </TableCell>
                      <TableCell>
                        <div className="font-medium">
-                         €{(preventivo.costo_totale || preventivo.totale)?.toLocaleString('it-IT') || '0'}
+                         €{preventivo.totale_preventivo?.toLocaleString('it-IT') || '0'}
                        </div>
                      </TableCell>
                     <TableCell>
