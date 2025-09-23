@@ -897,6 +897,62 @@ const Preventivi = () => {
       const qta100 = parseInt(data.qta_tipo100) || 0;
       const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
       const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+
+      // Calcolo del totale preventivo (con margini applicati)
+      const calculatePreventivoWithMargin = (cost: number, margin: number) => {
+        return cost * (1 + margin / 100);
+      };
+
+      // Calculate additional costs for storage, desk, espositori
+      // Storage costs
+      const costo_grafica_storage = costoStampaParam ? superficie_stampa_storage * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_storage = costoPremontaggio && data.premontaggio ? numero_pezzi_storage * (costoPremontaggio.valore || 0) : 0;
+      const costo_struttura_storage = sviluppo_metri_lineari_storage * (costoAltezzaParam?.valore || 0);
+
+      // Desk costs
+      const costo_grafica_desk = costoStampaParam ? superficie_stampa_desk * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_desk = costoPremontaggio && data.premontaggio ? numero_pezzi_desk * (costoPremontaggio.valore || 0) : 0;
+      const costo_struttura_desk = numero_pezzi_desk * 0.5; // Assumo un costo base per desk
+
+      // Espositori costs
+      const costo_grafica_espositori = costoStampaParam ? superficie_stampa_espositori * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_espositori = costoPremontaggio && data.premontaggio ? numero_pezzi_espositori * (costoPremontaggio.valore || 0) : 0;
+      const costo_struttura_espositori = (qta30 * 50) + (qta50 * 75) + (qta100 * 100); // Costi base espositori
+
+      // Retroilluminazione cost
+      const costoRetroilluminazione = retroilluminazione * elements.sviluppo_lineare * 10; // Stima costo retroilluminazione
+
+      // Extra stand complesso
+      const extraStandComplesso = parseFloat(data.extra_perc_complex || '0') * struttura_terra / 100;
+
+      // Calculate totali preventivi with margins (per nuovo preventivo, servizi e altri beni/servizi sono 0)
+      const preventivoStruttura = 
+        calculatePreventivoWithMargin(struttura_terra, data.marginalita_struttura || 50) +
+        calculatePreventivoWithMargin(costo_struttura_storage, data.marginalita_struttura_storage || 50) +
+        calculatePreventivoWithMargin(costo_struttura_desk, data.marginalita_struttura_desk || 50) +
+        calculatePreventivoWithMargin(costo_struttura_espositori, data.marginalita_struttura_espositori || 50);
+
+      const preventivoGrafiche = 
+        calculatePreventivoWithMargin(grafica_cordino, data.marginalita_grafica || 50) +
+        calculatePreventivoWithMargin(costo_grafica_storage, data.marginalita_grafica_storage || 50) +
+        calculatePreventivoWithMargin(costo_grafica_desk, data.marginalita_grafica_desk || 50) +
+        calculatePreventivoWithMargin(costo_grafica_espositori, data.marginalita_grafica_espositori || 50);
+
+      const preventivoRetroilluminazione = calculatePreventivoWithMargin(costoRetroilluminazione, data.marginalita_retroilluminazione || 50);
+      const preventivoExtraComplessa = calculatePreventivoWithMargin(extraStandComplesso, data.marginalita_struttura || 50);
+
+      const preventivoPremontaggi = 
+        calculatePreventivoWithMargin(premontaggio, data.marginalita_premontaggio || 50) +
+        calculatePreventivoWithMargin(costo_premontaggio_storage, data.marginalita_premontaggio_storage || 50) +
+        calculatePreventivoWithMargin(costo_premontaggio_desk, data.marginalita_premontaggio_desk || 50) +
+        calculatePreventivoWithMargin(costo_premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
+
+      // Calculate accessori (this would need to be calculated based on selected accessories)
+      const preventivoAccessori = 0; // Per ora 0, andrebbe calcolato in base agli accessori selezionati
+
+      // Calculate final totale_preventivo (per nuovo preventivo, servizi e altri beni/servizi sono 0)
+      const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
+        preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi;
       const {
         error
       } = await supabase.from('preventivi').insert({
@@ -1002,7 +1058,9 @@ const Preventivi = () => {
         // Services fields
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
-        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false
+        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
+        // Total preventivo calculation
+        totale_preventivo: totale_preventivo
       });
       if (error) throw error;
     },
@@ -1139,6 +1197,91 @@ const Preventivi = () => {
       const qta100 = parseInt(data.qta_tipo100) || 0;
       const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
       const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+
+      // Calcolo del totale preventivo (con margini applicati)
+      const calculatePreventivoWithMargin = (cost: number, margin: number) => {
+        return cost * (1 + margin / 100);
+      };
+
+      // Fetch current servizi and altri beni data for total calculation
+      const [serviziData, altriBeniData] = await Promise.all([
+        supabase
+          .from('preventivi_servizi')
+          .select('*')
+          .eq('preventivo_id', editingPreventivo.id)
+          .maybeSingle(),
+        supabase
+          .from('altri_beni_servizi')
+          .select('*')
+          .eq('preventivo_id', editingPreventivo.id)
+      ]);
+
+      // Calculate additional costs for storage, desk, espositori
+      // (riutilizzo le variabili già dichiarate sopra: costoStampaParam, costoPremontaggio)
+      
+      // Storage costs
+      const costo_grafica_storage = costoStampaParam ? superficie_stampa_storage * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_storage = costoPremontaggio && data.premontaggio ? numero_pezzi_storage * (costoPremontaggio.valore || 0) : 0;
+      const costo_struttura_storage = sviluppo_metri_lineari_storage * (costoAltezzaParam?.valore || 0);
+
+      // Desk costs
+      const costo_grafica_desk = costoStampaParam ? superficie_stampa_desk * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_desk = costoPremontaggio && data.premontaggio ? numero_pezzi_desk * (costoPremontaggio.valore || 0) : 0;
+      const costo_struttura_desk = numero_pezzi_desk * 0.5; // Assumo un costo base per desk
+
+      // Espositori costs
+      const costo_grafica_espositori = costoStampaParam ? superficie_stampa_espositori * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_espositori = costoPremontaggio && data.premontaggio ? numero_pezzi_espositori * (costoPremontaggio.valore || 0) : 0;
+      const costo_struttura_espositori = (qta30 * 50) + (qta50 * 75) + (qta100 * 100); // Costi base espositori
+
+      // Retroilluminazione cost
+      const costoRetroilluminazione = retroilluminazione * elements.sviluppo_lineare * 10; // Stima costo retroilluminazione
+
+      // Extra stand complesso
+      const extraStandComplesso = parseFloat(data.extra_perc_complex || '0') * struttura_terra / 100;
+
+      // Calculate totali preventivi with margins
+      const preventivoStruttura = 
+        calculatePreventivoWithMargin(struttura_terra, data.marginalita_struttura || 50) +
+        calculatePreventivoWithMargin(costo_struttura_storage, data.marginalita_struttura_storage || 50) +
+        calculatePreventivoWithMargin(costo_struttura_desk, data.marginalita_struttura_desk || 50) +
+        calculatePreventivoWithMargin(costo_struttura_espositori, data.marginalita_struttura_espositori || 50);
+
+      const preventivoGrafiche = 
+        calculatePreventivoWithMargin(grafica_cordino, data.marginalita_grafica || 50) +
+        calculatePreventivoWithMargin(costo_grafica_storage, data.marginalita_grafica_storage || 50) +
+        calculatePreventivoWithMargin(costo_grafica_desk, data.marginalita_grafica_desk || 50) +
+        calculatePreventivoWithMargin(costo_grafica_espositori, data.marginalita_grafica_espositori || 50);
+
+      const preventivoRetroilluminazione = calculatePreventivoWithMargin(costoRetroilluminazione, data.marginalita_retroilluminazione || 50);
+      const preventivoExtraComplessa = calculatePreventivoWithMargin(extraStandComplesso, data.marginalita_struttura || 50);
+
+      const preventivoPremontaggi = 
+        calculatePreventivoWithMargin(premontaggio, data.marginalita_premontaggio || 50) +
+        calculatePreventivoWithMargin(costo_premontaggio_storage, data.marginalita_premontaggio_storage || 50) +
+        calculatePreventivoWithMargin(costo_premontaggio_desk, data.marginalita_premontaggio_desk || 50) +
+        calculatePreventivoWithMargin(costo_premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
+
+      // Calculate accessori (this would need to be calculated based on selected accessories)
+      const preventivoAccessori = 0; // Per ora 0, andrebbe calcolato in base agli accessori selezionati
+
+      // Services total
+      const servicesTotal = serviziData.data ? 
+        (serviziData.data.preventivo_montaggio || 0) + (serviziData.data.preventivo_smontaggio || 0) : 0;
+
+      // Altri beni/servizi total
+      const altriBeniTotal = altriBeniData.data ? 
+        altriBeniData.data.reduce((sum: number, item: any) => {
+          const costoUnitario = item.costo_unitario || 0;
+          const quantita = item.quantita || 0;
+          const marginalita = item.marginalita || 0;
+          const costoTotale = costoUnitario * quantita;
+          return sum + costoTotale * (1 + marginalita / 100);
+        }, 0) : 0;
+
+      // Calculate final totale_preventivo
+      const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
+        preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniTotal;
       const {
         error
       } = await supabase.from('preventivi').update({
@@ -1243,7 +1386,9 @@ const Preventivi = () => {
         // Services fields
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
-        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false
+        servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
+        // Total preventivo calculation
+        totale_preventivo: totale_preventivo
       }).eq('id', editingPreventivo.id);
       if (error) throw error;
     },
