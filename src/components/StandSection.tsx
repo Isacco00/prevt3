@@ -496,25 +496,29 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
         {/* Summary */}
         <Card className="border-2 border-primary/20 bg-primary/5">
           <CardContent className="pt-4">
-{/*            <div className="grid grid-cols-4 gap-4 text-center">
-              <div>
+            
+            <div className="grid grid-cols-4 gap-4 text-center">
+         {/*      <div>
                 <div className="text-sm text-muted-foreground mb-1">Totale</div>
                 <div className="text-2xl font-bold text-primary">
                   €{costs.totale.toFixed(2)}
-                </div>
-              </div> */}
+                </div>*/}
+              </div>
+              
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Totale preventivo stand</div>
                 <div className="text-2xl font-bold text-primary">
                   €{costs.totale_preventivo_stand.toFixed(2)}
                 </div>
               </div>
+              
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Totale costi stand</div>
                 <div className="text-2xl font-bold">
                   €{costs.totale_costi_stand.toFixed(2)}
                 </div>
               </div>
+              
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
                 <div className="text-2xl font-bold text-green-600">
