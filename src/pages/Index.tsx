@@ -66,12 +66,53 @@ const Index = () => {
     enabled: !!user,
   });
 
+  // Helper function to calculate preventivo total with all components
+  const calculatePreventivoTotal = async (preventivoId: string) => {
+    try {
+      // Fetch all related data
+      const [servizi, altriBeni] = await Promise.all([
+        supabase
+          .from('preventivi_servizi')
+          .select('*')
+          .eq('preventivo_id', preventivoId)
+          .maybeSingle(),
+        supabase
+          .from('altri_beni_servizi')
+          .select('*')
+          .eq('preventivo_id', preventivoId)
+      ]);
+
+      let servicesTotal = 0;
+      if (servizi.data) {
+        servicesTotal = (servizi.data.preventivo_montaggio || 0) + (servizi.data.preventivo_smontaggio || 0);
+      }
+
+      let altriBeniTotal = 0;
+      if (altriBeni.data && altriBeni.data.length > 0) {
+        altriBeniTotal = altriBeni.data.reduce((sum: number, item: any) => {
+          const costoUnitario = item.costo_unitario || 0;
+          const quantita = item.quantita || 0;
+          const marginalita = item.marginalita || 0;
+          const costoTotale = costoUnitario * quantita;
+          return sum + costoTotale * (1 + marginalita / 100);
+        }, 0);
+      }
+
+      return servicesTotal + altriBeniTotal;
+    } catch (error) {
+      console.error('Error calculating totals:', error);
+      return 0;
+    }
+  };
+
   // Query per gli ultimi preventivi
   const { data: ultimiPreventivi = [] } = useQuery({
     queryKey: ['ultimi-preventivi'],
     queryFn: async () => {
       if (!user) return [];
-      const { data } = await supabase
+      
+      // First get the preventivi
+      const { data: preventivi } = await supabase
         .from('preventivi')
         .select(`
           *,
@@ -80,7 +121,37 @@ const Index = () => {
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(5);
-      return data || [];
+      
+      if (!preventivi) return [];
+
+      // Calculate totals for each preventivo
+      const preventiviWithTotals = await Promise.all(
+        preventivi.map(async (preventivo) => {
+          // Calculate the preventivo total using the same logic as TotalePreventivoSection
+          const calculatePreventivoWithMargin = (cost: number, margin: number) => {
+            return cost * (1 + margin / 100);
+          };
+
+          // Stand costs calculations
+          const standStruttura = calculatePreventivoWithMargin(preventivo.costo_struttura || 0, preventivo.marginalita_struttura || 50);
+          const standGrafica = calculatePreventivoWithMargin(preventivo.costo_grafica || 0, preventivo.marginalita_grafica || 50);
+          const standRetroilluminazione = calculatePreventivoWithMargin(preventivo.costo_retroilluminazione || 0, preventivo.marginalita_retroilluminazione || 50);
+          const standExtraComplessa = calculatePreventivoWithMargin(preventivo.extra_stand_complesso || 0, preventivo.marginalita_struttura || 50);
+          const standPremontaggio = calculatePreventivoWithMargin(preventivo.costo_premontaggio || 0, preventivo.marginalita_premontaggio || 50);
+
+          // Additional costs from external data
+          const additionalTotal = await calculatePreventivoTotal(preventivo.id);
+
+          const preventivoTotale = standStruttura + standGrafica + standRetroilluminazione + standExtraComplessa + standPremontaggio + additionalTotal;
+
+          return {
+            ...preventivo,
+            calculated_total: preventivoTotale
+          };
+        })
+      );
+
+      return preventiviWithTotals;
     },
     enabled: !!user,
   });
@@ -180,7 +251,7 @@ const Index = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">€{preventivo.totale?.toLocaleString('it-IT') || '0'}</p>
+                      <p className="text-sm font-medium">€{preventivo.calculated_total?.toLocaleString('it-IT', { maximumFractionDigits: 2 }) || '0'}</p>
                       <p className="text-xs text-muted-foreground capitalize">{preventivo.status}</p>
                     </div>
                   </div>
