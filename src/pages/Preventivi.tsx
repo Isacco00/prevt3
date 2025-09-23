@@ -947,8 +947,8 @@ const Preventivi = () => {
         calculatePreventivoWithMargin(costo_premontaggio_desk, data.marginalita_premontaggio_desk || 50) +
         calculatePreventivoWithMargin(costo_premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
 
-      // Calculate accessori (this would need to be calculated based on selected accessories)
-      const preventivoAccessori = 0; // Per ora 0, andrebbe calcolato in base agli accessori selezionati
+      // Calculate accessori preventivo totals (per ora 0, i costi accessori sono calcolati dinamicamente nel componente)
+      const preventivoAccessori = 0;
 
       // Calculate final totale_preventivo (per nuovo preventivo, servizi e altri beni/servizi sono 0)
       const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
