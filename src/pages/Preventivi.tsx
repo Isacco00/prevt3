@@ -1262,10 +1262,10 @@ const Preventivi = () => {
         calculatePreventivoWithMargin(costo_premontaggio_desk, data.marginalita_premontaggio_desk || 50) +
         calculatePreventivoWithMargin(costo_premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
 
-      // Calculate accessori (same logic as TotalePreventivoSection)
-      const costiAccessoriStand = parseFloat(data.accessori_stand?.total || '0');
-      const costiAccessoriDesk = parseFloat(data.accessori_desk?.total || '0'); 
-      const costiAccessoriEspositori = parseFloat(data.accessori_espositori?.total || '0');
+      // Calculate accessori using EXACT same values as TotalePreventivoSection
+      const costiAccessoriStand = costs.costi_accessori;
+      const costiAccessoriDesk = costs.costi_accessori_desk || 0;
+      const costiAccessoriEspositori = expositoreCostsLifted.accessori_espositori;
       
       const preventivoAccessori = 
         calculatePreventivoWithMargin(costiAccessoriStand, data.marginalita_accessori || 50) +
