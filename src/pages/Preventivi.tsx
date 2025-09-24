@@ -1216,20 +1216,15 @@ const Preventivi = () => {
           .eq('preventivo_id', editingPreventivo.id)
       ]);
 
-      // Calculate additional costs for storage, desk, espositori
-      // (riutilizzo le variabili già dichiarate sopra: costoStampaParam, costoPremontaggio)
-      
-      // Storage costs
+      // Calculate additional costs for storage, desk, espositori (same as before)
       const costo_grafica_storage = costoStampaParam ? superficie_stampa_storage * (costoStampaParam.valore || 0) : 0;
       const costo_premontaggio_storage = costoPremontaggio && data.premontaggio ? numero_pezzi_storage * (costoPremontaggio.valore || 0) : 0;
       const costo_struttura_storage = sviluppo_metri_lineari_storage * (costoAltezzaParam?.valore || 0);
 
-      // Desk costs
       const costo_grafica_desk = costoStampaParam ? superficie_stampa_desk * (costoStampaParam.valore || 0) : 0;
       const costo_premontaggio_desk = costoPremontaggio && data.premontaggio ? numero_pezzi_desk * (costoPremontaggio.valore || 0) : 0;
       const costo_struttura_desk = numero_pezzi_desk * 0.5; // Assumo un costo base per desk
 
-      // Espositori costs
       const costo_grafica_espositori = costoStampaParam ? superficie_stampa_espositori * (costoStampaParam.valore || 0) : 0;
       const costo_premontaggio_espositori = costoPremontaggio && data.premontaggio ? numero_pezzi_espositori * (costoPremontaggio.valore || 0) : 0;
       const costo_struttura_espositori = (qta30 * 50) + (qta50 * 75) + (qta100 * 100); // Costi base espositori
@@ -1240,43 +1235,74 @@ const Preventivi = () => {
       // Extra stand complesso
       const extraStandComplesso = parseFloat(data.extra_perc_complex || '0') * struttura_terra / 100;
 
-      // Calculate totali preventivi with margins
+      // Use EXACT same logic as TotalePreventivoSection for totale_preventivo and totale_costi
+      // Stand costs
+      const standCosts = {
+        struttura_terra: struttura_terra,
+        grafica_cordino: grafica_cordino,
+        retroilluminazione: costoRetroilluminazione,
+        extra_stand_complesso: extraStandComplesso,
+        costi_accessori: costs.costi_accessori,
+        premontaggio: premontaggio
+      };
+
+      // Storage costs
+      const storageCosts = {
+        costo_struttura_storage: costo_struttura_storage,
+        costo_grafica_storage: costo_grafica_storage,
+        costo_premontaggio_storage: costo_premontaggio_storage
+      };
+
+      // Desk costs
+      const deskCosts = {
+        struttura_terra: costo_struttura_desk,
+        grafica_cordino: costo_grafica_desk,
+        premontaggio: costo_premontaggio_desk,
+        accessori: costs.costi_accessori_desk || 0
+      };
+
+      // Espositori costs
+      const espositoriCosts = {
+        struttura_espositori: costo_struttura_espositori,
+        grafica_espositori: costo_grafica_espositori,
+        premontaggio_espositori: costo_premontaggio_espositori,
+        accessori_espositori: expositoreCostsLifted.accessori_espositori
+      };
+
+      // Calculate preventivo components with margins (EXACT same logic as TotalePreventivoSection)
       const preventivoStruttura = 
-        calculatePreventivoWithMargin(struttura_terra, data.marginalita_struttura || 50) +
-        calculatePreventivoWithMargin(costo_struttura_storage, data.marginalita_struttura_storage || 50) +
-        calculatePreventivoWithMargin(costo_struttura_desk, data.marginalita_struttura_desk || 50) +
-        calculatePreventivoWithMargin(costo_struttura_espositori, data.marginalita_struttura_espositori || 50);
+        calculatePreventivoWithMargin(standCosts.struttura_terra, data.marginalita_struttura || 50) +
+        calculatePreventivoWithMargin(storageCosts.costo_struttura_storage, data.marginalita_struttura_storage || 50) +
+        calculatePreventivoWithMargin(deskCosts.struttura_terra, data.marginalita_struttura_desk || 50) +
+        calculatePreventivoWithMargin(espositoriCosts.struttura_espositori, data.marginalita_struttura_espositori || 50);
 
       const preventivoGrafiche = 
-        calculatePreventivoWithMargin(grafica_cordino, data.marginalita_grafica || 50) +
-        calculatePreventivoWithMargin(costo_grafica_storage, data.marginalita_grafica_storage || 50) +
-        calculatePreventivoWithMargin(costo_grafica_desk, data.marginalita_grafica_desk || 50) +
-        calculatePreventivoWithMargin(costo_grafica_espositori, data.marginalita_grafica_espositori || 50);
+        calculatePreventivoWithMargin(standCosts.grafica_cordino, data.marginalita_grafica || 50) +
+        calculatePreventivoWithMargin(storageCosts.costo_grafica_storage, data.marginalita_grafica_storage || 50) +
+        calculatePreventivoWithMargin(deskCosts.grafica_cordino, data.marginalita_grafica_desk || 50) +
+        calculatePreventivoWithMargin(espositoriCosts.grafica_espositori, data.marginalita_grafica_espositori || 50);
 
-      const preventivoRetroilluminazione = calculatePreventivoWithMargin(costoRetroilluminazione, data.marginalita_retroilluminazione || 50);
-      const preventivoExtraComplessa = calculatePreventivoWithMargin(extraStandComplesso, data.marginalita_struttura || 50);
+      const preventivoRetroilluminazione = calculatePreventivoWithMargin(standCosts.retroilluminazione, data.marginalita_retroilluminazione || 50);
+      const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, data.marginalita_struttura || 50);
+
+      const preventivoAccessori = 
+        calculatePreventivoWithMargin(standCosts.costi_accessori, data.marginalita_accessori || 50) +
+        calculatePreventivoWithMargin(deskCosts.accessori, data.marginalita_accessori_desk || 50) +
+        calculatePreventivoWithMargin(espositoriCosts.accessori_espositori, data.marginalita_accessori_espositori || 50);
 
       const preventivoPremontaggi = 
-        calculatePreventivoWithMargin(premontaggio, data.marginalita_premontaggio || 50) +
-        calculatePreventivoWithMargin(costo_premontaggio_storage, data.marginalita_premontaggio_storage || 50) +
-        calculatePreventivoWithMargin(costo_premontaggio_desk, data.marginalita_premontaggio_desk || 50) +
-        calculatePreventivoWithMargin(costo_premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
-
-      // Calculate accessori using EXACT same values as TotalePreventivoSection
-      const costiAccessoriStand = costs.costi_accessori;
-      const costiAccessoriDesk = costs.costi_accessori_desk || 0;
-      const costiAccessoriEspositori = expositoreCostsLifted.accessori_espositori;
-      
-      const preventivoAccessori = 
-        calculatePreventivoWithMargin(costiAccessoriStand, data.marginalita_accessori || 50) +
-        calculatePreventivoWithMargin(costiAccessoriDesk, data.marginalita_accessori_desk || 50) +
-        calculatePreventivoWithMargin(costiAccessoriEspositori, data.marginalita_accessori_espositori || 50);
+        calculatePreventivoWithMargin(standCosts.premontaggio, data.marginalita_premontaggio || 50) +
+        calculatePreventivoWithMargin(storageCosts.costo_premontaggio_storage, data.marginalita_premontaggio_storage || 50) +
+        calculatePreventivoWithMargin(deskCosts.premontaggio, data.marginalita_premontaggio_desk || 50) +
+        calculatePreventivoWithMargin(espositoriCosts.premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
 
       // Services total
       const servicesTotal = serviziData.data ? 
         (serviziData.data.preventivo_montaggio || 0) + (serviziData.data.preventivo_smontaggio || 0) : 0;
+      const servicesCost = serviziData.data ? 
+        (serviziData.data.totale_costo_montaggio || 0) + (serviziData.data.totale_costo_smontaggio || 0) : 0;
 
-      // Altri beni/servizi total (this matches altriBeniServiziTotal from TotalePreventivoSection)
+      // Altri beni/servizi totals
       const altriBeniServiziTotal = altriBeniData.data ? 
         altriBeniData.data.reduce((sum: number, item: any) => {
           const costoUnitario = item.costo_unitario || 0;
@@ -1285,10 +1311,23 @@ const Preventivi = () => {
           const costoTotale = costoUnitario * quantita;
           return sum + costoTotale * (1 + marginalita / 100);
         }, 0) : 0;
+      const altriBeniServiziCost = altriBeniData.data ? 
+        altriBeniData.data.reduce((sum: number, item: any) => {
+          const costoUnitario = item.costo_unitario || 0;
+          const quantita = item.quantita || 0;
+          return sum + (costoUnitario * quantita);
+        }, 0) : 0;
 
-      // Calculate final totale_preventivo (matches exactly TotalePreventivoSection calculation)
-      const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
-        preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniServiziTotal;
+      // Final totals using EXACT TotalePreventivoSection logic
+      const costoStruttura = standCosts.struttura_terra + storageCosts.costo_struttura_storage + deskCosts.struttura_terra + espositoriCosts.struttura_espositori;
+      const costoGrafiche = standCosts.grafica_cordino + storageCosts.costo_grafica_storage + deskCosts.grafica_cordino + espositoriCosts.grafica_espositori;
+      const costoRetroilluminazioneTotal = standCosts.retroilluminazione;
+      const costoExtraComplessa = standCosts.extra_stand_complesso;
+      const costoAccessori = standCosts.costi_accessori + deskCosts.accessori + espositoriCosts.accessori_espositori;
+      const costoPremontaggi = standCosts.premontaggio + storageCosts.costo_premontaggio_storage + deskCosts.premontaggio + espositoriCosts.premontaggio_espositori;
+
+      const totale_costi = costoStruttura + costoGrafiche + costoRetroilluminazioneTotal + costoExtraComplessa + costoAccessori + costoPremontaggi + servicesCost + altriBeniServiziCost;
+      const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniServiziTotal;
       const {
         error
       } = await supabase.from('preventivi').update({
@@ -1395,7 +1434,8 @@ const Preventivi = () => {
         servizio_certificazioni: data.servizio_certificazioni || false,
         servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
         // Total preventivo calculation
-        totale_preventivo: totale_preventivo
+        totale_preventivo: totale_preventivo,
+        totale_costi: totale_costi
       }).eq('id', editingPreventivo.id);
       if (error) throw error;
     },
