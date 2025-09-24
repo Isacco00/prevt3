@@ -1262,15 +1262,22 @@ const Preventivi = () => {
         calculatePreventivoWithMargin(costo_premontaggio_desk, data.marginalita_premontaggio_desk || 50) +
         calculatePreventivoWithMargin(costo_premontaggio_espositori, data.marginalita_premontaggio_espositori || 50);
 
-      // Calculate accessori (this would need to be calculated based on selected accessories)
-      const preventivoAccessori = 0; // Per ora 0, andrebbe calcolato in base agli accessori selezionati
+      // Calculate accessori (same logic as TotalePreventivoSection)
+      const costiAccessoriStand = parseFloat(data.accessori_stand?.total || '0');
+      const costiAccessoriDesk = parseFloat(data.accessori_desk?.total || '0'); 
+      const costiAccessoriEspositori = parseFloat(data.accessori_espositori?.total || '0');
+      
+      const preventivoAccessori = 
+        calculatePreventivoWithMargin(costiAccessoriStand, data.marginalita_accessori || 50) +
+        calculatePreventivoWithMargin(costiAccessoriDesk, data.marginalita_accessori_desk || 50) +
+        calculatePreventivoWithMargin(costiAccessoriEspositori, data.marginalita_accessori_espositori || 50);
 
       // Services total
       const servicesTotal = serviziData.data ? 
         (serviziData.data.preventivo_montaggio || 0) + (serviziData.data.preventivo_smontaggio || 0) : 0;
 
-      // Altri beni/servizi total
-      const altriBeniTotal = altriBeniData.data ? 
+      // Altri beni/servizi total (this matches altriBeniServiziTotal from TotalePreventivoSection)
+      const altriBeniServiziTotal = altriBeniData.data ? 
         altriBeniData.data.reduce((sum: number, item: any) => {
           const costoUnitario = item.costo_unitario || 0;
           const quantita = item.quantita || 0;
@@ -1279,9 +1286,9 @@ const Preventivi = () => {
           return sum + costoTotale * (1 + marginalita / 100);
         }, 0) : 0;
 
-      // Calculate final totale_preventivo
+      // Calculate final totale_preventivo (matches exactly TotalePreventivoSection calculation)
       const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
-        preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniTotal;
+        preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniServiziTotal;
       const {
         error
       } = await supabase.from('preventivi').update({
