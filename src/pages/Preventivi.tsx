@@ -1198,11 +1198,6 @@ const Preventivi = () => {
       const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
       const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
 
-      // Calcolo del totale preventivo (con margini applicati)
-      const calculatePreventivoWithMargin = (cost: number, margin: number) => {
-        return cost * (1 + margin / 100);
-      };
-
       // Fetch current servizi and altri beni data for total calculation
       const [serviziData, altriBeniData] = await Promise.all([
         supabase
@@ -1236,6 +1231,9 @@ const Preventivi = () => {
       const extraStandComplesso = parseFloat(data.extra_perc_complex || '0') * struttura_terra / 100;
 
       // Use EXACT same logic as TotalePreventivoSection for totale_preventivo and totale_costi
+      const calculatePreventivoWithMargin = (cost: number, margin: number) => {
+        return cost * (1 + margin / 100);
+      };
       // Stand costs
       const standCosts = {
         struttura_terra: struttura_terra,
