@@ -8,7 +8,6 @@ import { Calculator } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-
 interface StandSectionProps {
   formData: {
     profondita: string;
@@ -57,25 +56,32 @@ interface StandSectionProps {
     totale: number;
   };
 }
-
-export function StandSection({ formData, setFormData, physicalElements, costs }: StandSectionProps) {
-  const { user } = useAuth();
+export function StandSection({
+  formData,
+  setFormData,
+  physicalElements,
+  costs
+}: StandSectionProps) {
+  const {
+    user
+  } = useAuth();
 
   // Fetch accessori stand from database
-  const { data: accessoriStand = [], isLoading } = useQuery({
+  const {
+    data: accessoriStand = [],
+    isLoading
+  } = useQuery({
     queryKey: ['listino-accessori-stand'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('listino_accessori_stand')
-        .select('*')
-        .eq('attivo', true)
-        .order('nome');
+      const {
+        data,
+        error
+      } = await supabase.from('listino_accessori_stand').select('*').eq('attivo', true).order('nome');
       if (error) throw error;
       return data;
     },
-    enabled: !!user,
+    enabled: !!user
   });
-
   const handleAccessorioChange = (accessorioId: string, quantity: number) => {
     setFormData({
       ...formData,
@@ -85,9 +91,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
       }
     });
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Dati di Ingresso per Stand */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
@@ -98,37 +102,26 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="profondita">Profondità (m) *</Label>
-            <Input
-              id="profondita"
-              type="number"
-              step="0.5"
-              min="0"
-              max="15"
-              value={formData.profondita}
-              onChange={(e) => setFormData({ ...formData, profondita: e.target.value })}
-              placeholder="0.0"
-              required
-            />
+            <Input id="profondita" type="number" step="0.5" min="0" max="15" value={formData.profondita} onChange={e => setFormData({
+            ...formData,
+            profondita: e.target.value
+          })} placeholder="0.0" required />
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="larghezza">Larghezza (m) *</Label>
-            <Input
-              id="larghezza"
-              type="number"
-              step="0.5"
-              min="0"
-              max="15"
-              value={formData.larghezza}
-              onChange={(e) => setFormData({ ...formData, larghezza: e.target.value })}
-              placeholder="0.0"
-              required
-            />
+            <Input id="larghezza" type="number" step="0.5" min="0" max="15" value={formData.larghezza} onChange={e => setFormData({
+            ...formData,
+            larghezza: e.target.value
+          })} placeholder="0.0" required />
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="altezza">Altezza (m) *</Label>
-            <Select value={formData.altezza} onValueChange={(value) => setFormData({ ...formData, altezza: value })}>
+            <Select value={formData.altezza} onValueChange={value => setFormData({
+            ...formData,
+            altezza: value
+          })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona altezza" />
               </SelectTrigger>
@@ -145,7 +138,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="layout">Layout *</Label>
-            <Select value={formData.layout} onValueChange={(value) => setFormData({ ...formData, layout: value })}>
+            <Select value={formData.layout} onValueChange={value => setFormData({
+            ...formData,
+            layout: value
+          })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona layout" />
               </SelectTrigger>
@@ -161,7 +157,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
 
           <div className="space-y-2">
             <Label htmlFor="distribuzione">Distribuzione *</Label>
-            <Select value={formData.distribuzione} onValueChange={(value) => setFormData({ ...formData, distribuzione: value })}>
+            <Select value={formData.distribuzione} onValueChange={value => setFormData({
+            ...formData,
+            distribuzione: value
+          })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona distribuzione" />
               </SelectTrigger>
@@ -176,7 +175,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
 
           <div className="space-y-2">
             <Label htmlFor="complessita">Complessità</Label>
-            <Select value={formData.complessita} onValueChange={(value) => setFormData({ ...formData, complessita: value })}>
+            <Select value={formData.complessita} onValueChange={value => setFormData({
+            ...formData,
+            complessita: value
+          })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -191,38 +193,26 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="bifaccialita">Bifaccialità (m)</Label>
-            <Input
-              id="bifaccialita"
-              type="number"
-              step="0.5"
-              min="0"
-              max="15"
-              value={formData.bifaccialita}
-              onChange={(e) => setFormData({ ...formData, bifaccialita: e.target.value })}
-              placeholder="0.0"
-            />
+            <Input id="bifaccialita" type="number" step="0.5" min="0" max="15" value={formData.bifaccialita} onChange={e => setFormData({
+            ...formData,
+            bifaccialita: e.target.value
+          })} placeholder="0.0" />
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="retroilluminazione">Retroilluminazione (m)</Label>
-            <Input
-              id="retroilluminazione"
-              type="number"
-              step="0.5"
-              min="0"
-              max="15"
-              value={formData.retroilluminazione}
-              onChange={(e) => setFormData({ ...formData, retroilluminazione: e.target.value })}
-              placeholder="0.0"
-            />
+            <Input id="retroilluminazione" type="number" step="0.5" min="0" max="15" value={formData.retroilluminazione} onChange={e => setFormData({
+            ...formData,
+            retroilluminazione: e.target.value
+          })} placeholder="0.0" />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="premontaggio">Premontaggio</Label>
-            <Select 
-              value={formData.premontaggio ? "SI" : "NO"} 
-              onValueChange={(value) => setFormData({ ...formData, premontaggio: value === "SI" })}
-            >
+            <Select value={formData.premontaggio ? "SI" : "NO"} onValueChange={value => setFormData({
+            ...formData,
+            premontaggio: value === "SI"
+          })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -292,10 +282,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <h4 className="text-md font-semibold">Accessori Stand</h4>
         </div>
         
-        {isLoading ? (
-          <div className="text-center py-4">Caricamento accessori...</div>
-        ) : (
-          <Card>
+        {isLoading ? <div className="text-center py-4">Caricamento accessori...</div> : <Card>
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
@@ -307,36 +294,26 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {accessoriStand.map((accessorio) => {
-                    const quantity = formData.accessori_stand?.[accessorio.id] || 0;
-                    const totalCost = quantity * accessorio.costo_unitario;
-                    return (
-                      <TableRow key={accessorio.id}>
+                  {accessoriStand.map(accessorio => {
+                const quantity = formData.accessori_stand?.[accessorio.id] || 0;
+                const totalCost = quantity * accessorio.costo_unitario;
+                return <TableRow key={accessorio.id}>
                         <TableCell className="font-medium py-1">{accessorio.nome}</TableCell>
                         <TableCell className="text-center py-1">
                           € {accessorio.costo_unitario.toString().replace('.', ',')}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Input
-                            type="number"
-                            min="0"
-                            max="99"
-                            value={quantity}
-                            onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
-                            className="w-14 text-center"
-                          />
+                          <Input type="number" min="0" max="99" value={quantity} onChange={e => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)} className="w-14 text-center" />
                         </TableCell>
                         <TableCell className="text-right font-medium">
                           € {totalCost.toFixed(2).replace('.', ',')}
                         </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                      </TableRow>;
+              })}
                 </TableBody>
               </Table>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
       </div>
 
       {/* Calcolo Costi Stand */}
@@ -358,15 +335,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
-                  <Input
-                    type="number"
-                    min="0"
-                    max="200"
-                    step="1"
-                    value={formData.marginalita_struttura || 0}
-                    onChange={(e) => setFormData({ ...formData, marginalita_struttura: parseFloat(e.target.value) || 0 })}
-                    className="w-16 h-6 text-xs text-center"
-                  />
+                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_struttura || 0} onChange={e => setFormData({
+                  ...formData,
+                  marginalita_struttura: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
               </div>
@@ -384,15 +356,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
-                  <Input
-                    type="number"
-                    min="0"
-                    max="200"
-                    step="1"
-                    value={formData.marginalita_grafica || 0}
-                    onChange={(e) => setFormData({ ...formData, marginalita_grafica: parseFloat(e.target.value) || 0 })}
-                    className="w-16 h-6 text-xs text-center"
-                  />
+                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_grafica || 0} onChange={e => setFormData({
+                  ...formData,
+                  marginalita_grafica: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
               </div>
@@ -410,15 +377,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
-                  <Input
-                    type="number"
-                    min="0"
-                    max="200"
-                    step="1"
-                    value={formData.marginalita_retroilluminazione || 0}
-                    onChange={(e) => setFormData({ ...formData, marginalita_retroilluminazione: parseFloat(e.target.value) || 0 })}
-                    className="w-16 h-6 text-xs text-center"
-                  />
+                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_retroilluminazione || 0} onChange={e => setFormData({
+                  ...formData,
+                  marginalita_retroilluminazione: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
               </div>
@@ -439,15 +401,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
-                  <Input
-                    type="number"
-                    min="0"
-                    max="200"
-                    step="1"
-                    value={formData.marginalita_accessori || 0}
-                    onChange={(e) => setFormData({ ...formData, marginalita_accessori: parseFloat(e.target.value) || 0 })}
-                    className="w-16 h-6 text-xs text-center"
-                  />
+                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_accessori || 0} onChange={e => setFormData({
+                  ...formData,
+                  marginalita_accessori: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
               </div>
@@ -465,15 +422,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground">Ricarico</div>
                 <div className="flex items-center gap-1">
-                  <Input
-                    type="number"
-                    min="0"
-                    max="200"
-                    step="1"
-                    value={formData.marginalita_premontaggio || 0}
-                    onChange={(e) => setFormData({ ...formData, marginalita_premontaggio: parseFloat(e.target.value) || 0 })}
-                    className="w-16 h-6 text-xs text-center"
-                  />
+                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_premontaggio || 0} onChange={e => setFormData({
+                  ...formData,
+                  marginalita_premontaggio: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
               </div>
@@ -491,7 +443,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
             </div>
             <div className="text-xs text-muted-foreground">Extra % su Costo Struttura</div>
             <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-              <div className="text-lg font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
+              <div className="w-16 h-6 text-xs text-center">€{costs.extra_stand_complesso.toFixed(2)}</div>
             </div>
           </Card>
         </div>
@@ -525,6 +477,5 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 }
