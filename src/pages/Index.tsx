@@ -136,7 +136,7 @@ const Index = () => {
           const standStruttura = calculatePreventivoWithMargin(preventivo.costo_struttura || 0, preventivo.marginalita_struttura || 50);
           const standGrafica = calculatePreventivoWithMargin(preventivo.costo_grafica || 0, preventivo.marginalita_grafica || 50);
           const standRetroilluminazione = calculatePreventivoWithMargin(preventivo.costo_retroilluminazione || 0, preventivo.marginalita_retroilluminazione || 50);
-          const standExtraComplessa = preventivo.extra_stand_complesso
+          const standExtraComplessa = calculatePreventivoWithMargin(preventivo.extra_stand_complesso || 0, preventivo.marginalita_struttura || 50);
           const standPremontaggio = calculatePreventivoWithMargin(preventivo.costo_premontaggio || 0, preventivo.marginalita_premontaggio || 50);
 
           // Additional costs from external data
