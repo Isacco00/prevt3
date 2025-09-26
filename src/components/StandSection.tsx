@@ -450,8 +450,11 @@ export function StandSection({
                   <span className="text-xs">%</span>
                 </div>
                </div>
+               <div className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</div>        
             </div>
+        
           </Card>
+       
         </div>
 
         {/* Summary */}
