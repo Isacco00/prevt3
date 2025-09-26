@@ -696,6 +696,7 @@ const Preventivi = () => {
     const totale_preventivo_stand = preventivo_struttura + preventivo_grafica + preventivo_retroilluminazione + preventivo_accessori + preventivo_premontaggio + extra_stand_complesso;
     const totale_costi_stand = struttura_terra + grafica_cordino + retroilluminazione + costi_accessori + premontaggio;
     const marginalita_media = totale_costi_stand > 0 ? (totale_preventivo_stand - totale_costi_stand) / totale_costi_stand * 100 : 0;
+    
     return {
       struttura_terra,
       grafica_cordino,

@@ -485,10 +485,27 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <Card className="p-4">
             <div className="flex justify-between items-start mb-3">
               <div className="text-sm font-medium">Extra Stand Complesso</div>
+              
               <div className="text-lg font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
+           
             </div>
+
             <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
-              <span className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</span>
+            
+            <div className="text-xs text-muted-foreground">Ricarico</div>
+                <div className="flex items-center gap-1">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="200"
+                    step="1"
+                    value={formData.extra_perc_complex || 0}
+                    onChange={(e) => setFormData({ ...formData,extra_perc_complex: parseFloat(e.target.value) || 0 })}
+                    className="w-16 h-6 text-xs text-center"
+                  />
+             
+{/*              <span className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</span>  */}
+                  
             </div>
           </Card>
         </div>
