@@ -442,7 +442,7 @@ export function StandSection({
               
             </div>
             <div className="text-xs text-muted-foreground">Extra % su Costo Struttura</div>
-            <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
+            <div className="p-3 bg-gray-50 rounded-md border border-gray-200 px-0 py-0">
               <div className="w-16 h-6 text-xs text-center">€{costs.extra_stand_complesso.toFixed(2)}</div>
             </div>
           </Card>
