@@ -485,9 +485,10 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
           <Card className="p-4">
             <div className="flex justify-between items-start mb-3">
               <div className="text-sm font-medium">Extra Stand Complesso</div>
-               <div className="text-xs text-muted-foreground">Ricarico</div>
+               
               <div className="text-lg font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
             </div>
+            <div className="text-xs text-muted-foreground">Ricarico</div>
             <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
               <span className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</span>
             </div>
