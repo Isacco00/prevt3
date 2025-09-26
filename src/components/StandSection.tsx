@@ -442,10 +442,16 @@ export function StandSection({
               
             </div>
             <div className="text-xs text-muted-foreground">Extra % su Costo Struttura</div>
-            <div className="p-3 bg-gray-50 rounded-md border border-gray-200 px-0 py-0">
-              <div className="w-16 h-6 text-xs text-center">€{costs.extra_stand_complesso.toFixed(2)}</div>
-              <span className="text-xs">%</span>
-            </div>
+            
+            <div className="flex items-center gap-1">
+                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_premontaggio || 0} onChange={e => setFormData({
+                  ...formData,
+                  marginalita_premontaggio: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
+                  <span className="text-xs">%</span>
+                </div>
+            
+          </div>
           </Card>
         </div>
 
