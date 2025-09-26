@@ -418,6 +418,7 @@ export function StandSection({
               <div className="text-sm font-medium">Premontaggio</div>
               <div className="text-lg font-bold">€{costs.premontaggio.toFixed(2)}</div>
             </div>
+            
             <div className="flex justify-between items-end">
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground">Ricarico</div>
@@ -436,21 +437,21 @@ export function StandSection({
           {/* Extra Stand Complesso */}
           <Card className="p-4">
             <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium">Extra Stand Complesso</div>
-               
-  {/*             <div className="text-lg font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div> */}
-              
+              <div className="text-sm font-medium">Extra Stand Complesso</div>           
             </div>
-            <div className="text-xs text-muted-foreground">Extra % su Costo Struttura</div>
-            
-            <div className="flex items-center gap-1">
+
+            <div className="flex justify-between items-end">
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-muted-foreground">Extra % su Costo Struttura</div>
+                <div className="flex items-center gap-1">
                   <Input type="number" min="0" max="200" step="1" value={formData.marginalita_premontaggio || 0} onChange={e => setFormData({
                   ...formData,
                   marginalita_premontaggio: parseFloat(e.target.value) || 0
                 })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
+                </div>
+               </div>
             </div>
-            
           </Card>
         </div>
 
