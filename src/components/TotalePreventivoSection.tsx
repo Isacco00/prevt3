@@ -179,7 +179,7 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
             <CardTitle className="text-sm font-medium">Extra per struttura complessa</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">€{preventivoExtraComplessa.toFixed(2)}</div>
+            <div className="text-2xl font-bold">€{costoExtraComplessa.toFixed(2)}</div>
           </CardContent>
         </Card>
 
