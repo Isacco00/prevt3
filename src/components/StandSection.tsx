@@ -448,11 +448,11 @@ export function StandSection({
           {/* Extra Stand Complesso */}
           <Card className="p-4">
             <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium">Extra Stand Complesso</div>           
+              <div className="text-sm font-medium my-0 py-0">Extra Stand Complesso</div>           
             </div>
             <div className="flex justify-between items-end">
               <div className="flex flex-col gap-1">
-                <div className="text-xs text-muted-foreground my-px py-0">Extra % su Costo Struttura</div>
+                <div className="text-xs text-muted-foreground my-[4px] py-px">Extra % su Costo Struttura</div>
                 <div className="flex items-center gap-1">
                    <Input type="number" min="0" max="200" step="1" value={formData.extra_perc_complex || 0} onChange={e => setFormData({
                   ...formData,
