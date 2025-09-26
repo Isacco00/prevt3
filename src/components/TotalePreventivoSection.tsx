@@ -93,19 +93,19 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   };
 
   // Struttura totals
-  const costoStruttura = standCosts.struttura_terra + storageCosts.costo_struttura_storage + (deskCosts.struttura_terra || 0) + espositoriCosts.struttura_espositori;
+  const costoStruttura = standCosts.struttura_terra + storageCosts.costo_struttura_storage + deskCosts.struttura_terra + espositoriCosts.struttura_espositori;
   const preventivoStruttura = 
     calculatePreventivoWithMargin(standCosts.struttura_terra, standMargins.marginalita_struttura) +
     calculatePreventivoWithMargin(storageCosts.costo_struttura_storage, storageMargins.marginalita_struttura_storage) +
-    calculatePreventivoWithMargin(deskCosts.struttura_terra || 0, deskMargins.marginalita_struttura_desk) +
+    calculatePreventivoWithMargin(deskCosts.struttura_terra, deskMargins.marginalita_struttura_desk) +
     calculatePreventivoWithMargin(espositoriCosts.struttura_espositori, espositoriMargins.marginalita_struttura_espositori);
 
   // Grafiche totals
-  const costoGrafiche = standCosts.grafica_cordino + storageCosts.costo_grafica_storage + (deskCosts.grafica_cordino || 0) + espositoriCosts.grafica_espositori;
+  const costoGrafiche = standCosts.grafica_cordino + storageCosts.costo_grafica_storage + deskCosts.grafica_cordino + espositoriCosts.grafica_espositori;
   const preventivoGrafiche = 
     calculatePreventivoWithMargin(standCosts.grafica_cordino, standMargins.marginalita_grafica) +
     calculatePreventivoWithMargin(storageCosts.costo_grafica_storage, storageMargins.marginalita_grafica_storage) +
-    calculatePreventivoWithMargin(deskCosts.grafica_cordino || 0, deskMargins.marginalita_grafica_desk) +
+    calculatePreventivoWithMargin(deskCosts.grafica_cordino, deskMargins.marginalita_grafica_desk) +
     calculatePreventivoWithMargin(espositoriCosts.grafica_espositori, espositoriMargins.marginalita_grafica_espositori);
 
   // Retroilluminazione (only for stands)
@@ -114,26 +114,30 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
 
   // Extra per struttura complessa (only for stands)
   const costoExtraComplessa = standCosts.extra_stand_complesso;
-  const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, standMargins.marginalita_struttura);
+  // const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, standMargins.marginalita_struttura);
+  const preventivoExtraComplessa = standCosts.extra_stand_complesso;
 
+  
   // Accessori totals
-  const costoAccessori = standCosts.costi_accessori + (deskCosts.accessori || 0) + espositoriCosts.accessori_espositori;
+  const costoAccessori = standCosts.costi_accessori + deskCosts.accessori + espositoriCosts.accessori_espositori;
   const preventivoAccessori = 
     calculatePreventivoWithMargin(standCosts.costi_accessori, standMargins.marginalita_accessori) +
-    calculatePreventivoWithMargin(deskCosts.accessori || 0, deskMargins.marginalita_accessori_desk) +
+    calculatePreventivoWithMargin(deskCosts.accessori, deskMargins.marginalita_accessori_desk) +
     calculatePreventivoWithMargin(espositoriCosts.accessori_espositori, espositoriMargins.marginalita_accessori_espositori);
 
   // Premontaggi totals
-  const costoPremontaggi = standCosts.premontaggio + storageCosts.costo_premontaggio_storage + (deskCosts.premontaggio || 0) + espositoriCosts.premontaggio_espositori;
+  const costoPremontaggi = standCosts.premontaggio + storageCosts.costo_premontaggio_storage + deskCosts.premontaggio + espositoriCosts.premontaggio_espositori;
   const preventivoPremontaggi = 
     calculatePreventivoWithMargin(standCosts.premontaggio, standMargins.marginalita_premontaggio) +
     calculatePreventivoWithMargin(storageCosts.costo_premontaggio_storage, storageMargins.marginalita_premontaggio_storage) +
-    calculatePreventivoWithMargin(deskCosts.premontaggio || 0, deskMargins.marginalita_premontaggio_desk) +
+    calculatePreventivoWithMargin(deskCosts.premontaggio, deskMargins.marginalita_premontaggio_desk) +
     calculatePreventivoWithMargin(espositoriCosts.premontaggio_espositori, espositoriMargins.marginalita_premontaggio_espositori);
 
   // Final totals
   const costoTotale = costoStruttura + costoGrafiche + costoRetroilluminazione + costoExtraComplessa + costoAccessori + costoPremontaggi + servicesCost + altriBeniServiziCost;
-  const preventivoTotale = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniServiziTotal;
+  const preventivoTotale = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
+                           preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi +
+                           servicesTotal + altriBeniServiziTotal;
   
   // Marginalità media
   const marginalitaMedia = costoTotale > 0 ? ((preventivoTotale - costoTotale) / costoTotale) * 100 : 0;
