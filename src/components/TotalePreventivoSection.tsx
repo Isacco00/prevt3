@@ -134,12 +134,12 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
 
 
   // Final totals
-//  const costoTotale = costoStruttura + costoGrafiche + costoRetroilluminazione + costoAccessori + 
-//                      costoPremontaggi + servicesCost + altriBeniServiziCost;
+  const costoTotale = costoStruttura + costoGrafiche + costoRetroilluminazione + costoAccessori + 
+                      costoPremontaggi + servicesCost + altriBeniServiziCost;
   
-//  const preventivoTotale = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione +
-//                           costoExtraComplessa + preventivoAccessori + preventivoPremontaggi + 
-//                           servicesTotal + altriBeniServiziTotal;
+  const preventivoTotale = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione +
+                           costoExtraComplessa + preventivoAccessori + preventivoPremontaggi + 
+                           servicesTotal + altriBeniServiziTotal;
   
   // Marginalità media
   const marginalitaMedia = costoTotale > 0 ? ((preventivoTotale - costoTotale) / costoTotale) * 100 : 0;
