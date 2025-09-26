@@ -1289,6 +1289,8 @@ const Preventivi = () => {
       // Calculate final totale_preventivo (matches exactly TotalePreventivoSection calculation)
       const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
         preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniServiziTotal;
+      
+      
       const {
         error
       } = await supabase.from('preventivi').update({
