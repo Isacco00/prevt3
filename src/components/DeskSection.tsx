@@ -3,10 +3,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface DeskLayoutConfig {
   layout: string;
@@ -45,6 +47,7 @@ interface DeskSectionProps {
 
 export function DeskSection({ data, onChange, parametri, costiAccessori = 0, costiDesk, prospect }: DeskSectionProps) {
   const { user } = useAuth();
+  const [accessoriOpen, setAccessoriOpen] = useState(true);
 
   // Fetch desk accessories
   const { data: accessoriDesk = [], isLoading: isLoadingAccessori } = useQuery({
@@ -259,61 +262,70 @@ export function DeskSection({ data, onChange, parametri, costiAccessori = 0, cos
           </div>
 
           {/* Accessori Desk */}
-          <div className="mt-6">
-            <h5 className="text-lg font-semibold mb-4 text-desk">Accessori Desk</h5>
-            {isLoadingAccessori ? (
-              <div className="text-center py-4">Caricamento accessori...</div>
-            ) : (
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Accessorio</TableHead>
-                        <TableHead className="text-center">Costo unitario</TableHead>
-                        <TableHead className="text-center w-24">Quantità</TableHead>
-                        <TableHead className="text-right">Costo totale</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {accessoriDesk.map((accessorio: any) => {
-                        // Mappa i nomi degli accessori ai campi del formData
-                        const fieldMap: Record<string, keyof DeskData> = {
-                          'Porta scorrevole con chiave': 'porta_scorrevole',
-                          'Ripiano Superiore L 100': 'ripiano_superiore',
-                          'Ripiano Inferiore L 100': 'ripiano_inferiore',
-                          'Teca in plexiglass': 'teca_plexiglass',
-                          'Fronte luminoso dim. 100x100': 'fronte_luminoso',
-                          'Borsa': 'borsa'
-                        };
-                        
-                        const field = fieldMap[accessorio.nome];
-                        const quantity = field ? (data[field] || 0) : 0;
-                        const total = Number(quantity) * Number(accessorio.costo_unitario);
-                        return (
-                          <TableRow key={accessorio.id}>
-                            <TableCell className="font-medium">{accessorio.nome}</TableCell>
-                            <TableCell className="text-center">€ {Number(accessorio.costo_unitario).toFixed(2).replace('.', ',')}</TableCell>
-                            <TableCell className="text-center">
-                              <Input
-                                type="number"
-                                min="0"
-                                max="99"
-                                value={quantity.toString()}
-                                onChange={(e) => handleAccessorioChange(accessorio.nome, parseInt(e.target.value) || 0)}
-                                className="w-16 text-center"
-                              />
-                            </TableCell>
-                            <TableCell className="text-right font-medium">€ {total.toFixed(2).replace('.', ',')}</TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen} className="mt-6">
+            <CollapsibleTrigger className="flex items-center gap-2 w-full mb-4">
+              <h5 className="text-lg font-semibold text-desk">Accessori Desk</h5>
+              {accessoriOpen ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              {isLoadingAccessori ? (
+                <div className="text-center py-4">Caricamento accessori...</div>
+              ) : (
+                <Card>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Accessorio</TableHead>
+                          <TableHead className="text-center">Costo unitario</TableHead>
+                          <TableHead className="text-center w-24">Quantità</TableHead>
+                          <TableHead className="text-right">Costo totale</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {accessoriDesk.map((accessorio: any) => {
+                          // Mappa i nomi degli accessori ai campi del formData
+                          const fieldMap: Record<string, keyof DeskData> = {
+                            'Porta scorrevole con chiave': 'porta_scorrevole',
+                            'Ripiano Superiore L 100': 'ripiano_superiore',
+                            'Ripiano Inferiore L 100': 'ripiano_inferiore',
+                            'Teca in plexiglass': 'teca_plexiglass',
+                            'Fronte luminoso dim. 100x100': 'fronte_luminoso',
+                            'Borsa': 'borsa'
+                          };
+                          
+                          const field = fieldMap[accessorio.nome];
+                          const quantity = field ? (data[field] || 0) : 0;
+                          const total = Number(quantity) * Number(accessorio.costo_unitario);
+                          return (
+                            <TableRow key={accessorio.id}>
+                              <TableCell className="font-medium">{accessorio.nome}</TableCell>
+                              <TableCell className="text-center">€ {Number(accessorio.costo_unitario).toFixed(2).replace('.', ',')}</TableCell>
+                              <TableCell className="text-center">
+                                <Input
+                                  type="number"
+                                  min="0"
+                                  max="99"
+                                  value={quantity.toString()}
+                                  onChange={(e) => handleAccessorioChange(accessorio.nome, parseInt(e.target.value) || 0)}
+                                  className="w-16 text-center"
+                                />
+                              </TableCell>
+                              <TableCell className="text-right font-medium">€ {total.toFixed(2).replace('.', ',')}</TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
         </CardContent>
       </Card>
 
