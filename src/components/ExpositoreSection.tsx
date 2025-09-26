@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-
 interface ExpositoreData {
   qta_tipo30: number;
   qta_tipo50: number;
@@ -23,16 +22,13 @@ interface ExpositoreData {
   retroilluminazione_100x50x100h: number;
   borsa_espositori: number;
 }
-
 interface ExpositorePhysicalElements {
   numero_pezzi_espositori: number;
   superficie_stampa_espositori: number;
 }
-
 interface EspositorePhysicalElementsProps {
   physicalElements: ExpositorePhysicalElements;
 }
-
 interface EspositoriSectionProps {
   formData: ExpositoreData & {
     marginalita_struttura_espositori?: number;
@@ -58,10 +54,10 @@ interface EspositoriSectionProps {
     costo_totale_espositori: number;
   }) => void;
 }
-
-function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElementsProps) {
-  return (
-    <Card className="border-l-4 border-l-espositore">
+function EspositorePhysicalElements({
+  physicalElements
+}: EspositorePhysicalElementsProps) {
+  return <Card className="border-l-4 border-l-espositore">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm flex items-center gap-2 text-espositore">
           <Calculator className="h-4 w-4" />
@@ -85,57 +81,61 @@ function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElem
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 }
-
-export function ExpositoreSection({ formData, setFormData, physicalElements, onChange, costiEspositori, onCostsChange }: EspositoriSectionProps) {
+export function ExpositoreSection({
+  formData,
+  setFormData,
+  physicalElements,
+  onChange,
+  costiEspositori,
+  onCostsChange
+}: EspositoriSectionProps) {
   const [accessoriOpen, setAccessoriOpen] = useState(true);
   // Query for accessories prices
-  const { data: accessoriesData = [] } = useQuery({
+  const {
+    data: accessoriesData = []
+  } = useQuery({
     queryKey: ['listino_accessori_espositori'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('listino_accessori_espositori')
-        .select('*')
-        .eq('attivo', true)
-        .order('nome');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('listino_accessori_espositori').select('*').eq('attivo', true).order('nome');
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   // Query for expositor layout costs
-  const { data: layoutCostsData = [] } = useQuery({
+  const {
+    data: layoutCostsData = []
+  } = useQuery({
     queryKey: ['costi_struttura_espositori_layout'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('costi_struttura_espositori_layout')
-        .select('*')
-        .eq('attivo', true)
-        .order('layout_espositore');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('costi_struttura_espositori_layout').select('*').eq('attivo', true).order('layout_espositore');
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   // Query for unit cost parameters
-  const { data: parametriCostiUnitari = [] } = useQuery({
+  const {
+    data: parametriCostiUnitari = []
+  } = useQuery({
     queryKey: ['parametri-costi-unitari'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('parametri_a_costi_unitari')
-        .select('*')
-        .eq('attivo', true)
-        .order('parametro');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('parametri_a_costi_unitari').select('*').eq('attivo', true).order('parametro');
       if (error) throw error;
       return data;
-    },
+    }
   });
-
   const handleInputChange = (field: keyof ExpositoreData, value: string) => {
     // Rimuovi caratteri non numerici eccetto stringa vuota
     const cleanValue = value.replace(/[^0-9]/g, '');
@@ -151,11 +151,9 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
     const accessory = accessoriesData.find(item => item.nome === name);
     return accessory ? Number(accessory.costo_unitario) : 0;
   };
-
   const getAccessoryQuantity = (fieldName: keyof ExpositoreData): number => {
     return formData[fieldName] || 0;
   };
-
   const calculateAccessoryTotal = (fieldName: keyof ExpositoreData, unitPrice: number): number => {
     const quantity = getAccessoryQuantity(fieldName);
     return quantity * unitPrice;
@@ -175,63 +173,70 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
 
   // Calculate costs
   const calculateStructureCost = (): number => {
-    return (
-      (formData.qta_tipo30 || 0) * getLayoutCost('30') +
-      (formData.qta_tipo50 || 0) * getLayoutCost('50') +
-      (formData.qta_tipo100 || 0) * getLayoutCost('100')
-    );
+    return (formData.qta_tipo30 || 0) * getLayoutCost('30') + (formData.qta_tipo50 || 0) * getLayoutCost('50') + (formData.qta_tipo100 || 0) * getLayoutCost('100');
   };
-
   const calculateGraphicsCost = (): number => {
     const costoStampaGrafica = getParameterValue('Costo Stampa Grafica');
     return physicalElements.superficie_stampa_espositori * costoStampaGrafica;
   };
-
   const calculatePreassemblyCost = (): number => {
     const costoPremontaggio = getParameterValue('Costo Premontaggio');
     return physicalElements.numero_pezzi_espositori * costoPremontaggio;
   };
-
   const calculateAccessoriesTotal = (): number => {
     return accessoryMapping.reduce((total, accessory) => {
       const unitPrice = getAccessoryPrice(accessory.name);
       const quantity = getAccessoryQuantity(accessory.field);
-      return total + (quantity * unitPrice);
+      return total + quantity * unitPrice;
     }, 0);
   };
-
   const calculateTotalCost = (): number => {
     return calculateStructureCost() + calculateGraphicsCost() + calculatePreassemblyCost() + calculateAccessoriesTotal();
   };
 
   // Mapping between field names and display names
-  const accessoryMapping = [
-    { field: 'ripiano_30x30' as keyof ExpositoreData, name: 'Ripiano 30x30' },
-    { field: 'ripiano_50x50' as keyof ExpositoreData, name: 'Ripiano 50x50' },
-    { field: 'ripiano_100x50' as keyof ExpositoreData, name: 'Ripiano 100x50' },
-    { field: 'teca_plexiglass_30x30x30' as keyof ExpositoreData, name: 'Teca in plexiglass 30x30x30' },
-    { field: 'teca_plexiglass_50x50x50' as keyof ExpositoreData, name: 'Teca in plexiglass 50x50x50' },
-    { field: 'teca_plexiglass_100x50x30' as keyof ExpositoreData, name: 'Teca in plexiglass 100x50x30' },
-    { field: 'retroilluminazione_30x30x100h' as keyof ExpositoreData, name: 'Retroilluminazione 30x30x100 H' },
-    { field: 'retroilluminazione_50x50x100h' as keyof ExpositoreData, name: 'Retroilluminazione 50x50x100 H' },
-    { field: 'retroilluminazione_100x50x100h' as keyof ExpositoreData, name: 'Retroilluminazione 100x50x100 H' },
-    { field: 'borsa_espositori' as keyof ExpositoreData, name: 'Borsa' },
-  ];
-
+  const accessoryMapping = [{
+    field: 'ripiano_30x30' as keyof ExpositoreData,
+    name: 'Ripiano 30x30'
+  }, {
+    field: 'ripiano_50x50' as keyof ExpositoreData,
+    name: 'Ripiano 50x50'
+  }, {
+    field: 'ripiano_100x50' as keyof ExpositoreData,
+    name: 'Ripiano 100x50'
+  }, {
+    field: 'teca_plexiglass_30x30x30' as keyof ExpositoreData,
+    name: 'Teca in plexiglass 30x30x30'
+  }, {
+    field: 'teca_plexiglass_50x50x50' as keyof ExpositoreData,
+    name: 'Teca in plexiglass 50x50x50'
+  }, {
+    field: 'teca_plexiglass_100x50x30' as keyof ExpositoreData,
+    name: 'Teca in plexiglass 100x50x30'
+  }, {
+    field: 'retroilluminazione_30x30x100h' as keyof ExpositoreData,
+    name: 'Retroilluminazione 30x30x100 H'
+  }, {
+    field: 'retroilluminazione_50x50x100h' as keyof ExpositoreData,
+    name: 'Retroilluminazione 50x50x100 H'
+  }, {
+    field: 'retroilluminazione_100x50x100h' as keyof ExpositoreData,
+    name: 'Retroilluminazione 100x50x100 H'
+  }, {
+    field: 'borsa_espositori' as keyof ExpositoreData,
+    name: 'Borsa'
+  }];
   const expositoriCosts = useMemo(() => ({
     struttura_espositori: calculateStructureCost(),
     grafica_espositori: calculateGraphicsCost(),
     premontaggio_espositori: calculatePreassemblyCost(),
     accessori_espositori: calculateAccessoriesTotal(),
-    costo_totale_espositori: calculateTotalCost(),
+    costo_totale_espositori: calculateTotalCost()
   }), [formData, physicalElements, accessoriesData, layoutCostsData, parametriCostiUnitari]);
-
   useEffect(() => {
     onCostsChange?.(expositoriCosts);
   }, [expositoriCosts, onCostsChange]);
-
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Calculator className="h-5 w-5" />
         <h4 className="text-md font-semibold">Dati di Ingresso per Espositori</h4>
@@ -259,33 +264,15 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
               </div>
               
               <div className="space-y-1">
-                <Input
-                  type="number"
-                  min="0"
-                  value={formData.qta_tipo30 === 0 ? '' : formData.qta_tipo30.toString()}
-                  onChange={(e) => handleInputChange('qta_tipo30', e.target.value)}
-                  placeholder="0"
-                />
+                <Input type="number" min="0" value={formData.qta_tipo30 === 0 ? '' : formData.qta_tipo30.toString()} onChange={e => handleInputChange('qta_tipo30', e.target.value)} placeholder="0" />
               </div>
               
               <div className="space-y-1">
-                <Input
-                  type="number"
-                  min="0"
-                  value={formData.qta_tipo50 === 0 ? '' : formData.qta_tipo50.toString()}
-                  onChange={(e) => handleInputChange('qta_tipo50', e.target.value)}
-                  placeholder="0"
-                />
+                <Input type="number" min="0" value={formData.qta_tipo50 === 0 ? '' : formData.qta_tipo50.toString()} onChange={e => handleInputChange('qta_tipo50', e.target.value)} placeholder="0" />
               </div>
               
               <div className="space-y-1">
-                <Input
-                  type="number"
-                  min="0"
-                  value={formData.qta_tipo100 === 0 ? '' : formData.qta_tipo100.toString()}
-                  onChange={(e) => handleInputChange('qta_tipo100', e.target.value)}
-                  placeholder="0"
-                />
+                <Input type="number" min="0" value={formData.qta_tipo100 === 0 ? '' : formData.qta_tipo100.toString()} onChange={e => handleInputChange('qta_tipo100', e.target.value)} placeholder="0" />
               </div>
             </div>
           </div>
@@ -298,14 +285,10 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
       {/* Accessori Espositori - Table Format */}
       <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
         <Card className="border-l-4 border-l-espositore">
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 py-[16px]">
             <CollapsibleTrigger className="flex items-center gap-2 w-full">
               <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
-              {accessoriOpen ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
+              {accessoriOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
             </CollapsibleTrigger>
           </CardHeader>
           <CollapsibleContent>
@@ -320,36 +303,26 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {accessoryMapping.map((accessory) => {
-                    const unitPrice = getAccessoryPrice(accessory.name);
-                    const quantity = getAccessoryQuantity(accessory.field);
-                    const total = calculateAccessoryTotal(accessory.field, unitPrice);
-                    
-                    return (
-                      <TableRow key={accessory.field}>
+                  {accessoryMapping.map(accessory => {
+                  const unitPrice = getAccessoryPrice(accessory.name);
+                  const quantity = getAccessoryQuantity(accessory.field);
+                  const total = calculateAccessoryTotal(accessory.field, unitPrice);
+                  return <TableRow key={accessory.field}>
                         <TableCell className="font-medium">{accessory.name}</TableCell>
                         <TableCell className="text-center">
                           €{unitPrice.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center">
-                          <Input
-                            type="number"
-                            min="0"
-                            max="10"
-                            value={quantity || 0}
-                            onChange={(e) => {
-                              const newQuantity = parseInt(e.target.value) || 0;
-                              handleInputChange(accessory.field, newQuantity.toString());
-                            }}
-                            className="w-20 text-center"
-                          />
+                          <Input type="number" min="0" max="10" value={quantity || 0} onChange={e => {
+                        const newQuantity = parseInt(e.target.value) || 0;
+                        handleInputChange(accessory.field, newQuantity.toString());
+                      }} className="w-20 text-center" />
                         </TableCell>
                         <TableCell className="text-center font-semibold">
                           €{total.toFixed(2)}
                         </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                      </TableRow>;
+                })}
                 </TableBody>
               </Table>
             </CardContent>
@@ -375,22 +348,12 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
                 <div className="flex flex-col gap-1">
                   <div className="text-xs text-muted-foreground">Ricarico</div>
                   <div className="flex items-center gap-1">
-                    <Input
-                      type="number"
-                      min="0"
-                      max="200"
-                      step="1"
-                      value={formData.marginalita_struttura_espositori ?? 0}
-                      onChange={(e) =>
-                        onChange('marginalita_struttura_espositori', e.target.value === '' ? 0 : Number(e.target.value))
-                      }
-                      className="w-16 h-6 text-xs text-center"
-                    />
+                    <Input type="number" min="0" max="200" step="1" value={formData.marginalita_struttura_espositori ?? 0} onChange={e => onChange('marginalita_struttura_espositori', e.target.value === '' ? 0 : Number(e.target.value))} className="w-16 h-6 text-xs text-center" />
                     <span className="text-xs">%</span>
                   </div>
                 </div>
                 <div className="text-lg font-bold text-primary">
-                  €{((costiEspositori?.struttura_espositori ?? 0) * (1 + ((formData.marginalita_struttura_espositori ?? 0) / 100))).toFixed(2)}
+                  €{((costiEspositori?.struttura_espositori ?? 0) * (1 + (formData.marginalita_struttura_espositori ?? 0) / 100)).toFixed(2)}
                 </div>
               </div>
             </Card>
@@ -405,22 +368,12 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
                 <div className="flex flex-col gap-1">
                   <div className="text-xs text-muted-foreground">Ricarico</div>
                   <div className="flex items-center gap-1">
-                    <Input
-                      type="number"
-                      min="0"
-                      max="200"
-                      step="1"
-                      value={formData.marginalita_grafica_espositori ?? 0}
-                      onChange={(e) =>
-                        onChange('marginalita_grafica_espositori', e.target.value === '' ? 0 : Number(e.target.value))
-                      }
-                      className="w-16 h-6 text-xs text-center"
-                    />
+                    <Input type="number" min="0" max="200" step="1" value={formData.marginalita_grafica_espositori ?? 0} onChange={e => onChange('marginalita_grafica_espositori', e.target.value === '' ? 0 : Number(e.target.value))} className="w-16 h-6 text-xs text-center" />
                     <span className="text-xs">%</span>
                   </div>
                 </div>
                 <div className="text-lg font-bold text-primary">
-                  €{((costiEspositori?.grafica_espositori ?? 0) * (1 + ((formData.marginalita_grafica_espositori ?? 0) / 100))).toFixed(2)}
+                  €{((costiEspositori?.grafica_espositori ?? 0) * (1 + (formData.marginalita_grafica_espositori ?? 0) / 100)).toFixed(2)}
                 </div>
               </div>
             </Card>
@@ -435,22 +388,12 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
                 <div className="flex flex-col gap-1">
                   <div className="text-xs text-muted-foreground">Ricarico</div>
                   <div className="flex items-center gap-1">
-                    <Input
-                      type="number"
-                      min="0"
-                      max="200"
-                      step="1"
-                      value={formData.marginalita_premontaggio_espositori ?? 0}
-                      onChange={(e) =>
-                        onChange('marginalita_premontaggio_espositori', e.target.value === '' ? 0 : Number(e.target.value))
-                      }
-                      className="w-16 h-6 text-xs text-center"
-                    />
+                    <Input type="number" min="0" max="200" step="1" value={formData.marginalita_premontaggio_espositori ?? 0} onChange={e => onChange('marginalita_premontaggio_espositori', e.target.value === '' ? 0 : Number(e.target.value))} className="w-16 h-6 text-xs text-center" />
                     <span className="text-xs">%</span>
                   </div>
                 </div>
                 <div className="text-lg font-bold text-primary">
-                  €{((costiEspositori?.premontaggio_espositori ?? 0) * (1 + ((formData.marginalita_premontaggio_espositori ?? 0) / 100))).toFixed(2)}
+                  €{((costiEspositori?.premontaggio_espositori ?? 0) * (1 + (formData.marginalita_premontaggio_espositori ?? 0) / 100)).toFixed(2)}
                 </div>
               </div>
             </Card>
@@ -465,22 +408,12 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
                 <div className="flex flex-col gap-1">
                   <div className="text-xs text-muted-foreground">Ricarico</div>
                   <div className="flex items-center gap-1">
-                    <Input
-                      type="number"
-                      min="0"
-                      max="200"
-                      step="1"
-                      value={formData.marginalita_accessori_espositori ?? 0}
-                      onChange={(e) =>
-                        onChange('marginalita_accessori_espositori', e.target.value === '' ? 0 : Number(e.target.value))
-                      }
-                      className="w-16 h-6 text-xs text-center"
-                    />
+                    <Input type="number" min="0" max="200" step="1" value={formData.marginalita_accessori_espositori ?? 0} onChange={e => onChange('marginalita_accessori_espositori', e.target.value === '' ? 0 : Number(e.target.value))} className="w-16 h-6 text-xs text-center" />
                     <span className="text-xs">%</span>
                   </div>
                 </div>
                 <div className="text-lg font-bold text-primary">
-                  €{((costiEspositori?.accessori_espositori ?? 0) * (1 + ((formData.marginalita_accessori_espositori ?? 0) / 100))).toFixed(2)}
+                  €{((costiEspositori?.accessori_espositori ?? 0) * (1 + (formData.marginalita_accessori_espositori ?? 0) / 100)).toFixed(2)}
                 </div>
               </div>
             </Card>
@@ -491,12 +424,7 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
             <Card className="p-4 bg-primary/5 border-primary/20">
               <div className="text-sm text-muted-foreground">Totale preventivo espositori</div>
               <div className="text-2xl font-bold text-primary">
-                €{(
-                  ((costiEspositori?.struttura_espositori ?? 0) * (1 + ((formData.marginalita_struttura_espositori ?? 0) / 100))) +
-                  ((costiEspositori?.grafica_espositori ?? 0) * (1 + ((formData.marginalita_grafica_espositori ?? 0) / 100))) +
-                  ((costiEspositori?.premontaggio_espositori ?? 0) * (1 + ((formData.marginalita_premontaggio_espositori ?? 0) / 100))) +
-                  ((costiEspositori?.accessori_espositori ?? 0) * (1 + ((formData.marginalita_accessori_espositori ?? 0) / 100)))
-                ).toFixed(2)}
+                €{((costiEspositori?.struttura_espositori ?? 0) * (1 + (formData.marginalita_struttura_espositori ?? 0) / 100) + (costiEspositori?.grafica_espositori ?? 0) * (1 + (formData.marginalita_grafica_espositori ?? 0) / 100) + (costiEspositori?.premontaggio_espositori ?? 0) * (1 + (formData.marginalita_premontaggio_espositori ?? 0) / 100) + (costiEspositori?.accessori_espositori ?? 0) * (1 + (formData.marginalita_accessori_espositori ?? 0) / 100)).toFixed(2)}
               </div>
             </Card>
 
@@ -511,21 +439,15 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
               <div className="text-sm text-muted-foreground">Marginalità media</div>
               <div className="text-2xl font-bold text-green-600">
                 {(() => {
-                  const totalCosts = (costiEspositori?.struttura_espositori ?? 0) + (costiEspositori?.grafica_espositori ?? 0) + (costiEspositori?.premontaggio_espositori ?? 0) + (costiEspositori?.accessori_espositori ?? 0);
-                  const totalQuoted = 
-                    ((costiEspositori?.struttura_espositori ?? 0) * (1 + ((formData.marginalita_struttura_espositori ?? 0) / 100))) +
-                    ((costiEspositori?.grafica_espositori ?? 0) * (1 + ((formData.marginalita_grafica_espositori ?? 0) / 100))) +
-                    ((costiEspositori?.premontaggio_espositori ?? 0) * (1 + ((formData.marginalita_premontaggio_espositori ?? 0) / 100))) +
-                    ((costiEspositori?.accessori_espositori ?? 0) * (1 + ((formData.marginalita_accessori_espositori ?? 0) / 100)));
-                  
-                  const margin = totalCosts > 0 ? ((totalQuoted - totalCosts) / totalCosts) * 100 : 0;
-                  return margin.toFixed(1);
-                })()}%
+                const totalCosts = (costiEspositori?.struttura_espositori ?? 0) + (costiEspositori?.grafica_espositori ?? 0) + (costiEspositori?.premontaggio_espositori ?? 0) + (costiEspositori?.accessori_espositori ?? 0);
+                const totalQuoted = (costiEspositori?.struttura_espositori ?? 0) * (1 + (formData.marginalita_struttura_espositori ?? 0) / 100) + (costiEspositori?.grafica_espositori ?? 0) * (1 + (formData.marginalita_grafica_espositori ?? 0) / 100) + (costiEspositori?.premontaggio_espositori ?? 0) * (1 + (formData.marginalita_premontaggio_espositori ?? 0) / 100) + (costiEspositori?.accessori_espositori ?? 0) * (1 + (formData.marginalita_accessori_espositori ?? 0) / 100);
+                const margin = totalCosts > 0 ? (totalQuoted - totalCosts) / totalCosts * 100 : 0;
+                return margin.toFixed(1);
+              })()}%
               </div>
             </Card>
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 }
