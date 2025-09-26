@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import { Calculator } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Calculator, ChevronDown, ChevronRight } from 'lucide-react';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -89,6 +90,7 @@ function EspositorePhysicalElements({ physicalElements }: EspositorePhysicalElem
 }
 
 export function ExpositoreSection({ formData, setFormData, physicalElements, onChange, costiEspositori, onCostsChange }: EspositoriSectionProps) {
+  const [accessoriOpen, setAccessoriOpen] = useState(true);
   // Query for accessories prices
   const { data: accessoriesData = [] } = useQuery({
     queryKey: ['listino_accessori_espositori'],
@@ -294,55 +296,66 @@ export function ExpositoreSection({ formData, setFormData, physicalElements, onC
       <EspositorePhysicalElements physicalElements={physicalElements} />
 
       {/* Accessori Espositori - Table Format */}
-      <Card className="border-l-4 border-l-espositore">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Accessorio</TableHead>
-                <TableHead className="text-center">Prezzo unitario</TableHead>
-                <TableHead className="text-center">Quantità</TableHead>
-                <TableHead className="text-center">Costo totale</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {accessoryMapping.map((accessory) => {
-                const unitPrice = getAccessoryPrice(accessory.name);
-                const quantity = getAccessoryQuantity(accessory.field);
-                const total = calculateAccessoryTotal(accessory.field, unitPrice);
-                
-                return (
-                  <TableRow key={accessory.field}>
-                    <TableCell className="font-medium">{accessory.name}</TableCell>
-                    <TableCell className="text-center">
-                      €{unitPrice.toFixed(2)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Input
-                        type="number"
-                        min="0"
-                        max="10"
-                        value={quantity || 0}
-                        onChange={(e) => {
-                          const newQuantity = parseInt(e.target.value) || 0;
-                          handleInputChange(accessory.field, newQuantity.toString());
-                        }}
-                        className="w-20 text-center"
-                      />
-                    </TableCell>
-                    <TableCell className="text-center font-semibold">
-                      €{total.toFixed(2)}
-                    </TableCell>
+      <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
+        <Card className="border-l-4 border-l-espositore">
+          <CardHeader className="pb-3">
+            <CollapsibleTrigger className="flex items-center gap-2 w-full">
+              <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
+              {accessoriOpen ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </CollapsibleTrigger>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Accessorio</TableHead>
+                    <TableHead className="text-center">Prezzo unitario</TableHead>
+                    <TableHead className="text-center">Quantità</TableHead>
+                    <TableHead className="text-center">Costo totale</TableHead>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {accessoryMapping.map((accessory) => {
+                    const unitPrice = getAccessoryPrice(accessory.name);
+                    const quantity = getAccessoryQuantity(accessory.field);
+                    const total = calculateAccessoryTotal(accessory.field, unitPrice);
+                    
+                    return (
+                      <TableRow key={accessory.field}>
+                        <TableCell className="font-medium">{accessory.name}</TableCell>
+                        <TableCell className="text-center">
+                          €{unitPrice.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Input
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={quantity || 0}
+                            onChange={(e) => {
+                              const newQuantity = parseInt(e.target.value) || 0;
+                              handleInputChange(accessory.field, newQuantity.toString());
+                            }}
+                            className="w-20 text-center"
+                          />
+                        </TableCell>
+                        <TableCell className="text-center font-semibold">
+                          €{total.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {/* Calcolo Costi Espositori */}
       <Card>
