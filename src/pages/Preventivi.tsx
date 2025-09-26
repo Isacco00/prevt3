@@ -2139,7 +2139,7 @@ const Preventivi = () => {
                    const costoMontaggio = formData.servizio_montaggio_smontaggio ? (preventivoServizi?.totale_costo_montaggio || 0) + (preventivoServizi?.totale_costo_smontaggio || 0) : 0;
                    const costoCertificazioni = formData.servizio_certificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
                    const costoIstruzioni = formData.servizio_istruzioni_assistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
-                   return costoMontaggio + costoCertificazioni + costoIstruzioni;
+                   return costoMontaggio
                  })()}
                  
                  altriBeniServiziTotal={(altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0)}
