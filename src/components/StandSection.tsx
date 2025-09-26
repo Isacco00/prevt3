@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Calculator } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Calculator, ChevronDown, ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -65,6 +66,9 @@ export function StandSection({
   const {
     user
   } = useAuth();
+
+  // State per controllare la sezione accessori collassabile
+  const [accessoriOpen, setAccessoriOpen] = useState(true);
 
   // Fetch accessori stand from database
   const {
@@ -276,45 +280,52 @@ export function StandSection({
       </div>
 
       {/* Accessori Stand */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Calculator className="h-5 w-5" />
-          <h4 className="text-md font-semibold">Accessori Stand</h4>
+      <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
+        <div className="space-y-4">
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent rounded-lg transition-colors">
+            <div className="flex items-center gap-2">
+              <Calculator className="h-5 w-5" />
+              <h4 className="text-md font-semibold">Accessori Stand</h4>
+            </div>
+            {accessoriOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </CollapsibleTrigger>
+          
+          <CollapsibleContent className="space-y-4">
+            {isLoading ? <div className="text-center py-4">Caricamento accessori...</div> : <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Accessorio</TableHead>
+                        <TableHead className="text-center">Costo unitario</TableHead>
+                        <TableHead className="text-center w-24">Quantità</TableHead>
+                        <TableHead className="text-right">Costo totale</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {accessoriStand.map(accessorio => {
+                    const quantity = formData.accessori_stand?.[accessorio.id] || 0;
+                    const totalCost = quantity * accessorio.costo_unitario;
+                    return <TableRow key={accessorio.id}>
+                            <TableCell className="font-medium py-1">{accessorio.nome}</TableCell>
+                            <TableCell className="text-center py-1">
+                              € {accessorio.costo_unitario.toString().replace('.', ',')}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Input type="number" min="0" max="99" value={quantity} onChange={e => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)} className="w-14 text-center" />
+                            </TableCell>
+                            <TableCell className="text-right font-medium">
+                              € {totalCost.toFixed(2).replace('.', ',')}
+                            </TableCell>
+                          </TableRow>;
+                  })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>}
+          </CollapsibleContent>
         </div>
-        
-        {isLoading ? <div className="text-center py-4">Caricamento accessori...</div> : <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Accessorio</TableHead>
-                    <TableHead className="text-center">Costo unitario</TableHead>
-                    <TableHead className="text-center w-24">Quantità</TableHead>
-                    <TableHead className="text-right">Costo totale</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {accessoriStand.map(accessorio => {
-                const quantity = formData.accessori_stand?.[accessorio.id] || 0;
-                const totalCost = quantity * accessorio.costo_unitario;
-                return <TableRow key={accessorio.id}>
-                        <TableCell className="font-medium py-1">{accessorio.nome}</TableCell>
-                        <TableCell className="text-center py-1">
-                          € {accessorio.costo_unitario.toString().replace('.', ',')}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Input type="number" min="0" max="99" value={quantity} onChange={e => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)} className="w-14 text-center" />
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          € {totalCost.toFixed(2).replace('.', ',')}
-                        </TableCell>
-                      </TableRow>;
-              })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>}
-      </div>
+      </Collapsible>
 
       {/* Calcolo Costi Stand */}
       <div className="space-y-4">
