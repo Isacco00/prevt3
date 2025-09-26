@@ -19,7 +19,7 @@ interface StandSectionProps {
     bifaccialita: string;
     retroilluminazione: string;
     premontaggio: boolean;
-    extra_perc_complex: string;
+    extra_perc_complex: number;
     // Stand margins
     marginalita_struttura: number;
     marginalita_grafica: number;
@@ -443,10 +443,10 @@ export function StandSection({
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground my-px py-0">Extra % su Costo Struttura</div>
                 <div className="flex items-center gap-1">
-                  <Input type="number" min="0" max="200" step="1" value={formData.extra_perc_complex || 0} onChange={e => setFormData({
-                  ...formData,
-                  extra_perc_complex: parseFloat(e.target.value) || 0
-                })} className="w-16 h-6 text-xs text-center" />
+                   <Input type="number" min="0" max="200" step="1" value={formData.extra_perc_complex || 0} onChange={e => setFormData({
+                   ...formData,
+                   extra_perc_complex: parseFloat(e.target.value) || 0
+                 })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
                </div>

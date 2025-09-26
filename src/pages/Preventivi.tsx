@@ -237,7 +237,7 @@ const Preventivi = () => {
     servizio_certificazioni: false,
     servizio_istruzioni_assistenza: false,
     // Complexity fields
-    extra_perc_complex: '',
+    extra_perc_complex: 0,
     costo_retroilluminazione: 0
   });
 
@@ -634,7 +634,7 @@ const Preventivi = () => {
     const retroilluminazione = costoRetroilluminazioneParam ? parseFloat(formData.retroilluminazione || '0') * (costoRetroilluminazioneParam.costo_al_metro || 0) : 0;
 
     // Extra per struttura complessa: percentuale sui costi di struttura a terra
-    const extraPercComplex = parseFloat(formData.extra_perc_complex || '0') || 0;
+    const extraPercComplex = formData.extra_perc_complex || 0;
     const extra_stand_complesso = struttura_terra * (extraPercComplex / 100);
 
     // Calcolo costi accessori
@@ -1394,8 +1394,12 @@ const Preventivi = () => {
         servizio_montaggio_smontaggio: data.servizio_montaggio_smontaggio || false,
         servizio_certificazioni: data.servizio_certificazioni || false,
         servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
+        // Extra stand complesso
+        extra_perc_complex: parseFloat(data.extra_perc_complex || '0') || 0,
+        extra_stand_complesso: extraStandComplesso,
         // Total preventivo calculation
-        totale_preventivo: totale_preventivo
+        totale_preventivo: totale_preventivo,
+        totale_costi: costo_totale
       }).eq('id', editingPreventivo.id);
       if (error) throw error;
     },
@@ -1546,7 +1550,7 @@ const Preventivi = () => {
       servizio_certificazioni: false,
       servizio_istruzioni_assistenza: false,
       // Complexity fields
-      extra_perc_complex: '',
+      extra_perc_complex: 0,
       costo_retroilluminazione: 0,
       // Stand margins
       marginalita_struttura: 50,
@@ -1680,7 +1684,7 @@ const Preventivi = () => {
       servizio_certificazioni: (preventivo as any).servizio_certificazioni || false,
       servizio_istruzioni_assistenza: (preventivo as any).servizio_istruzioni_assistenza || false,
       // Complexity fields
-      extra_perc_complex: (preventivo as any).extra_perc_complex?.toString() || '',
+      extra_perc_complex: (preventivo as any).extra_perc_complex || 0,
       costo_retroilluminazione: (preventivo as any).costo_retroilluminazione || 0,
       // Stand margins
       marginalita_struttura: (preventivo as any).marginalita_struttura,
