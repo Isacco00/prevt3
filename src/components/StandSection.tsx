@@ -488,7 +488,7 @@ export function StandSection({ formData, setFormData, physicalElements, costs }:
                
               <div className="text-lg font-bold">€{costs.extra_stand_complesso.toFixed(2)}</div>
             </div>
-            <div className="text-xs text-muted-foreground">Ricarico</div>
+            <div className="text-xs text-muted-foreground">Extra % su Costo Struttura</div>
             <div className="p-3 bg-gray-50 rounded-md border border-gray-200">
               <span className="text-lg font-bold text-primary">€{costs.extra_stand_complesso.toFixed(2)}</span>
             </div>
