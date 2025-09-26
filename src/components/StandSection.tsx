@@ -282,7 +282,7 @@ export function StandSection({
       {/* Accessori Stand */}
       <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
         <div className="space-y-4">
-          <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent rounded-lg transition-colors">
+          <CollapsibleTrigger className="flex items-center justify-between w-full p-2 hover:bg-accent rounded-lg transition-colors mx-0 px-0 py-[13px]">
             <div className="flex items-center gap-2">
               <Calculator className="h-5 w-5" />
               <h4 className="text-md font-semibold">Accessori Stand</h4>
@@ -455,9 +455,9 @@ export function StandSection({
                 <div className="text-xs text-muted-foreground my-px py-0">Extra % su Costo Struttura</div>
                 <div className="flex items-center gap-1">
                    <Input type="number" min="0" max="200" step="1" value={formData.extra_perc_complex || 0} onChange={e => setFormData({
-                   ...formData,
-                   extra_perc_complex: parseFloat(e.target.value) || 0
-                 })} className="w-16 h-6 text-xs text-center" />
+                  ...formData,
+                  extra_perc_complex: parseFloat(e.target.value) || 0
+                })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
                </div>
