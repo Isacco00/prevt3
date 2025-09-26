@@ -437,7 +437,7 @@ export function StandSection({
           {/* Extra Stand Complesso */}
           <Card className="p-4">
             <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium py-0">Extra Stand Complesso</div>           
+              <div className="text-sm font-medium">Extra Stand Complesso</div>           
             </div>
             <div className="flex justify-between items-end">
               <div className="flex flex-col gap-1">
