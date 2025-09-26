@@ -439,14 +439,13 @@ export function StandSection({
             <div className="flex justify-between items-start mb-3">
               <div className="text-sm font-medium">Extra Stand Complesso</div>           
             </div>
-
             <div className="flex justify-between items-end">
               <div className="flex flex-col gap-1">
                 <div className="text-xs text-muted-foreground py-[4px]">Extra % su Costo Struttura</div>
                 <div className="flex items-center gap-1">
-                  <Input type="number" min="0" max="200" step="1" value={formData.marginalita_premontaggio || 0} onChange={e => setFormData({
+                  <Input type="number" min="0" max="200" step="1" value={formData.extra_perc_complex || 0} onChange={e => setFormData({
                   ...formData,
-                  marginalita_premontaggio: parseFloat(e.target.value) || 0
+                  extra_perc_complex: parseFloat(e.target.value) || 0
                 })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
                 </div>
