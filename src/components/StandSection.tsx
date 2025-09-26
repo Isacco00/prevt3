@@ -449,9 +449,8 @@ export function StandSection({
                   marginalita_premontaggio: parseFloat(e.target.value) || 0
                 })} className="w-16 h-6 text-xs text-center" />
                   <span className="text-xs">%</span>
-                </div>
+            </div>
             
-          </div>
           </Card>
         </div>
 
