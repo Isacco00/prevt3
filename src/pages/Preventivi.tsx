@@ -2141,6 +2141,7 @@ const Preventivi = () => {
                    const costoIstruzioni = formData.servizio_istruzioni_assistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
                    return costoMontaggio + costoCertificazioni + costoIstruzioni;
                  })()}
+                 
                  altriBeniServiziTotal={(altriBeniServizi || []).reduce((sum, item) => sum + (item.totale || 0), 0)}
                  altriBeniServiziCost={(altriBeniServizi || []).reduce((sum, item) => sum + ((item.costo_unitario || 0) * (item.quantita || 0)), 0)}
                />
