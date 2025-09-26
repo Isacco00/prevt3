@@ -87,6 +87,7 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   altriBeniServiziTotal,
   altriBeniServiziCost
 }) => {
+ 
   // Calculate preventivo totals (costs + margins)
   const calculatePreventivoWithMargin = (cost: number, margin: number) => {
     return cost * (1 + margin / 100);
@@ -114,7 +115,7 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
 
   // Extra per struttura complessa (only for stands)
   const costoExtraComplessa = standCosts.extra_stand_complesso;
-  const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, standMargins.marginalita_struttura);
+  // const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, standMargins.marginalita_struttura);
 
   // Accessori totals
   const costoAccessori = standCosts.costi_accessori + (deskCosts.accessori || 0) + espositoriCosts.accessori_espositori;
@@ -131,9 +132,11 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
     calculatePreventivoWithMargin(deskCosts.premontaggio || 0, deskMargins.marginalita_premontaggio_desk) +
     calculatePreventivoWithMargin(espositoriCosts.premontaggio_espositori, espositoriMargins.marginalita_premontaggio_espositori);
 
+
   // Final totals
   const costoTotale = costoStruttura + costoGrafiche + costoRetroilluminazione + costoAccessori + 
                       costoPremontaggi + servicesCost + altriBeniServiziCost;
+  
   const preventivoTotale = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione +
                            costoExtraComplessa + preventivoAccessori + preventivoPremontaggi + 
                            servicesTotal + altriBeniServiziTotal;
