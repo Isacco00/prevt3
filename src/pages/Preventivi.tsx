@@ -954,6 +954,18 @@ const Preventivi = () => {
       // Calculate final totale_preventivo (per nuovo preventivo, servizi e altri beni/servizi sono 0)
       const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
         preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi;
+        
+      // Calculate totale_costi for new preventivo (without margins)
+      const totaleCostiBase = struttura_terra + grafica_cordino + premontaggio;
+      const totaleCostiStorage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
+      const totaleCostiDesk = costo_struttura_desk + costo_grafica_desk + costo_premontaggio_desk;
+      const totaleCostiEspositori = costo_struttura_espositori + costo_grafica_espositori + costo_premontaggio_espositori;
+      const totaleCostiRetroilluminazione = costoRetroilluminazione;
+      const totaleCostiExtraComplesso = extraStandComplesso;
+      
+      const totale_costi = totaleCostiBase + totaleCostiStorage + totaleCostiDesk + totaleCostiEspositori + 
+        totaleCostiRetroilluminazione + totaleCostiExtraComplesso;
+        
       const {
         error
       } = await supabase.from('preventivi').insert({
@@ -1061,7 +1073,8 @@ const Preventivi = () => {
         servizio_certificazioni: data.servizio_certificazioni || false,
         servizio_istruzioni_assistenza: data.servizio_istruzioni_assistenza || false,
         // Total preventivo calculation
-        totale_preventivo: totale_preventivo
+        totale_preventivo: totale_preventivo,
+        totale_costi: totale_costi
       });
       if (error) throw error;
     },
@@ -1291,6 +1304,30 @@ const Preventivi = () => {
       const totale_preventivo = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione + 
         preventivoExtraComplessa + preventivoAccessori + preventivoPremontaggi + servicesTotal + altriBeniServiziTotal;
       
+      // Calculate totale_costi (sum of all costs WITHOUT margins)
+      const totaleCostiBase = struttura_terra + grafica_cordino + premontaggio;
+      const totaleCostiStorage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
+      const totaleCostiDesk = costo_struttura_desk + costo_grafica_desk + costo_premontaggio_desk;
+      const totaleCostiEspositori = costo_struttura_espositori + costo_grafica_espositori + costo_premontaggio_espositori;
+      const totaleCostiAccessori = costiAccessoriStand + costiAccessoriDesk + costiAccessoriEspositori;
+      const totaleCostiRetroilluminazione = costoRetroilluminazione;
+      const totaleCostiExtraComplesso = extraStandComplesso;
+      
+      // Services costs without margin
+      const servicesTotalCosti = serviziData.data ? 
+        ((serviziData.data.totale_costo_montaggio || 0) + (serviziData.data.totale_costo_smontaggio || 0)) : 0;
+      
+      // Altri beni/servizi costs without margin
+      const altriBeniServiziTotalCosti = altriBeniData.data ? 
+        altriBeniData.data.reduce((sum: number, item: any) => {
+          const costoUnitario = item.costo_unitario || 0;
+          const quantita = item.quantita || 0;
+          return sum + (costoUnitario * quantita);
+        }, 0) : 0;
+      
+      const totale_costi = totaleCostiBase + totaleCostiStorage + totaleCostiDesk + totaleCostiEspositori + 
+        totaleCostiAccessori + totaleCostiRetroilluminazione + totaleCostiExtraComplesso + 
+        servicesTotalCosti + altriBeniServiziTotalCosti;
       
       const {
         error
@@ -1402,7 +1439,7 @@ const Preventivi = () => {
         extra_stand_complesso: extraStandComplesso,
         // Total preventivo calculation
         totale_preventivo: totale_preventivo,
-        totale_costi: costo_totale
+        totale_costi: totale_costi
       }).eq('id', editingPreventivo.id);
       if (error) throw error;
     },
