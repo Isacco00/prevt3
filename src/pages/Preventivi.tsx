@@ -718,6 +718,7 @@ const Preventivi = () => {
         struttura_terra: struttura_terra_desk,
         grafica_cordino: grafica_cordino_desk,
         premontaggio: premontaggio_desk,
+        accessori: costi_accessori_desk,
         totale: totale_desk
       },
       totale
