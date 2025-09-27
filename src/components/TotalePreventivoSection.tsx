@@ -118,7 +118,7 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   // const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, standMargins.marginalita_struttura);
 
   // Accessori totals
-  const costoAccessori = standCosts.costi_accessori + (deskCosts.accessori || 0) + espositoriCosts.accessori_espositori;
+  const costoAccessori = standCosts.costi_accessori + deskCosts.accessori + espositoriCosts.accessori_espositori;
   const preventivoAccessori = 
     calculatePreventivoWithMargin(standCosts.costi_accessori, standMargins.marginalita_accessori) +
     calculatePreventivoWithMargin(deskCosts.accessori || 0, deskMargins.marginalita_accessori_desk) +
