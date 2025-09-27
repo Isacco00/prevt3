@@ -118,18 +118,18 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   // const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extra_stand_complesso, standMargins.marginalita_struttura);
 
   // Accessori totals
-  const costoAccessori = standCosts.costi_accessori + (deskCosts.accessori || 0) + espositoriCosts.accessori_espositori;
+  const costoAccessori = standCosts.costi_accessori + (deskCosts.accessori ?? 0) + espositoriCosts.accessori_espositori;
   const preventivoAccessori = 
     calculatePreventivoWithMargin(standCosts.costi_accessori, standMargins.marginalita_accessori) +
-    calculatePreventivoWithMargin(deskCosts.accessori || 0, deskMargins.marginalita_accessori_desk) +
+    calculatePreventivoWithMargin(deskCosts.accessori ?? 0, deskMargins.marginalita_accessori_desk) +
     calculatePreventivoWithMargin(espositoriCosts.accessori_espositori, espositoriMargins.marginalita_accessori_espositori);
 
   // Premontaggi totals
-  const costoPremontaggi = standCosts.premontaggio + storageCosts.costo_premontaggio_storage + (deskCosts.premontaggio || 0) + espositoriCosts.premontaggio_espositori;
+  const costoPremontaggi = standCosts.premontaggio + storageCosts.costo_premontaggio_storage + (deskCosts.premontaggio ?? 0) + espositoriCosts.premontaggio_espositori;
   const preventivoPremontaggi = 
     calculatePreventivoWithMargin(standCosts.premontaggio, standMargins.marginalita_premontaggio) +
     calculatePreventivoWithMargin(storageCosts.costo_premontaggio_storage, storageMargins.marginalita_premontaggio_storage) +
-    calculatePreventivoWithMargin(deskCosts.premontaggio || 0, deskMargins.marginalita_premontaggio_desk) +
+    calculatePreventivoWithMargin(deskCosts.premontaggio ?? 0, deskMargins.marginalita_premontaggio_desk) +
     calculatePreventivoWithMargin(espositoriCosts.premontaggio_espositori, espositoriMargins.marginalita_premontaggio_espositori);
 
 
