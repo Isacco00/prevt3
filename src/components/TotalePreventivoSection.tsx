@@ -1,6 +1,6 @@
 import React from 'react';
+import { Calculator } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Calculator } from 'lucide-react';
 
 interface TotalePreventivoSectionProps {
   // Stand costs and margins
@@ -71,6 +71,7 @@ interface TotalePreventivoSectionProps {
   // Altri Beni/Servizi
   altriBeniServiziTotal: number;
   altriBeniServiziCost: number;
+  onTotalsCalculated?: (totals: { totale_preventivo: number; totale_costi: number }) => void;
 }
 
 export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = ({
@@ -85,7 +86,8 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   servicesTotal,
   servicesCost,
   altriBeniServiziTotal,
-  altriBeniServiziCost
+  altriBeniServiziCost,
+  onTotalsCalculated
 }) => {
  
   // Calculate preventivo totals (costs + margins)
@@ -143,6 +145,16 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   
   // Marginalità media
   const marginalitaMedia = costoTotale > 0 ? ((preventivoTotale - costoTotale) / costoTotale) * 100 : 0;
+
+  // Expose calculated values to parent component
+  React.useEffect(() => {
+    if (onTotalsCalculated) {
+      onTotalsCalculated({
+        totale_preventivo: parseFloat(preventivoTotale.toFixed(2)),
+        totale_costi: parseFloat(costoTotale.toFixed(2))
+      });
+    }
+  }, [preventivoTotale, costoTotale, onTotalsCalculated]);
 
   return (
     <div className="space-y-6">
