@@ -161,8 +161,8 @@ const Index = () => {
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
+      <div className="grid gap-4 md:grid-cols-2 items-stretch">
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>Ultimi Preventivi</CardTitle>
             <CardDescription>
@@ -195,7 +195,7 @@ const Index = () => {
           </CardContent>
         </Card>
         
-        <Card className="col-span-3">
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>Attività Recente</CardTitle>
             <CardDescription>
