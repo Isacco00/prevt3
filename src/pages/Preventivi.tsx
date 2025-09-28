@@ -804,6 +804,136 @@ const Preventivi = () => {
   const espositorePhysicalElements = calculateExpositorePhysicalElements();
   const costs = calculateCosts();
 
+  // Effect per ricalcolare i costi quando si apre un preventivo esistente
+  React.useEffect(() => {
+    if (!editingPreventivo || !parametriCostiUnitari.length || !accessoriEspositori.length) return;
+
+    // Calcola costi Storage
+    const calculateStorageCostsOnLoad = () => {
+      const larg = parseFloat(formData.larg_storage) || 0;
+      const prof = parseFloat(formData.prof_storage) || 0;
+      const alt = parseFloat(formData.alt_storage) || 2.5;
+      const layout = formData.layout_storage || '0';
+      const distribuzione = parseInt(formData.distribuzione) || 0;
+
+      if (!larg || !prof || !distribuzione) {
+        return {
+          costo_struttura_storage: 0,
+          costo_grafica_storage: 0,
+          costo_premontaggio_storage: 0,
+          costo_totale_storage: 0
+        };
+      }
+
+      // Calcolo superficie di stampa
+      let superficie_stampa = 0;
+      if (layout === "0") {
+        superficie_stampa = (2 * larg + 2 * prof) * alt;
+      } else if (layout === "1") {
+        superficie_stampa = (2 * larg + 2 * prof) * alt + 2;
+      } else if (layout === "2") {
+        superficie_stampa = (larg + prof) * alt + 2;
+      }
+
+      // Calcolo sviluppo lineare
+      let sviluppo_lineare = 0;
+      if (layout === "0") {
+        sviluppo_lineare = larg + prof;
+      } else if (layout === "1") {
+        sviluppo_lineare = 2 * larg + 2 * prof;
+      } else if (layout === "2") {
+        sviluppo_lineare = larg + prof + 1;
+      }
+
+      const numero_pezzi = sviluppo_lineare * distribuzione;
+
+      // Trova i parametri di costo
+      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+      const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === alt.toString());
+
+      const costo_struttura_storage = costoAltezzaParam ? sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+      const costo_grafica_storage = costoStampaParam ? superficie_stampa * (costoStampaParam.valore || 0) : 0;
+      const costo_premontaggio_storage = costoPremontaggio ? numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+      const costo_totale_storage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
+
+      return {
+        costo_struttura_storage,
+        costo_grafica_storage,
+        costo_premontaggio_storage,
+        costo_totale_storage
+      };
+    };
+
+    // Calcola costi Espositori
+    const calculateEspositoriCostsOnLoad = () => {
+      const qta30 = parseInt(formData.qta_tipo30?.toString() || '0') || 0;
+      const qta50 = parseInt(formData.qta_tipo50?.toString() || '0') || 0;
+      const qta100 = parseInt(formData.qta_tipo100?.toString() || '0') || 0;
+
+      if (!qta30 && !qta50 && !qta100) {
+        return {
+          struttura_espositori: 0,
+          grafica_espositori: 0,
+          premontaggio_espositori: 0,
+          accessori_espositori: 0,
+          costo_totale_espositori: 0
+        };
+      }
+
+      // Calcolo elementi fisici
+      const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
+      const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+
+      // Trova parametri di costo per struttura
+      const costoStruttura30 = layoutCostsEspositori?.find(c => c.layout_espositore === '30x30x100h');
+      const costoStruttura50 = layoutCostsEspositori?.find(c => c.layout_espositore === '50x50x100h');
+      const costoStruttura100 = layoutCostsEspositori?.find(c => c.layout_espositore === '100x50x100h');
+
+      const struttura_espositori = (qta30 * (costoStruttura30?.costo_unitario || 0)) + 
+                                   (qta50 * (costoStruttura50?.costo_unitario || 0)) + 
+                                   (qta100 * (costoStruttura100?.costo_unitario || 0));
+
+      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+      const grafica_espositori = costoStampaParam ? superficie_stampa_espositori * (costoStampaParam.valore || 0) : 0;
+
+      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+      const premontaggio_espositori = costoPremontaggio ? numero_pezzi_espositori * (costoPremontaggio.valore || 0) : 0;
+
+      // Calcolo accessori espositori
+      const accessori_espositori = 
+        (parseInt(formData.ripiano_30x30?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Ripiano 30x30')?.costo_unitario || 0)) +
+        (parseInt(formData.ripiano_50x50?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Ripiano 50x50')?.costo_unitario || 0)) +
+        (parseInt(formData.ripiano_100x50?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Ripiano 100x50')?.costo_unitario || 0)) +
+        (parseInt(formData.teca_plexiglass_30x30x30?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Teca plexiglass 30x30x30')?.costo_unitario || 0)) +
+        (parseInt(formData.teca_plexiglass_50x50x50?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Teca plexiglass 50x50x50')?.costo_unitario || 0)) +
+        (parseInt(formData.teca_plexiglass_100x50x30?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Teca plexiglass 100x50x30')?.costo_unitario || 0)) +
+        (parseInt(formData.retroilluminazione_30x30x100h?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Retroilluminazione 30x30x100h')?.costo_unitario || 0)) +
+        (parseInt(formData.retroilluminazione_50x50x100h?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Retroilluminazione 50x50x100h')?.costo_unitario || 0)) +
+        (parseInt(formData.retroilluminazione_100x50x100h?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Retroilluminazione 100x50x100h')?.costo_unitario || 0)) +
+        (parseInt(formData.borsa_espositori?.toString() || '0') * (accessoriEspositori.find(a => a.nome === 'Borsa')?.costo_unitario || 0));
+
+      const costo_totale_espositori = struttura_espositori + grafica_espositori + premontaggio_espositori + accessori_espositori;
+
+      return {
+        struttura_espositori,
+        grafica_espositori,
+        premontaggio_espositori,
+        accessori_espositori,
+        costo_totale_espositori
+      };
+    };
+
+    // Aggiorna i costi solo se abbiamo tutti i dati necessari
+    if (parametri.length > 0) {
+      const storageCosts = calculateStorageCostsOnLoad();
+      const espositoriCosts = calculateEspositoriCostsOnLoad();
+      
+      setStorageCostsLifted(storageCosts);
+      setExpositoreCostsLifted(espositoriCosts);
+    }
+  }, [editingPreventivo, formData, parametriCostiUnitari, parametri, accessoriEspositori, layoutCostsEspositori]);
+
   // Mutation per creare un nuovo preventivo
   const createPreventivoMutation = useMutation({
     mutationFn: async (data: any) => {
