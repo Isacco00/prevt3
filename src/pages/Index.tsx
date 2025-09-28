@@ -57,11 +57,11 @@ const Index = () => {
       if (!user) return 0;
       const { data } = await supabase
         .from('preventivi')
-        .select('totale')
+        .select('totale_preventivo')
         .eq('user_id', user.id)
-        .not('totale', 'is', null);
+        .not('totale_preventivo', 'is', null);
       
-      return data?.reduce((sum, preventivo) => sum + (preventivo.totale || 0), 0) || 0;
+      return data?.reduce((sum, preventivo) => sum + (preventivo.totale_preventivo || 0), 0) || 0;
     },
     enabled: !!user,
   });
