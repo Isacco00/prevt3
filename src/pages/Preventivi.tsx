@@ -2254,7 +2254,7 @@ const Preventivi = () => {
                     </TableCell>
                      <TableCell>
                        <div className="font-medium">
-                         €{preventivo.totale_preventivo?.toLocaleString('it-IT') || '0'}
+                         €{preventivo.totale_preventivo?.toLocaleString('it-IT',{minimumFractionDigits: 2, maximumFractionDigits: 2}) || '0'}
                        </div>
                      </TableCell>
                     <TableCell>
