@@ -1,8 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart3, Users, FileText, TrendingUp } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 const Index = () => {
   const { user } = useAuth();
@@ -86,6 +88,42 @@ const Index = () => {
         .limit(5);
       
       return preventivi || [];
+    },
+    enabled: !!user,
+  });
+
+  // Query per il valore preventivi per status
+  const { data: valorePerStatus = [] } = useQuery({
+    queryKey: ['preventivi-valore-status'],
+    queryFn: async () => {
+      if (!user) return [];
+      
+      const { data } = await supabase
+        .from('preventivi')
+        .select('status, totale_preventivo')
+        .eq('user_id', user.id)
+        .not('totale_preventivo', 'is', null);
+      
+      if (!data) return [];
+      
+      // Group by status and sum totale_preventivo
+      const grouped = data.reduce((acc, preventivo) => {
+        const status = preventivo.status || 'bozza';
+        const value = preventivo.totale_preventivo || 0;
+        
+        if (!acc[status]) {
+          acc[status] = 0;
+        }
+        acc[status] += value;
+        
+        return acc;
+      }, {} as Record<string, number>);
+      
+      // Convert to array format for chart
+      return Object.entries(grouped).map(([status, valore]) => ({
+        status: status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' '),
+        valore
+      }));
     },
     enabled: !!user,
   });
@@ -197,15 +235,61 @@ const Index = () => {
         
         <Card className="h-full">
           <CardHeader>
-            <CardTitle>Attività Recente</CardTitle>
+            <CardTitle>Valore Preventivi per Status</CardTitle>
             <CardDescription>
-              Le ultime attività del sistema
+              Distribuzione del valore preventivi per stato
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-6 text-muted-foreground">
-              Nessuna attività registrata
-            </div>
+            {valorePerStatus.length === 0 ? (
+              <div className="text-center py-6 text-muted-foreground">
+                Nessun preventivo ancora creato
+              </div>
+            ) : (
+              <ChartContainer
+                config={{
+                  valore: {
+                    label: "Valore",
+                    color: "hsl(var(--chart-1))",
+                  },
+                }}
+                className="h-[300px]"
+              >
+                <BarChart
+                  accessibilityLayer
+                  data={valorePerStatus}
+                  layout="horizontal"
+                  margin={{
+                    left: 80,
+                    right: 20,
+                    top: 20,
+                    bottom: 20,
+                  }}
+                >
+                  <XAxis type="number" />
+                  <YAxis
+                    dataKey="status"
+                    type="category"
+                    tickLine={false}
+                    tickMargin={10}
+                    axisLine={false}
+                    width={80}
+                  />
+                  <ChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent 
+                      indicator="line"
+                      formatter={(value) => [`€${Number(value).toLocaleString('it-IT', { maximumFractionDigits: 2 })}`, "Valore"]}
+                    />}
+                  />
+                  <Bar
+                    dataKey="valore"
+                    fill="var(--color-valore)"
+                    radius={[0, 4, 4, 0]}
+                  />
+                </BarChart>
+              </ChartContainer>
+            )}
           </CardContent>
         </Card>
       </div>
