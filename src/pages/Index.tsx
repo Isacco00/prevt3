@@ -223,7 +223,7 @@ const Index = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium">€{(preventivo.totale_preventivo || 0).toLocaleString('it-IT', { maximumFractionDigits: 2 })}</p>
+                      <p className="text-sm font-medium">€{(preventivo.totale_preventivo || 0).toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                       <p className="text-xs text-muted-foreground capitalize">{preventivo.status}</p>
                     </div>
                   </div>
