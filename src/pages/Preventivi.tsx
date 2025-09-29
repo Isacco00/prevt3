@@ -596,109 +596,134 @@ const Preventivi = () => {
     enabled: !!user
   });
 
-  // UseEffect per calcolare automaticamente i costi quando si apre un preventivo esistente
-  useEffect(() => {
-    if (!editingPreventivo || !formData.numero_preventivo) return;
-    if (!parametri.length || !parametriCostiUnitari.length || !accessoriStand.length) return;
-    if (!layoutCostsEspositori.length || !accessoriEspositori.length) return;
-
-    // Calcola i costi storage
-    if (formData.larg_storage && formData.prof_storage && formData.alt_storage) {
-      const larg = parseFloat(formData.larg_storage);
-      const prof = parseFloat(formData.prof_storage);
-      const alt = parseFloat(formData.alt_storage);
-      const layout = formData.layout_storage;
-      const distribuzione = parseInt(formData.distribuzione || '0');
-
-      // Calcolo superficie di stampa storage
-      let superficie_stampa = 0;
-      switch (layout) {
-        case '0':
-          superficie_stampa = (2 * larg + 2 * prof) * alt;
-          break;
-        case '1':
-          superficie_stampa = (2 * larg + 2 * prof) * alt + 2;
-          break;
-        case '2':
-          superficie_stampa = (larg + prof) * alt + 2;
-          break;
-      }
-
-      // Calcolo sviluppo lineare storage
-      let sviluppo_lineare = 0;
-      switch (layout) {
-        case '0':
-          sviluppo_lineare = larg + prof;
-          break;
-        case '1':
-          sviluppo_lineare = 2 * larg + 2 * prof;
-          break;
-        case '2':
-          sviluppo_lineare = larg + prof + 1;
-          break;
-      }
-
-      // Calcolo numero pezzi storage
-      const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
-      const numero_pezzi = sviluppo_lineare * fattoreDistribuzione;
-
-      // Parametri necessari
-      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
-      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
-      const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
-      
-      // Trova il costo della porta
-      const portaAccessorio = accessoriStand.find(acc => acc.nome?.toLowerCase().includes('porta'));
-      const costoPorta = portaAccessorio ? portaAccessorio.costo_unitario : 0;
-      const numeroPorte = parseInt(formData.numero_porte || '0') || 0;
-
-      // Calcolo costi
-      const costoStrutturaBase = costoAltezzaParam ? sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
-      const costoPorte = numeroPorte * costoPorta;
-      const costo_struttura_storage = costoStrutturaBase + costoPorte;
-
-      const costo_grafica_storage = costoStampaParam ? superficie_stampa * (costoStampaParam.valore || 0) : 0;
-      const costo_premontaggio_storage = costoPremontaggio ? numero_pezzi * (costoPremontaggio.valore || 0) : 0;
-      const costo_totale_storage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
-
-      setStorageCostsLifted({
-        costo_struttura_storage,
-        costo_grafica_storage,
-        costo_premontaggio_storage,
-        costo_totale_storage
-      });
+  // Calcolo automatico dei costi storage (sempre aggiornato)
+  const calculatedStorageCosts = React.useMemo(() => {
+    if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !parametri.length || !parametriCostiUnitari.length || !accessoriStand.length) {
+      return {
+        costo_struttura_storage: 0,
+        costo_grafica_storage: 0,
+        costo_premontaggio_storage: 0,
+        costo_totale_storage: 0
+      };
     }
 
-    // Calcola i costi espositori
+    const larg = parseFloat(formData.larg_storage);
+    const prof = parseFloat(formData.prof_storage);
+    const alt = parseFloat(formData.alt_storage);
+    const layout = formData.layout_storage;
+    const distribuzione = parseInt(formData.distribuzione || '0');
+
+    // Calcolo superficie di stampa storage
+    let superficie_stampa = 0;
+    switch (layout) {
+      case '0':
+        superficie_stampa = (2 * larg + 2 * prof) * alt;
+        break;
+      case '1':
+        superficie_stampa = (2 * larg + 2 * prof) * alt + 2;
+        break;
+      case '2':
+        superficie_stampa = (larg + prof) * alt + 2;
+        break;
+    }
+
+    // Calcolo sviluppo lineare storage
+    let sviluppo_lineare = 0;
+    switch (layout) {
+      case '0':
+        sviluppo_lineare = larg + prof;
+        break;
+      case '1':
+        sviluppo_lineare = 2 * larg + 2 * prof;
+        break;
+      case '2':
+        sviluppo_lineare = larg + prof + 1;
+        break;
+    }
+
+    // Calcolo numero pezzi storage
+    const fattoreDistribuzione = profiliDistribuzioneMap[distribuzione] || 0;
+    const numero_pezzi = sviluppo_lineare * fattoreDistribuzione;
+
+    // Parametri necessari
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
+    
+    // Trova il costo della porta
+    const portaAccessorio = accessoriStand.find(acc => acc.nome?.toLowerCase().includes('porta'));
+    const costoPorta = portaAccessorio ? portaAccessorio.costo_unitario : 0;
+    const numeroPorte = parseInt(formData.numero_porte || '0') || 0;
+
+    // Calcolo costi
+    const costoStrutturaBase = costoAltezzaParam ? sviluppo_lineare * (costoAltezzaParam.valore || 0) : 0;
+    const costoPorte = numeroPorte * costoPorta;
+    const costo_struttura_storage = costoStrutturaBase + costoPorte;
+
+    const costo_grafica_storage = costoStampaParam ? superficie_stampa * (costoStampaParam.valore || 0) : 0;
+    const costo_premontaggio_storage = costoPremontaggio ? numero_pezzi * (costoPremontaggio.valore || 0) : 0;
+    const costo_totale_storage = costo_struttura_storage + costo_grafica_storage + costo_premontaggio_storage;
+
+    return {
+      costo_struttura_storage,
+      costo_grafica_storage,
+      costo_premontaggio_storage,
+      costo_totale_storage
+    };
+  }, [
+    formData.larg_storage,
+    formData.prof_storage,
+    formData.alt_storage,
+    formData.layout_storage,
+    formData.numero_porte,
+    formData.distribuzione,
+    parametri,
+    parametriCostiUnitari,
+    profiliDistribuzioneMap,
+    accessoriStand
+  ]);
+
+  // Calcolo automatico dei costi espositori (sempre aggiornato)
+  const calculatedEspositoriCosts = React.useMemo(() => {
     const qta30 = parseInt(formData.qta_tipo30?.toString() || '0') || 0;
     const qta50 = parseInt(formData.qta_tipo50?.toString() || '0') || 0;
     const qta100 = parseInt(formData.qta_tipo100?.toString() || '0') || 0;
 
-    if ((qta30 + qta50 + qta100) > 0) {
-      // Calcolo elementi fisici espositori
-      const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
-      const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
+    if ((qta30 + qta50 + qta100) === 0 || !parametriCostiUnitari.length || !layoutCostsEspositori.length) {
+      return {
+        struttura_espositori: 0,
+        grafica_espositori: 0,
+        premontaggio_espositori: 0,
+        accessori_espositori: 0,
+        costo_totale_espositori: 0
+      };
+    }
 
-      // Calcolo costi struttura
-      const layoutCost30 = layoutCostsEspositori.find(l => l.layout_espositore === '30');
-      const layoutCost50 = layoutCostsEspositori.find(l => l.layout_espositore === '50');
-      const layoutCost100 = layoutCostsEspositori.find(l => l.layout_espositore === '100');
-      
-      const struttura_espositori = 
-        qta30 * (layoutCost30?.costo_unitario || 0) +
-        qta50 * (layoutCost50?.costo_unitario || 0) +
-        qta100 * (layoutCost100?.costo_unitario || 0);
+    // Calcolo elementi fisici espositori
+    const numero_pezzi_espositori = qta30 * 12 + qta50 * 12 + qta100 * 12;
+    const superficie_stampa_espositori = qta30 * 1.2 + qta50 * 2 + qta100 * 3;
 
-      // Calcolo costi grafiche
-      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
-      const grafica_espositori = costoStampaParam ? superficie_stampa_espositori * (costoStampaParam.valore || 0) : 0;
+    // Calcolo costi struttura
+    const layoutCost30 = layoutCostsEspositori.find(l => l.layout_espositore === '30');
+    const layoutCost50 = layoutCostsEspositori.find(l => l.layout_espositore === '50');
+    const layoutCost100 = layoutCostsEspositori.find(l => l.layout_espositore === '100');
+    
+    const struttura_espositori = 
+      qta30 * (layoutCost30?.costo_unitario || 0) +
+      qta50 * (layoutCost50?.costo_unitario || 0) +
+      qta100 * (layoutCost100?.costo_unitario || 0);
 
-      // Calcolo costi premontaggio
-      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
-      const premontaggio_espositori = costoPremontaggio ? numero_pezzi_espositori * (costoPremontaggio.valore || 0) : 0;
+    // Calcolo costi grafiche
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+    const grafica_espositori = costoStampaParam ? superficie_stampa_espositori * (costoStampaParam.valore || 0) : 0;
 
-      // Calcolo costi accessori
-      let accessori_espositori = 0;
+    // Calcolo costi premontaggio
+    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+    const premontaggio_espositori = costoPremontaggio ? numero_pezzi_espositori * (costoPremontaggio.valore || 0) : 0;
+
+    // Calcolo costi accessori
+    let accessori_espositori = 0;
+    if (accessoriEspositori && accessoriEspositori.length > 0) {
       const getAccessoryPrice = (name: string): number => {
         const accessory = accessoriEspositori.find(item => item.nome === name);
         return accessory ? Number(accessory.costo_unitario) : 0;
@@ -714,26 +739,18 @@ const Preventivi = () => {
       accessori_espositori += (formData.retroilluminazione_50x50x100h || 0) * getAccessoryPrice('Retroilluminazione 50x50x100 H');
       accessori_espositori += (formData.retroilluminazione_100x50x100h || 0) * getAccessoryPrice('Retroilluminazione 100x50x100 H');
       accessori_espositori += (formData.borsa_espositori || 0) * getAccessoryPrice('Borsa');
-
-      const costo_totale_espositori = struttura_espositori + grafica_espositori + premontaggio_espositori + accessori_espositori;
-
-      setExpositoreCostsLifted({
-        struttura_espositori,
-        grafica_espositori,
-        premontaggio_espositori,
-        accessori_espositori,
-        costo_totale_espositori
-      });
     }
+
+    const costo_totale_espositori = struttura_espositori + grafica_espositori + premontaggio_espositori + accessori_espositori;
+
+    return {
+      struttura_espositori,
+      grafica_espositori,
+      premontaggio_espositori,
+      accessori_espositori,
+      costo_totale_espositori
+    };
   }, [
-    editingPreventivo,
-    formData.numero_preventivo,
-    formData.larg_storage,
-    formData.prof_storage,
-    formData.alt_storage,
-    formData.layout_storage,
-    formData.numero_porte,
-    formData.distribuzione,
     formData.qta_tipo30,
     formData.qta_tipo50,
     formData.qta_tipo100,
@@ -747,13 +764,14 @@ const Preventivi = () => {
     formData.retroilluminazione_50x50x100h,
     formData.retroilluminazione_100x50x100h,
     formData.borsa_espositori,
-    parametri,
     parametriCostiUnitari,
-    profiliDistribuzioneMap,
-    accessoriStand,
     layoutCostsEspositori,
     accessoriEspositori
   ]);
+
+  // Usa i costi calcolati o quelli lifted (dai componenti figli quando le sezioni sono aperte)
+  const finalStorageCosts = storageCostsLifted.costo_totale_storage > 0 ? storageCostsLifted : calculatedStorageCosts;
+  const finalEspositoriCosts = expositoreCostsLifted.costo_totale_espositori > 0 ? expositoreCostsLifted : calculatedEspositoriCosts;
 
   // Calcolo dei costi automatici
   const calculateCosts = () => {
@@ -2405,7 +2423,7 @@ const Preventivi = () => {
                     marginalita_accessori: formData.marginalita_accessori,
                     marginalita_premontaggio: formData.marginalita_premontaggio
                   }}
-                  storageCosts={storageCostsLifted}
+                  storageCosts={finalStorageCosts}
                   storageMargins={{
                     marginalita_struttura_storage: formData.marginalita_struttura_storage,
                     marginalita_grafica_storage: formData.marginalita_grafica_storage,
@@ -2418,7 +2436,7 @@ const Preventivi = () => {
                     marginalita_premontaggio_desk: formData.marginalita_premontaggio_desk,
                     marginalita_accessori_desk: formData.marginalita_accessori_desk
                   }}
-                  espositoriCosts={expositoreCostsLifted}
+                  espositoriCosts={finalEspositoriCosts}
                   espositoriMargins={{
                     marginalita_struttura_espositori: formData.marginalita_struttura_espositori,
                     marginalita_grafica_espositori: formData.marginalita_grafica_espositori,
