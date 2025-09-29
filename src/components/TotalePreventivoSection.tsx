@@ -100,7 +100,7 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   const preventivoStruttura = 
     calculatePreventivoWithMargin(standCosts.struttura_terra, standMargins.marginalita_struttura) +
     calculatePreventivoWithMargin(storageCosts.costo_struttura_storage, storageMargins.marginalita_struttura_storage) +
-    calculatePreventivoWithMargin(deskCosts.struttura_terra || 0, deskMargins.marginalita_struttura_desk) +
+    calculatePreventivoWithMargin(deskCosts.struttura_terra, deskMargins.marginalita_struttura_desk) +
     calculatePreventivoWithMargin(espositoriCosts.struttura_espositori, espositoriMargins.marginalita_struttura_espositori);
 
   // Grafiche totals
@@ -108,7 +108,7 @@ export const TotalePreventivoSection: React.FC<TotalePreventivoSectionProps> = (
   const preventivoGrafiche = 
     calculatePreventivoWithMargin(standCosts.grafica_cordino, standMargins.marginalita_grafica) +
     calculatePreventivoWithMargin(storageCosts.costo_grafica_storage, storageMargins.marginalita_grafica_storage) +
-    calculatePreventivoWithMargin(deskCosts.grafica_cordino || 0, deskMargins.marginalita_grafica_desk) +
+    calculatePreventivoWithMargin(deskCosts.grafica_cordino, deskMargins.marginalita_grafica_desk) +
     calculatePreventivoWithMargin(espositoriCosts.grafica_espositori, espositoriMargins.marginalita_grafica_espositori);
 
   // Retroilluminazione (only for stands)
