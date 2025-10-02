@@ -269,6 +269,15 @@ const Preventivi = () => {
     costo_totale_espositori: 0
   });
 
+  // Totali Desk "lifted" dal calcolo automatico
+  const [deskCostsLifted, setDeskCostsLifted] = useState({
+    struttura_terra: 0,
+    grafica_cordino: 0,
+    premontaggio: 0,
+    accessori: 0,
+    totale: 0
+  });
+
   // Totali calcolati da TotalePreventivoSection
   const [calculatedTotals, setCalculatedTotals] = useState({
     totale_preventivo: 0,
@@ -1101,15 +1110,98 @@ const Preventivi = () => {
       };
     };
 
+    // Calcola costi Desk
+    const calculateDeskCostsOnLoad = () => {
+      if (!accessoriDesk || !costiStrutturaDesk) {
+        return {
+          struttura_terra: 0,
+          grafica_cordino: 0,
+          premontaggio: 0,
+          accessori: 0,
+          totale: 0
+        };
+      }
+
+      const deskLayoutsArray = Array.isArray(formData.desk_layouts) ? formData.desk_layouts as any[] : (() => {
+        try {
+          return typeof (formData.desk_layouts as any) === 'string' ? JSON.parse(formData.desk_layouts as any) : [];
+        } catch {
+          return [];
+        }
+      })();
+
+      // Costo struttura desk
+      const struttura_terra_desk = deskLayoutsArray.reduce((total, config: any) => {
+        const costoLayout = costiStrutturaDesk?.find((c: any) => c.layout_desk === config.layout);
+        return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costo_unitario) || 0);
+      }, 0);
+
+      // Grafica desk
+      const superficie_stampa_desk = deskLayoutsArray.reduce((total, config: any) => {
+        const { layout, quantity } = config;
+        if (!layout || !quantity) return total;
+        switch (layout) {
+          case "50": return total + 1.5 * quantity;
+          case "100": return total + 2 * quantity;
+          case "150": return total + 2.5 * quantity;
+          case "200": return total + 3 * quantity;
+          default: return total;
+        }
+      }, 0);
+
+      const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+      const grafica_cordino_desk = costoStampaParam ? superficie_stampa_desk * (costoStampaParam.valore || 0) : 0;
+
+      // Premontaggio desk
+      const numero_pezzi_desk = deskLayoutsArray.reduce((total, config: any) => {
+        const { layout, quantity } = config;
+        if (!layout || !quantity) return total;
+        switch (layout) {
+          case "50":
+          case "100":
+          case "150":
+            return total + 12 * quantity;
+          case "200":
+            return total + 20 * quantity;
+          default:
+            return total;
+        }
+      }, 0);
+
+      const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+      const premontaggio_desk = costoPremontaggio ? numero_pezzi_desk * (costoPremontaggio.valore || 0) : 0;
+
+      // Accessori desk
+      const costi_accessori_desk = 
+        (formData.porta_scorrevole || 0) * (accessoriDesk.find(a => a.nome === 'Porta scorrevole con chiave')?.costo_unitario || 0) +
+        (formData.ripiano_superiore || 0) * (accessoriDesk.find(a => a.nome === 'Ripiano Superiore L 100')?.costo_unitario || 0) +
+        (formData.ripiano_inferiore || 0) * (accessoriDesk.find(a => a.nome === 'Ripiano Inferiore L 100')?.costo_unitario || 0) +
+        (formData.teca_plexiglass || 0) * (accessoriDesk.find(a => a.nome === 'Teca in plexiglass')?.costo_unitario || 0) +
+        (formData.fronte_luminoso || 0) * (accessoriDesk.find(a => a.nome === 'Fronte luminoso dim. 100x100')?.costo_unitario || 0) +
+        (formData.borsa || 0) * (accessoriDesk.find(a => a.nome === 'Borsa')?.costo_unitario || 0);
+
+      const totale_desk = struttura_terra_desk + grafica_cordino_desk + premontaggio_desk + costi_accessori_desk;
+
+      return {
+        struttura_terra: struttura_terra_desk,
+        grafica_cordino: grafica_cordino_desk,
+        premontaggio: premontaggio_desk,
+        accessori: costi_accessori_desk,
+        totale: totale_desk
+      };
+    };
+
     // Aggiorna i costi solo se abbiamo tutti i dati necessari
     if (parametri.length > 0) {
       const storageCosts = calculateStorageCostsOnLoad();
       const espositoriCosts = calculateEspositoriCostsOnLoad();
+      const deskCosts = calculateDeskCostsOnLoad();
       
       setStorageCostsLifted(storageCosts);
       setExpositoreCostsLifted(espositoriCosts);
+      setDeskCostsLifted(deskCosts);
     }
-  }, [editingPreventivo, formData, parametriCostiUnitari, parametri, accessoriEspositori, layoutCostsEspositori]);
+  }, [editingPreventivo, formData, parametriCostiUnitari, parametri, accessoriEspositori, layoutCostsEspositori, accessoriDesk, costiStrutturaDesk]);
 
   // Mutation per creare un nuovo preventivo
   const createPreventivoMutation = useMutation({
@@ -2429,7 +2521,7 @@ const Preventivi = () => {
                     marginalita_grafica_storage: formData.marginalita_grafica_storage,
                     marginalita_premontaggio_storage: formData.marginalita_premontaggio_storage
                   }}
-                  deskCosts={costs.costi_desk || {}}
+                  deskCosts={deskCostsLifted}
                   deskMargins={{
                     marginalita_struttura_desk: formData.marginalita_struttura_desk,
                     marginalita_grafica_desk: formData.marginalita_grafica_desk,
