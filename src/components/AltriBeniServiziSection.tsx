@@ -245,8 +245,8 @@ export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = (
               <TableHead className="w-28 text-center">Costo UM (€)</TableHead>
               <TableHead className="w-28 text-center">Marginalità (%)</TableHead>
               <TableHead className="w-32 text-center">Prezzo Unitario (€)</TableHead>
-              <TableHead className="w-20 text-center">QTA</TableHead>
-              <TableHead className="w-32 text-center">Totale (€)</TableHead>
+              <TableHead className="w-32 text-center">QTA</TableHead>
+              <TableHead className="w-36 text-center">Totale (€)</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
