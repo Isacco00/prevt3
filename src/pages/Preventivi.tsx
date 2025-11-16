@@ -359,44 +359,25 @@ const Preventivi = () => {
   // Query per recuperare i preventivi
   const {
     data: preventivi = [],
-    isLoading,
-    error: queryError
+    isLoading
   } = useQuery({
     queryKey: ['preventivi'],
     queryFn: async () => {
-      console.log('🔍 Fetching preventivi for user:', user?.id);
-      if (!user) {
-        console.log('❌ No user found');
-        return [];
-      }
+      if (!user) return [];
       const {
         data,
         error
       } = await supabase.from('preventivi').select(`
           *,
           prospects:prospect_id (ragione_sociale)
-        `).eq('user_id', user.id).order('created_at', {
+        `).order('created_at', {
         ascending: false
       });
-      console.log('📊 Preventivi query result:', { data, error, count: data?.length });
-      if (error) {
-        console.error('❌ Error fetching preventivi:', error);
-        throw error;
-      }
+      if (error) throw error;
       return data as Preventivo[];
     },
     enabled: !!user
   });
-
-  // Log preventivi data when it changes
-  React.useEffect(() => {
-    console.log('📋 Preventivi data updated:', { 
-      count: preventivi.length, 
-      isLoading, 
-      queryError,
-      preventivi: preventivi.slice(0, 3) // Log first 3 for debugging
-    });
-  }, [preventivi, isLoading, queryError]);
 
   // Query per recuperare i parametri
   const {
@@ -2292,15 +2273,6 @@ const Preventivi = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Log filtered results
-  React.useEffect(() => {
-    console.log('🔎 Filtered preventivi:', {
-      total: preventivi.length,
-      filtered: filteredPreventivi.length,
-      searchTerm,
-      statusFilter
-    });
-  }, [preventivi, filteredPreventivi.length, searchTerm, statusFilter]);
   const getStatusBadge = (status: string) => {
     const statusMap = {
       bozza: {
