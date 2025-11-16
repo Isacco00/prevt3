@@ -16,8 +16,7 @@ const Index = () => {
       if (!user) return 0;
       const { count } = await supabase
         .from('prospects')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+        .select('*', { count: 'exact', head: true });
       return count || 0;
     },
     enabled: !!user,
@@ -30,8 +29,7 @@ const Index = () => {
       if (!user) return 0;
       const { count } = await supabase
         .from('preventivi')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id);
+        .select('*', { count: 'exact', head: true });
       return count || 0;
     },
     enabled: !!user,
@@ -45,7 +43,6 @@ const Index = () => {
       const { count } = await supabase
         .from('preventivi')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
         .in('status', ['bozza', 'inviato', 'in_revisione']);
       return count || 0;
     },
@@ -60,7 +57,6 @@ const Index = () => {
       const { data } = await supabase
         .from('preventivi')
         .select('totale_preventivo')
-        .eq('user_id', user.id)
         .not('totale_preventivo', 'is', null);
       
       return data?.reduce((sum, preventivo) => sum + (preventivo.totale_preventivo || 0), 0) || 0;
@@ -83,7 +79,6 @@ const Index = () => {
           totale_preventivo,
           prospects:prospect_id (ragione_sociale)
         `)
-        .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(5);
       
@@ -101,7 +96,6 @@ const Index = () => {
       const { data } = await supabase
         .from('preventivi')
         .select('status, totale_preventivo')
-        .eq('user_id', user.id)
         .not('totale_preventivo', 'is', null);
       
       if (!data) return [];
