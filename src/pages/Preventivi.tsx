@@ -513,7 +513,7 @@ const Preventivi = () => {
       const {
         data,
         error
-      } = await supabase.from('prospects').select('id, ragione_sociale, tipo_prospect').eq('user_id', user.id).order('ragione_sociale');
+      } = await supabase.from('prospects').select('id, ragione_sociale, tipo_prospect').order('ragione_sociale');
       if (error) throw error;
       return data as Prospect[];
     },
