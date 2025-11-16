@@ -527,6 +527,7 @@ export type Database = {
           teca_plexiglass_50x50x50: number | null
           titolo: string
           totale: number | null
+          totale_costi: number | null
           totale_preventivo: number | null
           updated_at: string
           user_id: string
@@ -629,6 +630,7 @@ export type Database = {
           teca_plexiglass_50x50x50?: number | null
           titolo: string
           totale?: number | null
+          totale_costi?: number | null
           totale_preventivo?: number | null
           updated_at?: string
           user_id: string
@@ -731,6 +733,7 @@ export type Database = {
           teca_plexiglass_50x50x50?: number | null
           titolo?: string
           totale?: number | null
+          totale_costi?: number | null
           totale_preventivo?: number | null
           updated_at?: string
           user_id?: string
@@ -1048,10 +1051,7 @@ export type Database = {
         }
         Returns: string
       }
-      is_admin: {
-        Args: { _user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
