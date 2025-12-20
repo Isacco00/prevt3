@@ -1,13 +1,30 @@
+# =========================
 # Stage 1: Build
+# =========================
 FROM maven:3.9-eclipse-temurin-17 AS build
+
 WORKDIR /app
-COPY . .
+
+# Copia solo il pom per cache Maven
+COPY backend/pom.xml .
+
+RUN mvn -B dependency:go-offline
+
+# Copia il codice sorgente
+COPY backend/src ./src
+
 RUN mvn -B clean package -DskipTests
 
+
+# =========================
 # Stage 2: Runtime
+# =========================
 FROM eclipse-temurin:17-jre-jammy
+
 WORKDIR /app
-COPY --from=build /app/target/*jar app.jar
+
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
-CMD ["java", "-jar", "app.jar"]
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
