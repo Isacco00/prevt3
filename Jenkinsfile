@@ -82,4 +82,10 @@ pipeline {
                 withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
                     sh """
                         kubectl --kubeconfig="$KCFG" rollout status deployment/prevt -n ${NAMESPACE}
-                        kubectl --kubeconfig="$KCFG" rollout status deployment/p
+                        kubectl --kubeconfig="$KCFG" rollout status deployment/prevt-webapp -n ${NAMESPACE}
+                    """
+                }
+            }
+        }
+    }
+}
