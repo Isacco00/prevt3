@@ -61,3 +61,28 @@ pipeline {
                 withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
                     sh """
                         kubectl --kubeconfig="$KCFG" \
+                          set image deployment/prevt \
+                          prevt=${REGISTRY}/${APP_BE}:${TAG} \
+                          -n ${NAMESPACE}
+
+                        kubectl --kubeconfig="$KCFG" \
+                          set image deployment/prevt-webapp \
+                          nginx=${REGISTRY}/${APP_FE}:${TAG} \
+                          -n ${NAMESPACE}
+                    """
+                }
+            }
+        }
+
+        stage('Check Rollout') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
+                    sh """
+                        kubectl --kubeconfig="$KCFG" rollout status deployment/prevt -n ${NAMESPACE}
+                        kubectl --kubeconfig="$KCFG" rollout status deployment/prevt-webapp -n ${NAMESPACE}
+                    """
+                }
+            }
+        }
+    }
+}
