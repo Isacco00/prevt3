@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5433}/${DB_NAME:prevt}
+    username: ${DB_USER:prevt}
+    password: ${DB_PASSWORD:prevt}
+    hikari:
+      data-source-properties:
+        stringtype: unspecified
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+frontend:
+  allowed-origins:
+    - http://localhost:5173
+    - http://localhost:3000
+    - http://frontend:80
