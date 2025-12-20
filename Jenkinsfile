@@ -34,7 +34,7 @@ pipeline {
             steps {
                 sh """
                     docker build \
-                      -f backend/dockerfile \
+                      -f deployment/backend/dockerfile \
                       -t ${REGISTRY}/${APP_BE}:${TAG} \
                       .
 
@@ -47,9 +47,9 @@ pipeline {
             steps {
                 sh """
                     docker build \
-                      -f frontend/dockerfile \
+                      -f deployment/frontend/Dockerfile \
                       -t ${REGISTRY}/${APP_FE}:${TAG} \
-                      .
+                      frontend
 
                     docker push ${REGISTRY}/${APP_FE}:${TAG}
                 """
