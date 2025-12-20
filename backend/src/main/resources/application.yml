@@ -1,0 +1,35 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: prevt-backend
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    defer-datasource-initialization: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+    clean-disabled: true
+    repair: true
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate: ERROR
+
+jwt:
+  secret: questa-e-una-chiave-molto-piu-lunga-di-32-caratteri-minimo!!!

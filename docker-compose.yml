@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15.4
+    container_name: postgres_prevt
+    restart: always
+    environment:
+      POSTGRES_USER: prevt
+      POSTGRES_PASSWORD: prevt
+      POSTGRES_DB: prevt
+    ports:
+      - "5433:5432"              # accesso da host (facoltativo)
+    volumes:
+      - postgres_prevt:/var/lib/postgresql/data
+    networks:
+      - prevt_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile.local
+    container_name: spring_prevt
+    restart: always
+    volumes:
+      - ./backend:/app          # 🔥 HOTSWAP codice
+      - ~/.m2:/root/.m2          # 🚀 cache Maven
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: prevt
+      DB_USER: prevt
+      DB_PASSWORD: prevt
+
+    depends_on:
+      - postgres
+    ports:
+      - "8081:8080"
+      - "5005:5005"              # 🐞 debug remoto
+    networks:
+      - prevt_net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: prevt-frontend
+    environment:
+      VITE_API_URL: http://backend:8080/api
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - prevt_net
+volumes:
+  postgres_prevt:
+
+networks:
+  prevt_net:
+    driver: bridge

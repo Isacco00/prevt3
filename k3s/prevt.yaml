@@ -1,0 +1,147 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: produzione
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prevt-config
+  namespace: produzione
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/prevt"
+  SPRING_PROFILES_ACTIVE: "produzione"
+  TZ: "Europe/Rome"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prevt-secret
+  namespace: produzione
+type: Opaque
+stringData:
+  SPRING_DATASOURCE_USERNAME: "prevt"
+  SPRING_DATASOURCE_PASSWORD: "prevt"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prevt
+  namespace: produzione
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prevt
+  template:
+    metadata:
+      labels:
+        app: prevt
+    spec:
+      containers:
+        - name: prevt
+          image: 192.168.101.110:5000/prevt:produzione-latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: prevt-config
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: prevt-config
+                  key: SPRING_PROFILES_ACTIVE
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: prevt-secret
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prevt-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 40
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prevt
+  namespace: produzione
+spec:
+  selector:
+    app: prevt
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prevt-webapp
+  namespace: produzione
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prevt-webapp
+  template:
+    metadata:
+      labels:
+        app: prevt-webapp
+    spec:
+      containers:
+        - name: nginx
+          image: 192.168.101.110:5000/prevt-webapp:produzione-latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prevt-webapp
+  namespace: produzione
+spec:
+  selector:
+    app: prevt-webapp
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prevt-ingress
+  namespace: produzione
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: prevt.ihomy.org
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: prevt
+                port:
+                  number: 8080
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prevt-webapp
+                port:
+                  number: 80
