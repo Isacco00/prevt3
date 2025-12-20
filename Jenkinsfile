@@ -3,10 +3,7 @@ pipeline {
 
     environment {
         REGISTRY = "192.168.101.110:5000"
-
-        APP_BE = "prevt"
-        APP_FE = "prevt-webapp"
-
+        APP = "prevt"
         TAG = "${BUILD_NUMBER}"
     }
 
@@ -25,33 +22,37 @@ pipeline {
                         error "❌ Branch non valido: ${env.BRANCH_NAME}"
                     }
 
+                    env.IMAGE_BUILD = "${REGISTRY}/${APP}:${TAG}"
+                    env.IMAGE_LATEST = "${REGISTRY}/${APP}:${env.NAMESPACE}-latest"
+
                     echo "Deploying to namespace: ${env.NAMESPACE}"
+                    echo "Build image: ${env.IMAGE_BUILD}"
+                    echo "Latest image: ${env.IMAGE_LATEST}"
                 }
             }
         }
 
-        stage('Build Backend Image') {
+        stage('Build Docker Image') {
             steps {
                 sh """
-                    docker build \
-                      -f deployment/backend/dockerfile \
-                      -t ${REGISTRY}/${APP_BE}:${TAG} \
-                      .
-
-                    docker push ${REGISTRY}/${APP_BE}:${TAG}
+                    docker build -t ${IMAGE_BUILD} .
                 """
             }
         }
 
-        stage('Build Frontend Image') {
+        stage('Push Build Image') {
             steps {
                 sh """
-                    docker build \
-                      -f deployment/frontend/Dockerfile \
-                      -t ${REGISTRY}/${APP_FE}:${TAG} \
-                      frontend
+                    docker push ${IMAGE_BUILD}
+                """
+            }
+        }
 
-                    docker push ${REGISTRY}/${APP_FE}:${TAG}
+        stage('Tag & Push Environment Latest') {
+            steps {
+                sh """
+                    docker tag ${IMAGE_BUILD} ${IMAGE_LATEST}
+                    docker push ${IMAGE_LATEST}
                 """
             }
         }
@@ -61,13 +62,8 @@ pipeline {
                 withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
                     sh """
                         kubectl --kubeconfig="$KCFG" \
-                          set image deployment/prevt \
-                          prevt=${REGISTRY}/${APP_BE}:${TAG} \
-                          -n ${NAMESPACE}
-
-                        kubectl --kubeconfig="$KCFG" \
-                          set image deployment/prevt-webapp \
-                          nginx=${REGISTRY}/${APP_FE}:${TAG} \
+                          set image deployment/${APP} \
+                          ${APP}=${IMAGE_LATEST} \
                           -n ${NAMESPACE}
                     """
                 }
@@ -78,8 +74,9 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
                     sh """
-                        kubectl --kubeconfig="$KCFG" rollout status deployment/prevt -n ${NAMESPACE}
-                        kubectl --kubeconfig="$KCFG" rollout status deployment/prevt-webapp -n ${NAMESPACE}
+                        kubectl --kubeconfig="$KCFG" \
+                          rollout status deployment/${APP} \
+                          -n ${NAMESPACE}
                     """
                 }
             }
