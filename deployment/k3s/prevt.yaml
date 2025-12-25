@@ -22,8 +22,8 @@ metadata:
   namespace: produzione
 type: Opaque
 stringData:
-  DB_USER: "prevt"
-  DB_PASSWORD: "prevt"
+  DB_USER: "postgres"
+  DB_PASSWORD: "password"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -154,7 +154,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: prevt.ihomy.org
+    - host: prevt.wow-design.it
       http:
         paths:
           - path: /api

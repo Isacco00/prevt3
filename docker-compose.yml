@@ -43,17 +43,20 @@ services:
       - prevt_net
 
   frontend:
-    build:
-      context: ./frontend
-    container_name: prevt-frontend
-    environment:
-      VITE_API_URL: http://backend:8080/api
+    image: node:20-alpine
+    container_name: prevt-frontend-dev
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev -- --host"
     ports:
-      - "3000:80"
+      - "3000:3000"
     depends_on:
       - backend
     networks:
       - prevt_net
+
 volumes:
   postgres_prevt:
 

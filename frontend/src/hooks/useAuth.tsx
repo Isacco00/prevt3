@@ -1,9 +1,9 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "@/api";
 
 interface AuthContextType {
     user: any;
-    loading: boolean;
+    authLoading: boolean;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => void;
 }
@@ -18,14 +18,22 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<any>(null);
-    const [loading, setLoading] = useState(false);
+    const [authLoading, setAuthLoading] = useState(true);
 
+    // ✅ SOLO bootstrap iniziale
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            setUser({ token });
+        }
+        setAuthLoading(false);
+    }, []);
+
+    // ✅ LOGIN NON TOCCA authLoading
     const signIn = async (email: string, password: string) => {
-        setLoading(true);
         const res = await api.post("/auth/login", { email, password });
         localStorage.setItem("token", res.data.token);
         setUser({ email });
-        setLoading(false);
     };
 
     const signOut = () => {
@@ -34,7 +42,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+        <AuthContext.Provider
+            value={{ user, authLoading, signIn, signOut }}
+        >
             {children}
         </AuthContext.Provider>
     );
