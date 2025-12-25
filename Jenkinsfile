@@ -23,8 +23,11 @@ pipeline {
                         error "❌ Branch non valido: ${env.BRANCH_NAME}"
                     }
 
-                    env.IMAGE_BE = "${REGISTRY}/${APP_BE}:${env.NAMESPACE}-latest"
-                    env.IMAGE_FE = "${REGISTRY}/${APP_FE}:${env.NAMESPACE}-latest"
+                    // 🔥 TAG IMMUTABILI
+                    env.TAG = env.BUILD_NUMBER
+
+                    env.IMAGE_BE = "${REGISTRY}/${APP_BE}:${env.TAG}"
+                    env.IMAGE_FE = "${REGISTRY}/${APP_FE}:${env.TAG}"
 
                     echo "Deploying to namespace: ${env.NAMESPACE}"
                     echo "Backend image: ${env.IMAGE_BE}"
