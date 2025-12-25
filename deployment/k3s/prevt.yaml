@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: prevt
-          image: 192.168.101.110:5000/prevt:1
+          image: 192.168.101.110:5000/prevt:produzione-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -129,7 +129,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: 192.168.101.110:5000/prevt-webapp:1
+          image: 192.168.101.110:5000/prevt-webapp:produzione-1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
