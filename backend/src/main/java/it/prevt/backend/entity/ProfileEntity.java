@@ -6,9 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -26,13 +24,7 @@ public class ProfileEntity {
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private UserEntity user;
-
-    @Column(name = "first_name")
-    private String firstName;
-
-    @Column(name = "last_name")
-    private String lastName;
+    private User user;
 
     private String email;
 
@@ -41,9 +33,6 @@ public class ProfileEntity {
 
     @Column(nullable = false)
     private Boolean active = true;
-
-    @Column(name = "avatar_url")
-    private String avatarUrl;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

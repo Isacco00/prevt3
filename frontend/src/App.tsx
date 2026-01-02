@@ -17,6 +17,7 @@ import Admin from "./pages/Admin";
 import { Profile } from "./pages/Profile";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import {GlobalApiLoader} from "@/components/LoadingOverlay.tsx";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+      <GlobalApiLoader />
     <TooltipProvider>
       <AuthProvider>
         <Toaster />

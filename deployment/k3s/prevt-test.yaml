@@ -9,7 +9,7 @@ metadata:
   name: prevt-config
   namespace: test
 data:
-  DB_HOST: "postgres"
+  DB_HOST: "postgres-test"
   DB_PORT: "5432"
   DB_NAME: "prevt"
   SPRING_PROFILES_ACTIVE: "test"
@@ -148,7 +148,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: prevt3-test.wow-design.it
+    - host: prevt-test.wow-design.it
       http:
         paths:
           - path: /api

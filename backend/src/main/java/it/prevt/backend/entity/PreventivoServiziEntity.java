@@ -8,7 +8,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -27,7 +26,7 @@ public class PreventivoServiziEntity {
 
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "preventivo_id", nullable = false)
-    private PreventivoEntity preventivo;
+    private Preventivo preventivo;
 
     private Boolean montaggioSmontaggio = false;
     private Boolean certificazioni = false;

@@ -1,0 +1,27 @@
+{
+  "common": {
+    "loading": "Caricamento...",
+    "reset": "Reset",
+    "success": "Successo"
+  },
+
+  "errors": {
+    "genericTitle": "Errore"
+  },
+
+  "profile": {
+    "avatar": {
+      "title": "Aggiorna foto profilo",
+      "description": "Seleziona una nuova foto profilo dal tuo dispositivo",
+      "upload": "Carica file",
+      "change": "Cambia foto",
+      "save": "Salva avatar",
+      "success": "Avatar aggiornato con successo",
+      "uploadError": "Errore durante il caricamento dell'avatar",
+      "invalidFile": "Seleziona un file immagine valido",
+      "dragHint": "Trascina l'immagine per riposizionarla",
+      "zoom": "Zoom: {{value}}x",
+      "rotation": "Rotazione: {{value}}°"
+    }
+  }
+}

@@ -9,15 +9,17 @@ import org.hibernate.annotations.UuidGenerator;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "preventivi")
-public class PreventivoEntity {
+@Table(name = "preventivo")
+public class Preventivo {
 
+public static final List<String> STATO_IN_CORSO = List.of("bozza", "inviato", "in_revisione");
     @Id
     @GeneratedValue
     @UuidGenerator
@@ -26,11 +28,11 @@ public class PreventivoEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prospect_id")
-    private ProspectEntity prospect;
+    private Prospect prospect;
 
     @Column(name = "numero_preventivo", nullable = false)
     private String numeroPreventivo;

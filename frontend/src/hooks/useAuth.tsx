@@ -1,51 +1,79 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "@/api";
+import { createContext, useContext, useState, useEffect } from "react";
+import { ProfileAPI } from "@/api/profile";
+import { AuthUser } from "@/types/auth";
+import {AuthAPI} from "@/api/auth.ts";
 
 interface AuthContextType {
-    user: any;
+    user: AuthUser | null;
     authLoading: boolean;
     signIn: (email: string, password: string) => Promise<void>;
-    signOut: () => void;
+    signOut: () => Promise<void>;
+    refreshUser: () => Promise<void>;
+    setAvatarKey: () => void; // 👈
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useAuth outside provider");
-    return ctx;
-};
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<any>(null);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+    const [user, setUser] = useState<AuthUser | null>(null);
     const [authLoading, setAuthLoading] = useState(true);
 
-    // ✅ SOLO bootstrap iniziale
+    // 🔑 bootstrap auth
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setUser({ token });
-        }
-        setAuthLoading(false);
+        const loadUser = async () => {
+            try {
+                const me = await ProfileAPI.getProfile();
+                setUser(me);
+            } catch {
+                setUser(null);
+            } finally {
+                setAuthLoading(false);
+            }
+        };
+
+        loadUser();
     }, []);
 
-    // ✅ LOGIN NON TOCCA authLoading
     const signIn = async (email: string, password: string) => {
-        const res = await api.post("/auth/login", { email, password });
-        localStorage.setItem("token", res.data.token);
-        setUser({ email });
+        setAuthLoading(true);
+        try {
+            const me = await AuthAPI.login(email, password);
+            setUser(me);
+        } catch (err) {
+            setUser(null);
+            throw err; // lascia gestire il toast al chiamante
+        } finally {
+            setAuthLoading(false);
+        }
     };
 
-    const signOut = () => {
-        localStorage.removeItem("token");
+    const signOut = async () => {
+        await AuthAPI.logout();
         setUser(null);
     };
 
+    const refreshUser = async () => {
+        const me = await ProfileAPI.getProfile();
+        setUser(me);
+    };
+
+    const setAvatarKey = () => {
+        setUser(prev =>
+            prev
+                ? { ...prev, avatarKey: Date.now() }
+                : prev
+        );
+    };
+
     return (
-        <AuthContext.Provider
-            value={{ user, authLoading, signIn, signOut }}
-        >
+        <AuthContext.Provider value={{ user, authLoading, signIn, signOut, refreshUser, setAvatarKey }}>
             {children}
         </AuthContext.Provider>
     );
+}
+
+export const useAuth = () => {
+    const ctx = useContext(AuthContext);
+    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+    return ctx;
 };

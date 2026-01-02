@@ -1,9 +1,7 @@
 package it.prevt.backend.repository;
 
-import it.prevt.backend.entity.UserEntity;
-
-import java.util.Optional;
+import it.prevt.backend.entity.User;
 
 public interface UserRepository extends AbstractRepository {
-    UserEntity findByEmail(String email);
+    User findByEmail(String email);
 }

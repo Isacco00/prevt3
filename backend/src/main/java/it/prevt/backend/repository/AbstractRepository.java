@@ -5,6 +5,7 @@ import jakarta.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public interface AbstractRepository {
 
@@ -13,13 +14,13 @@ public interface AbstractRepository {
 	public static final String HYPHENED_FORMAT = "uuuu-MM-dd";
 
 	// Long ID should be used for almost every Entity
-	<T> T find(Class<T> clazz, Long id);
+	<T> T find(Class<T> clazz, UUID id);
 
-	<T> T retrieve(Class<T> clazz, Long id);
+	<T> T retrieve(Class<T> clazz, UUID id);
 
-	<T> T find(Class<T> clazz, Long id, String... filters);
+	<T> T find(Class<T> clazz, UUID id, String... filters);
 
-	<T> Boolean exists(Class<T> clazz, Long id);
+	<T> Boolean exists(Class<T> clazz, UUID id);
 
 	// Integer ID should only be used for edoc
 	<T> T find(Class<T> clazz, Integer id);

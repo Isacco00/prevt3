@@ -1,4 +1,4 @@
-package it.prevt.backend.bean;
+package it.prevt.backend.request.bean;
 
 public class AbstractSearchRequestBean {
 	private Integer firstResult;
