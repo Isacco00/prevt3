@@ -34,6 +34,9 @@ pipeline {
                     env.IMAGE_BE = "${REGISTRY}/${APP_BE}:${env.TAG}"
                     env.IMAGE_FE = "${REGISTRY}/${APP_FE}:${env.TAG}"
 
+                    env.IMAGE_BE_LATEST = "${REGISTRY}/${APP_BE}:latest"
+                    env.IMAGE_FE_LATEST = "${REGISTRY}/${APP_FE}:latest"
+
                     echo "📦 Backend image:  ${env.IMAGE_BE}"
                     echo "📦 Frontend image: ${env.IMAGE_FE}"
                     echo "📍 Namespace: ${env.NAMESPACE}"
@@ -48,9 +51,11 @@ pipeline {
                     steps {
                         sh """
                             docker build -f deployment/backend/dockerfile \
-                              -t ${IMAGE_BE} .
+                              -t ${IMAGE_BE} \
+                              -t ${IMAGE_BE_LATEST} .
 
                             docker push ${IMAGE_BE}
+                            docker push ${IMAGE_BE_LATEST}
                         """
                     }
                 }
@@ -59,9 +64,11 @@ pipeline {
                     steps {
                         sh """
                             docker build -f deployment/frontend/Dockerfile \
-                              -t ${IMAGE_FE} .
+                              -t ${IMAGE_FE} \
+                              -t ${IMAGE_FE_LATEST} .
 
                             docker push ${IMAGE_FE}
+                            docker push ${IMAGE_FE_LATEST}
                         """
                     }
                 }

@@ -1,35 +1,19 @@
 package it.prevt.backend.manager.impl;
 
-import it.prevt.backend.bean.UserBean;
 import it.prevt.backend.entity.PasswordResetTokens;
 import it.prevt.backend.entity.User;
 import it.prevt.backend.manager.ResetPasswordManager;
-import it.prevt.backend.manager.UserManager;
-import it.prevt.backend.mapper.UserMapper;
-import it.prevt.backend.merger.UserMerger;
 import it.prevt.backend.repository.UserRepository;
 import it.prevt.backend.utility.MailService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
@@ -86,8 +70,4 @@ public class ResetPasswordManagerImpl implements ResetPasswordManager {
     userRepository.save(token);
   }
 
-  @Override
-  public void sendPasswordResetEmail(String mail, String isacco, String url) {
-    mailService.sendPasswordResetEmail(mail, isacco, url);
-  }
 }
