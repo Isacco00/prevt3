@@ -2,10 +2,13 @@ package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.UserBean;
 import it.prevt.backend.entity.User;
+import it.prevt.backend.manager.ResetPasswordManager;
 import it.prevt.backend.mapper.UserMapper;
 import it.prevt.backend.repository.UserRepository;
 import it.prevt.backend.request.bean.LoginRequestBean;
 import it.prevt.backend.auth.JwtService;
+import it.prevt.backend.request.bean.ResetPasswordConfirmRequestBean;
+import it.prevt.backend.request.bean.ResetPasswordRequestBean;
 import it.prevt.backend.service.rest.RestServiceAuth;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,6 +28,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class RestServiceAuthImpl implements RestServiceAuth {
 
+  private final ResetPasswordManager manager;
   private final UserRepository users;
   private final PasswordEncoder encoder;
   private final JwtService jwt;
@@ -53,4 +58,18 @@ public class RestServiceAuthImpl implements RestServiceAuth {
             .path("/").maxAge(0).build();
     response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
   }
+
+  @Override
+  public void resetPassword(@RequestBody ResetPasswordRequestBean request) {
+    manager.createResetToken(request.getEmail());
+  }
+
+  /* =========================
+     STEP 2 - CONFIRM RESET
+  ========================= */
+  @Override
+  public void confirmResetPassword(@RequestBody ResetPasswordConfirmRequestBean request) {
+    manager.confirmReset(request.getToken(), request.getPassword());
+  }
+
 }

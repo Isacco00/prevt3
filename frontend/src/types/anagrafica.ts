@@ -1,9 +1,11 @@
-export interface ProspectBean {
+import {ProspectBean} from "@/types/prospects";
+
+interface Prospect {
     id: string;
     userId: string;
-    ragioneSociale: string;
-    partitaIva: string;
-    codiceFiscale?: string;
+    ragione_sociale: string;
+    partita_iva: string;
+    codice_fiscale?: string;
     indirizzo: string;
     citta: string;
     cap: string;
@@ -12,6 +14,6 @@ export interface ProspectBean {
     email?: string;
     tipo: 'prospect' | 'cliente';
     tipo_prospect?: 'Professional' | 'Finale';
-    createdAt: string;
-    updatedAt: string;
+    created_at: string;
+    updated_at: string;
 }

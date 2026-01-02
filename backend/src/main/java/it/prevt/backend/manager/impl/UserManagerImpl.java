@@ -56,7 +56,6 @@ public class UserManagerImpl implements UserManager {
       }
       merger.merge(bean, entity);
     }
-    entity.setFirstName(bean.getFirstName());
     this.repository.save(entity);
     return mapper.mapEntityToBean(entity);
   }
@@ -92,9 +91,7 @@ public class UserManagerImpl implements UserManager {
     if (!Files.exists(path)) {
       return ResponseEntity.notFound().build();
     }
-    return ResponseEntity.ok()
-        .contentType(MediaType.IMAGE_PNG)
-        .body(new FileSystemResource(path));
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(new FileSystemResource(path));
   }
 
 }

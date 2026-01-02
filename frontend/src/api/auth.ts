@@ -5,7 +5,7 @@ const entryPoint = "/auth";
 
 export const AuthAPI = {
     login: async (email: string, password: string): Promise<AuthUser> => {
-        const res = await api.post(entryPoint + '/login', { email, password });
+        const res = await api.post(entryPoint + '/login', {email, password});
         return res.data;
     },
 
@@ -13,9 +13,17 @@ export const AuthAPI = {
         await api.post(entryPoint + '/logout');
     },
 
-    loggedUser: async (): Promise<AuthUser> => {
-        const res = await api.get(entryPoint + '/loggedUser');
-        return res.data;
+    resetPassword: async (email: string): Promise<void> => {
+        await api.post(entryPoint + "/resetPassword", {email});
     },
 
+    confirmResetPassword: async (
+        token: string,
+        password: string
+    ): Promise<void> => {
+        await api.post(entryPoint + "/resetPasswordConfirm", {
+            token,
+            password,
+        });
+    },
 };

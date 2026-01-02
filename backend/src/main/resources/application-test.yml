@@ -7,6 +7,4 @@ spring:
   jpa:
     show-sql: false
 
-frontend:
-  allowed-origins:
-    - https://prevt-test.wow-design.it
+frontend-url: https://prevt-test.wow-design.it

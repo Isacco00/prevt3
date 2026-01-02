@@ -25,6 +25,8 @@ services:
     volumes:
       - ./backend:/app          # 🔥 HOTSWAP codice
       - ~/.m2:/root/.m2          # 🚀 cache Maven
+    env_file:
+      - .env
     environment:
       SPRING_PROFILES_ACTIVE: local
       DB_HOST: postgres
