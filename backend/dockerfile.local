@@ -1,0 +1,10 @@
+FROM maven:3.9.9-eclipse-temurin-17
+
+WORKDIR /app
+
+COPY docker-entrypoint.local.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+EXPOSE 8080 5005
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
