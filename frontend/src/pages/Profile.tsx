@@ -24,7 +24,7 @@ export function Profile() {
     /* =========================
        LOAD PROFILE
     ========================= */
-    const {data: profile, isLoading} = useQuery({
+    const {data: profile} = useQuery({
         queryKey: ['profile'],
         queryFn: ProfileAPI.getProfile,
     });
@@ -71,8 +71,8 @@ export function Profile() {
         setProfileDraft(null);
     };
 
-    const handleAvatarUpdate = (avatarUrl: string) => {
-        setAvatarKey();          // 👈 QUESTO È IL PUNTO CHIAVE
+    const handleAvatarUpdate = () => {
+        setAvatarKey();
         queryClient.invalidateQueries({ queryKey: ["profile"] });
         setShowAvatarUpload(false);
     };

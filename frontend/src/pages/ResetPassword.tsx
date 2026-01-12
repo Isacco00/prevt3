@@ -73,7 +73,7 @@ const ResetPassword = () => {
             });
 
             navigate("/auth");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast({
                 title: "Errore",
                 description:

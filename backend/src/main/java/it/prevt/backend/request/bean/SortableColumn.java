@@ -11,7 +11,9 @@ public enum SortableColumn {
       "u"), PARAMETRI_COSTI_RETROILLUMINAZIONE_ALTEZZA("altezza",
       "u"), COSTI_STRUTTURA_ESPOSITORI_LAYOUT_ESPOSITORE("layoutEspositore",
       "u"), LISTINO_ACCESSORI_ESPOSITORI_NOME("nome", "u"), CONDIZIONI_FORNITURA_PREVENTIVI_ORDINE(
-      "ordine", "u"), CONDIZIONI_STANDARD_FORNITURA_ORDINE("ordine", "u"),
+      "ordine", "u"), CONDIZIONI_STANDARD_FORNITURA_ORDINE("ordine",
+      "u"), ALTRI_BENI_SERVIZI_CREATED_AT("createdAt", "u"), PARAMETRI_TIPO("tipo",
+      "u"), PARAMETRI_ORDINE("ordine", "u"),
   ;
 
   SortableColumn(String fieldName, String classAlias) {

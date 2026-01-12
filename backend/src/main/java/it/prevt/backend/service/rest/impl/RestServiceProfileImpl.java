@@ -2,7 +2,9 @@ package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.UserBean;
 import it.prevt.backend.manager.UserManager;
+import it.prevt.backend.request.bean.UserRequestBean;
 import it.prevt.backend.service.rest.RestServiceProfile;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -36,5 +38,10 @@ public class RestServiceProfileImpl implements RestServiceProfile {
   @Override
   public ResponseEntity<Resource> getAvatar(Authentication auth) {
     return manager.getAvatar(auth);
+  }
+
+  @Override
+  public List<UserBean> getUserList(UserRequestBean request) {
+    return manager.getUserList(request);
   }
 }

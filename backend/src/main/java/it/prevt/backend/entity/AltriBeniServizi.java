@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 @Table(name = "altri_beni_servizi")
-public class AltriBeniServiziEntity {
+public class AltriBeniServizi {
 
     @Id
     @GeneratedValue

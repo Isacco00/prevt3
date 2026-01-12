@@ -3,6 +3,7 @@ package it.prevt.backend.repository;
 import it.prevt.backend.entity.*;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 
+import it.prevt.backend.request.bean.ParametriRequestBean;
 import java.util.List;
 
 public interface PreventivoRepository extends AbstractRepository {
@@ -11,7 +12,7 @@ public interface PreventivoRepository extends AbstractRepository {
 
   List<ListinoAccessoriDesk> getListinoAccessoriDesk(ListinoAccessoriRequestBean searchRequest);
 
-  List<Parametri> getParametriList();
+  List<Parametri> getParametriList(ParametriRequestBean request);
 
   List<ListinoAccessoriStand> getListinoAccessoriStand(ListinoAccessoriRequestBean searchRequest);
 
@@ -25,5 +26,9 @@ public interface PreventivoRepository extends AbstractRepository {
   List<CostiStrutturaEspositoriLayout> getCostiStrutturaEspositoriLayout(
       ListinoAccessoriRequestBean searchRequest);
 
-  List<ListinoAccessoriEspositori> getListinoAccessoriEspositori(ListinoAccessoriRequestBean searchRequest);
+  List<ListinoAccessoriEspositori> getListinoAccessoriEspositori(
+      ListinoAccessoriRequestBean searchRequest);
+
+  List<AltriBeniServizi> getAltriBeniServizi(
+      ListinoAccessoriRequestBean searchRequest);
 }

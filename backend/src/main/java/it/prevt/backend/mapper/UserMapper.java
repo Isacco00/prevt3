@@ -17,6 +17,8 @@ public class UserMapper extends AbstractMapper<User, UserBean> {
     bean.setLastName(entity.getLastName());
     bean.setEmail(entity.getEmail());
     bean.setAvatarUrl(entity.getAvatarUrl());
+    bean.setRole(entity.getRole());
+    bean.setActive(entity.isActive());
     return bean;
   }
 }

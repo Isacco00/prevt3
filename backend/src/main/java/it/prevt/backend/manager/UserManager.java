@@ -1,6 +1,8 @@
 package it.prevt.backend.manager;
 
 import it.prevt.backend.bean.UserBean;
+import it.prevt.backend.request.bean.UserRequestBean;
+import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,4 +17,6 @@ public interface UserManager {
   void saveAvatar(MultipartFile file, Authentication auth);
 
   ResponseEntity<Resource> getAvatar(Authentication auth);
+
+  List<UserBean> getUserList(UserRequestBean request);
 }

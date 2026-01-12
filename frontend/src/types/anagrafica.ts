@@ -13,7 +13,7 @@ interface Prospect {
     telefono?: string;
     email?: string;
     tipo: 'prospect' | 'cliente';
-    tipo_prospect?: 'Professional' | 'Finale';
+    tipoProspect?: 'Professional' | 'Finale';
     created_at: string;
     updated_at: string;
 }

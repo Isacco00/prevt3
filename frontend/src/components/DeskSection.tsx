@@ -40,7 +40,7 @@ interface DeskSectionProps {
         premontaggio: number;
         totale: number;
     };
-    prospect?: { tipo_prospect?: string };
+    prospect?: { tipoProspect?: string };
 }
 
 export function DeskSection({data, onChange, costiAccessori = 0, costiDesk}: DeskSectionProps) {

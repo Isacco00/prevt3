@@ -49,4 +49,7 @@ public class User {
 
   @Column(name = "avatar_url")
   private String avatarUrl;
+
+  @Column(name = "role")
+  private String role;
 }

@@ -1,6 +1,8 @@
 package it.prevt.backend.service.rest;
 
 import it.prevt.backend.bean.UserBean;
+import it.prevt.backend.request.bean.UserRequestBean;
+import java.util.List;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,4 +26,7 @@ public interface RestServiceProfile {
 
   @GetMapping("/getAvatar")
   ResponseEntity<Resource> getAvatar(Authentication auth);
+
+  @PostMapping("/getUserList")
+  List<UserBean> getUserList(UserRequestBean request);
 }

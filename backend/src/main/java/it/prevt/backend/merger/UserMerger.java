@@ -11,6 +11,9 @@ public class UserMerger extends AbstractMerger<UserBean, User> {
   protected void doMerge(UserBean bean, User entity) {
     entity.setFirstName(bean.getFirstName());
     entity.setLastName(bean.getLastName());
+    entity.setEmail(bean.getEmail());
+    entity.setRole(bean.getRole());
+    entity.setActive(bean.isActive());
   }
 
 }

@@ -32,6 +32,7 @@ public class PreventivoManagerImpl implements PreventivoManager {
   private final CostiRetroilluminazioneMapper costiRetroilluminazioneMapper;
   private final CostiStrutturaEspositoriLayoutMapper costiStrutturaEspositoriLayoutMapper;
   private final ListinoAccessoriEspositoriMapper listinoAccessoriEspositoriMapper;
+  private final AltriBeniServiziMapper altriBeniServiziMapper;
   private final ParametriMapper parametriMapper;
 
   @Override
@@ -144,12 +145,14 @@ public class PreventivoManagerImpl implements PreventivoManager {
   }
 
   @Override
-  public List<ParametriBean> getParametriList() {
-    List<Parametri> parametriList = repository.getParametriList();
-    if (parametriList == null) {
-      throw new UsernameNotFoundException("error.parametri.notfound");
+  public List<AltriBeniServiziBean> getAltriBeniServizi(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<AltriBeniServizi> altriBeniServiziList =
+        repository.getAltriBeniServizi(searchRequest);
+    if (altriBeniServiziList == null) {
+      throw new UsernameNotFoundException("error.listinoaccessoriespositori.notfound");
     }
-    return parametriMapper.mapEntitiesToBeans(parametriList);
+    return altriBeniServiziMapper.mapEntitiesToBeans(altriBeniServiziList);
   }
 
 }

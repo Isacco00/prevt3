@@ -7,5 +7,6 @@ public class RestServicePath {
   public static final String PROFILE = MAIN + "/profile";
   public static final String PROSPECT = MAIN + "/prospect";
   public static final String PREVENTIVI = MAIN + "/preventivi";
+  public static final String PARAMETRI = MAIN + "/parametri";
   public static final String FORNITURA = MAIN + "/fornitura";
 }

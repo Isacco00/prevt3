@@ -48,7 +48,8 @@ const Prospects = () => {
     const [editingProspect, setEditingProspect] =
         useState<ProspectBean | null>(null);
 
-    const [formData, setFormData] = useState({
+    const emptyFormData: ProspectBean = {
+        id: null,
         ragioneSociale: "",
         partitaIva: "",
         codiceFiscale: "",
@@ -59,8 +60,10 @@ const Prospects = () => {
         telefono: "",
         email: "",
         tipo: "prospect" as "prospect" | "cliente",
-        tipoProspect: "Professional" as "Professional" | "Finale",
-    });
+        tipoProspect: "Professional" as "Professional" | "Finale"
+    };
+
+    const [formData, setFormData] = useState<ProspectBean>(emptyFormData);
 
     useEffect(() => {
         loadProspects();
@@ -70,10 +73,10 @@ const Prospects = () => {
         try {
             const data = await ProspectsAPI.getProspects();
             setProspects(data);
-        } catch (e: any) {
+        } catch (e: unknown) {
             toast({
                 title: "Errore",
-                description: e.message,
+                description: err?.response?.data?.message,
                 variant: "destructive",
             });
         } finally {
@@ -115,10 +118,10 @@ const Prospects = () => {
             resetForm();
             setIsDialogOpen(false);
             loadProspects();
-        } catch (e: any) {
+        } catch (e: unknown) {
             toast({
                 title: "Errore",
-                description: e.message,
+                description: err?.response?.data?.message,
                 variant: "destructive",
             });
         }
@@ -126,6 +129,7 @@ const Prospects = () => {
 
     const resetForm = () => {
         setFormData({
+            id: null,
             ragioneSociale: "",
             partitaIva: "",
             codiceFiscale: "",

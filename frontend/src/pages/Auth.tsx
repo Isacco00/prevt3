@@ -50,7 +50,7 @@ const Auth = () => {
                 title: "Accesso effettuato",
                 description: "Benvenuto in PrevT3!",
             });
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast({
                 title: "Errore di accesso",
                 description:
@@ -78,7 +78,7 @@ const Auth = () => {
             });
             setShowResetForm(false);
             setResetEmail("");
-        } catch (err: any) {
+        } catch (err: unknown) {
             toast({
                 title: "Errore",
                 description:

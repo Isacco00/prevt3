@@ -14,8 +14,6 @@ public interface PreventivoManager {
 
   List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(ListinoAccessoriRequestBean searchRequest);
 
-  List<ParametriBean> getParametriList();
-
   List<ListinoAccessoriStandBean> getListinoAccessoriStand(
       ListinoAccessoriRequestBean searchRequest);
 
@@ -31,5 +29,9 @@ public interface PreventivoManager {
   List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
       ListinoAccessoriRequestBean searchRequest);
 
-  List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(ListinoAccessoriRequestBean searchRequest);
+  List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
+      ListinoAccessoriRequestBean searchRequest);
+
+  List<AltriBeniServiziBean> getAltriBeniServizi(
+      ListinoAccessoriRequestBean searchRequest);
 }

@@ -24,7 +24,7 @@ interface StorageSectionProps {
   profiliDistribuzioneMap: Record<number, number>;
   parametri: any[];
   accessoriStand: any[];
-  prospect?: { tipo_prospect?: string };
+  prospect?: { tipoProspect?: string };
   onCostsChange?: (costs: {
     costo_struttura_storage: number;
     costo_grafica_storage: number;

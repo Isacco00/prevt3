@@ -13,4 +13,6 @@ public class UserBean {
   private String firstName;
   private String lastName;
   private String avatarUrl;
+  private String role;
+  private boolean active;
 }

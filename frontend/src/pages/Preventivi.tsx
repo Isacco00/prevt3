@@ -46,6 +46,7 @@ import {useToast} from '@/hooks/use-toast';
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {PreventiviAPI} from "@/api/preventivi.ts";
 import {ProspectsAPI} from "@/api/prospects.ts";
+import {ParametriAPI} from "@/api/parametri.ts";
 
 const Preventivi = () => {
     const location = useLocation();
@@ -72,7 +73,7 @@ const Preventivi = () => {
         data: parametri = [],
     } = useQuery({
         queryKey: ["parametri-for-preventivi"],
-        queryFn: PreventiviAPI.getParametriList,
+        queryFn: ParametriAPI.getParametriList,
     });
 
     // Fetch listino accessori desk
@@ -2136,7 +2137,7 @@ const Preventivi = () => {
             storage: false,
             desk: false,
             espositori: false,
-            servizi: true,
+            servizi: false,
             altri_beni_servizi: false,
             condizioni_fornitura: false
         });
@@ -2428,7 +2429,7 @@ const Preventivi = () => {
                                     </CollapsibleContent>
                                 </div>
                             </Collapsible>
-
+                            {/*
                             <Collapsible open={sectionsOpen.espositori} onOpenChange={open => setSectionsOpen(prev => ({
                                 ...prev,
                                 espositori: open
@@ -2482,8 +2483,8 @@ const Preventivi = () => {
                                         </div>
                                     </CollapsibleContent>
                                 </div>
-                            </Collapsible>
-
+                            </Collapsible>*/}
+                            {/*
                             <Collapsible open={sectionsOpen.servizi} onOpenChange={open => setSectionsOpen(prev => ({
                                 ...prev,
                                 servizi: open
@@ -2511,8 +2512,8 @@ const Preventivi = () => {
                                         </div>
                                     </CollapsibleContent>
                                 </div>
-                            </Collapsible>
-
+                            </Collapsible>*/}
+                            {/* Sezioni aggiuntive collassabili
                             <Collapsible open={sectionsOpen.altri_beni_servizi}
                                          onOpenChange={open => setSectionsOpen(prev => ({
                                              ...prev,
@@ -2540,7 +2541,7 @@ const Preventivi = () => {
                                         </div>
                                     </CollapsibleContent>
                                 </div>
-                            </Collapsible>
+                            </Collapsible>*/}
 
                             <Collapsible open={sectionsOpen.condizioni_fornitura}
                                          onOpenChange={open => setSectionsOpen(prev => ({

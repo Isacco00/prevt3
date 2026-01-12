@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { ProfileAPI } from "@/api/profile";
-import { AuthUser } from "@/types/auth";
 import {AuthAPI} from "@/api/auth.ts";
+import {UserBean} from "@/types/profile.ts";
 
 interface AuthContextType {
-    user: AuthUser | null;
+    user: UserBean | null;
     authLoading: boolean;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
@@ -15,7 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<AuthUser | null>(null);
+    const [user, setUser] = useState<UserBean | null>(null);
     const [authLoading, setAuthLoading] = useState(true);
 
     // 🔑 bootstrap auth

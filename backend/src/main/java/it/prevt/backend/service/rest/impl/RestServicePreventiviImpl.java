@@ -67,8 +67,9 @@ public class RestServicePreventiviImpl implements RestServicePreventivi {
   }
 
   @Override
-  public List<ParametriBean> getParametriList() {
-    return manager.getParametriList();
+  public List<AltriBeniServiziBean> getAltriBeniServizi(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getAltriBeniServizi(searchRequest);
   }
 
   @Override

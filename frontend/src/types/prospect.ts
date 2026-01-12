@@ -1,6 +1,8 @@
+import {ISODateString} from "@/types/index.ts";
+
 export interface ProspectBean {
     id: string;
-    userId: string;
+    userId?: string;
     ragioneSociale: string;
     partitaIva: string;
     codiceFiscale?: string;
@@ -11,7 +13,7 @@ export interface ProspectBean {
     telefono?: string;
     email?: string;
     tipo: 'prospect' | 'cliente';
-    tipo_prospect?: 'Professional' | 'Finale';
-    createdAt: string;
-    updatedAt: string;
+    tipoProspect?: 'Professional' | 'Finale';
+    createdAt?: ISODateString;
+    updatedAt?: ISODateString;
 }

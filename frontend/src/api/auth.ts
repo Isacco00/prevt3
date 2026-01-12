@@ -1,10 +1,10 @@
-import {AuthUser} from '@/types/auth';
 import {api} from "@/api/index.ts";
+import {UserBean} from "@/types/profile.ts";
 
 const entryPoint = "/auth";
 
 export const AuthAPI = {
-    login: async (email: string, password: string): Promise<AuthUser> => {
+    login: async (email: string, password: string): Promise<UserBean> => {
         const res = await api.post(entryPoint + '/login', {email, password});
         return res.data;
     },

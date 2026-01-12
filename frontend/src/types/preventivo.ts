@@ -175,19 +175,6 @@ export interface CostiStrutturaEspositoriLayoutBean {
     costoUnitario: number;
 }
 
-export interface ParametriBean {
-    id: string;
-    tipo: string;
-    nome: string;
-    valore: number;
-    valoreTesto: string;
-    descrizione: string;
-    attivo: boolean;
-    valoreChiave: string;
-    ordine: number;
-
-}
-
 export interface ListinoAccessoriRequestBean extends AbstractSearchRequestBean {
     attivo?: boolean;
     preventivoId?: string

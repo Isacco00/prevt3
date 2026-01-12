@@ -1,12 +1,16 @@
 package it.prevt.backend.manager.impl;
 
 import it.prevt.backend.bean.UserBean;
+import it.prevt.backend.entity.ListinoAccessoriEspositori;
 import it.prevt.backend.entity.User;
 import it.prevt.backend.manager.UserManager;
 import it.prevt.backend.mapper.UserMapper;
 import it.prevt.backend.merger.UserMerger;
 import it.prevt.backend.repository.UserRepository;
+import it.prevt.backend.request.bean.UserRequestBean;
+import it.prevt.backend.utility.UserHelper;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -34,6 +38,7 @@ public class UserManagerImpl implements UserManager {
   private final UserRepository repository;
   private final UserMapper mapper;
   private final UserMerger merger;
+  private final UserHelper userHelper;
 
   @Override
   public UserBean getProfile(Authentication auth) {
@@ -92,6 +97,14 @@ public class UserManagerImpl implements UserManager {
       return ResponseEntity.notFound().build();
     }
     return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(new FileSystemResource(path));
+  }
+
+  @Override
+  public List<UserBean> getUserList(UserRequestBean request) {
+    String userId = userHelper.getCurrentUserId();
+    request.setUserIdNot(List.of(userId));
+    List<User> userList = repository.getUserList(request);
+    return mapper.mapEntitiesToBeans(userList);
   }
 
 }
