@@ -1,24 +1,24 @@
 import React, { useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calculator } from 'lucide-react';
+import {PreventiviAPI} from "@/api/preventivi.ts";
 
 interface StorageSectionProps {
   formData: {
-    larg_storage: string;
-    prof_storage: string;
-    alt_storage: string;
-    layout_storage: string;
-    numero_porte: string;
+    larghezzaStorage: string;
+    profonditaStorage: string;
+    altezzaStorage: string;
+    layoutStorage: string;
+    numeroPorte: string;
     distribuzione: string;
-    marginalita_struttura_storage?: number;
-    marginalita_grafica_storage?: number;
-    marginalita_premontaggio_storage?: number;
+    marginalitaStrutturaStorage?: number;
+    marginalitaGraficaStorage?: number;
+    marginalitaPremontaggioStorage?: number;
   };
   setFormData: (data: any) => void;
   profiliDistribuzioneMap: Record<number, number>;
@@ -35,25 +35,21 @@ interface StorageSectionProps {
 
 export function StorageSection({ formData, setFormData, profiliDistribuzioneMap, parametri, accessoriStand, prospect, onCostsChange }: StorageSectionProps) {
   const { user } = useAuth();
-
-  // Fetch parametri a costi unitari
-  const { data: parametriCostiUnitari = [] } = useQuery({
-    queryKey: ['parametri-costi-unitari'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('parametri_a_costi_unitari')
-        .select('*')
-        .eq('attivo', true)
-        .order('parametro');
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user,
-  });
+    // Query per recuperare i parametri a costi unitari
+    const {
+        data: parametriCostiUnitari = []
+    } = useQuery({
+        queryKey: ['parametri-costi-unitari'],
+        queryFn: () => PreventiviAPI.getParametriACostiUnitari({
+            attivo: true, sortFields: [{
+                field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
+                desc: false
+            }]
+        })
+    });
   // Calcolo degli elementi fisici per Storage
   const storageElements = useMemo(() => {
-    if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !formData.layout_storage || !formData.distribuzione) {
+    if (!formData.larghezzaStorage || !formData.profonditaStorage || !formData.altezzaStorage || !formData.layoutStorage || !formData.distribuzione) {
       return {
         superficie_stampa: 0,
         sviluppo_lineare: 0,
@@ -61,10 +57,10 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       };
     }
 
-    const larg = parseFloat(formData.larg_storage);
-    const prof = parseFloat(formData.prof_storage);
-    const alt = parseFloat(formData.alt_storage);
-    const layout = formData.layout_storage;
+    const larg = parseFloat(formData.larghezzaStorage);
+    const prof = parseFloat(formData.profonditaStorage);
+    const alt = parseFloat(formData.altezzaStorage);
+    const layout = formData.layoutStorage;
     const distribuzione = parseInt(formData.distribuzione);
 
     // Superficie di stampa Storage
@@ -104,11 +100,11 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       sviluppo_lineare,
       numero_pezzi
     };
-  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.layout_storage, formData.distribuzione, profiliDistribuzioneMap]);
+  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.layoutStorage, formData.distribuzione, profiliDistribuzioneMap]);
 
   // Calcolo dei costi Storage
   const storageCosts = useMemo(() => {
-    if (!formData.larg_storage || !formData.prof_storage || !formData.alt_storage || !parametri.length) {
+    if (!formData.larghezzaStorage || !formData.profonditaStorage || !formData.altezzaStorage || !parametri.length) {
       return {
         costo_struttura_storage: 0,
         costo_grafica_storage: 0,
@@ -117,17 +113,17 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       };
     }
 
-    const altezza = parseFloat(formData.alt_storage);
+    const altezza = parseFloat(formData.altezzaStorage);
     
     // Trova i parametri necessari
     const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
     const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
-    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valore_chiave === formData.alt_storage);
+    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valoreChiave === formData.altezzaStorage);
 
     // Trova il costo della porta dagli accessori stand
     const portaAccessorio = accessoriStand.find(acc => acc.nome?.toLowerCase().includes('porta'));
-    const costoPorta = portaAccessorio ? portaAccessorio.costo_unitario : 0;
-    const numeroPorte = parseInt(formData.numero_porte) || 0;
+    const costoPorta = portaAccessorio ? portaAccessorio.costoUnitario : 0;
+    const numeroPorte = parseInt(formData.numeroPorte) || 0;
 
     // Costo struttura a terra storage: sviluppo lineare * costo struttura al m/l in funzione altezza + numero porte * costo porta
     const costoStrutturaBase = costoAltezzaParam ? 
@@ -151,7 +147,7 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
       costo_premontaggio_storage,
       costo_totale_storage
     };
-  }, [formData.larg_storage, formData.prof_storage, formData.alt_storage, formData.numero_porte, storageElements, parametri, parametriCostiUnitari, accessoriStand]);
+  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.numeroPorte, storageElements, parametri, parametriCostiUnitari, accessoriStand]);
 
   useEffect(() => {
     onCostsChange?.(storageCosts);
@@ -175,29 +171,29 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
               step="0.5"
               min="0"
               max="15"
-              value={formData.larg_storage}
-              onChange={(e) => setFormData({ ...formData, larg_storage: e.target.value })}
+              value={formData.larghezzaStorage}
+              onChange={(e) => setFormData({ ...formData, larghezzaStorage: e.target.value })}
               placeholder="0.0"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="prof_storage">Profondità dello storage (m)</Label>
+            <Label htmlFor="profonditaStorage">Profondità dello storage (m)</Label>
             <Input
-              id="prof_storage"
+              id="profonditaStorage"
               type="number"
               step="0.5"
               min="0"
               max="15"
-              value={formData.prof_storage}
-              onChange={(e) => setFormData({ ...formData, prof_storage: e.target.value })}
+              value={formData.profonditaStorage}
+              onChange={(e) => setFormData({ ...formData, profonditaStorage: e.target.value })}
               placeholder="0.0"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="alt_storage">Altezza pareti dello storage (m)</Label>
-            <Select value={formData.alt_storage} onValueChange={(value) => setFormData({ ...formData, alt_storage: value })}>
+            <Label htmlFor="altezzaStorage">Altezza pareti dello storage (m)</Label>
+            <Select value={formData.altezzaStorage} onValueChange={(value) => setFormData({ ...formData, altezzaStorage: value })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona altezza" />
               </SelectTrigger>
@@ -213,8 +209,8 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="layout_storage">Tipo layout dello storage</Label>
-            <Select value={formData.layout_storage} onValueChange={(value) => setFormData({ ...formData, layout_storage: value })}>
+            <Label htmlFor="layoutStorage">Tipo layout dello storage</Label>
+            <Select value={formData.layoutStorage} onValueChange={(value) => setFormData({ ...formData, layoutStorage: value })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona layout" />
               </SelectTrigger>
@@ -227,8 +223,8 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="numero_porte">Numero porte</Label>
-            <Select value={formData.numero_porte} onValueChange={(value) => setFormData({ ...formData, numero_porte: value })}>
+            <Label htmlFor="numeroPorte">Numero porte</Label>
+            <Select value={formData.numeroPorte} onValueChange={(value) => setFormData({ ...formData, numeroPorte: value })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleziona numero porte" />
               </SelectTrigger>
@@ -306,17 +302,17 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_struttura_storage || 0}
+                    value={formData.marginalitaStrutturaStorage || 0}
                     onChange={(e) => setFormData({
                       ...formData,
-                      marginalita_struttura_storage: parseFloat(e.target.value) || 0
+                      marginalitaStrutturaStorage: parseFloat(e.target.value) || 0
                     })}
                     className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 0) / 100)).toFixed(2)}</div>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_struttura_storage * (1 + (formData.marginalitaStrutturaStorage || 0) / 100)).toFixed(2)}</div>
             </div>
           </Card>
 
@@ -335,17 +331,17 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_grafica_storage || 0}
+                    value={formData.marginalitaGraficaStorage || 0}
                     onChange={(e) => setFormData({
                       ...formData,
-                      marginalita_grafica_storage: parseFloat(e.target.value) || 0
+                      marginalitaGraficaStorage: parseFloat(e.target.value) || 0
                     })}
                     className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 0) / 100)).toFixed(2)}</div>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_grafica_storage * (1 + (formData.marginalitaGraficaStorage || 0) / 100)).toFixed(2)}</div>
             </div>
           </Card>
 
@@ -364,17 +360,17 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                     min="0"
                     max="200"
                     step="1"
-                    value={formData.marginalita_premontaggio_storage || 0}
+                    value={formData.marginalitaPremontaggioStorage || 0}
                     onChange={(e) => setFormData({
                       ...formData,
-                      marginalita_premontaggio_storage: parseFloat(e.target.value) || 0
+                      marginalitaPremontaggioStorage: parseFloat(e.target.value) || 0
                     })}
                     className="w-16 h-6 text-xs text-center"
                   />
                   <span className="text-xs">%</span>
                 </div>
               </div>
-              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 0) / 100)).toFixed(2)}</div>
+              <div className="text-lg font-bold text-primary">€{(storageCosts.costo_premontaggio_storage * (1 + (formData.marginalitaPremontaggioStorage || 0) / 100)).toFixed(2)}</div>
             </div>
           </Card>
         </div>
@@ -388,9 +384,9 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                 <div className="text-2xl font-bold text-primary">
                   €{(() => {
                      const totalePreventivo = 
-                       storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 0) / 100) +
-                       storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 0) / 100) +
-                       storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage || 0) / 100);
+                       storageCosts.costo_struttura_storage * (1 + (formData.marginalitaStrutturaStorage || 0) / 100) +
+                       storageCosts.costo_grafica_storage * (1 + (formData.marginalitaGraficaStorage || 0) / 100) +
+                       storageCosts.costo_premontaggio_storage * (1 + (formData.marginalitaPremontaggioStorage || 0) / 100);
                     return totalePreventivo.toFixed(2);
                   })()}
                 </div>
@@ -407,9 +403,9 @@ export function StorageSection({ formData, setFormData, profiliDistribuzioneMap,
                   {(() => {
                     if (storageCosts.costo_totale_storage === 0) return '0.0%';
                      const totalePreventivo = 
-                       storageCosts.costo_struttura_storage * (1 + (formData.marginalita_struttura_storage || 0) / 100) +
-                       storageCosts.costo_grafica_storage * (1 + (formData.marginalita_grafica_storage || 0) / 100) +
-                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalita_premontaggio_storage) / 100);
+                       storageCosts.costo_struttura_storage * (1 + (formData.marginalitaStrutturaStorage || 0) / 100) +
+                       storageCosts.costo_grafica_storage * (1 + (formData.marginalitaGraficaStorage || 0) / 100) +
+                      storageCosts.costo_premontaggio_storage * (1 + (formData.marginalitaPremontaggioStorage) / 100);
                     const marginalitaMedia = ((totalePreventivo - storageCosts.costo_totale_storage) / storageCosts.costo_totale_storage * 100);
                     return marginalitaMedia.toFixed(1) + '%';
                   })()}

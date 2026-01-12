@@ -1,24 +1,50 @@
-// src/api/preventivi.ts
-import { api } from "@/api/index";
+// src/api/preventivo.ts
+import {api} from "@/api/index";
+import {
+    CostiRetroilluminazioneBean,
+    CostiStrutturaDeskBean,
+    ListinoAccessoriDeskBean,
+    ListinoAccessoriRequestBean, ListinoAccessoriStandBean, ParametriACostiUnitariBean, ParametriBean,
+    PreventivoBean
+} from "@/types/preventivo.ts";
+
+const entryPoint = "/preventivi";
 
 export const PreventiviAPI = {
-    list: async () => (await api.get("/api/preventivi")).data,
-    prospects: async () => (await api.get("/api/prospects")).data,
-    parametri: async () => (await api.get("/api/parametri")).data,
-    parametriCostiUnitari: async () => (await api.get("/api/parametri-costi-unitari")).data,
-    costiRetroilluminazione: async () => (await api.get("/api/costi-retroilluminazione")).data,
-
-    marginalitaProspect: async () => (await api.get("/api/marginalita-per-prospect")).data,
-
-    accessoriStand: async () => (await api.get("/api/listini/accessori-stand")).data,
-    accessoriDesk: async () => (await api.get("/api/listini/accessori-desk")).data,
-    accessoriEspositori: async () => (await api.get("/api/listini/accessori-espositori")).data,
-
-    costiStrutturaDesk: async () => (await api.get("/api/costi/struttura-desk-layout")).data,
-    layoutCostsEspositori: async () => (await api.get("/api/costi/struttura-espositori-layout")).data,
-
-    preventivoServizi: async (id: string) => (await api.get(`/api/preventivi/${id}/servizi`)).data,
-    altriBeniServizi: async (id: string) => (await api.get(`/api/preventivi/${id}/altri-beni-servizi`)).data,
-
-    serviceCosts: async () => (await api.get(`/api/parametri-costi-unitari/service-costs`)).data,
+    getPreventiviList: async (): Promise<PreventivoBean[]> => {
+        const res = await api.get(entryPoint + '/getPreventiviList');
+        return res.data;
+    },
+    getListinoAccessoriDesk: async (filter: ListinoAccessoriRequestBean = {}): Promise<ListinoAccessoriDeskBean[]> => {
+        const res = await api.post(entryPoint + "/getListinoAccessoriDesk", filter);
+        return res.data;
+    },
+    getListinoAccessoriStand: async (filter: ListinoAccessoriRequestBean = {}): Promise<ListinoAccessoriStandBean[]> => {
+        const res = await api.post(entryPoint + "/getListinoAccessoriStand", filter);
+        return res.data;
+    },
+    getCostiStrutturaDesk: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiStrutturaDeskBean[]> => {
+        const res = await api.post(entryPoint + "/getCostiStrutturaDesk", filter);
+        return res.data;
+    },
+    getParametriList: async (): Promise<ParametriBean[]> => {
+        const res = await api.post(entryPoint + "/getParametriList");
+        return res.data;
+    },
+    getParametriACostiUnitari: async (filter: ListinoAccessoriRequestBean = {}): Promise<ParametriACostiUnitariBean[]> => {
+        const res = await api.post(entryPoint + "/getParametriACostiUnitari", filter);
+        return res.data;
+    },
+    getCostiRetroilluminazione: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiRetroilluminazioneBean[]> => {
+        const res = await api.post(entryPoint + "/getCostiRetroilluminazione", filter);
+        return res.data;
+    },
+    getCostiStrutturaEspositoriLayout: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiRetroilluminazioneBean[]> => {
+        const res = await api.post(entryPoint + "/getCostiStrutturaEspositoriLayout", filter);
+        return res.data;
+    },
+    getListinoAccessoriEspositori: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiRetroilluminazioneBean[]> => {
+        const res = await api.post(entryPoint + "/getListinoAccessoriEspositori", filter);
+        return res.data;
+    },
 };

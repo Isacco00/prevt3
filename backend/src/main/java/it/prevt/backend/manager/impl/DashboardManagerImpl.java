@@ -4,7 +4,7 @@ import it.prevt.backend.bean.DashboardBean;
 import it.prevt.backend.bean.ValorePerStatusBean;
 import it.prevt.backend.entity.Preventivo;
 import it.prevt.backend.manager.DashboardManager;
-import it.prevt.backend.mapper.PreventiviMapper;
+import it.prevt.backend.mapper.PreventivoMapper;
 import it.prevt.backend.repository.DashboardRepository;
 import it.prevt.backend.request.bean.PreventiviRequestBean;
 import it.prevt.backend.utility.CalcUtility;
@@ -24,7 +24,7 @@ public class DashboardManagerImpl implements DashboardManager {
 
   private final DashboardRepository repository;
   private final CalcUtility calcUtility;
-  private final PreventiviMapper preventiviMapper;
+  private final PreventivoMapper preventiviMapper;
 
   @Override
   public DashboardBean loadDashboard() {

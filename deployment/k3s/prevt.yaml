@@ -24,6 +24,7 @@ type: Opaque
 stringData:
   DB_USER: "postgres"
   DB_PASSWORD: "password"
+  MAIL_PASSWORD: "zHgW0%avN5yU9-)L"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -85,6 +86,11 @@ spec:
 
             - name: SPRING_JPA_DATABASE_PLATFORM
               value: org.hibernate.dialect.PostgreSQLDialect
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: prevt-secret
+                  key: MAIL_PASSWORD
 
           readinessProbe:
             httpGet:

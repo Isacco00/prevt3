@@ -8,15 +8,14 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "costi_struttura_desk_layout")
-public class CostoStrutturaDeskLayoutEntity {
+@Table(name = "parametri")
+public class Parametri {
 
     @Id
     @GeneratedValue
@@ -24,14 +23,26 @@ public class CostoStrutturaDeskLayoutEntity {
     @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "layout_desk", nullable = false)
-    private String layoutDesk;
+    @Column(nullable = false)
+    private String tipo;
 
-    @Column(name = "costo_unitario", nullable = false)
-    private BigDecimal costoUnitario = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private String nome;
+
+    private BigDecimal valore;
+
+    @Column(name = "valore_testo")
+    private String valoreTesto;
+
+    private String descrizione;
 
     @Column(nullable = false)
     private Boolean attivo = true;
+
+    @Column(name = "valore_chiave")
+    private String valoreChiave;
+
+    private Integer ordine = 0;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

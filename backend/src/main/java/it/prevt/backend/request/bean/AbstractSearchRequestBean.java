@@ -1,23 +1,15 @@
 package it.prevt.backend.request.bean;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
 public class AbstractSearchRequestBean {
-	private Integer firstResult;
+  private Integer firstResult;
+  private Integer maxResult;
+  private List<SortableFieldBean> sortFields;
 
-	private Integer maxResult;
-
-	public Integer getFirstResult() {
-		return firstResult;
-	}
-
-	public void setFirstResult(Integer firstResult) {
-		this.firstResult = firstResult;
-	}
-
-	public Integer getMaxResult() {
-		return maxResult;
-	}
-
-	public void setMaxResult(Integer maxResult) {
-		this.maxResult = maxResult;
-	}
 }

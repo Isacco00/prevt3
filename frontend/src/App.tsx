@@ -10,7 +10,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { AppHeader } from "@/components/AppHeader";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Prospects from "./pages/Prospects";
+import Prospects from "./pages/Prospects.tsx";
 import Preventivi from "./pages/Preventivi";
 import ServizioMontaggio from "./pages/ServizioMontaggio";
 import Admin from "./pages/Admin";

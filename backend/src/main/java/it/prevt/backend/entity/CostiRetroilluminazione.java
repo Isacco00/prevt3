@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -13,8 +14,8 @@ import java.util.UUID;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "condizioni_fornitura_preventivi")
-public class CondizioneFornituraPreventivoEntity {
+@Table(name = "costi_retroilluminazione")
+public class CostiRetroilluminazione {
 
     @Id
     @GeneratedValue
@@ -22,21 +23,11 @@ public class CondizioneFornituraPreventivoEntity {
     @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "preventivo_id", nullable = false)
-    private Preventivo preventivo;
-
     @Column(nullable = false)
-    private String voce;
+    private BigDecimal altezza;
 
-    @Column(nullable = false)
-    private String testo = "Inserisci testo";
-
-    @Column(nullable = false)
-    private Boolean selezionato = true;
-
-    @Column(nullable = false)
-    private Integer ordine = 0;
+    @Column(name = "costo_al_metro", nullable = false)
+    private BigDecimal costoAlMetro;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -8,15 +8,14 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "listino_accessori_espositori")
-public class ListinoAccessoriEspositoriEntity {
+@Table(name = "costi_struttura_desk_layout")
+public class CostoStrutturaDeskLayout {
 
     @Id
     @GeneratedValue
@@ -24,8 +23,8 @@ public class ListinoAccessoriEspositoriEntity {
     @Column(nullable = false, updatable = false)
     private UUID id;
 
-    @Column(nullable = false)
-    private String nome;
+    @Column(name = "layout_desk", nullable = false)
+    private String layoutDesk;
 
     @Column(name = "costo_unitario", nullable = false)
     private BigDecimal costoUnitario = BigDecimal.ZERO;

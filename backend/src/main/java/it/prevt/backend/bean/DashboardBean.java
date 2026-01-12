@@ -15,7 +15,7 @@ public class DashboardBean {
     private long preventiviInCorso;
     private BigDecimal valoreTotale;
 
-    private List<PreventiviBean> ultimiPreventivi;
+    private List<PreventivoBean> ultimiPreventivi;
     private List<ValorePerStatusBean> valorePerStatus;
 
 }

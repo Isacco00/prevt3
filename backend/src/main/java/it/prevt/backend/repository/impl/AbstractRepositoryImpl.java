@@ -2,6 +2,7 @@ package it.prevt.backend.repository.impl;
 
 import it.prevt.backend.request.bean.AbstractSearchRequestBean;
 import it.prevt.backend.repository.AbstractRepository;
+import it.prevt.backend.request.bean.SortableFieldBean;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -325,4 +326,36 @@ public abstract class AbstractRepositoryImpl implements AbstractRepository {
     selectQuery += " FROM " + clazz.getSimpleName() + " " + entityAlias + " ";
     return new StringBuilder(selectQuery);
   }
+
+  public StringBuilder orderBy(List<String> allowedSortableColumns,
+      List<SortableFieldBean> orderByUserCriteriaMap, String strQueryDefaultOrderBy) {
+    StringBuilder strQueryOrderBy = new StringBuilder(" ORDER BY ");
+    String strQueryCustomOrderBy = orderByUserCriteriaMap.stream().map(
+            e -> orderByUserCriteria(allowedSortableColumns,
+                e.getField().getClassAlias() + "." + e.getField().getFieldName(), e.isDesc()))
+        .filter(x -> x != null && !x.isEmpty()).collect(Collectors.joining(", "));
+    if (strQueryCustomOrderBy.isEmpty()) {
+      if (strQueryDefaultOrderBy == null || strQueryDefaultOrderBy.isEmpty()) {
+        return new StringBuilder(); //NO ORDER SPECIFIED
+      }
+      strQueryOrderBy.append(strQueryDefaultOrderBy);
+    } else {
+      strQueryOrderBy.append(strQueryCustomOrderBy);
+    }
+    return strQueryOrderBy;
+  }
+
+  public String orderByUserCriteria(List<String> allowedSortableColumns, String orderByUserCriteria,
+      boolean isDesc) {
+    String str = "";
+    if (allowedSortableColumns != null && !allowedSortableColumns.contains(orderByUserCriteria)) {
+      //Invalid ordering, continue
+    } else {
+      //Valid ordering
+      str =
+          " " + orderByUserCriteria + " " + (isDesc ? "DESC NULLS LAST" : "ASC NULLS FIRST") + " ";
+    }
+    return str;
+  }
+
 }

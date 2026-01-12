@@ -8,15 +8,14 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "condizioni_standard_fornitura")
-public class CondizioneStandardFornituraEntity {
+@Table(name = "parametri_a_costi_unitari")
+public class ParametriACostiUnitari {
 
     @Id
     @GeneratedValue
@@ -25,13 +24,13 @@ public class CondizioneStandardFornituraEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String voce;
+    private String parametro;
 
-    @Column(name = "testo_standard", nullable = false)
-    private String testoStandard = "Inserisci testo";
+    @Column(name = "unita_misura", nullable = false)
+    private String unitaMisura;
 
     @Column(nullable = false)
-    private Integer ordine = 0;
+    private BigDecimal valore = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private Boolean attivo = true;

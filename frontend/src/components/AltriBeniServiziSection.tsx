@@ -18,9 +18,9 @@ interface AltriBeniServiziItem {
 interface AltriBeniServiziSectionProps {
   preventivoId: string;
 }
-export const AltriBeniServiziSection: React.FC<AltriBeniServiziSectionProps> = ({
+export function AltriBeniServiziSection({
   preventivoId
-}) => {
+}) {
   const [items, setItems] = useState<AltriBeniServiziItem[]>([]);
   const queryClient = useQueryClient();
   const initializedRef = useRef(false); // inizializza da DB una sola volta

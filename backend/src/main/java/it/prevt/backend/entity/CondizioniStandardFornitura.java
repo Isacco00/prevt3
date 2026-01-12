@@ -6,17 +6,15 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "parametri_a_costi_unitari")
-public class ParametroCostoUnitarioEntity {
+@Table(name = "condizioni_standard_fornitura")
+public class CondizioniStandardFornitura {
 
     @Id
     @GeneratedValue
@@ -25,13 +23,13 @@ public class ParametroCostoUnitarioEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String parametro;
+    private String voce;
 
-    @Column(name = "unita_misura", nullable = false)
-    private String unitaMisura;
+    @Column(name = "testo_standard", nullable = false)
+    private String testoStandard = "Inserisci testo";
 
     @Column(nullable = false)
-    private BigDecimal valore = BigDecimal.ZERO;
+    private Integer ordine = 0;
 
     @Column(nullable = false)
     private Boolean attivo = true;

@@ -8,15 +8,14 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "listino_accessori_stand")
-public class ListinoAccessoriStandEntity {
+@Table(name = "listino_accessori_espositori")
+public class ListinoAccessoriEspositori {
 
     @Id
     @GeneratedValue

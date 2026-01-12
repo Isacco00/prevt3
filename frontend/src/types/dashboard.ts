@@ -1,4 +1,4 @@
-import {PreventiviBean} from "@/types/preventivi";
+import {PreventivoBean} from "@/types/preventivo.ts";
 
 export interface DashboardBean {
     prospectsCount: number;
@@ -6,7 +6,7 @@ export interface DashboardBean {
     preventiviInCorso: number;
     valoreTotale: number;
 
-    ultimiPreventivi: PreventiviBean[];
+    ultimiPreventivi: PreventivoBean[];
 
     valorePerStatus: {
         status: string;

@@ -1,4 +1,4 @@
-import {ProspectBean} from "@/types/prospects";
+import {ProspectBean} from "@/types/prospect.ts";
 
 interface Prospect {
     id: string;

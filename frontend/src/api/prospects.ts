@@ -1,6 +1,6 @@
-// src/api/preventivi.ts
+// src/api/preventivo.ts
 import {api} from "@/api/index";
-import {ProspectBean} from "@/types/prospects";
+import {ProspectBean} from "@/types/prospect.ts";
 
 const entryPoint = "/prospect";
 

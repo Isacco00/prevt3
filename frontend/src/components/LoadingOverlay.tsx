@@ -1,4 +1,5 @@
-import { useIsMutating } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import {subscribeApiLoading} from "@/api";
 
 const LoadingOverlay = () => (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/70">
@@ -7,9 +8,12 @@ const LoadingOverlay = () => (
 );
 
 export const GlobalApiLoader = () => {
-    const mutating = useIsMutating();
+    const [loading, setLoading] = useState(false);
 
-    if (mutating === 0) return null;
+    useEffect(() => {
+        return subscribeApiLoading(setLoading);
+    }, []);
 
+    if (!loading) return null;
     return <LoadingOverlay />;
 };
