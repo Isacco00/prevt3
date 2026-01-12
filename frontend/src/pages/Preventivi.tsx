@@ -73,7 +73,15 @@ const Preventivi = () => {
         data: parametri = [],
     } = useQuery({
         queryKey: ["parametri-for-preventivi"],
-        queryFn: ParametriAPI.getParametriList,
+        queryFn: () => ParametriAPI.getParametriList({
+            sortFields: [{
+                field: "PARAMETRI_TIPO",
+                desc: false
+            }, {
+                field: "PARAMETRI_ORDINE",
+                desc: false
+            }]
+        })
     });
 
     // Fetch listino accessori desk
@@ -102,7 +110,7 @@ const Preventivi = () => {
         data: parametriCostiUnitari = []
     } = useQuery({
         queryKey: ['parametri-costi-unitari'],
-        queryFn: () => PreventiviAPI.getParametriACostiUnitari({
+        queryFn: () => ParametriAPI.getParametriACostiUnitari({
             attivo: true, sortFields: [{
                 field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
                 desc: false
@@ -115,8 +123,8 @@ const Preventivi = () => {
         data: costiRetroilluminazione = []
     } = useQuery({
         queryKey: ['costi-retroilluminazione'],
-        queryFn: () => PreventiviAPI.getCostiRetroilluminazione({
-            attivo: true, sortFields: [{
+        queryFn: () => ParametriAPI.getCostiRetroilluminazione({
+            sortFields: [{
                 field: "PARAMETRI_COSTI_RETROILLUMINAZIONE_ALTEZZA",
                 desc: false
             }]
@@ -128,7 +136,7 @@ const Preventivi = () => {
         data: accessoriStand = []
     } = useQuery({
         queryKey: ['listino-accessori-stand'],
-        queryFn: () => PreventiviAPI.getListinoAccessoriStand({
+        queryFn: () => ParametriAPI.getListinoAccessoriStand({
             attivo: true
         })
     });

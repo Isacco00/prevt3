@@ -1,5 +1,5 @@
 import {ProspectBean} from "@/types/prospect.ts";
-import {AbstractSearchRequestBean, SortableFieldBean} from "@/types/index.ts";
+import {AbstractSearchRequestBean} from "@/types/index.ts";
 
 export interface PreventivoBean {
     id: string;
@@ -140,26 +140,11 @@ export interface ListinoAccessoriDeskBean {
     attivo: boolean;
 }
 
-export interface ListinoAccessoriStandBean {
-    id: string;
-    nome: string;
-    costoUnitario: number;
-    attivo: boolean;
-}
-
 export interface CostiStrutturaDeskBean {
     id: string;
     nome: string;
     costoUnitario: number;
     layoutDesk: string;
-    attivo: boolean;
-}
-
-export interface ParametriACostiUnitariBean {
-    id: string;
-    parametro: string
-    unitaMisura: string;
-    valore: number;
     attivo: boolean;
 }
 
@@ -178,4 +163,7 @@ export interface CostiStrutturaEspositoriLayoutBean {
 export interface ListinoAccessoriRequestBean extends AbstractSearchRequestBean {
     attivo?: boolean;
     preventivoId?: string
+}
+
+export class ParametriACostiUnitariBean {
 }

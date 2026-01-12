@@ -1,9 +1,12 @@
 package it.prevt.backend.service.rest;
 
-import it.prevt.backend.bean.ParametriBean;
-import it.prevt.backend.bean.UserBean;
+import it.prevt.backend.bean.*;
+import it.prevt.backend.entity.ParametriACostiUnitari;
+import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
+
 import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,4 +23,28 @@ public interface RestServiceParametri {
 
   @PostMapping("/saveParametro")
   ParametriBean saveParametro(@RequestBody ParametriBean dto);
+
+  @PostMapping("/getParametriACostiUnitari")
+  List<ParametriACostiUnitariBean> getParametriACostiUnitari(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/saveParametriCostiUnitari")
+  ParametriACostiUnitariBean saveParametriCostiUnitari(@RequestBody ParametriACostiUnitariBean dto);
+
+  @PostMapping("/getCostiRetroilluminazione")
+  List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/saveCostiRetroilluminazione")
+  CostiRetroilluminazioneBean saveCostiRetroilluminazione(
+      @RequestBody CostiRetroilluminazioneBean dto);
+
+  @PostMapping("/getListinoAccessoriStand")
+  List<ListinoAccessoriStandBean> getListinoAccessoriStand(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/saveListinoAccessoriStand")
+  ListinoAccessoriStandBean saveListinoAccessoriStand(
+      @RequestBody ListinoAccessoriStandBean dto);
+
 }

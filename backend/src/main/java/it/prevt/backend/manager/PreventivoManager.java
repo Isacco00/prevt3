@@ -20,12 +20,6 @@ public interface PreventivoManager {
   List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
       ListinoAccessoriRequestBean searchRequest);
 
-  List<ParametriACostiUnitariBean> getParametriACostiUnitari(
-      ListinoAccessoriRequestBean searchRequest);
-
-  List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
-      ListinoAccessoriRequestBean searchRequest);
-
   List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
       ListinoAccessoriRequestBean searchRequest);
 

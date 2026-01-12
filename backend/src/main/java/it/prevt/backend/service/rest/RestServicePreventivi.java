@@ -20,20 +20,8 @@ public interface RestServicePreventivi {
   List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
 
-  @PostMapping("/getListinoAccessoriStand")
-  List<ListinoAccessoriStandBean> getListinoAccessoriStand(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
   @PostMapping("/getCostiStrutturaDesk")
   List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
-  @PostMapping("/getParametriACostiUnitari")
-  List<ParametriACostiUnitariBean> getParametriACostiUnitari(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
-  @PostMapping("/getCostiRetroilluminazione")
-  List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
 
   @PostMapping("/getCostiStrutturaEspositoriLayout")

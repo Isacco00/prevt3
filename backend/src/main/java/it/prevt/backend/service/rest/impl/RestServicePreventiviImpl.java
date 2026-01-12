@@ -31,27 +31,9 @@ public class RestServicePreventiviImpl implements RestServicePreventivi {
   }
 
   @Override
-  public List<ListinoAccessoriStandBean> getListinoAccessoriStand(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getListinoAccessoriStand(searchRequest);
-  }
-
-  @Override
   public List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
       ListinoAccessoriRequestBean searchRequest) {
     return manager.getCostiStrutturaDesk(searchRequest);
-  }
-
-  @Override
-  public List<ParametriACostiUnitariBean> getParametriACostiUnitari(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getParametriACostiUnitari(searchRequest);
-  }
-
-  @Override
-  public List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getCostiRetroilluminazione(searchRequest);
   }
 
   @Override

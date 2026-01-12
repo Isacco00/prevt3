@@ -28,12 +28,10 @@ public class PreventivoManagerImpl implements PreventivoManager {
   private final ListinoAccessoriDeskMapper listinoAccessoriDeskMapper;
   private final ListinoAccessoriStandMapper listinoAccessoriStandMapper;
   private final CostoStrutturaDeskLayoutMapper costoStrutturaDeskLayoutMapper;
-  private final ParametriACostiUnitariMapper parametriACostiUnitariMapper;
   private final CostiRetroilluminazioneMapper costiRetroilluminazioneMapper;
   private final CostiStrutturaEspositoriLayoutMapper costiStrutturaEspositoriLayoutMapper;
   private final ListinoAccessoriEspositoriMapper listinoAccessoriEspositoriMapper;
   private final AltriBeniServiziMapper altriBeniServiziMapper;
-  private final ParametriMapper parametriMapper;
 
   @Override
   public List<PreventivoBean> getPreventiviList() {
@@ -97,28 +95,6 @@ public class PreventivoManagerImpl implements PreventivoManager {
       throw new UsernameNotFoundException("error.costistrutturadesk.notfound");
     }
     return costoStrutturaDeskLayoutMapper.mapEntitiesToBeans(costiStrutturaDeskList);
-  }
-
-  @Override
-  public List<ParametriACostiUnitariBean> getParametriACostiUnitari(
-      ListinoAccessoriRequestBean searchRequest) {
-    List<ParametriACostiUnitari> parametriACostiUnitaris =
-        repository.getParametriACostiUnitari(searchRequest);
-    if (parametriACostiUnitaris == null) {
-      throw new UsernameNotFoundException("error.parametriacostiunitari.notfound");
-    }
-    return parametriACostiUnitariMapper.mapEntitiesToBeans(parametriACostiUnitaris);
-  }
-
-  @Override
-  public List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
-      ListinoAccessoriRequestBean searchRequest) {
-    List<CostiRetroilluminazione> costiRetroilluminazioneList =
-        repository.getCostiRetroilluminazione(searchRequest);
-    if (costiRetroilluminazioneList == null) {
-      throw new UsernameNotFoundException("error.costiretroilluminazione.notfound");
-    }
-    return costiRetroilluminazioneMapper.mapEntitiesToBeans(costiRetroilluminazioneList);
   }
 
   @Override
