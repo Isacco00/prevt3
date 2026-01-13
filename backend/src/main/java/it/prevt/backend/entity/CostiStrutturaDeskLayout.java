@@ -15,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 @Table(name = "costi_struttura_desk_layout")
-public class CostoStrutturaDeskLayout {
+public class CostiStrutturaDeskLayout {
 
     @Id
     @GeneratedValue

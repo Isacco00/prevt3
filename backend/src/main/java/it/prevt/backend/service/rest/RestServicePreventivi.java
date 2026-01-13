@@ -16,22 +16,6 @@ public interface RestServicePreventivi {
   @GetMapping("/getPreventiviList")
   List<PreventivoBean> getPreventiviList();
 
-  @PostMapping("/getListinoAccessoriDesk")
-  List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
-  @PostMapping("/getCostiStrutturaDesk")
-  List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
-  @PostMapping("/getCostiStrutturaEspositoriLayout")
-  List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
-  @PostMapping("/getListinoAccessoriEspositori")
-  List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
   @PostMapping("/getAltriBeniServizi")
   List<AltriBeniServiziBean> getAltriBeniServizi(
       @RequestBody ListinoAccessoriRequestBean searchRequest);

@@ -16,6 +16,7 @@ import it.prevt.backend.request.bean.ParametriRequestBean;
 
 import java.util.List;
 
+import java.util.UUID;
 import org.springframework.security.core.Authentication;
 
 public interface ParametriManager {
@@ -34,7 +35,40 @@ public interface ParametriManager {
 
   CostiRetroilluminazioneBean saveCostiRetroilluminazione(CostiRetroilluminazioneBean bean);
 
-  List<ListinoAccessoriStandBean> getListinoAccessoriStand(ListinoAccessoriRequestBean searchRequest);
+  List<ListinoAccessoriStandBean> getListinoAccessoriStand(
+      ListinoAccessoriRequestBean searchRequest);
 
   ListinoAccessoriStandBean saveListinoAccessoriStand(ListinoAccessoriStandBean dto);
+
+  void deleteListinoAccessoriStand(ListinoAccessoriStandBean id);
+
+  List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(ListinoAccessoriRequestBean searchRequest);
+
+  ListinoAccessoriDeskBean saveListinoAccessoriDesk(ListinoAccessoriDeskBean dto);
+
+  void deleteListinoAccessoriDesk(ListinoAccessoriDeskBean bean);
+
+  List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
+      ListinoAccessoriRequestBean searchRequest);
+
+  ListinoAccessoriEspositoriBean saveListinoAccessoriEspositori(ListinoAccessoriEspositoriBean dto);
+
+  void deleteListinoAccessoriEspositori(ListinoAccessoriEspositoriBean bean);
+
+  List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
+      ListinoAccessoriRequestBean searchRequest);
+
+  CostiStrutturaDeskLayoutBean saveCostiStrutturaDesk(CostiStrutturaDeskLayoutBean dto);
+
+  void deleteCostiStrutturaDesk(CostiStrutturaDeskLayoutBean bean);
+
+  List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
+      ListinoAccessoriRequestBean searchRequest);
+
+  CostiStrutturaEspositoriLayoutBean saveCostiStrutturaEspositoriLayout(
+      CostiStrutturaEspositoriLayoutBean dto);
+
+  void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean);
+
+
 }

@@ -1,10 +1,16 @@
 // src/api/preventivo.ts
 import {api} from "@/api/index";
-import {ParametriBean, ParametriRequestBean} from "@/types/parametri.ts";
 import {
+    ListinoAccessoriStandBean,
+    ParametriBean,
+    ParametriRequestBean,
     CostiRetroilluminazioneBean,
-    ListinoAccessoriRequestBean, ListinoAccessoriStandBean,
-    ParametriACostiUnitariBean
+    ListinoAccessoriDeskBean,
+    ParametriACostiUnitariBean, ListinoAccessoriEspositoriBean, CostiStrutturaDeskBean,
+    CostiStrutturaEspositoriLayoutBean
+} from "@/types/parametri.ts";
+import {
+    ListinoAccessoriRequestBean,
 } from "@/types/preventivo.ts";
 
 const entryPoint = "/parametri";
@@ -51,8 +57,68 @@ export const ParametriAPI = {
         return data.data;
     },
 
-    deleteListinoAccessoriStand: async (parametro: ListinoAccessoriStandBean): Promise<ListinoAccessoriStandBean> => {
-        const data = await api.post(entryPoint + "/deleteListinoAccessoriStand", parametro);
+    deleteListinoAccessoriStand: async (id: string): Promise<void> => {
+        const data = await api.post(entryPoint + "/deleteListinoAccessoriStand", { id });
+        return data.data;
+    },
+
+    getListinoAccessoriDesk: async (filter: ListinoAccessoriRequestBean = {}): Promise<ListinoAccessoriDeskBean[]> => {
+        const res = await api.post(entryPoint + "/getListinoAccessoriDesk", filter);
+        return res.data;
+    },
+
+    saveListinoAccessoriDesk: async (parametro: ListinoAccessoriStandBean): Promise<ListinoAccessoriStandBean> => {
+        const data = await api.post(entryPoint + "/saveListinoAccessoriDesk", parametro);
+        return data.data;
+    },
+
+    deleteListinoAccessoriDesk: async (id: string): Promise<void> => {
+        const data = await api.post(entryPoint + "/deleteListinoAccessoriDesk", { id });
+        return data.data;
+    },
+
+    getListinoAccessoriEspositori: async (filter: ListinoAccessoriRequestBean = {}): Promise<ListinoAccessoriEspositoriBean[]> => {
+        const res = await api.post(entryPoint + "/getListinoAccessoriEspositori", filter);
+        return res.data;
+    },
+
+    saveListinoAccessoriEspositori: async (parametro: ListinoAccessoriEspositoriBean): Promise<ListinoAccessoriEspositoriBean> => {
+        const data = await api.post(entryPoint + "/saveListinoAccessoriEspositori", parametro);
+        return data.data;
+    },
+
+    deleteListinoAccessoriEspositori: async (id: string): Promise<void> => {
+        const data = await api.post(entryPoint + "/deleteListinoAccessoriEspositori", { id });
+        return data.data;
+    },
+
+    getCostiStrutturaDesk: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiStrutturaDeskBean[]> => {
+        const res = await api.post(entryPoint + "/getCostiStrutturaDesk", filter);
+        return res.data;
+    },
+
+    saveCostiStrutturaDesk: async (parametro: CostiStrutturaDeskBean): Promise<CostiStrutturaDeskBean> => {
+        const data = await api.post(entryPoint + "/saveCostiStrutturaDesk", parametro);
+        return data.data;
+    },
+
+    deleteCostiStrutturaDesk: async (id: string): Promise<void> => {
+        const data = await api.post(entryPoint + "/deleteCostiStrutturaDesk", { id });
+        return data.data;
+    },
+
+    getCostiStrutturaEspositoriLayout: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiStrutturaEspositoriLayoutBean[]> => {
+        const res = await api.post(entryPoint + "/getCostiStrutturaEspositoriLayout", filter);
+        return res.data;
+    },
+
+    saveCostiStrutturaEspositoriLayout: async (parametro: CostiStrutturaEspositoriLayoutBean): Promise<CostiStrutturaEspositoriLayoutBean> => {
+        const data = await api.post(entryPoint + "/saveCostiStrutturaEspositoriLayout", parametro);
+        return data.data;
+    },
+
+    deleteCostiStrutturaEspositoriLayout: async (id: string): Promise<void> => {
+        const data = await api.post(entryPoint + "/deleteCostiStrutturaEspositoriLayout", { id });
         return data.data;
     },
 };

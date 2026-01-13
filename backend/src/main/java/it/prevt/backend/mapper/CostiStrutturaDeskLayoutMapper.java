@@ -1,23 +1,21 @@
 package it.prevt.backend.mapper;
 
 import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
-import it.prevt.backend.bean.ListinoAccessoriStandBean;
-import it.prevt.backend.entity.CostoStrutturaDeskLayout;
-import it.prevt.backend.entity.ListinoAccessoriStand;
+import it.prevt.backend.entity.CostiStrutturaDeskLayout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CostoStrutturaDeskLayoutMapper
-    extends AbstractMapper<CostoStrutturaDeskLayout, CostiStrutturaDeskLayoutBean> {
+public class CostiStrutturaDeskLayoutMapper
+    extends AbstractMapper<CostiStrutturaDeskLayout, CostiStrutturaDeskLayoutBean> {
 
-  protected CostiStrutturaDeskLayoutBean doMapping(CostoStrutturaDeskLayout entity) {
+  protected CostiStrutturaDeskLayoutBean doMapping(CostiStrutturaDeskLayout entity) {
     return doMapping(new CostiStrutturaDeskLayoutBean(), entity);
   }
 
   protected CostiStrutturaDeskLayoutBean doMapping(CostiStrutturaDeskLayoutBean bean,
-      CostoStrutturaDeskLayout entity) {
+      CostiStrutturaDeskLayout entity) {
     bean.setId(entity.getId());
     bean.setLayoutDesk(entity.getLayoutDesk());
     bean.setCostoUnitario(entity.getCostoUnitario());

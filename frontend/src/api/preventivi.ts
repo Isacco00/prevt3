@@ -1,11 +1,10 @@
 // src/api/preventivo.ts
 import {api} from "@/api/index";
 import {
-  CostiRetroilluminazioneBean,
   CostiStrutturaDeskBean,
-  ListinoAccessoriDeskBean,
   ListinoAccessoriRequestBean, PreventivoBean
 } from "@/types/preventivo.ts";
+import {CostiRetroilluminazioneBean, ListinoAccessoriDeskBean} from "@/types/parametri.ts";
 
 const entryPoint = "/preventivi";
 

@@ -1,24 +1,12 @@
 package it.prevt.backend.repository.impl;
 
-import it.prevt.backend.entity.AltriBeniServizi;
-import it.prevt.backend.entity.CostiRetroilluminazione;
-import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
-import it.prevt.backend.entity.CostoStrutturaDeskLayout;
-import it.prevt.backend.entity.ListinoAccessoriDesk;
-import it.prevt.backend.entity.ListinoAccessoriEspositori;
-import it.prevt.backend.entity.ListinoAccessoriStand;
 import it.prevt.backend.entity.Parametri;
-import it.prevt.backend.entity.ParametriACostiUnitari;
-import it.prevt.backend.entity.Preventivo;
 import it.prevt.backend.repository.ParametriRepository;
-import it.prevt.backend.repository.PreventivoRepository;
-import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
 import jakarta.persistence.TypedQuery;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -133,37 +133,7 @@ export interface PreventivoBean {
     totaleCosti: number;
 }
 
-export interface ListinoAccessoriDeskBean {
-    id: string;
-    nome: string;
-    costoUnitario: number;
-    attivo: boolean;
-}
-
-export interface CostiStrutturaDeskBean {
-    id: string;
-    nome: string;
-    costoUnitario: number;
-    layoutDesk: string;
-    attivo: boolean;
-}
-
-export interface CostiRetroilluminazioneBean {
-    id: string;
-    altezza: number
-    costoAlMetro: number;
-}
-
-export interface CostiStrutturaEspositoriLayoutBean {
-    id: string;
-    layoutEspositore: string
-    costoUnitario: number;
-}
-
 export interface ListinoAccessoriRequestBean extends AbstractSearchRequestBean {
     attivo?: boolean;
     preventivoId?: string
-}
-
-export class ParametriACostiUnitariBean {
 }

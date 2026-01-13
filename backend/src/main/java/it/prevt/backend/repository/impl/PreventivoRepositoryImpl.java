@@ -111,9 +111,9 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
   }
 
   @Override
-  public List<CostoStrutturaDeskLayout> getCostiStrutturaDesk(
+  public List<CostiStrutturaDeskLayout> getCostiStrutturaDesk(
       ListinoAccessoriRequestBean searchRequest) {
-    Class<CostoStrutturaDeskLayout> clazz = CostoStrutturaDeskLayout.class;
+    Class<CostiStrutturaDeskLayout> clazz = CostiStrutturaDeskLayout.class;
     Map<String, Object> parameters = new HashMap<>();
 
     StringBuilder strQueryFrom = new StringBuilder(
@@ -133,7 +133,7 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
       strQueryWhere.append(strQueryOrderBy.toString());
     }
     String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
-    TypedQuery<CostoStrutturaDeskLayout> query = entityManager.createQuery(strQueryFinal, clazz);
+    TypedQuery<CostiStrutturaDeskLayout> query = entityManager.createQuery(strQueryFinal, clazz);
     parameters.forEach(query::setParameter);
     return getResultList(query);
   }

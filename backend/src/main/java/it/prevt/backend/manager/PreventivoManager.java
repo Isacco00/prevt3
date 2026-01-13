@@ -12,20 +12,6 @@ public interface PreventivoManager {
 
   PreventivoBean savePreventivo(PreventivoBean bean, Authentication authentication);
 
-  List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(ListinoAccessoriRequestBean searchRequest);
-
-  List<ListinoAccessoriStandBean> getListinoAccessoriStand(
-      ListinoAccessoriRequestBean searchRequest);
-
-  List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
-      ListinoAccessoriRequestBean searchRequest);
-
-  List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
-      ListinoAccessoriRequestBean searchRequest);
-
-  List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
-      ListinoAccessoriRequestBean searchRequest);
-
   List<AltriBeniServiziBean> getAltriBeniServizi(
       ListinoAccessoriRequestBean searchRequest);
 }

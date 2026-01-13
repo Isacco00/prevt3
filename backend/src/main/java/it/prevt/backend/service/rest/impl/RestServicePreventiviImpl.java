@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -22,30 +21,6 @@ public class RestServicePreventiviImpl implements RestServicePreventivi {
   @Override
   public List<PreventivoBean> getPreventiviList() {
     return manager.getPreventiviList();
-  }
-
-  @Override
-  public List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(
-      @RequestBody ListinoAccessoriRequestBean searchRequest) {
-    return manager.getListinoAccessoriDesk(searchRequest);
-  }
-
-  @Override
-  public List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getCostiStrutturaDesk(searchRequest);
-  }
-
-  @Override
-  public List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getCostiStrutturaEspositoriLayout(searchRequest);
-  }
-
-  @Override
-  public List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getListinoAccessoriEspositori(searchRequest);
   }
 
   @Override

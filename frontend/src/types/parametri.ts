@@ -27,4 +27,39 @@ export interface ListinoAccessoriStandBean {
     attivo: boolean;
 }
 
+export interface ListinoAccessoriDeskBean {
+    id: string;
+    nome: string;
+    costoUnitario: number;
+    attivo: boolean;
+}
+
+export interface CostiRetroilluminazioneBean {
+    id: string;
+    altezza: number
+    costoAlMetro: number;
+}
+
+export interface ListinoAccessoriEspositoriBean {
+    id: string;
+    nome: string
+    costoUnitario: number;
+    attivo: boolean;
+}
+
+export interface CostiStrutturaDeskBean {
+    id: string;
+    nome: string;
+    costoUnitario: number;
+    layoutDesk: string;
+    attivo: boolean;
+}
+
+export interface CostiStrutturaEspositoriLayoutBean {
+    id: string;
+    layoutEspositore: string
+    costoUnitario: number;
+    attivo: boolean;
+}
+
 export type ParametriRequestBean = AbstractSearchRequestBean

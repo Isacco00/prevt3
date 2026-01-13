@@ -1,6 +1,10 @@
 package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.CostiRetroilluminazioneBean;
+import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
+import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
+import it.prevt.backend.bean.ListinoAccessoriDeskBean;
+import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
@@ -12,6 +16,7 @@ import it.prevt.backend.service.rest.RestServiceParametri;
 
 import java.util.List;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,5 +69,76 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   @Override
   public ListinoAccessoriStandBean saveListinoAccessoriStand(ListinoAccessoriStandBean dto) {
     return manager.saveListinoAccessoriStand(dto);
+  }
+
+  @Override
+  public void deleteListinoAccessoriStand(ListinoAccessoriStandBean id) {
+    manager.deleteListinoAccessoriStand(id);
+  }
+
+  @Override
+  public List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getListinoAccessoriDesk(searchRequest);
+  }
+
+  @Override
+  public ListinoAccessoriDeskBean saveListinoAccessoriDesk(ListinoAccessoriDeskBean dto) {
+    return manager.saveListinoAccessoriDesk(dto);
+  }
+
+  @Override
+  public void deleteListinoAccessoriDesk(ListinoAccessoriDeskBean bean) {
+    manager.deleteListinoAccessoriDesk(bean);
+  }
+
+  @Override
+  public List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getListinoAccessoriEspositori(searchRequest);
+  }
+
+  @Override
+  public ListinoAccessoriEspositoriBean saveListinoAccessoriEspositori(
+      ListinoAccessoriEspositoriBean dto) {
+    return manager.saveListinoAccessoriEspositori(dto);
+  }
+
+  @Override
+  public void deleteListinoAccessoriEspositori(ListinoAccessoriEspositoriBean bean) {
+    manager.deleteListinoAccessoriEspositori(bean);
+  }
+
+  @Override
+  public List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getCostiStrutturaDesk(searchRequest);
+  }
+
+  @Override
+  public CostiStrutturaDeskLayoutBean saveCostiStrutturaDesk(CostiStrutturaDeskLayoutBean dto) {
+    return manager.saveCostiStrutturaDesk(dto);
+  }
+
+  @Override
+  public void deleteCostiStrutturaDesk(CostiStrutturaDeskLayoutBean bean) {
+    manager.deleteCostiStrutturaDesk(bean);
+  }
+
+  @Override
+  public List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getCostiStrutturaEspositoriLayout(searchRequest);
+  }
+
+  @Override
+  public CostiStrutturaEspositoriLayoutBean saveCostiStrutturaEspositoriLayout(
+      CostiStrutturaEspositoriLayoutBean dto) {
+    return manager.saveCostiStrutturaEspositoriLayout(dto);
+  }
+
+  @Override
+  public void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean) {
+    manager.deleteCostiStrutturaEspositoriLayout(bean);
   }
 }

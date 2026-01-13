@@ -1,8 +1,6 @@
 package it.prevt.backend.mapper;
 
-import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
-import it.prevt.backend.entity.CostoStrutturaDeskLayout;
 import it.prevt.backend.entity.ParametriACostiUnitari;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

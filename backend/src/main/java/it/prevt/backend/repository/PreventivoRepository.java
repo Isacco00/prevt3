@@ -16,7 +16,7 @@ public interface PreventivoRepository extends AbstractRepository {
 
   List<ListinoAccessoriStand> getListinoAccessoriStand(ListinoAccessoriRequestBean searchRequest);
 
-  List<CostoStrutturaDeskLayout> getCostiStrutturaDesk(ListinoAccessoriRequestBean searchRequest);
+  List<CostiStrutturaDeskLayout> getCostiStrutturaDesk(ListinoAccessoriRequestBean searchRequest);
 
   List<ParametriACostiUnitari> getParametriACostiUnitari(ListinoAccessoriRequestBean searchRequest);
 

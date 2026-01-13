@@ -23,7 +23,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 
 import { ParametriAPI } from '@/api/parametri';
-import { CostiRetroilluminazioneBean } from '@/types/preventivo';
+import {CostiRetroilluminazioneBean} from "@/types/parametri.ts";
 
 /* =====================================================
    CostoRetroilluminazione

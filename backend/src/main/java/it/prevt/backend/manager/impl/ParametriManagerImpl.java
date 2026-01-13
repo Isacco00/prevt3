@@ -1,19 +1,35 @@
 package it.prevt.backend.manager.impl;
 
 import it.prevt.backend.bean.CostiRetroilluminazioneBean;
+import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
+import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
+import it.prevt.backend.bean.ListinoAccessoriDeskBean;
+import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.entity.CostiRetroilluminazione;
+import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
+import it.prevt.backend.entity.CostiStrutturaDeskLayout;
+import it.prevt.backend.entity.ListinoAccessoriDesk;
+import it.prevt.backend.entity.ListinoAccessoriEspositori;
 import it.prevt.backend.entity.ListinoAccessoriStand;
 import it.prevt.backend.entity.Parametri;
 import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.manager.ParametriManager;
 import it.prevt.backend.mapper.CostiRetroilluminazioneMapper;
+import it.prevt.backend.mapper.CostiStrutturaEspositoriLayoutMapper;
+import it.prevt.backend.mapper.CostiStrutturaDeskLayoutMapper;
+import it.prevt.backend.mapper.ListinoAccessoriDeskMapper;
+import it.prevt.backend.mapper.ListinoAccessoriEspositoriMapper;
 import it.prevt.backend.mapper.ListinoAccessoriStandMapper;
 import it.prevt.backend.mapper.ParametriACostiUnitariMapper;
 import it.prevt.backend.mapper.ParametriMapper;
 import it.prevt.backend.merger.CostiRetroilluminazioneMerger;
+import it.prevt.backend.merger.CostiStrutturaDeskLayoutMerger;
+import it.prevt.backend.merger.CostiStrutturaEspositoriLayoutMerger;
+import it.prevt.backend.merger.ListinoAccessoriDeskMerger;
+import it.prevt.backend.merger.ListinoAccessoriEspositoriMerger;
 import it.prevt.backend.merger.ListinoAccessoriStandMerger;
 import it.prevt.backend.merger.ParametriACostiUnitariMerger;
 import it.prevt.backend.merger.ParametriMerger;
@@ -43,6 +59,14 @@ public class ParametriManagerImpl implements ParametriManager {
   private final CostiRetroilluminazioneMerger costiRetroilluminazioneMerger;
   private final ListinoAccessoriStandMapper listinoAccessoriStandMapper;
   private final ListinoAccessoriStandMerger listinoAccessoriStandMerger;
+  private final ListinoAccessoriDeskMapper listinoAccessoriDeskMapper;
+  private final ListinoAccessoriDeskMerger listinoAccessoriDeskMerger;
+  private final ListinoAccessoriEspositoriMapper listinoAccessoriEspositoriMapper;
+  private final ListinoAccessoriEspositoriMerger listinoAccessoriEspositoriMerger;
+  private final CostiStrutturaDeskLayoutMapper costiStrutturaDeskLayoutMapper;
+  private final CostiStrutturaDeskLayoutMerger costiStrutturaDeskLayoutMerger;
+  private final CostiStrutturaEspositoriLayoutMapper costiStrutturaEspositoriLayoutMapper;
+  private final CostiStrutturaEspositoriLayoutMerger costiStrutturaEspositoriLayoutMerger;
 
   @Override
   public List<ParametriBean> getParametriList(ParametriRequestBean request) {
@@ -72,8 +96,8 @@ public class ParametriManagerImpl implements ParametriManager {
   @Override
   public List<ParametriACostiUnitariBean> getParametriACostiUnitari(
       ListinoAccessoriRequestBean searchRequest) {
-    List<ParametriACostiUnitari> parametriACostiUnitaris =
-        repository.getParametriACostiUnitari(searchRequest);
+    List<ParametriACostiUnitari> parametriACostiUnitaris = repository.getParametriACostiUnitari(
+        searchRequest);
     if (parametriACostiUnitaris == null) {
       throw new UsernameNotFoundException("error.parametriacostiunitari.notfound");
     }
@@ -99,8 +123,8 @@ public class ParametriManagerImpl implements ParametriManager {
   @Override
   public List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest) {
-    List<CostiRetroilluminazione> costiRetroilluminazioneList =
-        repository.getCostiRetroilluminazione(searchRequest);
+    List<CostiRetroilluminazione> costiRetroilluminazioneList = repository.getCostiRetroilluminazione(
+        searchRequest);
     if (costiRetroilluminazioneList == null) {
       throw new UsernameNotFoundException("error.costiretroilluminazione.notfound");
     }
@@ -126,8 +150,8 @@ public class ParametriManagerImpl implements ParametriManager {
   @Override
   public List<ListinoAccessoriStandBean> getListinoAccessoriStand(
       ListinoAccessoriRequestBean searchRequest) {
-    List<ListinoAccessoriStand> listinoAccessoriStandList =
-        repository.getListinoAccessoriStand(searchRequest);
+    List<ListinoAccessoriStand> listinoAccessoriStandList = repository.getListinoAccessoriStand(
+        searchRequest);
     if (listinoAccessoriStandList == null) {
       throw new UsernameNotFoundException("error.listinoaccessoristand.notfound");
     }
@@ -148,6 +172,181 @@ public class ParametriManagerImpl implements ParametriManager {
     }
     this.repository.save(entity);
     return listinoAccessoriStandMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteListinoAccessoriStand(ListinoAccessoriStandBean bean) {
+    if (bean != null) {
+      ListinoAccessoriStand entity = repository.find(ListinoAccessoriStand.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      entity.setAttivo(false);
+      this.repository.save(entity);
+    }
+  }
+
+  @Override
+  public List<ListinoAccessoriDeskBean> getListinoAccessoriDesk(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<ListinoAccessoriDesk> listinoAccessoriDeskList = repository.getListinoAccessoriDesk(
+        searchRequest);
+    if (listinoAccessoriDeskList == null) {
+      throw new UsernameNotFoundException("error.listinoaccessoridesk.notfound");
+    }
+    return listinoAccessoriDeskMapper.mapEntitiesToBeans(listinoAccessoriDeskList);
+  }
+
+  @Override
+  public ListinoAccessoriDeskBean saveListinoAccessoriDesk(ListinoAccessoriDeskBean bean) {
+    ListinoAccessoriDesk entity;
+    if (bean.getId() == null) {
+      entity = listinoAccessoriDeskMerger.mapNew(bean, ListinoAccessoriDesk.class);
+    } else {
+      entity = repository.find(ListinoAccessoriDesk.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      listinoAccessoriDeskMerger.merge(bean, entity);
+    }
+    this.repository.save(entity);
+    return listinoAccessoriDeskMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteListinoAccessoriDesk(ListinoAccessoriDeskBean bean) {
+    if (bean != null) {
+      ListinoAccessoriDesk entity = repository.find(ListinoAccessoriDesk.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      entity.setAttivo(false);
+      this.repository.save(entity);
+    }
+  }
+
+  @Override
+  public List<ListinoAccessoriEspositoriBean> getListinoAccessoriEspositori(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<ListinoAccessoriEspositori> listinoAccessoriEspositoriList = repository.getListinoAccessoriEspositori(
+        searchRequest);
+    if (listinoAccessoriEspositoriList == null) {
+      throw new UsernameNotFoundException("error.listinoaccessoriespositori.notfound");
+    }
+    return listinoAccessoriEspositoriMapper.mapEntitiesToBeans(listinoAccessoriEspositoriList);
+  }
+
+  @Override
+  public ListinoAccessoriEspositoriBean saveListinoAccessoriEspositori(
+      ListinoAccessoriEspositoriBean bean) {
+    ListinoAccessoriEspositori entity;
+    if (bean.getId() == null) {
+      entity = listinoAccessoriEspositoriMerger.mapNew(bean, ListinoAccessoriEspositori.class);
+    } else {
+      entity = repository.find(ListinoAccessoriEspositori.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      listinoAccessoriEspositoriMerger.merge(bean, entity);
+    }
+    this.repository.save(entity);
+    return listinoAccessoriEspositoriMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteListinoAccessoriEspositori(ListinoAccessoriEspositoriBean bean) {
+    if (bean != null) {
+      ListinoAccessoriEspositori entity = repository.find(ListinoAccessoriEspositori.class,
+          bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      entity.setAttivo(false);
+      this.repository.save(entity);
+    }
+  }
+
+  @Override
+  public List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<CostiStrutturaDeskLayout> costiStrutturaDeskList = repository.getCostiStrutturaDesk(
+        searchRequest);
+    if (costiStrutturaDeskList == null) {
+      throw new UsernameNotFoundException("error.costistrutturadesk.notfound");
+    }
+    return costiStrutturaDeskLayoutMapper.mapEntitiesToBeans(costiStrutturaDeskList);
+  }
+
+  @Override
+  public CostiStrutturaDeskLayoutBean saveCostiStrutturaDesk(CostiStrutturaDeskLayoutBean bean) {
+    CostiStrutturaDeskLayout entity;
+    if (bean.getId() == null) {
+      entity = costiStrutturaDeskLayoutMerger.mapNew(bean, CostiStrutturaDeskLayout.class);
+    } else {
+      entity = repository.find(CostiStrutturaDeskLayout.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      costiStrutturaDeskLayoutMerger.merge(bean, entity);
+    }
+    this.repository.save(entity);
+    return costiStrutturaDeskLayoutMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteCostiStrutturaDesk(CostiStrutturaDeskLayoutBean bean) {
+    if (bean != null) {
+      CostiStrutturaDeskLayout entity = repository.find(CostiStrutturaDeskLayout.class,
+          bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      entity.setAttivo(false);
+      this.repository.save(entity);
+    }
+  }
+
+  @Override
+  public List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<CostiStrutturaEspositoriLayout> costiStrutturaEspositoriLayoutList = repository.getCostiStrutturaEspositoriLayout(
+        searchRequest);
+    if (costiStrutturaEspositoriLayoutList == null) {
+      throw new UsernameNotFoundException("error.costistrutturaespositorilayout.notfound");
+    }
+    return costiStrutturaEspositoriLayoutMapper.mapEntitiesToBeans(
+        costiStrutturaEspositoriLayoutList);
+  }
+
+  @Override
+  public CostiStrutturaEspositoriLayoutBean saveCostiStrutturaEspositoriLayout(
+      CostiStrutturaEspositoriLayoutBean bean) {
+    CostiStrutturaEspositoriLayout entity;
+    if (bean.getId() == null) {
+      entity = costiStrutturaEspositoriLayoutMerger.mapNew(bean,
+          CostiStrutturaEspositoriLayout.class);
+    } else {
+      entity = repository.find(CostiStrutturaEspositoriLayout.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      costiStrutturaEspositoriLayoutMerger.merge(bean, entity);
+    }
+    this.repository.save(entity);
+    return costiStrutturaEspositoriLayoutMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean) {
+    if (bean != null) {
+      CostiStrutturaEspositoriLayout entity = repository.find(CostiStrutturaEspositoriLayout.class,
+          bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      entity.setAttivo(false);
+      this.repository.save(entity);
+    }
   }
 }
 
