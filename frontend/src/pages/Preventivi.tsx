@@ -89,7 +89,7 @@ const Preventivi = () => {
         data: accessoriDesk
     } = useQuery({
         queryKey: ["listino-accessori-desk"],
-        queryFn: () => PreventiviAPI.getListinoAccessoriDesk({
+        queryFn: () => ParametriAPI.getListinoAccessoriDesk({
             attivo: true, sortFields: [{
                 field: "LISTINO_ACCESSORI_DESK_NAME",
                 desc: false
@@ -102,7 +102,7 @@ const Preventivi = () => {
         data: costiStrutturaDesk
     } = useQuery({
         queryKey: ["costi-struttura-desk-layout"],
-        queryFn: () => PreventiviAPI.getCostiStrutturaDesk({attivo: true})
+        queryFn: () => ParametriAPI.getCostiStrutturaDesk({attivo: true})
     });
 
     // Query per recuperare i parametri a costi unitari
@@ -146,7 +146,7 @@ const Preventivi = () => {
         data: accessoriEspositoriDB = []
     } = useQuery({
         queryKey: ['listino-accessori-espositori'],
-        queryFn: () => PreventiviAPI.getListinoAccessoriEspositori({
+        queryFn: () => ParametriAPI.getListinoAccessoriEspositori({
             attivo: true, sortFields: [{
                 field: "LISTINO_ACCESSORI_ESPOSITORI_NOME",
                 desc: false
