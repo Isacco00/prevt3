@@ -4,7 +4,6 @@ services:
   postgres:
     image: postgres:15.4
     container_name: postgres_prevt
-    restart: always
     environment:
       POSTGRES_USER: prevt
       POSTGRES_PASSWORD: prevt
@@ -21,7 +20,6 @@ services:
       context: ./backend
       dockerfile: dockerfile.local
     container_name: spring_prevt
-    restart: always
     volumes:
       - ./backend:/app          # 🔥 HOTSWAP codice
       - ~/.m2:/root/.m2          # 🚀 cache Maven
