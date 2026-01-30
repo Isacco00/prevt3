@@ -3,7 +3,7 @@ import {AbstractSearchRequestBean} from "@/types/index.ts";
 
 export interface PreventivoBean {
     id: string;
-    prospect?: ProspectBean;
+    prospect?: Partial<ProspectBean>;
     numeroPreventivo: string;
     titolo: string;
     descrizione: string;

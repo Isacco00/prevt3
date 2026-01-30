@@ -8,7 +8,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -16,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
 @Table(name = "marginalita_per_prospect")
-public class MarginalitaPerProspectEntity {
+public class MarginalitaPerProspect {
 
     @Id
     @GeneratedValue
