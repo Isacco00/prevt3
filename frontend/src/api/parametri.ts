@@ -67,7 +67,7 @@ export const ParametriAPI = {
         return res.data;
     },
 
-    saveListinoAccessoriDesk: async (parametro: ListinoAccessoriStandBean): Promise<ListinoAccessoriStandBean> => {
+    saveListinoAccessoriDesk: async (parametro: ListinoAccessoriDeskBean): Promise<ListinoAccessoriDeskBean> => {
         const data = await api.post(entryPoint + "/saveListinoAccessoriDesk", parametro);
         return data.data;
     },

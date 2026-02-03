@@ -15,6 +15,8 @@ import { ProspectsAPI } from "@/api/prospects";
 import { PreventivoBean } from "@/types/preventivo";
 import { usePreventivoMargins } from "@/hooks/usePreventivi";
 import {MarginalitaPerProspectAPI} from "@/api/marginalitaPerProspect.ts";
+import {ProspectBean} from "@/types/prospect.ts";
+import {MarginalitaPerProspectBean} from "@/types/marginalitaPerProspect.ts";
 
 interface PreventivoAnagraficaProps {
     formData: PreventivoBean;
@@ -27,13 +29,13 @@ export function PreventivoAnagrafica({
                                      }: PreventivoAnagraficaProps) {
 
     // Prospects
-    const { data: prospects = [] } = useQuery({
+    const { data: prospects = [] } = useQuery<ProspectBean[]>({
         queryKey: ["prospects"],
         queryFn: ProspectsAPI.getProspects
     });
 
     // Marginalità per prospect
-    const { data: marginalitaProspect = [] } = useQuery({
+    const { data: marginalitaProspect = [] } = useQuery<MarginalitaPerProspectBean[]>({
         queryKey: ["marginalita-per-prospect"],
         queryFn: () => MarginalitaPerProspectAPI.getMarginalitaPerProspect({
             attivo: true

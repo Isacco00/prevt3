@@ -7,6 +7,7 @@ import {ChevronDown, ChevronRight} from "lucide-react";
 import {useQuery} from "@tanstack/react-query";
 import {useState} from "react";
 import {PreventiviAPI} from "@/api/preventivi.ts";
+import {ParametriAPI} from "@/api/parametri.ts";
 
 interface DeskLayoutConfig {
     layout: string;
@@ -51,7 +52,7 @@ export function DeskSection({data, onChange, costiAccessori = 0, costiDesk}: Des
         data: accessoriDesk
     } = useQuery({
         queryKey: ["listino-accessori-desk"],
-        queryFn: () => PreventiviAPI.getListinoAccessoriDesk({
+        queryFn: () => ParametriAPI.getListinoAccessoriDesk({
             attivo: true, sortFields: [{
                 field: "LISTINO_ACCESSORI_DESK_NAME",
                 desc: false

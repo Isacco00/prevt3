@@ -1,26 +1,17 @@
 import React, { useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/hooks/useAuth.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
+import { Input } from '@/components/ui/input.tsx';
+import { Label } from '@/components/ui/label.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { Calculator } from 'lucide-react';
 import {PreventiviAPI} from "@/api/preventivi.ts";
+import {PreventivoBean} from "@/types/preventivo.ts";
 
 interface StorageSectionProps {
-  formData: {
-    larghezzaStorage: string;
-    profonditaStorage: string;
-    altezzaStorage: string;
-    layoutStorage: string;
-    numeroPorte: string;
-    distribuzione: string;
-    marginalitaStrutturaStorage?: number;
-    marginalitaGraficaStorage?: number;
-    marginalitaPremontaggioStorage?: number;
-  };
-  setFormData: (data: any) => void;
+  formData: PreventivoBean;
+  setFormData: React.Dispatch<React.SetStateAction<PreventivoBean>>;
   profiliDistribuzioneMap: Record<number, number>;
   parametri: any[];
   accessoriStand: any[];

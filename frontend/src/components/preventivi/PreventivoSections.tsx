@@ -1,5 +1,5 @@
-import {StandSection} from "@/components/StandSection.tsx";
-import {StorageSection} from "@/components/StorageSection.tsx";
+import {StandSection} from "@/components/preventivi/StandSection.tsx";
+import {StorageSection} from "@/components/preventivi/StorageSection.tsx";
 import {DeskSection} from "@/components/DeskSection.tsx";
 import {ExpositoreSection} from "@/components/ExpositoreSection.tsx";
 import {ServicesSection} from "@/components/ServicesSection.tsx";
@@ -14,8 +14,6 @@ interface Props {
 export function PreventivoSections({formData, setFormData}: Props) {
     return (
         <div className="space-y-4">
-
-            <StandSection formData={formData} setFormData={setFormData}/>
 
             <StorageSection formData={formData} setFormData={setFormData}/>
 

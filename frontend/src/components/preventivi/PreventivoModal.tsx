@@ -15,8 +15,8 @@ import {ChevronDown, FileText, Plus} from "lucide-react";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {StandSection} from "@/components/StandSection.tsx";
-import {StorageSection} from "@/components/StorageSection.tsx";
+import {StandSection} from "@/components/preventivi/StandSection.tsx";
+import {StorageSection} from "@/components/preventivi/StorageSection.tsx";
 import {DeskSection} from "@/components/DeskSection.tsx";
 import {TotalePreventivoSection} from "@/components/TotalePreventivoSection.tsx";
 import {CondizioniFornituraSection} from "@/components/CondizioniFornituraSection.tsx";
@@ -40,6 +40,16 @@ export function PreventivoModal({
                                     setFormData,
                                     isEditing,
                                 }: PreventivoModalProps) {
+    // State per controllare le sezioni collassabili
+    const [sectionsOpen, setSectionsOpen] = useState({
+      stand: false,
+      storage: false,
+      desk: false,
+      espositori: false,
+      servizi: false,
+      altri_beni_servizi: false,
+      condizioni_fornitura: false
+    });
 
 
     // Function to update margins based on prospect type
@@ -797,6 +807,31 @@ export function PreventivoModal({
                 <form className="space-y-8">
                     <PreventivoAnagrafica formData={formData} setFormData={setFormData} />
                     <Separator/>
+                    {/* Sezione Stand - collassabile */}
+                    <Collapsible open={sectionsOpen.stand} onOpenChange={open => setSectionsOpen(prev => ({
+                      ...prev,
+                      stand: open
+                    }))}>
+                      <div className="bg-[hsl(var(--section-stand))] border border-[hsl(var(--section-stand-border))] rounded-lg overflow-hidden">
+                        <CollapsibleTrigger asChild>
+                          <Button variant="ghost" className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-stand-border))] rounded-none border-0">
+                            <div className="flex items-center gap-3">
+                              <div className="w-3 h-3 rounded-full bg-[hsl(var(--section-stand-foreground))]"></div>
+                              <span className="font-medium text-[hsl(var(--section-stand-foreground))]">Stand</span>
+                              <span className="ml-2 text-xs bg-[hsl(var(--section-stand-foreground))] text-[hsl(var(--section-stand))] px-2 py-1 rounded-full">
+                            Principale
+                          </span>
+                            </div>
+                            <ChevronDown className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-stand-foreground))] ${sectionsOpen.stand ? 'rotate-180' : ''}`} />
+                          </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="border-t border-[hsl(var(--section-stand-border))] bg-card p-6">
+                            <StandSection formData={formData} setFormData={setFormData}/>
+                          </div>
+                        </CollapsibleContent>
+                      </div>
+                    </Collapsible>
                 </form>
             </DialogContent>
         </Dialog>
