@@ -1,13 +1,14 @@
-import {Card, CardContent} from "@/components/ui/card";
-import {Label} from "@/components/ui/label";
-import {Input} from "@/components/ui/input";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
+import {Card, CardContent} from "@/components/ui/card.tsx";
+import {Label} from "@/components/ui/label.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible.tsx";
 import {ChevronDown, ChevronRight} from "lucide-react";
 import {useQuery} from "@tanstack/react-query";
 import React, {useState} from "react";
 import {ParametriAPI} from "@/api/parametri.ts";
-import {PreventivoBean} from "@/types/preventivo.ts";
+import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
+import {CostiStrutturaDeskBean, ListinoAccessoriDeskBean} from "@/types/parametri.ts";
 
 interface DeskSectionProps {
   formData: PreventivoBean;
@@ -26,9 +27,9 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     "Borsa": "borsa",
   };
 
-  const deskLayoutsArray = Array.isArray(formData.layoutDesk) ? formData.layoutDesk as any[] : (() => {
+  const deskLayoutsArray = Array.isArray(formData.layoutDesk) ? formData.layoutDesk as LayoutDeskBean[] : (() => {
     try {
-      return typeof (formData.layoutDesk as any) === 'string' ? JSON.parse(formData.layoutDesk as any) : [];
+      return typeof (formData.layoutDesk as LayoutDeskBean) === 'string' ? JSON.parse(formData.layoutDesk as string) : [];
     } catch {
       return [];
     }
@@ -138,15 +139,15 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
 
   // Funzioni helper per calcolo desk
   const calculateSuperficieStampaDesk = () => {
-    const arr = Array.isArray(formData.layoutDesk) ? formData.layoutDesk as any[] : (() => {
+    const arr = Array.isArray(formData.layoutDesk) ? formData.layoutDesk as LayoutDeskBean[] : (() => {
       try {
-        return typeof (formData.layoutDesk as any) === 'string' ? JSON.parse(formData.layoutDesk as any) : [];
+        return typeof (formData.layoutDesk as LayoutDeskBean) === 'string' ? JSON.parse(formData.layoutDesk as string) : [];
       } catch {
         return [];
       }
     })();
     if (!arr.length) return 0;
-    return arr.reduce((total, config: any) => {
+    return arr.reduce((total, config: LayoutDeskBean) => {
       const {
         layout,
         quantity
@@ -167,15 +168,15 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     }, 0);
   };
   const calculateNumeroPezziDesk = () => {
-    const arr = Array.isArray(formData.layoutDesk) ? formData.layoutDesk as any[] : (() => {
+    const arr = Array.isArray(formData.layoutDesk) ? formData.layoutDesk as LayoutDeskBean[] : (() => {
       try {
-        return typeof (formData.layoutDesk as any) === 'string' ? JSON.parse(formData.layoutDesk as any) : [];
+        return typeof (formData.layoutDesk as LayoutDeskBean) === 'string' ? JSON.parse(formData.layoutDesk as string) : [];
       } catch {
         return [];
       }
     })();
     if (!arr.length) return 0;
-    return arr.reduce((total, config: any) => {
+    return arr.reduce((total, config: LayoutDeskBean) => {
       const {
         layout,
         quantity
@@ -217,8 +218,8 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     const costoStampaDeskParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
     const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
 
-    const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: any) => {
-      const costoLayout = costiStrutturaDesk?.find((c: any) => c.layout_desk === config.layout);
+    const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
+      const costoLayout = costiStrutturaDesk?.find((c: CostiStrutturaDeskBean) => c.layoutDesk === config.layout);
       return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costoUnitario) || 0);
     }, 0);
     // Grafica desk con cordino cucito
@@ -366,7 +367,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {accessoriDesk.map((accessorio: any) => {
+                        {accessoriDesk.map((accessorio: ListinoAccessoriDeskBean) => {
                           // Mappa i nomi degli accessori ai campi del formData
                           const field = fieldMap[accessorio.nome];
                           const quantity = field ? (formData[field] || 0) : 0;

@@ -13,6 +13,7 @@ import {
 import {Calculator} from 'lucide-react';
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {ParametriAPI} from "@/api/parametri.ts";
+import {ParametriBean} from "@/types/parametri.ts";
 
 interface StorageSectionProps {
   formData: PreventivoBean;
@@ -34,7 +35,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
 
   const profiliDistribuzioneMap = useMemo(() => {
     const map: Record<number, number> = {};
-    for (const p of parametri as any[]) {
+    for (const p of parametri as ParametriBean[]) {
       if (p?.tipo === "profili_distribuzione") {
         const key = Number(p?.nome);
         if (Number.isFinite(key)) map[key] = Number(p?.valore);

@@ -1,6 +1,10 @@
 import {ProspectBean} from "@/types/prospect.ts";
 import {AbstractSearchRequestBean} from "@/types/index.ts";
 
+export interface LayoutDeskBean {
+    layout: string;
+    quantity: number;
+}
 export interface PreventivoBean {
     id: string;
     prospect?: Partial<ProspectBean>;
@@ -47,7 +51,7 @@ export interface PreventivoBean {
 
     numeroPorte: string;
     deskQta: number;
-    layoutDesk: string;
+    layoutDesk: LayoutDeskBean[];
 
     portaScorrevole: number;
     ripianoSuperiore: number;

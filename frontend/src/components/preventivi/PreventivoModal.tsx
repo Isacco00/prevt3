@@ -23,7 +23,7 @@ import {Separator} from "@/components/ui/separator.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {StandSection} from "@/components/preventivi/StandSection.tsx";
 import {StorageSection} from "@/components/preventivi/StorageSection.tsx";
-import {DeskSection} from "@/components/DeskSection.tsx";
+import {DeskSection} from "@/components/preventivi/DeskSection.tsx";
 import {TotalePreventivoSection} from "@/components/TotalePreventivoSection.tsx";
 import {CondizioniFornituraSection} from "@/components/CondizioniFornituraSection.tsx";
 import {useQuery} from "@tanstack/react-query";

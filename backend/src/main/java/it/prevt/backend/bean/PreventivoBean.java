@@ -1,5 +1,6 @@
 package it.prevt.backend.bean;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,7 +47,7 @@ public class PreventivoBean {
   private String layoutStorage;
   private String numeroPorte;
   private Integer deskQta;
-  private String layoutDesk;
+  private List<LayoutDeskBean> layoutDesk;
   private Integer portaScorrevole;
   private Integer ripianoSuperiore;
   private Integer ripianoInferiore;

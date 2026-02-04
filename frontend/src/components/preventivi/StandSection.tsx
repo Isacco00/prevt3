@@ -15,6 +15,7 @@ import {PreventivoBean} from "@/types/preventivo";
 import {ParametriAPI} from "@/api/parametri";
 import {TableBody, Table, TableCell, TableHead, TableHeader, TableRow} from "../ui/table";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "../ui/collapsible";
+import {ParametriBean} from "@/types/parametri.ts";
 
 interface StandSectionProps {
   formData: PreventivoBean;
@@ -53,7 +54,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
   const profiliDistribuzioneMap = useMemo(() => {
     const map: Record<number, number> = {};
-    for (const p of parametri as any[]) {
+    for (const p of parametri as ParametriBean[]) {
       if (p?.tipo === "profili_distribuzione") {
         const key = Number(p?.nome);
         if (Number.isFinite(key)) map[key] = Number(p?.valore);
@@ -371,7 +372,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                   onValueChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
-                        layout: value as any,
+                        layout: value as string,
                       }))
                   }
               >
@@ -418,7 +419,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                   onValueChange={(value) =>
                       setFormData((prev) => ({
                         ...prev,
-                        complessita: value as any,
+                        complessita: value as string,
                       }))
                   }
               >

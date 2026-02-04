@@ -1,7 +1,14 @@
 package it.prevt.backend.mapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.prevt.backend.bean.LayoutDeskBean;
 import it.prevt.backend.bean.PreventivoBean;
 import it.prevt.backend.entity.Preventivo;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +16,21 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean> {
 
+  private static final ObjectMapper MAPPER = new ObjectMapper();
   private final ProspectMapper prospectMapper;
+
+  public static List<LayoutDeskBean> parseLayoutDesk(String json) {
+    if (json == null || json.isBlank()) {
+      return Collections.emptyList();
+    }
+    try {
+      return MAPPER.readValue(json, new TypeReference<List<LayoutDeskBean>>() {
+      });
+    } catch (Exception e) {
+      return Collections.emptyList();
+    }
+  }
+
 
   protected PreventivoBean doMapping(Preventivo entity) {
     return doMapping(new PreventivoBean(), entity);
@@ -51,7 +72,8 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
     bean.setLayoutStorage(entity.getLayoutStorage());
     bean.setNumeroPorte(entity.getNumeroPorte());
     bean.setDeskQta(entity.getDeskQta());
-    bean.setLayoutDesk(entity.getLayoutDesk());
+    bean.setLayoutDesk(parseLayoutDesk(entity.getLayoutDesk()));
+
     bean.setPortaScorrevole(entity.getPortaScorrevole());
     bean.setRipianoSuperiore(entity.getRipianoSuperiore());
     bean.setRipianoInferiore(entity.getRipianoInferiore());
@@ -140,3 +162,4 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
     return bean;
   }
 }
+
