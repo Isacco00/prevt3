@@ -21,14 +21,6 @@ interface StandSectionProps {
   setFormData: React.Dispatch<React.SetStateAction<PreventivoBean>>;
 }
 
-// helper: converte string -> number, gestendo "" / null / undefined
-const toNumber = (v: unknown): number => {
-  if (v === null || v === undefined) return 0;
-  if (typeof v === "number") return Number.isFinite(v) ? v : 0;
-  const n = Number(String(v).replace(",", "."));
-  return Number.isFinite(n) ? n : 0;
-};
-
 export function StandSection({formData, setFormData}: StandSectionProps) {
 
   type AccessoriStandMap = Record<string, number>;
@@ -64,18 +56,18 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     for (const p of parametri as any[]) {
       if (p?.tipo === "profili_distribuzione") {
         const key = Number(p?.nome);
-        if (Number.isFinite(key)) map[key] = toNumber(p?.valore);
+        if (Number.isFinite(key)) map[key] = Number(p?.valore);
       }
     }
     return map;
   }, [parametri]);
 
   const physicalElements = useMemo(() => {
-    const profondita = toNumber(formData.profondita);
-    const larghezza = toNumber(formData.larghezza);
-    const altezza = toNumber(formData.altezza);
-    const distribuzione = toNumber(formData.distribuzione);
-    const bifaccialita = toNumber(formData.bifaccialita);
+    const profondita = Number(formData.profondita);
+    const larghezza = Number(formData.larghezza);
+    const altezza = Number(formData.altezza);
+    const distribuzione = Number(formData.distribuzione);
+    const bifaccialita = Number(formData.bifaccialita);
 
     // campi stringa
     const layout = formData.layout;
