@@ -1,5 +1,6 @@
 package it.prevt.backend.service.rest.impl;
 
+import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.CostiRetroilluminazioneBean;
 import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
@@ -8,6 +9,7 @@ import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
+import it.prevt.backend.bean.PreventivoServiziBean;
 import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.manager.ParametriManager;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
@@ -140,5 +142,17 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   @Override
   public void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean) {
     manager.deleteCostiStrutturaEspositoriLayout(bean);
+  }
+
+  @Override
+  public List<AltriBeniServiziBean> getAltriBeniServiziByPreventivoId(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getAltriBeniServiziByPreventivoId(searchRequest);
+  }
+
+  @Override
+  public List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getPreventivoServiziByPreventivoId(searchRequest);
   }
 }

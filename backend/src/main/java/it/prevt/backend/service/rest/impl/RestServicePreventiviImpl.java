@@ -24,12 +24,6 @@ public class RestServicePreventiviImpl implements RestServicePreventivi {
   }
 
   @Override
-  public List<AltriBeniServiziBean> getAltriBeniServizi(
-      ListinoAccessoriRequestBean searchRequest) {
-    return manager.getAltriBeniServizi(searchRequest);
-  }
-
-  @Override
   public PreventivoBean savePreventivo(PreventivoBean dto, Authentication authentication) {
     return manager.savePreventivo(dto, authentication);
   }

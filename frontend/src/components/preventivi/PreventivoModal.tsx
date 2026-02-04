@@ -24,7 +24,7 @@ import {Textarea} from "@/components/ui/textarea.tsx";
 import {StandSection} from "@/components/preventivi/StandSection.tsx";
 import {StorageSection} from "@/components/preventivi/StorageSection.tsx";
 import {DeskSection} from "@/components/preventivi/DeskSection.tsx";
-import {TotalePreventivoSection} from "@/components/TotalePreventivoSection.tsx";
+import {TotalePreventivoSection} from "@/components/preventivi/TotalePreventivoSection.tsx";
 import {CondizioniFornituraSection} from "@/components/CondizioniFornituraSection.tsx";
 import {useQuery} from "@tanstack/react-query";
 import {ProspectsAPI} from "@/api/prospects.ts";
@@ -901,6 +901,43 @@ export function PreventivoModal({
                   </CollapsibleContent>
                 </div>
               </Collapsible>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dataScadenza">Data Scadenza</Label>
+                <Input
+                    id="dataScadenza"
+                    type="date"
+                    value={formData.dataScadenza ?? ""}
+                    onChange={(e) =>
+                        setFormData(prev => ({
+                          ...prev,
+                          dataScadenza: e.target.value || null
+                        }))
+                    }
+                />
+              </div>
+            </div>
+
+            {/* Sezione Totale Preventivo Fornitura */}
+            <TotalePreventivoSection formData={formData} setFormData={setFormData}/>
+            <div className="space-y-2">
+              <Label htmlFor="note">Note</Label>
+              <Textarea id="note" value={formData.note} onChange={e => setFormData({
+                ...formData,
+                note: e.target.value
+              })} placeholder="Note aggiuntive"/>
+            </div>
+
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Annulla
+              </Button>
+              { /*<Button type="submit"
+                      disabled={isSubmitting}>
+                {editingPreventivo ? 'Aggiorna' : 'Salva'}
+              </Button>*/}
             </div>
           </form>
         </DialogContent>

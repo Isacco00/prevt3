@@ -16,7 +16,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "preventivi_servizi",
        uniqueConstraints = @UniqueConstraint(name = "ux_preventivi_servizi_preventivo_id", columnNames = "preventivo_id"))
-public class PreventivoServiziEntity {
+public class PreventivoServizi {
 
     @Id
     @GeneratedValue

@@ -25,7 +25,6 @@ public class PreventivoManagerImpl implements PreventivoManager {
   private final PreventivoRepository repository;
   private final PreventivoMapper mapper;
   private final PreventivoMerger merger;
-  private final AltriBeniServiziMapper altriBeniServiziMapper;
 
   @Override
   public List<PreventivoBean> getPreventiviList() {
@@ -56,17 +55,6 @@ public class PreventivoManagerImpl implements PreventivoManager {
     entity.setUser(user);
     this.repository.save(entity);
     return mapper.mapEntityToBean(entity);
-  }
-
-  @Override
-  public List<AltriBeniServiziBean> getAltriBeniServizi(
-      ListinoAccessoriRequestBean searchRequest) {
-    List<AltriBeniServizi> altriBeniServiziList =
-        repository.getAltriBeniServizi(searchRequest);
-    if (altriBeniServiziList == null) {
-      throw new UsernameNotFoundException("error.listinoaccessoriespositori.notfound");
-    }
-    return altriBeniServiziMapper.mapEntitiesToBeans(altriBeniServiziList);
   }
 
 }

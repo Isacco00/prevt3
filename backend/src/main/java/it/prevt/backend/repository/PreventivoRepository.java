@@ -31,4 +31,7 @@ public interface PreventivoRepository extends AbstractRepository {
 
   List<AltriBeniServizi> getAltriBeniServizi(
       ListinoAccessoriRequestBean searchRequest);
+
+  List<PreventivoServizi> getPreventivoServizi(
+      ListinoAccessoriRequestBean searchRequest);
 }

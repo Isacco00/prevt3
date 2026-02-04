@@ -10,6 +10,7 @@ import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoBean;
+import it.prevt.backend.bean.PreventivoServiziBean;
 import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
@@ -70,5 +71,10 @@ public interface ParametriManager {
 
   void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean);
 
+  List<AltriBeniServiziBean> getAltriBeniServiziByPreventivoId(
+      ListinoAccessoriRequestBean searchRequest);
+
+  List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
+      ListinoAccessoriRequestBean searchRequest);
 
 }

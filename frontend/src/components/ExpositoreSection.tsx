@@ -8,6 +8,7 @@ import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "./ui/collapsi
 import {useQuery} from '@tanstack/react-query';
 import {supabase} from '@/integrations/supabase/client';
 import {PreventiviAPI} from "@/api/preventivi.ts";
+import {ParametriAPI} from "@/api/parametri.ts";
 
 interface ExpositoreData {
     qtaTipo30: number;
@@ -104,7 +105,7 @@ export function ExpositoreSection({
         data: accessoriesData = []
     } = useQuery({
         queryKey: ['listino_accessori_espositori'],
-        queryFn: () => PreventiviAPI.getListinoAccessoriEspositori({
+        queryFn: () => ParametriAPI.getListinoAccessoriEspositori({
             attivo: true, sortFields: [{
                 field: "LISTINO_ACCESSORI_ESPOSITORI_NOME",
                 desc: false
@@ -117,7 +118,7 @@ export function ExpositoreSection({
         data: layoutCostsData = []
     } = useQuery({
         queryKey: ['costi_struttura_espositori_layout'],
-        queryFn: () => PreventiviAPI.getCostiStrutturaEspositoriLayout({
+        queryFn: () => ParametriAPI.getCostiStrutturaEspositoriLayout({
             attivo: true, sortFields: [{
                 field: "COSTI_STRUTTURA_ESPOSITORI_LAYOUT_ESPOSITORE",
                 desc: false
@@ -130,7 +131,7 @@ export function ExpositoreSection({
         data: parametriCostiUnitari = []
     } = useQuery({
         queryKey: ['parametri-costi-unitari'],
-        queryFn: () => PreventiviAPI.getParametriACostiUnitari({
+        queryFn: () => ParametriAPI.getParametriACostiUnitari({
             attivo: true, sortFields: [{
                 field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
                 desc: false

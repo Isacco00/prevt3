@@ -62,4 +62,19 @@ export interface CostiStrutturaEspositoriLayoutBean {
     attivo: boolean;
 }
 
+export interface AltriBeniServiziBean {
+    id: string;
+    layoutEspositore: string
+    costoUnitario: number;
+    attivo: boolean;
+}
+
+export interface PreventivoServiziBean {
+    id: string;
+    preventivoMontaggio?: number;
+    preventivoSmontaggio?: number;
+    totaleCostoMontaggio?: number;
+    totaleCostoSmontaggio?: number;
+}
+
 export type ParametriRequestBean = AbstractSearchRequestBean

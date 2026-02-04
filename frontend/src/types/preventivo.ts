@@ -140,4 +140,5 @@ export interface PreventivoBean {
 export interface ListinoAccessoriRequestBean extends AbstractSearchRequestBean {
     attivo?: boolean;
     preventivoId?: string
+    parametri?: string[];
 }

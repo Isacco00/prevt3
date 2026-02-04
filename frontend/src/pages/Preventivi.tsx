@@ -68,7 +68,7 @@ const Preventivi = () => {
         larghezza: 0,
         larghezzaStorage: 0,
         layout: "",
-        layoutDesk: "",
+        layoutDesk: [],
         layoutStorage: "",
         marginalitaAccessori: 0,
         marginalitaAccessoriDesk: 0,

@@ -154,6 +154,10 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
         strQueryWhere.append(" AND u.attivo = :attivo ");
         parameters.put("attivo", searchRequest.getAttivo());
       }
+      if (searchRequest.getParametri() != null && !searchRequest.getParametri().isEmpty()) {
+        createListWhereClause("u", "parametro", searchRequest.getParametri(), strQueryWhere,
+            parameters);
+      }
     }
     if (searchRequest != null && searchRequest.getSortFields() != null
         && !searchRequest.getSortFields().isEmpty()) {
@@ -271,4 +275,32 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
     parameters.forEach(query::setParameter);
     return getResultList(query);
   }
+
+  @Override
+  public List<PreventivoServizi> getPreventivoServizi(ListinoAccessoriRequestBean searchRequest) {
+    Class<PreventivoServizi> clazz = PreventivoServizi.class;
+    Map<String, Object> parameters = new HashMap<>();
+
+    StringBuilder strQueryFrom = new StringBuilder(
+        " SELECT u FROM " + clazz.getSimpleName() + " u ");
+    StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
+
+    // Parameters
+    if (searchRequest != null) {
+      if (searchRequest.getPreventivoId() != null) {
+        strQueryWhere.append(" AND u.preventivo.id = :preventivoId ");
+        parameters.put("preventivoId", UUID.fromString(searchRequest.getPreventivoId()));
+      }
+    }
+    if (searchRequest != null && searchRequest.getSortFields() != null
+        && !searchRequest.getSortFields().isEmpty()) {
+      StringBuilder strQueryOrderBy = orderBy(null, searchRequest.getSortFields(), null);
+      strQueryWhere.append(strQueryOrderBy.toString());
+    }
+    String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
+    TypedQuery<PreventivoServizi> query = entityManager.createQuery(strQueryFinal, clazz);
+    parameters.forEach(query::setParameter);
+    return getResultList(query);
+  }
+
 }

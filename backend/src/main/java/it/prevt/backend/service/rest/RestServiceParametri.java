@@ -94,4 +94,12 @@ public interface RestServiceParametri {
   @PostMapping("/deleteCostiStrutturaEspositoriLayout")
   void deleteCostiStrutturaEspositoriLayout(@RequestBody CostiStrutturaEspositoriLayoutBean bean);
 
+  @PostMapping("/getAltriBeniServiziByPreventivoId")
+  List<AltriBeniServiziBean> getAltriBeniServiziByPreventivoId(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/getPreventivoServiziByPreventivoId")
+  List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
 }

@@ -12,6 +12,4 @@ public interface PreventivoManager {
 
   PreventivoBean savePreventivo(PreventivoBean bean, Authentication authentication);
 
-  List<AltriBeniServiziBean> getAltriBeniServizi(
-      ListinoAccessoriRequestBean searchRequest);
 }

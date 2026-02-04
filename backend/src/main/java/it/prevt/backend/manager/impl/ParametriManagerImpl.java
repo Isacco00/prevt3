@@ -1,5 +1,6 @@
 package it.prevt.backend.manager.impl;
 
+import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.CostiRetroilluminazioneBean;
 import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
@@ -8,6 +9,8 @@ import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
+import it.prevt.backend.bean.PreventivoServiziBean;
+import it.prevt.backend.entity.AltriBeniServizi;
 import it.prevt.backend.entity.CostiRetroilluminazione;
 import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
 import it.prevt.backend.entity.CostiStrutturaDeskLayout;
@@ -16,7 +19,9 @@ import it.prevt.backend.entity.ListinoAccessoriEspositori;
 import it.prevt.backend.entity.ListinoAccessoriStand;
 import it.prevt.backend.entity.Parametri;
 import it.prevt.backend.entity.ParametriACostiUnitari;
+import it.prevt.backend.entity.PreventivoServizi;
 import it.prevt.backend.manager.ParametriManager;
+import it.prevt.backend.mapper.AltriBeniServiziMapper;
 import it.prevt.backend.mapper.CostiRetroilluminazioneMapper;
 import it.prevt.backend.mapper.CostiStrutturaEspositoriLayoutMapper;
 import it.prevt.backend.mapper.CostiStrutturaDeskLayoutMapper;
@@ -25,6 +30,7 @@ import it.prevt.backend.mapper.ListinoAccessoriEspositoriMapper;
 import it.prevt.backend.mapper.ListinoAccessoriStandMapper;
 import it.prevt.backend.mapper.ParametriACostiUnitariMapper;
 import it.prevt.backend.mapper.ParametriMapper;
+import it.prevt.backend.mapper.PreventivoServiziMapper;
 import it.prevt.backend.merger.CostiRetroilluminazioneMerger;
 import it.prevt.backend.merger.CostiStrutturaDeskLayoutMerger;
 import it.prevt.backend.merger.CostiStrutturaEspositoriLayoutMerger;
@@ -67,6 +73,8 @@ public class ParametriManagerImpl implements ParametriManager {
   private final CostiStrutturaDeskLayoutMerger costiStrutturaDeskLayoutMerger;
   private final CostiStrutturaEspositoriLayoutMapper costiStrutturaEspositoriLayoutMapper;
   private final CostiStrutturaEspositoriLayoutMerger costiStrutturaEspositoriLayoutMerger;
+  private final AltriBeniServiziMapper altriBeniServiziMapper;
+  private final PreventivoServiziMapper preventivoServiziMapper;
 
   @Override
   public List<ParametriBean> getParametriList(ParametriRequestBean request) {
@@ -347,6 +355,26 @@ public class ParametriManagerImpl implements ParametriManager {
       entity.setAttivo(false);
       this.repository.save(entity);
     }
+  }
+
+  @Override
+  public List<AltriBeniServiziBean> getAltriBeniServiziByPreventivoId(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<AltriBeniServizi> altriBeniServiziList = repository.getAltriBeniServizi(searchRequest);
+    if (altriBeniServiziList == null) {
+      throw new UsernameNotFoundException("error.listinoaccessoriespositori.notfound");
+    }
+    return altriBeniServiziMapper.mapEntitiesToBeans(altriBeniServiziList);
+  }
+
+  @Override
+  public List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<PreventivoServizi> altriBeniServiziList = repository.getPreventivoServizi(searchRequest);
+    if (altriBeniServiziList == null) {
+      throw new UsernameNotFoundException("error.preventivoservizi.notfound");
+    }
+    return preventivoServiziMapper.mapEntitiesToBeans(altriBeniServiziList);
   }
 }
 

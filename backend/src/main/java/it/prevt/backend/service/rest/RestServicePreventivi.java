@@ -16,10 +16,6 @@ public interface RestServicePreventivi {
   @GetMapping("/getPreventiviList")
   List<PreventivoBean> getPreventiviList();
 
-  @PostMapping("/getAltriBeniServizi")
-  List<AltriBeniServiziBean> getAltriBeniServizi(
-      @RequestBody ListinoAccessoriRequestBean searchRequest);
-
   @PostMapping("/savePreventivo")
   PreventivoBean savePreventivo(@RequestBody PreventivoBean dto, Authentication authentication);
 
