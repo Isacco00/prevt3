@@ -628,8 +628,8 @@ export function TotalePreventivoSection({
     const totaleDesk = strutturaTerraDesk + graficaCordinoDesk + premontaggioDesk + costiAccessoriDesk;
 
     return {
-      struttura_terra: strutturaTerraDesk,
-      grafica_cordino: graficaCordinoDesk,
+      strutturaTerra: strutturaTerraDesk,
+      graficaCordino: graficaCordinoDesk,
       premontaggio: premontaggioDesk,
       accessori: costiAccessoriDesk,
       totale: totaleDesk
