@@ -7,9 +7,13 @@ import org.springframework.security.core.Authentication;
 import java.util.List;
 
 public interface FornituraManager {
+
   List<CondizioniStandardFornituraBean> getCondizioniStandardFornitura(
       ListinoAccessoriRequestBean searchRequest);
 
   List<CondizioniFornituraPreventiviBean> getCondizioniFornituraPreventivi(
       ListinoAccessoriRequestBean searchRequest);
+
+  List<CondizioniFornituraPreventiviBean> saveCondizioniFornituraPreventivi(
+      List<CondizioniFornituraPreventiviBean> beans);
 }

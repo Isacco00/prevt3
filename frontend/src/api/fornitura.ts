@@ -19,4 +19,8 @@ export const FornituraAPI = {
     const res = await api.post(entryPoint + "/getCondizioniFornituraPreventivi", filter);
     return res.data;
   },
+  saveCondizioniFornituraPreventivi: async (objects: CondizioniFornituraPreventiviBean[] = []): Promise<CondizioniFornituraPreventiviBean[]> => {
+    const res = await api.post(entryPoint + "/saveCondizioniFornituraPreventivi", objects);
+    return res.data;
+  },
 };

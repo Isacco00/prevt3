@@ -37,7 +37,7 @@ export function PreventivoAnagrafica({
     // Marginalità per prospect
     const { data: marginalitaProspect = [] } = useQuery<MarginalitaPerProspectBean[]>({
         queryKey: ["marginalita-per-prospect"],
-        queryFn: () => MarginalitaPerProspectAPI.getMarginalitaPerProspect({
+        queryFn: () => MarginalitaPerProspectAPI.getMarginalitaPerProspectList({
             attivo: true
         })
     });

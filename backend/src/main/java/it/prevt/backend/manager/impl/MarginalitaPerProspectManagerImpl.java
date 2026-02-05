@@ -2,9 +2,12 @@ package it.prevt.backend.manager.impl;
 
 import it.prevt.backend.bean.MarginalitaPerProspectBean;
 import it.prevt.backend.bean.ProspectBean;
+import it.prevt.backend.entity.MarginalitaPerProspect;
+import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.entity.Prospect;
 import it.prevt.backend.entity.User;
 import it.prevt.backend.manager.MarginalitaPerProspectManager;
+import it.prevt.backend.mapper.MarginalitaPerProspectMapper;
 import it.prevt.backend.mapper.ProspectMapper;
 import it.prevt.backend.merger.ProspectMerger;
 import it.prevt.backend.repository.ProspectRepository;
@@ -24,14 +27,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class MarginalitaPerProspectManagerImpl implements MarginalitaPerProspectManager {
 
   private final ProspectRepository repository;
-  private final ProspectMapper mapper;
-  private final ProspectMerger merger;
+  private final MarginalitaPerProspectMapper mapper;
 
 
   @Override
   public List<MarginalitaPerProspectBean> getMarginalitaPerProspectList(
       ListinoAccessoriRequestBean searchRequest) {
-    return List.of();
+    List<MarginalitaPerProspect> marginalitaPerProspects = repository.getMarginalitaPerProspectList(
+        searchRequest);
+    if (marginalitaPerProspects == null) {
+      throw new UsernameNotFoundException("error.marginalitaperprospects.notfound");
+    }
+    return mapper.mapEntitiesToBeans(marginalitaPerProspects);
   }
 
   @Override

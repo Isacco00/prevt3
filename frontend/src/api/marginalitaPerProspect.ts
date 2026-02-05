@@ -6,7 +6,7 @@ import {ListinoAccessoriRequestBean} from "@/types/preventivo.ts";
 const entryPoint = "/marginalitaperprospect";
 
 export const MarginalitaPerProspectAPI = {
-    getMarginalitaPerProspect: async (filter: ListinoAccessoriRequestBean = {}): Promise<MarginalitaPerProspectBean[]> => {
+    getMarginalitaPerProspectList: async (filter: ListinoAccessoriRequestBean = {}): Promise<MarginalitaPerProspectBean[]> => {
         const res = await api.post(entryPoint + "/getMarginalitaPerProspectList", filter);
         return res.data;
     },

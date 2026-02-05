@@ -21,4 +21,8 @@ public interface RestServiceFornitura {
   List<CondizioniFornituraPreventiviBean> getCondizioniFornituraPreventivi(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
 
+  @PostMapping("/saveCondizioniFornituraPreventivi")
+  List<CondizioniFornituraPreventiviBean> saveCondizioniFornituraPreventivi(
+      @RequestBody List<CondizioniFornituraPreventiviBean> beans);
+
 }

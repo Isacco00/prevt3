@@ -32,4 +32,10 @@ public class RestServiceFornituraImpl implements RestServiceFornitura {
       ListinoAccessoriRequestBean searchRequest) {
     return manager.getCondizioniFornituraPreventivi(searchRequest);
   }
+
+  @Override
+  public List<CondizioniFornituraPreventiviBean> saveCondizioniFornituraPreventivi(
+      List<CondizioniFornituraPreventiviBean> beans) {
+    return manager.saveCondizioniFornituraPreventivi(beans);
+  }
 }

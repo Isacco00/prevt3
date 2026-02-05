@@ -1,6 +1,8 @@
 package it.prevt.backend.merger;
 
+import it.prevt.backend.repository.AbstractRepository;
 import java.lang.reflect.InvocationTargetException;
+import lombok.RequiredArgsConstructor;
 
 public abstract class AbstractMerger<K, V> /* implements BeanEntityMerger<K, V> */ {
 
