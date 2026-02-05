@@ -155,4 +155,14 @@ public class RestServiceParametriImpl implements RestServiceParametri {
       ListinoAccessoriRequestBean searchRequest) {
     return manager.getPreventivoServiziByPreventivoId(searchRequest);
   }
+
+  @Override
+  public AltriBeniServiziBean saveAltriBeniServizi(AltriBeniServiziBean bean) {
+    return manager.saveAltriBeniServizi(bean);
+  }
+
+  @Override
+  public void deleteAltriBeniServizi(AltriBeniServiziBean bean) {
+    manager.deleteAltriBeniServizi(bean);
+  }
 }

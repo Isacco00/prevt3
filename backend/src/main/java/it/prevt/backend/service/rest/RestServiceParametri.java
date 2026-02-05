@@ -102,4 +102,10 @@ public interface RestServiceParametri {
   List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
 
+  @PostMapping("/saveAltriBeniServizi")
+  AltriBeniServiziBean saveAltriBeniServizi(@RequestBody AltriBeniServiziBean dto);
+
+  @PostMapping("/deleteAltriBeniServizi")
+  void deleteAltriBeniServizi(@RequestBody AltriBeniServiziBean bean);
+
 }

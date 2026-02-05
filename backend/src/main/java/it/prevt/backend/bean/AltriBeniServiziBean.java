@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class AltriBeniServiziBean {
   private UUID id;
+  private String preventivoId;
   private String descrizione;
   private BigDecimal costoUnitario;
   private BigDecimal marginalita;

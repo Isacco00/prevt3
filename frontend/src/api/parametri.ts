@@ -7,7 +7,7 @@ import {
     CostiRetroilluminazioneBean,
     ListinoAccessoriDeskBean,
     ParametriACostiUnitariBean, ListinoAccessoriEspositoriBean, CostiStrutturaDeskBean,
-    CostiStrutturaEspositoriLayoutBean, AltriBeniServiziBean, PreventivoServiziBean
+    CostiStrutturaEspositoriLayoutBean, AltriBeniServiziBean
 } from "@/types/parametri.ts";
 import {
     ListinoAccessoriRequestBean,
@@ -127,7 +127,17 @@ export const ParametriAPI = {
         return res.data;
     },
 
-    getPreventivoServiziByPreventivoId: async (filter?: ListinoAccessoriRequestBean): Promise<PreventivoServiziBean> => {
+    saveAltriBeniServizi: async (bean: AltriBeniServiziBean): Promise<AltriBeniServiziBean> => {
+        const data = await api.post(entryPoint + "/saveAltriBeniServizi", bean);
+        return data.data;
+    },
+
+    deleteAltriBeniServizi: async (bean: AltriBeniServiziBean): Promise<AltriBeniServiziBean> => {
+        const data = await api.post(entryPoint + "/deleteAltriBeniServizi", bean);
+        return data.data;
+    },
+
+    getPreventivoServiziByPreventivoId: async (filter?: ListinoAccessoriRequestBean): Promise<void> => {
         const res = await api.post(entryPoint + "/getPreventivoServiziByPreventivoId", filter);
         return res.data;
     },

@@ -10,309 +10,251 @@ import {
   TableRow
 } from '@/components/ui/table.tsx';
 import {Plus, Trash2} from 'lucide-react';
-import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {supabase} from '@/integrations/supabase/client.ts';
+import {useQuery, useMutation} from '@tanstack/react-query';
 import {toast} from '@/hooks/use-toast.ts';
 import {AltriBeniServiziBean} from "@/types/parametri.ts";
 import {ParametriAPI} from "@/api/parametri.ts";
+import {useQueryClient} from '@tanstack/react-query';
 
 interface AltriBeniServiziSectionProps {
   preventivoId: string;
 }
 
-export function AltriBeniServiziSection({
-                                          preventivoId
-                                        }: AltriBeniServiziSectionProps) {
-  const [items, setItems] = useState<AltriBeniServiziBean[]>([]);
+export function AltriBeniServiziSection({preventivoId}: AltriBeniServiziSectionProps) {
   const queryClient = useQueryClient();
-  const initializedRef = useRef(false); // inizializza da DB una sola volta
 
-  // --- FETCH ---
-  const {
-    data: existingItems,
-  } = useQuery({
+  const toNumber = (v: unknown): number => {
+    if (v === null || v === undefined || v === '') return 0;
+    const n = Number(String(v).replace(',', '.'));
+    return Number.isFinite(n) ? n : 0;
+  };
+
+  const calculateDerivedValues = (item: AltriBeniServiziBean) => {
+    const prezzoUnitario = item.costoUnitario * (1 + item.marginalita / 100);
+    const totale = prezzoUnitario * item.quantita;
+    return {prezzoUnitario, totale};
+  };
+
+
+  const [items, setItems] = useState<AltriBeniServiziBean[]>([]);
+  const initializedRef = useRef(false);
+
+  /* =======================
+   * FETCH
+   * ======================= */
+  const {data: existingItems = [], isLoading} = useQuery({
     queryKey: ['altri-beni-servizi', preventivoId],
-    queryFn: () => ParametriAPI.getAltriBeniServiziByPreventivoId({
-      preventivoId: preventivoId,
-      sortFields: [{
-        field: "ALTRI_BENI_SERVIZI_CREATED_AT",
-        desc: false
-      }]
-    })
+    queryFn: () =>
+        ParametriAPI.getAltriBeniServiziByPreventivoId({
+          preventivoId,
+          sortFields: [{field: 'ALTRI_BENI_SERVIZI_CREATED_AT', desc: false}]
+        })
   });
 
-  // --- INIT SOLO LA PRIMA VOLTA ---
   useEffect(() => {
     if (initializedRef.current) return;
-    if (existingItems && existingItems.length > 0) {
-      setItems(existingItems.map((item: AltriBeniServiziBean) => ({
-        id: item.id,
-        preventivoId: item.preventivoId,
-        descrizione: item.descrizione,
-        costoUnitario: item.costoUnitario,
-        marginalita: item.marginalita,
-        prezzoUnitario: item.prezzoUnitario,
-        quantita: item.quantita,
-        totale: item.totale
-      })));
-    } else {
-      // se non c'è nulla, parti con una riga vuota (ma NB: la versione robusta aggiunge su DB con il bottone)
-      setItems([{
-        id: null,
-        preventivoId: preventivoId,
-        descrizione: '',
-        costoUnitario: 0,
-        marginalita: 0,
-        prezzoUnitario: 0,
-        quantita: 0,
-        totale: 0
-      }]);
-    }
+    setItems(existingItems);
     initializedRef.current = true;
   }, [existingItems]);
 
-  // --- MUTATION SAVE ---
-  const saveItemMutation = useMutation({
-    mutationFn: async (item: AltriBeniServiziBean) => {
-      if (item.id) {
-        const {
-          error
-        } = await supabase.from('altri_beni_servizi').update({
-          descrizione: item.descrizione,
-          costoUnitario: item.costoUnitario,
-          marginalita: item.marginalita,
-          prezzoUnitario: item.prezzoUnitario,
-          quantita: item.quantita,
-          totale: item.totale
-        }).eq('id', item.id);
-        if (error) throw error;
-        return {
-          id: item.id
-        };
-      } else {
-        const {
-          data,
-          error
-        } = await supabase.from('altri_beni_servizi').insert({
-          preventivoId: preventivoId,
-          descrizione: item.descrizione,
-          costoUnitario: item.costoUnitario,
-          marginalita: item.marginalita,
-          prezzoUnitario: item.prezzoUnitario,
-          quantita: item.quantita,
-          totale: item.totale
-        }).select().single();
-        if (error) throw error;
-        return data; // con id
-      }
-    },
-    onSuccess: data => {
-      // Se è un insert, data contiene l'id nuovo → assicuriamoci di averlo nello stato
-      if (data && (data as any).id) {
-        const newId = (data as any).id;
-        setItems(prev => {
-          // se l'ultima riga non ha id, assegnalo
-          const clone = [...prev];
-          if (clone.length > 0 && !clone[clone.length - 1].id) {
-            clone[clone.length - 1] = {
-              ...clone[clone.length - 1],
-              id: newId
-            };
-          }
-          return clone;
-        });
-      }
-    },
-    onError: () => {
-      toast({
-        title: 'Errore',
-        description: 'Errore nel salvataggio del bene/servizio',
-        variant: 'destructive'
-      });
-    }
-  });
-
-  // --- MUTATION DELETE ---
-  const deleteItemMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const {
-        error
-      } = await supabase.from('altri_beni_servizi').delete().eq('id', id);
-      if (error) throw error;
-    },
+  /* =======================
+   * MUTATIONS
+   * ======================= */
+  const saveMutation = useMutation({
+    mutationFn: (item: AltriBeniServiziBean) =>
+        ParametriAPI.saveAltriBeniServizi(item),
     onSuccess: () => {
-      // Rimuovo invalidate per evitare re-render che chiudono la sezione
-    },
-    onError: () => {
-      toast({
-        title: 'Errore',
-        description: 'Errore nella cancellazione del bene/servizio',
-        variant: 'destructive'
+      queryClient.invalidateQueries({
+        queryKey: ['altri-beni-servizi', preventivoId]
       });
-    }
+    },
+    onError: () =>
+        toast({
+          title: 'Errore',
+          description: 'Errore nel salvataggio',
+          variant: 'destructive'
+        })
   });
 
-  // --- DERIVATE ---
-  const calculateDerivedValues = (item: AltriBeniServiziBean) => {
-    const prezzo_unitario = item.costoUnitario * (1 + item.marginalita / 100);
-    const totale = prezzo_unitario * item.quantita;
-    return {
-      prezzo_unitario,
-      totale
-    };
-  };
+  const deleteMutation = useMutation({
+    mutationFn: (item: AltriBeniServiziBean) =>
+        ParametriAPI.deleteAltriBeniServizi(item),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['altri-beni-servizi', preventivoId]
+      });
+    },
+    onError: () =>
+        toast({
+          title: 'Errore',
+          description: 'Errore nella cancellazione',
+          variant: 'destructive'
+        })
+  });
 
-  // --- UPDATE (salva a ogni modifica) ---
-  const updateItem = (index: number, field: keyof AltriBeniServiziBean, value: any) => {
+  /* =======================
+   * UPDATE LOCAL
+   * ======================= */
+  const updateLocalItem = <K extends keyof AltriBeniServiziBean>(
+      index: number,
+      field: K,
+      value: AltriBeniServiziBean[K]
+  ) => {
     setItems(prev => {
-      const newItems = [...prev];
-      newItems[index] = {
-        ...newItems[index],
-        [field]: value
-      };
-      const derived = calculateDerivedValues(newItems[index]);
-      newItems[index].prezzoUnitario = derived.prezzoUnitario;
-      newItems[index].totale = derived.totale;
-      saveItemMutation.mutate(newItems[index]);
-      return newItems;
+      const clone = [...prev];
+      clone[index] = {...clone[index], [field]: value};
+
+      const derived = calculateDerivedValues(clone[index]);
+      clone[index].prezzoUnitario = derived.prezzoUnitario;
+      clone[index].totale = derived.totale;
+
+      return clone;
     });
   };
 
-  // --- ADD: crea SUBITO su DB e poi aggiungi in stato con id ---
-  const addItem = async () => {
-    const nuovo: AltriBeniServiziBean = {
-      descrizione: '',
-      costo_unitario: 0,
-      marginalita: 0,
-      prezzo_unitario: 0,
-      quantita: 0,
-      totale: 0
-    };
-    const {
-      data,
-      error
-    } = await supabase.from('altri_beni_servizi').insert({
-      preventivo_id: preventivoId,
-      ...nuovo
-    }).select().single();
-    if (error) {
-      toast({
-        title: 'Errore',
-        description: 'Impossibile aggiungere il bene/servizio.',
-        variant: 'destructive'
-      });
+  const persistItem = (index: number) => {
+    const item = items[index];
+    if (!item) return;
+    // evita insert di righe completamente vuote
+    item.preventivoId = preventivoId;
+    if (!item.id &&
+        !item.descrizione &&
+        item.quantita === 0 &&
+        item.costoUnitario === 0
+    ) {
       return;
     }
-    setItems(prev => [...prev, {
-      ...nuovo,
-      id: data.id
-    }]);
-    // NB: niente invalidate qui per evitare flicker; i prossimi salvataggi aggiorneranno DB
+    saveMutation.mutate(item);
   };
 
-  // --- REMOVE ---
+
+  /* =======================
+   * ADD / REMOVE
+   * ======================= */
+  const addItem = () => {
+    setItems(prev => [...prev, {
+      id: null,
+      preventivoId: preventivoId,
+      descrizione: '',
+      costoUnitario: 0,
+      marginalita: 0,
+      prezzoUnitario: 0,
+      quantita: 0,
+      totale: 0
+    }]);
+  };
+
   const removeItem = (index: number) => {
     const item = items[index];
-    if (item?.id) {
-      deleteItemMutation.mutate(item.id);
-    }
+    if (item.id) deleteMutation.mutate(item);
     setItems(prev => prev.filter((_, i) => i !== index));
   };
 
-  // --- TOTALI ---
-  const totalGeneral = items.reduce((sum, item) => sum + (item.totale || 0), 0);
+  /* =======================
+   * TOTALI
+   * ======================= */
+  const totalGeneral = items.reduce((s, i) => s + i.totale, 0);
 
-  // bottone sempre visibile (più semplice)
-  const showAddButton = true;
-  if (!initializedRef.current) {
-    return <div className="p-4">Caricamento...</div>;
-  }
-  return <div className="w-full">
-    {showAddButton && <div className="flex justify-end p-4 border rounded-t-lg py-[2px]">
-      <Button type="button" onClick={addItem} size="sm" className="flex items-center gap-1"
-              variant="outline">
-        <Plus className="h-4 w-4"/>
-        Aggiungi Bene/Servizio
-      </Button>
-    </div>}
+  if (isLoading) return <div className="p-4">Caricamento...</div>;
 
-    <div className="w-full border rounded-b-lg overflow-hidden">
-      <Table className="w-full">
-        <TableHeader>
-          <TableRow className="bg-hsl(var(--section-services))/30">
-            <TableHead className="w-12 text-center">ID</TableHead>
-            <TableHead className="min-w-80">Descrizione</TableHead>
-            <TableHead className="w-28 text-center">Costo UM (€)</TableHead>
-            <TableHead className="w-28 text-center">Marginalità (%)</TableHead>
-            <TableHead className="w-32 text-center">Prezzo Unitario (€)</TableHead>
-            <TableHead className="w-32 text-center">QTA</TableHead>
-            <TableHead className="w-36 text-center">Totale (€)</TableHead>
-            <TableHead className="w-12"></TableHead>
-          </TableRow>
-        </TableHeader>
+  return (
+      <div className="w-full">
+        <div className="flex justify-end p-2">
+          <Button type="button" size="sm" variant="outline" onClick={addItem}>
+            <Plus className="h-4 w-4 mr-1"/>
+            Aggiungi Bene/Servizio
+          </Button>
+        </div>
 
-        <TableBody>
-          {items.map((item, index) => <TableRow key={item.id ?? `tmp-${index}`}
-                                                className="hover:bg-hsl(var(--section-services))/20">
-            <TableCell className="text-center text-sm text-muted-foreground">{index + 1}</TableCell>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>#</TableHead>
+              <TableHead>Descrizione</TableHead>
+              <TableHead>Costo</TableHead>
+              <TableHead>Margine %</TableHead>
+              <TableHead>Prezzo</TableHead>
+              <TableHead>QTA</TableHead>
+              <TableHead>Totale</TableHead>
+              <TableHead/>
+            </TableRow>
+          </TableHeader>
 
-            <TableCell>
-              <Input value={item.descrizione}
-                     onChange={e => updateItem(index, 'descrizione', e.target.value)}
-                     placeholder="Descrizione del bene/servizio"
-                     className="border-0 bg-transparent focus:bg-white/50 resize-none min-h-[60px]"/>
-            </TableCell>
+          <TableBody>
+            {items.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center text-muted-foreground">
+                    Nessun bene o servizio aggiunto
+                  </TableCell>
+                </TableRow>
+            )}
+            {items.map((item, index) => (
+                <TableRow key={item.id ?? `tmp-${index}`}>
+                  <TableCell>{index + 1}</TableCell>
 
-            <TableCell>
-              <Input type="number" value={item.costoUnitario} onChange={e => {
-                const val = e.target.value;
-                updateItem(index, 'costoUnitario', val === '' ? 0 : parseFloat(val));
-              }} className="border-0 bg-transparent focus:bg-white/50 text-center" step="0.01"
-                     min="0"/>
-            </TableCell>
+                  <TableCell>
+                    <Input
+                        value={item.descrizione}
+                        onChange={e => updateLocalItem(index, 'descrizione', e.target.value)}
+                        onBlur={() => persistItem(index)}
+                    />
+                  </TableCell>
 
-            <TableCell>
-              <Input type="number" value={item.marginalita} onChange={e => {
-                const val = e.target.value;
-                updateItem(index, 'marginalita', val === '' ? 0 : parseFloat(val));
-              }} className="border-0 bg-transparent focus:bg-white/50 text-center" step="1" min="0"
-                     max="200"/>
-            </TableCell>
+                  <TableCell>
+                    <Input
+                        type="number"
+                        value={item.costoUnitario}
+                        onChange={e => updateLocalItem(index, 'costoUnitario', toNumber(e.target.value))}
+                        onBlur={() => persistItem(index)}
+                    />
+                  </TableCell>
 
-            <TableCell
-                className="text-center font-medium">€{item.prezzoUnitario.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Input
+                        type="number"
+                        value={item.marginalita}
+                        onChange={e => updateLocalItem(index, 'marginalita', toNumber(e.target.value))}
+                        onBlur={() => persistItem(index)}
+                    />
+                  </TableCell>
 
-            <TableCell>
-              <Input type="number" value={item.quantita} onChange={e => {
-                const val = e.target.value;
-                updateItem(index, 'quantita', val === '' ? 0 : parseFloat(val));
-              }} className="border-0 bg-transparent focus:bg-white/50 text-center" step="1"
-                     min="0"/>
-            </TableCell>
+                  <TableCell className="text-center">
+                    €{item.prezzoUnitario.toFixed(2)}
+                  </TableCell>
 
-            <TableCell className="text-center font-semibold">€{item.totale.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Input
+                        type="number"
+                        value={item.quantita}
+                        onChange={e => updateLocalItem(index, 'quantita', toNumber(e.target.value))}
+                        onBlur={() => persistItem(index)}
+                    />
+                  </TableCell>
 
-            <TableCell>
-              {items.length > 1 &&
-                  <Button onClick={() => removeItem(index)} size="sm" variant="ghost"
-                          className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10">
-                    <Trash2 className="h-4 w-4"/>
-                  </Button>}
-            </TableCell>
-          </TableRow>)}
+                  <TableCell className="text-center font-semibold">
+                    €{item.totale.toFixed(2)}
+                  </TableCell>
 
-          {/* Riga Totale */}
-          <TableRow
-              className="bg-hsl(var(--section-services))/40 border-t-2 border-hsl(var(--section-services-border))">
-            <TableCell colSpan={6} className="text-right font-semibold">
-              Totale Altri Beni/Servizi:
-            </TableCell>
-            <TableCell
-                className="text-center font-bold text-lg">€{totalGeneral.toFixed(2)}</TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
-  </div>;
+                  <TableCell>
+                      <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => removeItem(index)}>
+                        <Trash2 className="h-4 w-4 text-destructive"/>
+                      </Button>
+                  </TableCell>
+                </TableRow>
+            ))}
+
+            <TableRow className="font-bold">
+              <TableCell colSpan={6} className="text-right">
+                Totale:
+              </TableCell>
+              <TableCell>€{totalGeneral.toFixed(2)}</TableCell>
+              <TableCell/>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+  );
 }

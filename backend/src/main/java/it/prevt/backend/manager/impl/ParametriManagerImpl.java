@@ -31,6 +31,7 @@ import it.prevt.backend.mapper.ListinoAccessoriStandMapper;
 import it.prevt.backend.mapper.ParametriACostiUnitariMapper;
 import it.prevt.backend.mapper.ParametriMapper;
 import it.prevt.backend.mapper.PreventivoServiziMapper;
+import it.prevt.backend.merger.AltriBeniServiziMerger;
 import it.prevt.backend.merger.CostiRetroilluminazioneMerger;
 import it.prevt.backend.merger.CostiStrutturaDeskLayoutMerger;
 import it.prevt.backend.merger.CostiStrutturaEspositoriLayoutMerger;
@@ -74,6 +75,7 @@ public class ParametriManagerImpl implements ParametriManager {
   private final CostiStrutturaEspositoriLayoutMapper costiStrutturaEspositoriLayoutMapper;
   private final CostiStrutturaEspositoriLayoutMerger costiStrutturaEspositoriLayoutMerger;
   private final AltriBeniServiziMapper altriBeniServiziMapper;
+  private final AltriBeniServiziMerger altriBeniServiziMerger;
   private final PreventivoServiziMapper preventivoServiziMapper;
 
   @Override
@@ -375,6 +377,33 @@ public class ParametriManagerImpl implements ParametriManager {
       throw new UsernameNotFoundException("error.preventivoservizi.notfound");
     }
     return preventivoServiziMapper.mapEntitiesToBeans(altriBeniServiziList);
+  }
+
+  @Override
+  public AltriBeniServiziBean saveAltriBeniServizi(AltriBeniServiziBean bean) {
+    AltriBeniServizi entity;
+    if (bean.getId() == null) {
+      entity = altriBeniServiziMerger.mapNew(bean, AltriBeniServizi.class);
+    } else {
+      entity = repository.find(AltriBeniServizi.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      altriBeniServiziMerger.merge(bean, entity);
+    }
+    this.repository.save(entity);
+    return altriBeniServiziMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteAltriBeniServizi(AltriBeniServiziBean bean) {
+    if (bean != null) {
+      AltriBeniServizi entity = repository.find(AltriBeniServizi.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      this.repository.delete(entity);
+    }
   }
 }
 

@@ -9,16 +9,10 @@ import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
-import it.prevt.backend.bean.PreventivoBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
-import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
-
 import java.util.List;
-
-import java.util.UUID;
-import org.springframework.security.core.Authentication;
 
 public interface ParametriManager {
 
@@ -76,5 +70,9 @@ public interface ParametriManager {
 
   List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
       ListinoAccessoriRequestBean searchRequest);
+
+  AltriBeniServiziBean saveAltriBeniServizi(AltriBeniServiziBean bean);
+
+  void deleteAltriBeniServizi(AltriBeniServiziBean bean);
 
 }
