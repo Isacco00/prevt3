@@ -1,22 +1,20 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {Input} from '@/components/ui/input';
-import {Button} from '@/components/ui/button';
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table';
+import {Input} from '@/components/ui/input.tsx';
+import {Button} from '@/components/ui/button.tsx';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table.tsx';
 import {Plus, Trash2} from 'lucide-react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {supabase} from '@/integrations/supabase/client';
-import {toast} from '@/hooks/use-toast';
-import {PreventiviAPI} from "@/api/preventivi.ts";
-
-interface AltriBeniServiziItem {
-  id?: string;
-  descrizione: string;
-  costo_unitario: number;
-  marginalita: number;
-  prezzo_unitario: number;
-  quantita: number;
-  totale: number;
-}
+import {supabase} from '@/integrations/supabase/client.ts';
+import {toast} from '@/hooks/use-toast.ts';
+import {AltriBeniServiziBean} from "@/types/parametri.ts";
+import {ParametriAPI} from "@/api/parametri.ts";
 
 interface AltriBeniServiziSectionProps {
   preventivoId: string;
@@ -24,8 +22,8 @@ interface AltriBeniServiziSectionProps {
 
 export function AltriBeniServiziSection({
                                           preventivoId
-                                        }) {
-  const [items, setItems] = useState<AltriBeniServiziItem[]>([]);
+                                        }: AltriBeniServiziSectionProps) {
+  const [items, setItems] = useState<AltriBeniServiziBean[]>([]);
   const queryClient = useQueryClient();
   const initializedRef = useRef(false); // inizializza da DB una sola volta
 
@@ -34,7 +32,7 @@ export function AltriBeniServiziSection({
     data: existingItems,
   } = useQuery({
     queryKey: ['altri-beni-servizi', preventivoId],
-    queryFn: () => PreventiviAPI.getAltriBeniServizi({
+    queryFn: () => ParametriAPI.getAltriBeniServiziByPreventivoId({
       preventivoId: preventivoId,
       sortFields: [{
         field: "ALTRI_BENI_SERVIZI_CREATED_AT",
@@ -47,22 +45,25 @@ export function AltriBeniServiziSection({
   useEffect(() => {
     if (initializedRef.current) return;
     if (existingItems && existingItems.length > 0) {
-      setItems(existingItems.map((item: any) => ({
+      setItems(existingItems.map((item: AltriBeniServiziBean) => ({
         id: item.id,
+        preventivoId: item.preventivoId,
         descrizione: item.descrizione,
-        costo_unitario: item.costo_unitario,
+        costoUnitario: item.costoUnitario,
         marginalita: item.marginalita,
-        prezzo_unitario: item.prezzo_unitario,
+        prezzoUnitario: item.prezzoUnitario,
         quantita: item.quantita,
         totale: item.totale
       })));
     } else {
       // se non c'è nulla, parti con una riga vuota (ma NB: la versione robusta aggiunge su DB con il bottone)
       setItems([{
+        id: null,
+        preventivoId: preventivoId,
         descrizione: '',
-        costo_unitario: 0,
+        costoUnitario: 0,
         marginalita: 0,
-        prezzo_unitario: 0,
+        prezzoUnitario: 0,
         quantita: 0,
         totale: 0
       }]);
@@ -72,15 +73,15 @@ export function AltriBeniServiziSection({
 
   // --- MUTATION SAVE ---
   const saveItemMutation = useMutation({
-    mutationFn: async (item: AltriBeniServiziItem) => {
+    mutationFn: async (item: AltriBeniServiziBean) => {
       if (item.id) {
         const {
           error
         } = await supabase.from('altri_beni_servizi').update({
           descrizione: item.descrizione,
-          costo_unitario: item.costo_unitario,
+          costoUnitario: item.costoUnitario,
           marginalita: item.marginalita,
-          prezzo_unitario: item.prezzo_unitario,
+          prezzoUnitario: item.prezzoUnitario,
           quantita: item.quantita,
           totale: item.totale
         }).eq('id', item.id);
@@ -93,11 +94,11 @@ export function AltriBeniServiziSection({
           data,
           error
         } = await supabase.from('altri_beni_servizi').insert({
-          preventivo_id: preventivoId,
+          preventivoId: preventivoId,
           descrizione: item.descrizione,
-          costo_unitario: item.costo_unitario,
+          costoUnitario: item.costoUnitario,
           marginalita: item.marginalita,
-          prezzo_unitario: item.prezzo_unitario,
+          prezzoUnitario: item.prezzoUnitario,
           quantita: item.quantita,
           totale: item.totale
         }).select().single();
@@ -152,8 +153,8 @@ export function AltriBeniServiziSection({
   });
 
   // --- DERIVATE ---
-  const calculateDerivedValues = (item: AltriBeniServiziItem) => {
-    const prezzo_unitario = item.costo_unitario * (1 + item.marginalita / 100);
+  const calculateDerivedValues = (item: AltriBeniServiziBean) => {
+    const prezzo_unitario = item.costoUnitario * (1 + item.marginalita / 100);
     const totale = prezzo_unitario * item.quantita;
     return {
       prezzo_unitario,
@@ -162,7 +163,7 @@ export function AltriBeniServiziSection({
   };
 
   // --- UPDATE (salva a ogni modifica) ---
-  const updateItem = (index: number, field: keyof AltriBeniServiziItem, value: any) => {
+  const updateItem = (index: number, field: keyof AltriBeniServiziBean, value: any) => {
     setItems(prev => {
       const newItems = [...prev];
       newItems[index] = {
@@ -170,7 +171,7 @@ export function AltriBeniServiziSection({
         [field]: value
       };
       const derived = calculateDerivedValues(newItems[index]);
-      newItems[index].prezzo_unitario = derived.prezzo_unitario;
+      newItems[index].prezzoUnitario = derived.prezzoUnitario;
       newItems[index].totale = derived.totale;
       saveItemMutation.mutate(newItems[index]);
       return newItems;
@@ -179,7 +180,7 @@ export function AltriBeniServiziSection({
 
   // --- ADD: crea SUBITO su DB e poi aggiungi in stato con id ---
   const addItem = async () => {
-    const nuovo: AltriBeniServiziItem = {
+    const nuovo: AltriBeniServiziBean = {
       descrizione: '',
       costo_unitario: 0,
       marginalita: 0,
@@ -263,9 +264,9 @@ export function AltriBeniServiziSection({
             </TableCell>
 
             <TableCell>
-              <Input type="number" value={item.costo_unitario} onChange={e => {
+              <Input type="number" value={item.costoUnitario} onChange={e => {
                 const val = e.target.value;
-                updateItem(index, 'costo_unitario', val === '' ? 0 : parseFloat(val));
+                updateItem(index, 'costoUnitario', val === '' ? 0 : parseFloat(val));
               }} className="border-0 bg-transparent focus:bg-white/50 text-center" step="0.01"
                      min="0"/>
             </TableCell>
@@ -279,7 +280,7 @@ export function AltriBeniServiziSection({
             </TableCell>
 
             <TableCell
-                className="text-center font-medium">€{item.prezzo_unitario.toFixed(2)}</TableCell>
+                className="text-center font-medium">€{item.prezzoUnitario.toFixed(2)}</TableCell>
 
             <TableCell>
               <Input type="number" value={item.quantita} onChange={e => {
@@ -314,4 +315,4 @@ export function AltriBeniServiziSection({
       </Table>
     </div>
   </div>;
-};
+}

@@ -64,9 +64,13 @@ export interface CostiStrutturaEspositoriLayoutBean {
 
 export interface AltriBeniServiziBean {
     id: string;
-    layoutEspositore: string
+    preventivoId: string;
+    descrizione: string;
     costoUnitario: number;
-    attivo: boolean;
+    marginalita: number;
+    prezzoUnitario: number;
+    quantita: number;
+    totale: number;
 }
 
 export interface PreventivoServiziBean {

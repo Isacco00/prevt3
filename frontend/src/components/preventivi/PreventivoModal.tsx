@@ -5,19 +5,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
 } from '@/components/ui/dialog';
 import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Label} from "@/components/ui/label.tsx";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select.tsx";
-import {ChevronDown, FileText, Plus} from "lucide-react";
+import {ChevronDown} from "lucide-react";
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible.tsx";
 import {Separator} from "@/components/ui/separator.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
@@ -25,12 +17,12 @@ import {StandSection} from "@/components/preventivi/StandSection.tsx";
 import {StorageSection} from "@/components/preventivi/StorageSection.tsx";
 import {DeskSection} from "@/components/preventivi/DeskSection.tsx";
 import {TotalePreventivoSection} from "@/components/preventivi/TotalePreventivoSection.tsx";
-import {CondizioniFornituraSection} from "@/components/preventivi/CondizioniFornituraSection.tsx";
-import {useQuery} from "@tanstack/react-query";
-import {ProspectsAPI} from "@/api/prospects.ts";
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {PreventivoAnagrafica} from "@/components/preventivi/PreventivoAnagrafica.tsx";
 import {ExpositoreSection} from "@/components/preventivi/ExpositoreSection.tsx";
+import {AltriBeniServiziSection} from "@/components/preventivi/AltriBeniServiziSection.tsx";
+import {CondizioniFornituraSection} from "@/components/preventivi/CondizioniFornituraSection.tsx";
+import {ServicesSection} from "@/components/preventivi/ServicesSection.tsx";
 
 interface PreventivoModalProps {
   open: boolean;
@@ -54,8 +46,8 @@ export function PreventivoModal({
     desk: false,
     espositori: false,
     servizi: false,
-    altri_beni_servizi: false,
-    condizioni_fornitura: false
+    altriBeniServizi: false,
+    condizioniFornitura: false
   });
 
   return (
@@ -186,10 +178,66 @@ export function PreventivoModal({
                   </CollapsibleContent>
                 </div>
               </Collapsible>
-              <Collapsible open={sectionsOpen.condizioni_fornitura}
+              <Collapsible open={sectionsOpen.servizi} onOpenChange={open => setSectionsOpen(prev => ({
+                ...prev,
+                servizi: open
+              }))}>
+                <div
+                    className="bg-[hsl(var(--section-complement))] border border-[hsl(var(--section-complement-border))] rounded-lg overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost"
+                            className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-complement-border))] rounded-none border-0 px-[15px]">
+                      <div className="flex items-center gap-3">
+                        <div
+                            className="w-3 h-3 rounded-full bg-[hsl(var(--section-complement-foreground))]"></div>
+                        <span
+                            className="font-medium text-[hsl(var(--section-complement-foreground))]">Servizi</span>
+                      </div>
+                      <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-complement-foreground))] ${sectionsOpen.servizi ? 'rotate-180' : ''}`}/>
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div
+                        className="border-t border-[hsl(var(--section-complement-border))] bg-card p-6">
+                      <ServicesSection formData={formData} setFormData={setFormData}
+                                       preventivoId={formData?.id}/>
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+              <Collapsible open={sectionsOpen.altriBeniServizi}
                            onOpenChange={open => setSectionsOpen(prev => ({
                              ...prev,
-                             condizioni_fornitura: open
+                             altriBeniServizi: open
+                           }))}>
+                <div
+                    className="bg-[hsl(var(--section-services))] border border-[hsl(var(--section-services-border))] rounded-lg overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost"
+                            className="w-full justify-between p-4 h-auto hover:bg-[hsl(var(--section-services-border))] rounded-none border-0">
+                      <div className="flex items-center gap-3">
+                        <div
+                            className="w-3 h-3 rounded-full bg-[hsl(var(--section-services-foreground))]"></div>
+                        <span
+                            className="font-medium text-[hsl(var(--section-services-foreground))]">Altri Beni/Servizi</span>
+                      </div>
+                      <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-services-foreground))] ${sectionsOpen.altriBeniServizi ? 'rotate-180' : ''}`}/>
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div
+                        className="border-t border-[hsl(var(--section-services-border))] bg-card p-6 mx-0 my-0 px-[2px] py-[12px]">
+                      <AltriBeniServiziSection preventivoId={formData?.id || ''}/>
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+              <Collapsible open={sectionsOpen.condizioniFornitura}
+                           onOpenChange={open => setSectionsOpen(prev => ({
+                             ...prev,
+                             condizioniFornitura: open
                            }))}>
                 <div
                     className="bg-[hsl(var(--section-conditions))] border border-[hsl(var(--section-conditions-border))] rounded-lg overflow-hidden">
@@ -203,7 +251,7 @@ export function PreventivoModal({
                             className="font-medium text-[hsl(var(--section-conditions-foreground))]">Condizioni di fornitura</span>
                       </div>
                       <ChevronDown
-                          className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-conditions-foreground))] ${sectionsOpen.condizioni_fornitura ? 'rotate-180' : ''}`}/>
+                          className={`h-4 w-4 transition-transform duration-200 text-[hsl(var(--section-conditions-foreground))] ${sectionsOpen.condizioniFornitura ? 'rotate-180' : ''}`}/>
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
