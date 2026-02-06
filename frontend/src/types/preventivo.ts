@@ -1,6 +1,15 @@
 import {ProspectBean} from "@/types/prospect.ts";
 import {AbstractSearchRequestBean} from "@/types/index.ts";
 
+export type PreventivoSectionKey =
+    | 'stand'
+    | 'storage'
+    | 'desk'
+    | 'espositori'
+    | 'servizi'
+    | 'altriBeniServizi'
+    | 'condizioniFornitura';
+
 export interface LayoutDeskBean {
     layout: string;
     quantity: number;

@@ -17,12 +17,13 @@ import {StandSection} from "@/components/preventivi/StandSection.tsx";
 import {StorageSection} from "@/components/preventivi/StorageSection.tsx";
 import {DeskSection} from "@/components/preventivi/DeskSection.tsx";
 import {TotalePreventivoSection} from "@/components/preventivi/TotalePreventivoSection.tsx";
-import {PreventivoBean} from "@/types/preventivo.ts";
+import {PreventivoBean, PreventivoSectionKey} from "@/types/preventivo.ts";
 import {PreventivoAnagrafica} from "@/components/preventivi/PreventivoAnagrafica.tsx";
 import {ExpositoreSection} from "@/components/preventivi/ExpositoreSection.tsx";
 import {AltriBeniServiziSection} from "@/components/preventivi/AltriBeniServiziSection.tsx";
 import {CondizioniFornituraSection} from "@/components/preventivi/CondizioniFornituraSection.tsx";
 import {ServicesSection} from "@/components/preventivi/ServicesSection.tsx";
+import {PreventiviAPI} from "@/api/preventivi.ts";
 
 interface PreventivoModalProps {
   open: boolean;
@@ -30,6 +31,7 @@ interface PreventivoModalProps {
   formData: PreventivoBean;
   setFormData: React.Dispatch<React.SetStateAction<PreventivoBean>>;
   isEditing: boolean;
+  focusSection?: PreventivoSectionKey | null;
 }
 
 export function PreventivoModal({
@@ -38,7 +40,21 @@ export function PreventivoModal({
                                   formData,
                                   setFormData,
                                   isEditing,
+                                  focusSection,
                                 }: PreventivoModalProps) {
+  const sectionRefs = React.useMemo(
+      () => ({
+        stand: React.createRef<HTMLDivElement>(),
+        storage: React.createRef<HTMLDivElement>(),
+        desk: React.createRef<HTMLDivElement>(),
+        espositori: React.createRef<HTMLDivElement>(),
+        servizi: React.createRef<HTMLDivElement>(),
+        altriBeniServizi: React.createRef<HTMLDivElement>(),
+        condizioniFornitura: React.createRef<HTMLDivElement>(),
+      }),
+      []
+  );
+
   // State per controllare le sezioni collassabili
   const [sectionsOpen, setSectionsOpen] = useState({
     stand: false,
@@ -50,6 +66,37 @@ export function PreventivoModal({
     condizioniFornitura: false
   });
 
+  React.useEffect(() => {
+    if (!open || !focusSection) return;
+
+    // Apri solo la sezione target
+    setSectionsOpen(prev => ({
+      ...Object.keys(prev).reduce((acc, k) => {
+        acc[k as keyof typeof prev] = false;
+        return acc;
+      }, {} as typeof prev),
+      [focusSection]: true,
+    }));
+
+    // Scroll con leggero delay (dialog animation)
+    setTimeout(() => {
+      sectionRefs[focusSection]?.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 200);
+  }, [open, focusSection, sectionRefs]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await PreventiviAPI.savePreventivo(formData);
+      onOpenChange(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
@@ -60,7 +107,7 @@ export function PreventivoModal({
             </DialogDescription>
           </DialogHeader>
 
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={handleSubmit}>
             <PreventivoAnagrafica formData={formData} setFormData={setFormData}/>
             <Separator/>
             {/* Sezione Stand - collassabile */}
@@ -178,10 +225,11 @@ export function PreventivoModal({
                   </CollapsibleContent>
                 </div>
               </Collapsible>
-              <Collapsible open={sectionsOpen.servizi} onOpenChange={open => setSectionsOpen(prev => ({
-                ...prev,
-                servizi: open
-              }))}>
+              <Collapsible open={sectionsOpen.servizi}
+                           onOpenChange={open => setSectionsOpen(prev => ({
+                             ...prev,
+                             servizi: open
+                           }))}>
                 <div
                     className="bg-[hsl(var(--section-complement))] border border-[hsl(var(--section-complement-border))] rounded-lg overflow-hidden">
                   <CollapsibleTrigger asChild>
@@ -295,10 +343,9 @@ export function PreventivoModal({
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Annulla
               </Button>
-              { /*<Button type="submit"
-                      disabled={isSubmitting}>
-                {editingPreventivo ? 'Aggiorna' : 'Salva'}
-              </Button>*/}
+              {<Button type="submit">
+                {isEditing ? 'Aggiorna' : 'Salva'}
+              </Button>}
             </div>
           </form>
         </DialogContent>
