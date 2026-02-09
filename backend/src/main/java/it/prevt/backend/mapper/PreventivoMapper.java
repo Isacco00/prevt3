@@ -24,7 +24,7 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
       return Collections.emptyList();
     }
     try {
-      return MAPPER.readValue(json, new TypeReference<List<LayoutDeskBean>>() {
+      return MAPPER.readValue(json, new TypeReference<>() {
       });
     } catch (Exception e) {
       return Collections.emptyList();

@@ -70,7 +70,7 @@ const App = () => (
                 </AppLayout>
               </ProtectedRoute>
             } />
-            <Route path="/servizio-montaggio/:preventivo_id" element={
+            <Route path="/servizio-montaggio/:preventivoId" element={
               <ProtectedRoute>
                 <AppLayout>
                   <ServizioMontaggio />

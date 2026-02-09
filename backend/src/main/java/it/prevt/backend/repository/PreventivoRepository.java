@@ -4,11 +4,12 @@ import it.prevt.backend.entity.*;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 
 import it.prevt.backend.request.bean.ParametriRequestBean;
+import it.prevt.backend.request.bean.PreventiviRequestBean;
 import java.util.List;
 
 public interface PreventivoRepository extends AbstractRepository {
 
-  List<Preventivo> getPreventiviList();
+  List<Preventivo> getPreventiviList(PreventiviRequestBean preventiviRequestBean);
 
   List<ListinoAccessoriDesk> getListinoAccessoriDesk(ListinoAccessoriRequestBean searchRequest);
 

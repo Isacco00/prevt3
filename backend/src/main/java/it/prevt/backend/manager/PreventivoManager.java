@@ -12,4 +12,6 @@ public interface PreventivoManager {
 
   PreventivoBean savePreventivo(PreventivoBean bean, Authentication authentication);
 
+  PreventivoBean getPreventivoDetail(String id);
+
 }

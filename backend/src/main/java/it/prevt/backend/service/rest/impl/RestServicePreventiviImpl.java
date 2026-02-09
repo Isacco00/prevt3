@@ -28,4 +28,9 @@ public class RestServicePreventiviImpl implements RestServicePreventivi {
     return manager.savePreventivo(dto, authentication);
   }
 
+  @Override
+  public PreventivoBean getPreventivoDetail(String id) {
+    return manager.getPreventivoDetail(id);
+  }
+
 }

@@ -1,21 +1,20 @@
 package it.prevt.backend.manager.impl;
 
-import it.prevt.backend.bean.*;
-import it.prevt.backend.entity.*;
+import it.prevt.backend.bean.PreventivoBean;
+import it.prevt.backend.entity.Preventivo;
+import it.prevt.backend.entity.User;
 import it.prevt.backend.manager.PreventivoManager;
-import it.prevt.backend.mapper.*;
+import it.prevt.backend.mapper.PreventivoMapper;
 import it.prevt.backend.merger.PreventivoMerger;
 import it.prevt.backend.repository.PreventivoRepository;
-import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class PreventivoManagerImpl implements PreventivoManager {
 
   @Override
   public List<PreventivoBean> getPreventiviList() {
-    List<Preventivo> preventivoList = repository.getPreventiviList();
+    List<Preventivo> preventivoList = repository.getPreventiviList(null);
     if (preventivoList == null) {
       throw new UsernameNotFoundException("error.preventivo.notfound");
     }
@@ -57,5 +56,13 @@ public class PreventivoManagerImpl implements PreventivoManager {
     return mapper.mapEntityToBean(entity);
   }
 
+  @Override
+  public PreventivoBean getPreventivoDetail(String id) {
+    Preventivo preventivoList = repository.find(Preventivo.class, UUID.fromString(id));
+    if (preventivoList == null) {
+      throw new UsernameNotFoundException("error.preventivo.notfound");
+    }
+    return mapper.mapEntityToBean(preventivoList);
+  }
 }
 

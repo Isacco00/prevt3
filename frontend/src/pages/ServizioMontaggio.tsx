@@ -10,10 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { ArrowLeft, Settings, Calculator } from 'lucide-react';
+import {PreventivoServiziBean} from "@/types/parametri.ts";
+import {ParametriAPI} from "@/api/parametri.ts";
+import {PreventiviAPI} from "@/api/preventivi.ts";
 
 interface ServizioData {
   id?: string;
-  preventivo_id: string;
+  preventivoId: string;
   // Montaggio fields
   personale_mont: number;
   costo_orario_mont: number;
@@ -45,12 +48,12 @@ interface ServizioData {
 }
 
 export default function ServizioMontaggio() {
-  const { preventivo_id } = useParams<{ preventivo_id: string }>();
+  const { preventivoId } = useParams<{ preventivoId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState<ServizioData>({
-    preventivo_id: preventivo_id || '',
+    preventivoId: preventivoId || '',
     // Montaggio defaults
     personale_mont: 0,
     costo_orario_mont: 20,
@@ -81,44 +84,40 @@ export default function ServizioMontaggio() {
     extra_km_trasp_tir_smon: 0,
   });
 
-  // Fetch existing service data
-  const { data: servizioData } = useQuery({
-    queryKey: ['preventivi_servizi', preventivo_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('preventivi_servizi')
-        .select('*')
-        .eq('preventivo_id', preventivo_id)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
+  const {
+    data: servizioData,
+  } = useQuery<PreventivoServiziBean | null>({
+    queryKey: ['preventivo-servizi', formData?.id],
+    queryFn: () => {
+      if (!formData?.id) {
+        return Promise.resolve(null);
+      }
+      return ParametriAPI.getPreventivoServiziByPreventivoId({
+        preventivoId: formData.id,
+      });
     },
-    enabled: !!preventivo_id,
+    enabled: !!formData?.id,
   });
 
   // Fetch preventivo info for header
-  const { data: preventivoInfo } = useQuery({
-    queryKey: ['preventivo_info', preventivo_id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('preventivi')
-        .select(`numero_preventivo, titolo, prospects(ragione_sociale)`)
-        .eq('id', preventivo_id)
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!preventivo_id,
+  const {
+    data: preventivoInfo = []
+  } = useQuery({
+    queryKey: ['preventivo_info'],
+    queryFn: () => PreventiviAPI.getPreventivoDetail(preventivoId)
   });
 
-  // Fetch parameters
-  const { data: parametri } = useQuery({
-    queryKey: ['parametri_a_costi_unitari'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('parametri_a_costi_unitari').select('*').eq('attivo', true);
-      if (error) throw error;
-      return data;
-    },
+  // Query per recuperare i parametri a costi unitari
+  const {
+    data: parametri = []
+  } = useQuery({
+    queryKey: ['parametri-costi-unitari'],
+    queryFn: () => ParametriAPI.getParametriACostiUnitari({
+      attivo: true, sortFields: [{
+        field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
+        desc: false
+      }]
+    })
   });
 
   // Fetch flight costs
@@ -146,7 +145,7 @@ export default function ServizioMontaggio() {
     if (servizioData) {
       setFormData({
         id: servizioData.id,
-        preventivo_id: servizioData.preventivo_id,
+        preventivoId: servizioData.preventivoId,
         // Montaggio data
         personale_mont: servizioData.personale_mont || 0,
         costo_orario_mont: servizioData.costo_orario_mont || 20,
@@ -335,7 +334,7 @@ export default function ServizioMontaggio() {
   const saveMutation = useMutation({
     mutationFn: async (data: ServizioData & { costs: any }) => {
       const payload = {
-        preventivo_id: data.preventivo_id,
+        preventivoId: data.preventivoId,
         montaggio_smontaggio: true,
         // Montaggio fields
         personale_mont: data.personale_mont,
@@ -411,7 +410,7 @@ export default function ServizioMontaggio() {
       const { error: preventivoError } = await supabase
         .from('preventivi')
         .update({ servizio_montaggio_smontaggio: true })
-        .eq('id', data.preventivo_id);
+        .eq('id', data.preventivoId);
 
       if (preventivoError) throw preventivoError;
     },
@@ -439,7 +438,7 @@ export default function ServizioMontaggio() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivo_id, focusSection: 'servizi' } })}>
+          <Button variant="ghost" onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivoId, focusSection: 'servizi' } })}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Torna al preventivo {preventivoInfo?.numero_preventivo}
           </Button>
@@ -1126,7 +1125,7 @@ export default function ServizioMontaggio() {
             <Button 
               variant="outline" 
               size="lg" 
-              onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivo_id, focusSection: 'servizi' } })}
+              onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivoId, focusSection: 'servizi' } })}
             >
               Annulla
             </Button>

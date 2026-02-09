@@ -17,4 +17,8 @@ export const PreventiviAPI = {
     const res = await api.post(entryPoint + '/savePreventivo', data);
     return res.data;
   },
+  getPreventivoDetail: async (preventivoId: string): Promise<PreventivoBean> => {
+    const res = await api.post(entryPoint + '/getPreventivoDetail', preventivoId);
+    return res.data;
+  },
 };

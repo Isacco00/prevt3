@@ -93,7 +93,7 @@ const Preventivi = () => {
     extraPercComplex: 0,
     extraStandComplesso: 0,
     fronteLuminoso: 0,
-    id: "",
+    id: null,
     kitFaro100w: 0,
     kitFaro50w: 0,
     larghezza: 0,

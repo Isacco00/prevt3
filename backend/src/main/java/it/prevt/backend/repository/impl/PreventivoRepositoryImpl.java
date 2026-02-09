@@ -4,6 +4,7 @@ import it.prevt.backend.entity.*;
 import it.prevt.backend.repository.PreventivoRepository;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
+import it.prevt.backend.request.bean.PreventiviRequestBean;
 import jakarta.persistence.TypedQuery;
 import java.util.UUID;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
     PreventivoRepository {
 
   @Override
-  public List<Preventivo> getPreventiviList() {
+  public List<Preventivo> getPreventiviList(PreventiviRequestBean preventiviRequestBean) {
     Class<Preventivo> clazz = Preventivo.class;
     Map<String, Object> parameters = new HashMap<>();
 
@@ -25,6 +26,12 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
         " SELECT u FROM " + clazz.getSimpleName() + " u ");
     StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
 
+    if (preventiviRequestBean != null) {
+      if (preventiviRequestBean.getPreventivoId() != null) {
+        strQueryWhere.append(" AND u.id = :preventivoId ");
+        parameters.put("preventivoId", preventiviRequestBean.getPreventivoId());
+      }
+    }
     // Parameters
     strQueryWhere.append("ORDER BY u.createdAt DESC ");
     String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
