@@ -157,7 +157,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
         storageElements.superficieStampa * (costoStampaParam.valore || 0) : 0;
 
     // Costo premontaggio storage: numero pezzi * costo premontaggio al pezzo
-    const costoPremontaggioStorage = costoPremontaggio ?
+    const costoPremontaggioStorage = costoPremontaggio && formData.premontaggioStorage ?
         storageElements.numeroPezzi * (costoPremontaggio.valore || 0) : 0;
 
     const costoTotaleStorage = costoStrutturaStorage + costoGraficaStorage + costoPremontaggioStorage;
@@ -168,7 +168,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
       costoPremontaggioStorage,
       costoTotaleStorage
     };
-  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.numeroPorte, storageElements, parametri, parametriCostiUnitari, accessoriStand]);
+  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.numeroPorte, formData.premontaggioStorage, storageElements, parametri, parametriCostiUnitari, accessoriStand]);
 
   return (
       <div className="space-y-6">
@@ -225,7 +225,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="layoutStorage">Tipo layout dello storage</Label>
               <Select value={formData.layoutStorage}
@@ -252,6 +252,27 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                   <SelectItem value="0">0</SelectItem>
                   <SelectItem value="1">1</SelectItem>
                   <SelectItem value="2">2</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="premontaggio">Premontaggio</Label>
+              <Select
+                  value={formData.premontaggioStorage ? "SI" : "NO"}
+                  onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        premontaggioStorage: value === "SI",
+                      }))
+                  }
+              >
+                <SelectTrigger>
+                  <SelectValue/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="SI">SI</SelectItem>
+                  <SelectItem value="NO">NO</SelectItem>
                 </SelectContent>
               </Select>
             </div>
