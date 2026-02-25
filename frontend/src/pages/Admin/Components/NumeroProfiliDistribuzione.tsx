@@ -47,8 +47,8 @@ export function NumeroProfiliDistribuzione() {
         queryFn: () =>
             ParametriAPI.getParametriList({
                 sortFields: [
-                    { field: 'PARAMETRI_TIPO', desc: false },
-                    { field: 'PARAMETRI_ORDINE', desc: false },
+                    { field: 'PARAMETRI_NOME', desc: false },
+                    { field: 'PARAMETRI_VALORE', desc: false },
                 ],
             }),
     });

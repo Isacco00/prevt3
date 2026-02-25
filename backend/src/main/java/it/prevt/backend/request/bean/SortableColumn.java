@@ -14,6 +14,8 @@ public enum SortableColumn {
       "ordine", "u"), CONDIZIONI_STANDARD_FORNITURA_ORDINE("ordine",
       "u"), ALTRI_BENI_SERVIZI_CREATED_AT("createdAt", "u"), PARAMETRI_TIPO("tipo",
       "u"), PARAMETRI_ORDINE("ordine", "u"),
+  PARAMETRI_VALORE("valore", "u"),
+  PARAMETRI_NOME("nome", "u"),
   ;
 
   SortableColumn(String fieldName, String classAlias) {
