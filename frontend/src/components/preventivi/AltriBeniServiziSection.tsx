@@ -52,9 +52,7 @@ export function AltriBeniServiziSection({preventivoId}: AltriBeniServiziSectionP
   });
 
   useEffect(() => {
-    if (initializedRef.current) return;
     setItems(existingItems);
-    initializedRef.current = true;
   }, [existingItems]);
 
   /* =======================
