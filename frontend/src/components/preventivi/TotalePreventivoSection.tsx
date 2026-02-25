@@ -715,17 +715,47 @@ export function TotalePreventivoSection({
 
   // Marginalità media
   const marginalitaMedia = costoTotale > 0 ? ((preventivoTotale - costoTotale) / costoTotale) * 100 : 0;
-  //
-  // // Expose calculated values to parent component
-  // React.useEffect(() => {
-  //     if (onTotalsCalculated) {
-  //         onTotalsCalculated({
-  //             totalePreventivo: parseFloat(preventivoTotale.toFixed(2)),
-  //             totaleCosti: parseFloat(costoTotale.toFixed(2))
-  //         });
-  //     }
-  // }, [preventivoTotale, costoTotale, onTotalsCalculated]);
+  React.useEffect(() => {
+    if (!physicalElements) return;
 
+    setFormData(prev => {
+      const {
+        superficieStampa,
+        sviluppoLineare,
+        numeroPezzi,
+        superficieMq
+      } = physicalElements;
+
+      // Evita loop inutili
+      if (
+          prev.superficieStampa === superficieStampa &&
+          prev.sviluppoLineare === sviluppoLineare &&
+          prev.numeroPezzi === numeroPezzi &&
+          prev.superficieMq === superficieMq
+      ) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        superficieStampa,
+        sviluppoLineare,
+        numeroPezzi,
+        superficieMq
+      };
+    });
+
+  }, [physicalElements, setFormData]);
+  React.useEffect(() => {
+    if (!formData) return;
+    // Evita set inutili (importantissimo per non fare loop)
+    if (formData.totalePreventivo !== preventivoTotale) {
+      setFormData(prev => ({
+        ...prev,
+        totalePreventivo: preventivoTotale
+      }));
+    }
+  }, [preventivoTotale, setFormData]);
   return (
       <div className="space-y-6">
         <div className="flex items-center gap-2">
