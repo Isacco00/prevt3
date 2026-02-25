@@ -24,6 +24,7 @@ import {AltriBeniServiziSection} from "@/components/preventivi/AltriBeniServiziS
 import {CondizioniFornituraSection} from "@/components/preventivi/CondizioniFornituraSection.tsx";
 import {ServicesSection} from "@/components/preventivi/ServicesSection.tsx";
 import {PreventiviAPI} from "@/api/preventivi.ts";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface PreventivoModalProps {
   open: boolean;
@@ -87,14 +88,25 @@ export function PreventivoModal({
     }, 200);
   }, [open, focusSection, sectionRefs]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await PreventiviAPI.savePreventivo(formData);
+  const queryClient = useQueryClient();
+
+  const saveMutation = useMutation({
+    mutationFn: (data: PreventivoBean) =>
+        PreventiviAPI.savePreventivo(data),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["preventivi"] });
       onOpenChange(false);
-    } catch (err) {
+    },
+
+    onError: (err) => {
       console.error(err);
     }
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveMutation.mutate(formData);
   };
 
   return (
