@@ -10,7 +10,9 @@ type SortableColumn =
     | 'ALTRI_BENI_SERVIZI_CREATED_AT'
     | 'USER_LIST_CREATED_AT'
     | 'PARAMETRI_TIPO'
-    | 'PARAMETRI_ORDINE';
+    | 'PARAMETRI_ORDINE'
+    | 'PARAMETRI_NOME'
+    | 'PARAMETRI_VALORE';
 
 export interface SortableFieldBean {
     field: SortableColumn;
