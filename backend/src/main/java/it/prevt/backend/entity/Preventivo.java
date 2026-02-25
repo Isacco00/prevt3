@@ -249,6 +249,9 @@ public static final List<String> STATO_IN_CORSO = List.of("bozza", "inviato", "i
 
     private Boolean premontaggio = true;
 
+    @Column(name = "premontaggio_storage")
+    private Boolean premontaggioStorage = false;
+
     @Column(name = "marginalita_struttura")
     private BigDecimal marginalitaStruttura = new BigDecimal("50");
 

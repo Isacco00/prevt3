@@ -106,6 +106,7 @@ public class PreventivoBean {
 
   private Integer borsaEspositori;
   private boolean premontaggio;
+  private boolean premontaggioStorage;
 
   private BigDecimal marginalitaStruttura;
   private BigDecimal marginalitaGrafica;
