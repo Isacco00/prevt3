@@ -9,6 +9,9 @@ import {ListinoAccessoriDesk} from "@/pages/Admin/Components/ListinoAccessoriDes
 import {ListinoAccessoriEspositori} from "@/pages/Admin/Components/ListinoAccessoriEspositori.tsx";
 import {CostiStrutturaDesk} from "@/pages/Admin/Components/CostiStrutturaDesk.tsx";
 import {CostiStrutturaEspositori} from "@/pages/Admin/Components/CostiStrutturaEspositori.tsx";
+import {
+  CostoStrutturaStandMetroLineareAltezza
+} from "@/pages/Admin/Components/CostiStandMetroLineareAltezza.tsx";
 
 export default function Admin() {
   return (
@@ -34,6 +37,7 @@ export default function Admin() {
             <ListinoAccessoriEspositori/>
             <CostiStrutturaDesk/>
             <CostiStrutturaEspositori/>
+            <CostoStrutturaStandMetroLineareAltezza/>
 
           </TabsContent>
         </Tabs>
