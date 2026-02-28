@@ -121,6 +121,9 @@ export interface PreventivoBean {
 
     borsaEspositori: number;
     premontaggio: boolean;
+    premontaggioStorage: boolean;
+    premontaggioDesk: boolean;
+    premontaggioEspositori: boolean;
 
     marginalitaStruttura: number;
     marginalitaGrafica: number;

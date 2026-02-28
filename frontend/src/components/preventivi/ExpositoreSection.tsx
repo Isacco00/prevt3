@@ -8,6 +8,7 @@ import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "../ui/collaps
 import {useQuery} from '@tanstack/react-query';
 import {ParametriAPI} from "@/api/parametri.ts";
 import {PreventivoBean} from "@/types/preventivo.ts";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 interface ExpositorePhysicalElements {
   numeroPezziEspositori: number;
@@ -149,6 +150,9 @@ export function ExpositoreSection({
     return physicalElements.superficieStampaEspositori * costoStampaGrafica;
   };
   const calculatePreassemblyCost = (): number => {
+    if (!formData.premontaggioEspositori) {
+      return 0;
+    }
     const costoPremontaggio = getParameterValue('Costo Premontaggio');
     return physicalElements.numeroPezziEspositori * costoPremontaggio;
   };
@@ -367,7 +371,18 @@ export function ExpositoreSection({
           {/* Premontaggio espositori */}
           <Card className="p-4">
             <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium">Premontaggio espositori</div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-medium">Premontaggio espositori</div>
+                <Checkbox
+                    checked={formData.premontaggioEspositori ?? false}
+                    onCheckedChange={(checked) =>
+                        setFormData({
+                          ...formData,
+                          premontaggioEspositori: Boolean(checked)
+                        })
+                    }
+                />
+              </div>
               <div
                   className="text-lg font-bold">€{(costiEspositori?.premontaggioEspositori ?? 0).toFixed(2)}</div>
             </div>
