@@ -19,6 +19,7 @@ public class MarginalitaPerProspectMapper extends
     bean.setId(entity.getId());
     bean.setMarginalita(entity.getMarginalita());
     bean.setAttivo(entity.getAttivo());
+    bean.setTipoProspect(entity.getTipoProspect());
 
     return bean;
   }

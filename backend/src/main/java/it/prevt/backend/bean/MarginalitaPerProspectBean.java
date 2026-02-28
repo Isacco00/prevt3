@@ -13,6 +13,7 @@ public class MarginalitaPerProspectBean {
 
   private UUID id;
   private BigDecimal marginalita;
+  private String tipoProspect;
   private boolean attivo;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
