@@ -252,6 +252,12 @@ public static final List<String> STATO_IN_CORSO = List.of("bozza", "inviato", "i
     @Column(name = "premontaggio_storage")
     private Boolean premontaggioStorage = false;
 
+    @Column(name = "premontaggio_desk")
+    private Boolean premontaggioDesk = false;
+
+    @Column(name = "premontaggio_espositori")
+    private Boolean premontaggioEspositori = false;
+
     @Column(name = "marginalita_struttura")
     private BigDecimal marginalitaStruttura = new BigDecimal("50");
 

@@ -9,6 +9,7 @@ import React, {useState} from "react";
 import {ParametriAPI} from "@/api/parametri.ts";
 import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
 import {CostiStrutturaDeskBean, ListinoAccessoriDeskBean} from "@/types/parametri.ts";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 interface DeskSectionProps {
   formData: PreventivoBean;
@@ -227,7 +228,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     const graficaCordinoDesk = costoStampaDeskParam ? superficieStampaDesk * (costoStampaDeskParam.valore || 0) : 0;
     // Premontaggio desk
     const numeroPezziDesk = calculateNumeroPezziDesk();
-    const premontaggioDesk = costoPremontaggerDesk ? numeroPezziDesk * (costoPremontaggerDesk.valore || 0) : 0;
+    const premontaggioDesk = formData.premontaggioDesk && costoPremontaggerDesk ? numeroPezziDesk * (costoPremontaggerDesk.valore || 0) : 0;
     const totaleDesk = strutturaTerraDesk + graficaCordinoDesk + premontaggioDesk + costiAccessoriDesk;
     return {
       costiAccessoriDesk,
@@ -488,7 +489,18 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
               {/* Premontaggio desk NEW */}
               <Card className="p-4">
                 <div className="flex justify-between items-start mb-3">
-                  <div className="text-sm font-medium">Premontaggio desk</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-medium">Premontaggio desk</div>
+                    <Checkbox
+                        checked={formData.premontaggioDesk ?? false}
+                        onCheckedChange={(checked) =>
+                            setFormData({
+                              ...formData,
+                              premontaggioDesk: Boolean(checked)
+                            })
+                        }
+                    />
+                  </div>
                   <div
                       className="text-lg font-bold">€{(costs.costiDesk?.premontaggio ?? 0).toFixed(2)}</div>
                 </div>
