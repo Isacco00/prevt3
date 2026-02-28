@@ -248,7 +248,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
     // Extra per struttura complessa: percentuale sui costi di struttura a terra
     const extraPercComplex = formData.extraPercComplex || 0;
-    const extraStandComplesso = strutturaTerra * (extraPercComplex / 100);
+    const extraStandComplesso = formData.complessita == 'alta' ? strutturaTerra * (extraPercComplex / 100) : 0;
 
     // Calcolo costi accessori
     let costiAccessori = 0;
