@@ -1,6 +1,17 @@
 import {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {Edit, Save, X, Trash2} from 'lucide-react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import {
     Card,
@@ -272,14 +283,40 @@ export function ListinoAccessoriStand() {
                                             >
                                                 <Edit className="h-4 w-4"/>
                                             </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => deleteMutation.mutate(a.id)}
-                                                disabled={deleteMutation.isPending}
-                                            >
-                                                <Trash2 className="h-4 w-4"/>
-                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        disabled={deleteMutation.isPending}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>
+                                                            Eliminare l’accessorio?
+                                                        </AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Stai per disattivare l’accessorio "{a.nome}".
+                                                            L’operazione non può essere annullata.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Annulla</AlertDialogCancel>
+
+                                                        <AlertDialogAction
+                                                            onClick={() => deleteMutation.mutate(a.id)}
+                                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                        >
+                                                            Conferma eliminazione
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </div>
                                     )}
                                 </TableCell>
