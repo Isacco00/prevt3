@@ -233,8 +233,24 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valoreChiave === String(formData.altezza));
 
-    // Struttura a terra: sviluppo lineare * costo per m/l in base all'altezza
-    const strutturaTerra = costoAltezzaParam ? elements.sviluppoLineare * (costoAltezzaParam.valore || 0) : 0;
+    // Mappa quantità accessori configurati (id -> quantity)
+    const accessoriMap = parseAccessoriStand(formData.accessoriStandConfig);
+
+    // Trova accessorio "Porta" (puoi usare id fisso oppure nome)
+    const portaAccessorio = accessoriStand.find(a => a.nome === 'Porta');
+    // oppure meglio: a.tipo === 'PORTA' se hai un enum
+
+    const numeroPorteStorage = portaAccessorio
+        ? (accessoriMap[portaAccessorio.id] ?? 0)
+        : 0;
+
+    const costoPorta = portaAccessorio?.costoUnitario || 0;
+    // Struttura a terra: sviluppo lineare + bifaccialità + porte storage
+    const strutturaTerra = costoAltezzaParam
+        ? elements.sviluppoLineare * (costoAltezzaParam.valore || 0) +
+        formData.bifaccialita * (costoAltezzaParam.valore || 0) * 0.5 +
+        numeroPorteStorage * costoPorta
+        : 0;
 
     // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
     const graficaCordino = costoStampaParam ? elements.superficieStampa * (costoStampaParam.valore || 0) : 0;
