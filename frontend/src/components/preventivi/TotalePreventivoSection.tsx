@@ -6,6 +6,7 @@ import {ParametriAPI} from "@/api/parametri.ts";
 import {CostiStrutturaDeskBean, ParametriBean, PreventivoServiziBean} from "@/types/parametri.ts";
 import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
 import {LayoutRouteProps} from "react-router-dom";
+import {useStandCosts} from "@/hooks/useStandCosts.ts";
 
 interface TotalePreventivoSectionProps {
   formData: PreventivoBean;
@@ -265,93 +266,14 @@ export function TotalePreventivoSection({
     })
   });
 
-  const calculateCosts = () => {
-    if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione || !parametri.length) {
-      return {
-        strutturaTerra: 0,
-        graficaCordino: 0,
-        premontaggio: 0,
-        retroilluminazione: 0,
-        extraStandComplesso: 0,
-        costiAccessori: 0,
-        // Preventivo values
-        preventivoStruttura: 0,
-        preventivoGrafica: 0,
-        preventivoRetroilluminazione: 0,
-        preventivoAccessori: 0,
-        preventivoPremontaggio: 0,
-        // Summary values
-        totalePreventivoStand: 0,
-        totaleCostiStand: 0,
-        marginalitaMedia: 0,
-        totale: 0
-      };
-    }
-    const elements = physicalElements;
-
-    // Trova i parametri necessari
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
-    const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valoreChiave === String(formData.altezza));
-
-    // Struttura a terra: sviluppo lineare * costo per m/l in base all'altezza
-    const strutturaTerra = costoAltezzaParam ? elements.sviluppoLineare * (costoAltezzaParam.valore || 0) : 0;
-
-    // Grafica con cordino cucito: superficie di stampa * costo stampa grafica al mq
-    const graficaCordino = costoStampaParam ? elements.superficieStampa * (costoStampaParam.valore || 0) : 0;
-
-    // Premontaggio: numero pezzi * costo premontaggio al pezzo (solo se premontaggio è attivo)
-    const premontaggio = costoPremontaggio && formData.premontaggio ? elements.numeroPezzi * (costoPremontaggio.valore || 0) : 0;
-
-    // Retroilluminazione: metri retroilluminazione * costo per m/l in base all'altezza
-    const costoRetroilluminazioneParam = costiRetroilluminazione.find(c => c.altezza === formData.altezza);
-    const retroilluminazione = costoRetroilluminazioneParam ? formData.retroilluminazione * (costoRetroilluminazioneParam.costoAlMetro || 0) : 0;
-
-    // Extra per struttura complessa: percentuale sui costi di struttura a terra
-    const extraPercComplex = formData.extraPercComplex || 0;
-    const extraStandComplesso = strutturaTerra * (extraPercComplex / 100);
-
-    // Calcolo costi accessori
-    let costiAccessori = 0;
-    if (accessoriStand.length > 0) {
-      const accessoriMap = parseAccessoriStand(formData.accessoriStandConfig);
-      accessoriStand.forEach(accessorio => {
-        const quantity = accessoriMap[accessorio.id] ?? 0;
-        costiAccessori += quantity * accessorio.costoUnitario;
-      });
-    }
-
-    // Calculate preventivos (quotes) based on costs and margins
-    const preventivoStruttura = strutturaTerra * (1 + formData.marginalitaStruttura / 100);
-    const preventivoGrafica = graficaCordino * (1 + formData.marginalitaGrafica / 100);
-    const preventivoRetroilluminazione = retroilluminazione * (1 + formData.marginalitaRetroilluminazione / 100);
-    const preventivoAccessori = costiAccessori * (1 + formData.marginalitaAccessori / 100);
-    const preventivoPremontaggio = premontaggio * (1 + formData.marginalitaPremontaggio / 100);
-
-    // Total preventivo and total costs for summary
-    const totalePreventivoStand = preventivoStruttura + preventivoGrafica + preventivoRetroilluminazione + preventivoAccessori + preventivoPremontaggio + extraStandComplesso;
-    const totaleCostiStand = strutturaTerra + graficaCordino + retroilluminazione + costiAccessori + premontaggio;
-    const marginalitaMedia = totaleCostiStand > 0 ? (totalePreventivoStand - totaleCostiStand) / totaleCostiStand * 100 : 0;
-    return {
-      strutturaTerra,
-      graficaCordino,
-      premontaggio,
-      retroilluminazione,
-      extraStandComplesso,
-      costiAccessori,
-      // Preventivo values
-      preventivoStruttura,
-      preventivoGrafica,
-      preventivoRetroilluminazione,
-      preventivoAccessori,
-      preventivoPremontaggio,
-      // Summary values
-      totalePreventivoStand,
-      totaleCostiStand,
-      marginalitaMedia,
-    };
-  };
-  const standCosts = calculateCosts();
+  const standCosts = useStandCosts({
+    formData,
+    physicalElements,
+    parametri,
+    parametriCostiUnitari,
+    costiRetroilluminazione,
+    accessoriStand
+  });
   const standMargins = {
     marginalitaStruttura: formData.marginalitaStruttura,
     marginalitaGrafica: formData.marginalitaGrafica,
@@ -678,9 +600,8 @@ export function TotalePreventivoSection({
 
   // Extra per struttura complessa (only for stands)
   const costoExtraComplessa = standCosts.extraStandComplesso;
-  const preventivoExtraComplessa = calculatePreventivoWithMargin(standCosts.extraStandComplesso, standMargins.marginalitaStruttura);
-
-  // Accessori totals
+  calculatePreventivoWithMargin(standCosts.extraStandComplesso, standMargins.marginalitaStruttura);
+// Accessori totals
   const costoAccessori = standCosts.costiAccessori + (deskCosts.accessori ?? 0) + espositoriCosts.accessoriEspositori;
   const preventivoAccessori =
       calculatePreventivoWithMargin(standCosts.costiAccessori, standMargins.marginalitaAccessori) +
