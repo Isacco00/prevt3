@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle, CardDescription} from '@/components/ui/card';
-import {Edit, Trash2, Search, FileText, Plus} from 'lucide-react';
+import {Edit, Trash2, Search, FileText, Plus, Copy } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -129,6 +129,9 @@ const Preventivi = () => {
     pedana: 0,
     portaScorrevole: 0,
     premontaggio: false,
+    premontaggioStorage: false,
+    premontaggioDesk: false,
+    premontaggioEspositori: false,
     profondita: 0,
     profonditaStorage: 0,
     prospect: undefined,
@@ -216,6 +219,21 @@ const Preventivi = () => {
   const openEditDialog = (preventivo: PreventivoBean) => {
     setEditingPreventivo(preventivo);
     setForm(preventivo);
+    setIsDialogOpen(true);
+  };
+
+  const openCloneDialog = (preventivo: PreventivoBean) => {
+    const clonedPreventivo: PreventivoBean = {
+      ...preventivo,
+      id: null,                 // 🔥 fondamentale
+      numeroPreventivo: "",
+      status: "bozza",
+      createdAt: "",
+      updatedAt: ""
+    };
+
+    setEditingPreventivo(null);
+    setForm(clonedPreventivo);
     setIsDialogOpen(true);
   };
 
@@ -331,6 +349,12 @@ const Preventivi = () => {
                     <div className="flex gap-1">
                       <Button variant="ghost" size="sm" onClick={() => openEditDialog(preventivo)}>
                         <Edit className="h-4 w-4"/>
+                      </Button>
+                      <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openCloneDialog(preventivo)}>
+                        <Copy className="h-4 w-4"/>
                       </Button>
                       <Button variant="ghost" size="sm"
                               onClick={() => setDeletePreventivo(preventivo)}
