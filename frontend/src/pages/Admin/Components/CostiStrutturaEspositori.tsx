@@ -24,6 +24,14 @@ import { useToast } from '@/hooks/use-toast';
 
 import { ParametriAPI } from '@/api/parametri';
 import { CostiStrutturaEspositoriLayoutBean } from '@/types/parametri';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+    AlertDialogHeader, AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog.tsx";
 
 /* =====================================================
    CostiStrutturaEspositori
@@ -287,14 +295,40 @@ export function CostiStrutturaEspositori() {
                                             >
                                                 <Edit className="h-4 w-4" />
                                             </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => deleteMutation.mutate(c.id)}
-                                                disabled={deleteMutation.isPending}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        disabled={deleteMutation.isPending}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>
+                                                            Eliminare l’elemento?
+                                                        </AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Stai per disattivare l'elemento.
+                                                            L’operazione non può essere annullata.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Annulla</AlertDialogCancel>
+
+                                                        <AlertDialogAction
+                                                            onClick={() => deleteMutation.mutate(c.id)}
+                                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                        >
+                                                            Conferma eliminazione
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </div>
                                     )}
                                 </TableCell>
