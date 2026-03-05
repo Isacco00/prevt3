@@ -19,7 +19,10 @@ public interface RestServicePreventivi {
   @PostMapping("/savePreventivo")
   PreventivoBean savePreventivo(@RequestBody PreventivoBean dto, Authentication authentication);
 
-  @PostMapping("/getPreventivoDetail")
-  PreventivoBean getPreventivoDetail(@RequestBody String id);
+  @GetMapping("/getPreventivoDetail/{id}")
+  PreventivoBean getPreventivoDetail(@PathVariable String id);
+
+  @DeleteMapping("/deletePreventivo/{id}")
+  void deletePreventivo(@PathVariable String id);
 
 }

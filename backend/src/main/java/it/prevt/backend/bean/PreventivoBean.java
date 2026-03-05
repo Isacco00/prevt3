@@ -1,5 +1,7 @@
 package it.prevt.backend.bean;
 
+import it.prevt.backend.entity.Preventivo;
+import it.prevt.backend.enumerator.PreventivoStatus;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +24,7 @@ public class PreventivoBean {
   private BigDecimal costoMq;
   private BigDecimal costoMc;
   private BigDecimal costoFisso;
-  private String status;
+  private PreventivoStatus status;
   private LocalDate dataScadenza;
   private String note;
   private OffsetDateTime createdAt;

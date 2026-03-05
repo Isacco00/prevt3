@@ -31,6 +31,11 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
         strQueryWhere.append(" AND u.id = :preventivoId ");
         parameters.put("preventivoId", preventiviRequestBean.getPreventivoId());
       }
+      if (preventiviRequestBean.getStatiPreventivi() != null
+          && !preventiviRequestBean.getStatiPreventivi().isEmpty()) {
+        createListWhereClause("u", "status", preventiviRequestBean.getStatiPreventivi(),
+            strQueryWhere, parameters);
+      }
     }
     // Parameters
     strQueryWhere.append("ORDER BY u.createdAt DESC ");

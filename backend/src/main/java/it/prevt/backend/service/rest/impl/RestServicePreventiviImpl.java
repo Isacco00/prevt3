@@ -33,4 +33,9 @@ public class RestServicePreventiviImpl implements RestServicePreventivi {
     return manager.getPreventivoDetail(id);
   }
 
+  @Override
+  public void deletePreventivo(String id) {
+    manager.deletePreventivo(id);
+  }
+
 }
