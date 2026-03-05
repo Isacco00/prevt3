@@ -27,7 +27,7 @@ import {PreventiviAPI} from "@/api/preventivi.ts";
 import {PreventivoModal} from "@/components/preventivi/PreventivoModal.tsx";
 import {PreventivoBean, PreventivoSectionKey} from "@/types/preventivo.ts";
 import {useLocation} from 'react-router-dom';
-
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 const Preventivi = () => {
   const location = useLocation();
@@ -222,6 +222,17 @@ const Preventivi = () => {
     setIsDialogOpen(true);
   };
 
+  const queryClient = useQueryClient();
+  const deletePreventivoMutation = useMutation({
+    mutationFn: (id: string) =>
+        PreventiviAPI.deletePreventivo(id),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["preventivi"] });
+      setDeletePreventivo(null);
+    }
+  });
+  
   const openCloneDialog = (preventivo: PreventivoBean) => {
     const clonedPreventivo: PreventivoBean = {
       ...preventivo,

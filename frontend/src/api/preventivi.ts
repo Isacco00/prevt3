@@ -18,7 +18,10 @@ export const PreventiviAPI = {
     return res.data;
   },
   getPreventivoDetail: async (preventivoId: string): Promise<PreventivoBean> => {
-    const res = await api.post(entryPoint + '/getPreventivoDetail', preventivoId);
+    const res = await api.get(`${entryPoint}/getPreventivoDetail/${preventivoId}`);
     return res.data;
+  },
+  deletePreventivo: async (preventivoId: string): Promise<void> => {
+    await api.delete(`${entryPoint}/deletePreventivo/${preventivoId}`);
   },
 };

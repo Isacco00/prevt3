@@ -3,10 +3,12 @@ package it.prevt.backend.manager.impl;
 import it.prevt.backend.bean.PreventivoBean;
 import it.prevt.backend.entity.Preventivo;
 import it.prevt.backend.entity.User;
+import it.prevt.backend.enumerator.PreventivoStatus;
 import it.prevt.backend.manager.PreventivoManager;
 import it.prevt.backend.mapper.PreventivoMapper;
 import it.prevt.backend.merger.PreventivoMerger;
 import it.prevt.backend.repository.PreventivoRepository;
+import it.prevt.backend.request.bean.PreventiviRequestBean;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
@@ -27,9 +29,11 @@ public class PreventivoManagerImpl implements PreventivoManager {
 
   @Override
   public List<PreventivoBean> getPreventiviList() {
-    List<Preventivo> preventivoList = repository.getPreventiviList(null);
+    PreventiviRequestBean request = new PreventiviRequestBean();
+    request.setStatiPreventivi(Preventivo.STATO_IN_CORSO);
+    List<Preventivo> preventivoList = repository.getPreventiviList(request);
     if (preventivoList == null) {
-      throw new UsernameNotFoundException("error.preventivo.notfound");
+      throw new EntityNotFoundException("error.preventivo.notfound");
     }
     return mapper.mapEntitiesToBeans(preventivoList);
   }
@@ -49,7 +53,7 @@ public class PreventivoManagerImpl implements PreventivoManager {
     UUID userId = UUID.fromString(authentication.getName());
     User user = repository.find(User.class, userId);
     if (user == null) {
-      throw new UsernameNotFoundException("error.user.notfound");
+      throw new EntityNotFoundException("error.user.notfound");
     }
     entity.setUser(user);
     this.repository.save(entity);
@@ -58,11 +62,21 @@ public class PreventivoManagerImpl implements PreventivoManager {
 
   @Override
   public PreventivoBean getPreventivoDetail(String id) {
-    Preventivo preventivoList = repository.find(Preventivo.class, UUID.fromString(id));
-    if (preventivoList == null) {
-      throw new UsernameNotFoundException("error.preventivo.notfound");
+    Preventivo preventivo = repository.find(Preventivo.class, UUID.fromString(id));
+    if (preventivo == null) {
+      throw new EntityNotFoundException("error.preventivo.notfound");
     }
-    return mapper.mapEntityToBean(preventivoList);
+    return mapper.mapEntityToBean(preventivo);
+  }
+
+  @Override
+  public void deletePreventivo(String id) {
+    Preventivo preventivo  = repository.find(Preventivo.class, UUID.fromString(id));
+    if (preventivo == null) {
+      throw new EntityNotFoundException("error.preventivo.notfound");
+    }
+    preventivo.setStatus(PreventivoStatus.CANCELLATO);
+    this.repository.save(preventivo);
   }
 }
 
