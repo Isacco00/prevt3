@@ -1,0 +1,1 @@
+update preventivo set status = upper(status);
