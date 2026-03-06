@@ -14,6 +14,7 @@ export interface ProspectBean {
     email?: string;
     tipo: 'prospect' | 'cliente';
     tipoProspect?: 'Professional' | 'Finale';
+    scontoCliente: number;
     createdAt?: ISODateString;
     updatedAt?: ISODateString;
 }

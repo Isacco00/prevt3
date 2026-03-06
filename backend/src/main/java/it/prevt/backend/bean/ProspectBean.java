@@ -1,5 +1,6 @@
 package it.prevt.backend.bean;
 
+import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,5 +25,6 @@ public class ProspectBean {
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
   private String tipoProspect;
+  private BigDecimal scontoCliente;
 
 }

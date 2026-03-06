@@ -26,6 +26,7 @@ public class ProspectMapper extends AbstractMapper<Prospect, ProspectBean> {
     bean.setCreatedAt(entity.getCreatedAt());
     bean.setUpdatedAt(entity.getUpdatedAt());
     bean.setTipoProspect(entity.getTipoProspect());
+    bean.setScontoCliente(entity.getScontoCliente());
     return bean;
   }
 }
