@@ -9,12 +9,14 @@ import it.prevt.backend.mapper.PreventivoMapper;
 import it.prevt.backend.merger.PreventivoMerger;
 import it.prevt.backend.repository.PreventivoRepository;
 import it.prevt.backend.request.bean.PreventiviRequestBean;
+import it.prevt.backend.validator.PreventivoValidator;
+import it.prevt.backend.validator.internal.ValidationException;
+import it.prevt.backend.validator.internal.ValidationMessages;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ public class PreventivoManagerImpl implements PreventivoManager {
   private final PreventivoRepository repository;
   private final PreventivoMapper mapper;
   private final PreventivoMerger merger;
+  private final PreventivoValidator validator;
 
   @Override
   public List<PreventivoBean> getPreventiviList() {
@@ -40,6 +43,7 @@ public class PreventivoManagerImpl implements PreventivoManager {
 
   @Override
   public PreventivoBean savePreventivo(PreventivoBean bean, Authentication authentication) {
+    checkPreventivo(bean);
     Preventivo entity;
     if (bean.getId() == null) {
       entity = merger.mapNew(bean, Preventivo.class);
@@ -71,12 +75,20 @@ public class PreventivoManagerImpl implements PreventivoManager {
 
   @Override
   public void deletePreventivo(String id) {
-    Preventivo preventivo  = repository.find(Preventivo.class, UUID.fromString(id));
+    Preventivo preventivo = repository.find(Preventivo.class, UUID.fromString(id));
     if (preventivo == null) {
       throw new EntityNotFoundException("error.preventivo.notfound");
     }
     preventivo.setStatus(PreventivoStatus.CANCELLATO);
     this.repository.save(preventivo);
+  }
+
+  @Override
+  public void checkPreventivo(PreventivoBean bean) {
+    ValidationMessages<PreventivoBean> result = validator.validate(bean);
+    if (result.hasErrors()) {
+      throw new ValidationException(result.getErrors());
+    }
   }
 }
 

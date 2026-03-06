@@ -13,5 +13,6 @@ public class PreventiviRequestBean {
 
     private List<PreventivoStatus> statiPreventivi;
     private UUID preventivoId;
+    private String numeroPreventivo;
 
 }

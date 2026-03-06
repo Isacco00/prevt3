@@ -16,4 +16,6 @@ public interface PreventivoManager {
 
   void deletePreventivo(String id);
 
+  void checkPreventivo(PreventivoBean bean);
+
 }

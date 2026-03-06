@@ -18,7 +18,7 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
     PreventivoRepository {
 
   @Override
-  public List<Preventivo> getPreventiviList(PreventiviRequestBean preventiviRequestBean) {
+  public List<Preventivo> getPreventiviList(PreventiviRequestBean request) {
     Class<Preventivo> clazz = Preventivo.class;
     Map<String, Object> parameters = new HashMap<>();
 
@@ -26,10 +26,19 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
         " SELECT u FROM " + clazz.getSimpleName() + " u ");
     StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
 
-    if (preventiviRequestBean != null) {
-      if (preventiviRequestBean.getPreventivoId() != null) {
+    if (request != null) {
+      if (request.getPreventivoId() != null) {
         strQueryWhere.append(" AND u.id = :preventivoId ");
-        parameters.put("preventivoId", preventiviRequestBean.getPreventivoId());
+        parameters.put("preventivoId", request.getPreventivoId());
+      }
+      if (request.getStatiPreventivi() != null
+          && !request.getStatiPreventivi().isEmpty()) {
+        createListWhereClause("u", "status", request.getStatiPreventivi(),
+            strQueryWhere, parameters);
+      }
+      if (request.getNumeroPreventivo() != null) {
+        strQueryWhere.append(" AND u.numeroPreventivo = :numeroPreventivo ");
+        parameters.put("numeroPreventivo", request.getNumeroPreventivo());
       }
       if (preventiviRequestBean.getStatiPreventivi() != null
           && !preventiviRequestBean.getStatiPreventivi().isEmpty()) {
