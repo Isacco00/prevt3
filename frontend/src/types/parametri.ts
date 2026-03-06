@@ -38,6 +38,9 @@ export interface CostiRetroilluminazioneBean {
     id: string;
     altezza: number
     costoAlMetro: number;
+    ricaricoPercentuale: number;
+    prezzo: number;
+    descrizione: string;
 }
 
 export interface ListinoAccessoriEspositoriBean {
