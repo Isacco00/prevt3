@@ -4,11 +4,10 @@
     "reset": "Reset",
     "success": "Successo"
   },
-
   "errors": {
-    "genericTitle": "Errore"
+    "genericTitle": "Errore",
+    "validation": "Errore salvataggio"
   },
-
   "profile": {
     "avatar": {
       "title": "Aggiorna foto profilo",
@@ -22,6 +21,14 @@
       "dragHint": "Trascina l'immagine per riposizionarla",
       "zoom": "Zoom: {{value}}x",
       "rotation": "Rotazione: {{value}}°"
+    }
+  },
+  "preventivo": {
+    "message": {
+      "error": {
+        "numeroRequired": "Errore nel salvataggio del preventivo: numero preventivo non inserito",
+        "numeroDuplicato": "Errore nel salvataggio del preventivo: numero preventivo duplicato"
+      }
     }
   }
 }
