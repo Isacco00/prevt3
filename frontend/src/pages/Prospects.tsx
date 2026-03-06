@@ -141,6 +141,7 @@ const Prospects = () => {
             email: "",
             tipo: "prospect",
             tipoProspect: "Professional",
+            scontoCliente: 0,
         });
         setEditingProspect(null);
     };
