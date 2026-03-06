@@ -230,9 +230,15 @@ export function CostiStrutturaDesk() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Layout Desk</TableHead>
-                <TableHead>Costo unitario</TableHead>
-                <TableHead>Azioni</TableHead>
+                <TableHead className="w-[200px]">
+                  Layout Desk
+                </TableHead>
+                <TableHead className="w-[200px]">
+                  Costo unitario
+                </TableHead>
+                <TableHead className="w-[120px]">
+                  Azioni
+                </TableHead>
               </TableRow>
             </TableHeader>
 

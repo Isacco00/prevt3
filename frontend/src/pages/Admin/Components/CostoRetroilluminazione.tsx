@@ -209,9 +209,9 @@ export function CostoRetroilluminazione() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Altezza</TableHead>
-                            <TableHead>Costo per m/l</TableHead>
-                            <TableHead>Azioni</TableHead>
+                            <TableHead className="w-[200px]">Altezza</TableHead>
+                            <TableHead className="w-[200px]">Costo per m/l</TableHead>
+                            <TableHead className="w-[120px]">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 

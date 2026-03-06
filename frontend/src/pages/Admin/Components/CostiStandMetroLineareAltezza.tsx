@@ -25,9 +25,9 @@ import { ParametriAPI } from '@/api/parametri';
 import { ParametriBean } from '@/types/parametri';
 
 /* =====================================================
-   NumeroProfiliDistribuzioneTab
+   CostoStrutturaStandMetroLineareAltezza
 ===================================================== */
-export function NumeroProfiliDistribuzione() {
+export function CostoStrutturaStandMetroLineareAltezza() {
     const queryClient = useQueryClient();
     const { toast } = useToast();
 
@@ -47,15 +47,15 @@ export function NumeroProfiliDistribuzione() {
         queryFn: () =>
             ParametriAPI.getParametriList({
                 sortFields: [
-                    { field: 'PARAMETRI_TIPO', desc: false },
-                    { field: 'PARAMETRI_ORDINE', desc: false },
+                    { field: 'PARAMETRI_NOME', desc: false },
+                    { field: 'PARAMETRI_VALORE', desc: false },
                 ],
             }),
     });
 
-    // come nel tuo codice originale
-    const profiliDistribuzione = parametri.filter(
-        (p) => p.tipo === 'profili_distribuzione'
+    // 🔥 filtro per costo struttura stand per m/l in funzione dell'altezza
+    const costiStandAltezza = parametri.filter(
+        (p) => p.tipo === 'costo_altezza'
     );
 
     /* =========================
@@ -69,14 +69,16 @@ export function NumeroProfiliDistribuzione() {
             setEditValue(null);
 
             toast({
-                title: 'Parametro aggiornato',
-                description: 'Numero profili aggiornato correttamente.',
+                title: 'Costo aggiornato',
+                description:
+                    'Costo struttura stand aggiornato correttamente.',
             });
         },
         onError: () => {
             toast({
                 title: 'Errore',
-                description: 'Errore durante il salvataggio del parametro.',
+                description:
+                    'Errore durante il salvataggio del costo struttura stand.',
                 variant: 'destructive',
             });
         },
@@ -119,9 +121,11 @@ export function NumeroProfiliDistribuzione() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Numero di Profili per Distribuzione</CardTitle>
+                <CardTitle>
+                    Costo struttura a terra Stand
+                </CardTitle>
                 <CardDescription>
-                    Numero di profili m/l in funzione della distribuzione
+                    Costo stand per metro lineare (m/l) in funzione dell’altezza
                 </CardDescription>
             </CardHeader>
 
@@ -130,17 +134,17 @@ export function NumeroProfiliDistribuzione() {
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[200px]">
-                                Distribuzione
+                                Altezza Stand (m)
                             </TableHead>
                             <TableHead className="w-[200px]">
-                                Numero di Profili m/l
+                                Costo per m/l (€)
                             </TableHead>
                             <TableHead className="w-[120px]" />
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
-                        {profiliDistribuzione.map((parametro) => (
+                        {costiStandAltezza.map((parametro) => (
                             <TableRow key={parametro.id}>
                                 <TableCell className="font-medium">
                                     {parametro.nome}
@@ -150,7 +154,7 @@ export function NumeroProfiliDistribuzione() {
                                     {editingParametro?.id === parametro.id ? (
                                         <Input
                                             type="number"
-                                            step="1"
+                                            step="0.01"
                                             value={editValue ?? ''}
                                             onChange={(e) =>
                                                 setEditValue(Number(e.target.value))
@@ -158,7 +162,9 @@ export function NumeroProfiliDistribuzione() {
                                             className="w-32"
                                         />
                                     ) : (
-                                        parametro.valore
+                                        `€ ${parametro.valore
+                                        ?.toFixed(2)
+                                        .replace('.', ',')}`
                                     )}
                                 </TableCell>
 
