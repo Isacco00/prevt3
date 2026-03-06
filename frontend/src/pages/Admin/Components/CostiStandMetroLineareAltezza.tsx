@@ -133,7 +133,7 @@ export function CostoStrutturaStandMetroLineareAltezza() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[250px]">
+                            <TableHead className="w-[200px]">
                                 Altezza Stand (m)
                             </TableHead>
                             <TableHead className="w-[200px]">

@@ -238,9 +238,15 @@ export function CostiStrutturaEspositori() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Layout Espositore</TableHead>
-                            <TableHead>Costo unitario</TableHead>
-                            <TableHead>Azioni</TableHead>
+                            <TableHead className="w-[200px]">
+                                Layout Espositore
+                            </TableHead>
+                            <TableHead className="w-[200px]">
+                                Costo unitario
+                            </TableHead>
+                            <TableHead className="w-[120px]">
+                                Azioni
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
 

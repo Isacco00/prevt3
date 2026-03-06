@@ -228,9 +228,9 @@ export function ListinoAccessoriStand() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Nome</TableHead>
-                            <TableHead>Costo unitario</TableHead>
-                            <TableHead>Azioni</TableHead>
+                            <TableHead className="w-[200px]">Nome</TableHead>
+                            <TableHead className="w-[200px]">Costo unitario</TableHead>
+                            <TableHead className="w-[120px]">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 

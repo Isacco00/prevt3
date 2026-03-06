@@ -120,10 +120,10 @@ export function ParametriACostoUnitario() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[300px]">Parametro</TableHead>
-                            <TableHead className="w-[100px] text-center">U.M.</TableHead>
-                            <TableHead className="w-[150px] text-center">Valore</TableHead>
-                            <TableHead className="w-[100px] text-center">Azioni</TableHead>
+                            <TableHead className="w-[200px]">Parametro</TableHead>
+                            <TableHead className="w-[100px]">U.M.</TableHead>
+                            <TableHead className="w-[100px]">Valore</TableHead>
+                            <TableHead className="w-[120px]">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -134,11 +134,11 @@ export function ParametriACostoUnitario() {
                                     {parametro.parametro}
                                 </TableCell>
 
-                                <TableCell className="text-center">
+                                <TableCell>
                                     {parametro.unitaMisura}
                                 </TableCell>
 
-                                <TableCell className="text-center">
+                                <TableCell>
                                     {editingParametro?.id === parametro.id ? (
                                         <Input
                                             type="number"
@@ -154,7 +154,7 @@ export function ParametriACostoUnitario() {
                                     )}
                                 </TableCell>
 
-                                <TableCell className="text-center">
+                                <TableCell>
                                     {editingParametro?.id === parametro.id ? (
                                         <div className="flex justify-center gap-2">
                                             <Button

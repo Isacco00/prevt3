@@ -129,7 +129,7 @@ export function NumeroProfiliDistribuzione() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[250px]">
+                            <TableHead className="w-[200px]">
                                 Distribuzione
                             </TableHead>
                             <TableHead className="w-[200px]">
