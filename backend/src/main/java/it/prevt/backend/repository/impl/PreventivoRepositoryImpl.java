@@ -40,9 +40,9 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
         strQueryWhere.append(" AND u.numeroPreventivo = :numeroPreventivo ");
         parameters.put("numeroPreventivo", request.getNumeroPreventivo());
       }
-      if (preventiviRequestBean.getStatiPreventivi() != null
-          && !preventiviRequestBean.getStatiPreventivi().isEmpty()) {
-        createListWhereClause("u", "status", preventiviRequestBean.getStatiPreventivi(),
+      if (request.getStatiPreventivi() != null
+          && !request.getStatiPreventivi().isEmpty()) {
+        createListWhereClause("u", "status", request.getStatiPreventivi(),
             strQueryWhere, parameters);
       }
     }
