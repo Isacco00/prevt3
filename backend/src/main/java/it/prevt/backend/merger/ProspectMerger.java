@@ -25,6 +25,7 @@ public class ProspectMerger extends AbstractMerger<ProspectBean, Prospect> {
     entity.setCreatedAt(bean.getCreatedAt());
     entity.setUpdatedAt(bean.getUpdatedAt());
     entity.setTipoProspect(bean.getTipoProspect());
+    entity.setScontoCliente(bean.getScontoCliente());
   }
 
 }

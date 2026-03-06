@@ -300,21 +300,48 @@ const Prospects = () => {
                                     </Select>
                                 </div>
 
-                                <div className="col-span-2">
-                                    <Label htmlFor="tipoProspect">Relazione *</Label>
-                                    <Select value={formData.tipoProspect}
-                                            onValueChange={(value: 'Professional' | 'Finale') => setFormData({
-                                                ...formData,
-                                                tipoProspect: value
-                                            })}>
-                                        <SelectTrigger>
-                                            <SelectValue/>
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Professional">Professional</SelectItem>
-                                            <SelectItem value="Finale">Finale</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                <div className="col-span-2 grid grid-cols-3 gap-4">
+                                    {/* Relazione */}
+                                    <div>
+                                        <Label htmlFor="tipoProspect">Relazione *</Label>
+                                        <Select
+                                            value={formData.tipoProspect}
+                                            onValueChange={(value: 'Professional' | 'Finale') =>
+                                                setFormData({
+                                                    ...formData,
+                                                    tipoProspect: value
+                                                })
+                                            }>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Professional">Professional</SelectItem>
+                                                <SelectItem value="Finale">Finale</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    {/* Sconto cliente */}
+                                    <div className="col-span-2">
+                                        <Label htmlFor="scontoCliente">Sconto Cliente</Label>
+                                        <div className="relative">
+                                            <Input
+                                                id="scontoCliente"
+                                                type="number"
+                                                step="0.01"
+                                                value={formData.scontoCliente ?? ""}
+                                                onChange={(e) =>
+                                                    setFormData({
+                                                        ...formData,
+                                                        scontoCliente: Number(e.target.value)
+                                                    })
+                                                }
+                                                className="w-full pr-8"
+                                                placeholder="0"/>
+                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">%</span>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
