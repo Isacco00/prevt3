@@ -1,7 +1,7 @@
 package it.prevt.backend.manager.impl;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
-import it.prevt.backend.bean.CostiRetroilluminazioneBean;
+import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
@@ -11,7 +11,7 @@ import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
 import it.prevt.backend.entity.AltriBeniServizi;
-import it.prevt.backend.entity.CostiRetroilluminazione;
+import it.prevt.backend.entity.ListinoRetroilluminazione;
 import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
 import it.prevt.backend.entity.CostiStrutturaDeskLayout;
 import it.prevt.backend.entity.ListinoAccessoriDesk;
@@ -22,7 +22,7 @@ import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.entity.PreventivoServizi;
 import it.prevt.backend.manager.ParametriManager;
 import it.prevt.backend.mapper.AltriBeniServiziMapper;
-import it.prevt.backend.mapper.CostiRetroilluminazioneMapper;
+import it.prevt.backend.mapper.ListinoRetroilluminazioneMapper;
 import it.prevt.backend.mapper.CostiStrutturaEspositoriLayoutMapper;
 import it.prevt.backend.mapper.CostiStrutturaDeskLayoutMapper;
 import it.prevt.backend.mapper.ListinoAccessoriDeskMapper;
@@ -32,7 +32,7 @@ import it.prevt.backend.mapper.ParametriACostiUnitariMapper;
 import it.prevt.backend.mapper.ParametriMapper;
 import it.prevt.backend.mapper.PreventivoServiziMapper;
 import it.prevt.backend.merger.AltriBeniServiziMerger;
-import it.prevt.backend.merger.CostiRetroilluminazioneMerger;
+import it.prevt.backend.merger.ListinoRetroilluminazioneMerger;
 import it.prevt.backend.merger.CostiStrutturaDeskLayoutMerger;
 import it.prevt.backend.merger.CostiStrutturaEspositoriLayoutMerger;
 import it.prevt.backend.merger.ListinoAccessoriDeskMerger;
@@ -62,8 +62,8 @@ public class ParametriManagerImpl implements ParametriManager {
   private final ParametriMerger merger;
   private final ParametriACostiUnitariMapper parametriACostiUnitariMapper;
   private final ParametriACostiUnitariMerger parametriACostiUnitariMerger;
-  private final CostiRetroilluminazioneMapper costiRetroilluminazioneMapper;
-  private final CostiRetroilluminazioneMerger costiRetroilluminazioneMerger;
+  private final ListinoRetroilluminazioneMapper listinoRetroilluminazioneMapper;
+  private final ListinoRetroilluminazioneMerger listinoRetroilluminazioneMerger;
   private final ListinoAccessoriStandMapper listinoAccessoriStandMapper;
   private final ListinoAccessoriStandMerger listinoAccessoriStandMerger;
   private final ListinoAccessoriDeskMapper listinoAccessoriDeskMapper;
@@ -131,30 +131,31 @@ public class ParametriManagerImpl implements ParametriManager {
   }
 
   @Override
-  public List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
+  public List<ListinoRetroilluminazioneBean> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest) {
-    List<CostiRetroilluminazione> costiRetroilluminazioneList = repository.getCostiRetroilluminazione(
+    List<ListinoRetroilluminazione> listinoRetroilluminazioneList = repository.getListinoRetroilluminazione(
         searchRequest);
-    if (costiRetroilluminazioneList == null) {
-      throw new UsernameNotFoundException("error.costiretroilluminazione.notfound");
+    if (listinoRetroilluminazioneList == null) {
+      throw new UsernameNotFoundException("error.listinoretroilluminazione.notfound");
     }
-    return costiRetroilluminazioneMapper.mapEntitiesToBeans(costiRetroilluminazioneList);
+    return listinoRetroilluminazioneMapper.mapEntitiesToBeans(listinoRetroilluminazioneList);
   }
 
   @Override
-  public CostiRetroilluminazioneBean saveCostiRetroilluminazione(CostiRetroilluminazioneBean bean) {
-    CostiRetroilluminazione entity;
+  public ListinoRetroilluminazioneBean saveListinoRetroilluminazione(
+      ListinoRetroilluminazioneBean bean) {
+    ListinoRetroilluminazione entity;
     if (bean.getId() == null) {
-      entity = costiRetroilluminazioneMerger.mapNew(bean, CostiRetroilluminazione.class);
+      entity = listinoRetroilluminazioneMerger.mapNew(bean, ListinoRetroilluminazione.class);
     } else {
-      entity = repository.find(CostiRetroilluminazione.class, bean.getId());
+      entity = repository.find(ListinoRetroilluminazione.class, bean.getId());
       if (entity == null) {
         throw new EntityNotFoundException();
       }
-      costiRetroilluminazioneMerger.merge(bean, entity);
+      listinoRetroilluminazioneMerger.merge(bean, entity);
     }
     this.repository.save(entity);
-    return costiRetroilluminazioneMapper.mapEntityToBean(entity);
+    return listinoRetroilluminazioneMapper.mapEntityToBean(entity);
   }
 
   @Override

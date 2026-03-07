@@ -3,7 +3,7 @@ import {api} from "@/api/index";
 import {
   ListinoAccessoriRequestBean, PreventivoBean
 } from "@/types/preventivo.ts";
-import {AltriBeniServiziBean, CostiRetroilluminazioneBean} from "@/types/parametri.ts";
+import {AltriBeniServiziBean, ListinoRetroilluminazioneBean} from "@/types/parametri.ts";
 import {ProspectBean} from "@/types/prospect.ts";
 
 const entryPoint = "/preventivi";

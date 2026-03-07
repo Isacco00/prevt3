@@ -1,7 +1,7 @@
 // hooks/preventivo/useStandCosts.ts
 import {useMemo} from "react";
 import {
-  CostiRetroilluminazioneBean, ListinoAccessoriStandBean,
+  ListinoRetroilluminazioneBean, ListinoAccessoriStandBean,
   ParametriACostiUnitariBean,
   ParametriBean
 } from "@/types/parametri";
@@ -29,7 +29,7 @@ interface UseStandCostsParams {
   };
   parametri: ParametriBean[];
   parametriCostiUnitari: ParametriACostiUnitariBean[];
-  costiRetroilluminazione: CostiRetroilluminazioneBean[];
+  listinoRetroilluminazione: ListinoRetroilluminazioneBean[];
   accessoriStand: ListinoAccessoriStandBean[];
 }
 
@@ -38,7 +38,7 @@ export function useStandCosts({
                                 physicalElements,
                                 parametri,
                                 parametriCostiUnitari,
-                                costiRetroilluminazione,
+                                listinoRetroilluminazione,
                                 accessoriStand,
                               }: UseStandCostsParams) {
 
@@ -72,7 +72,7 @@ export function useStandCosts({
     const graficaCordino = costoStampaParam ? elements.superficieStampa * (costoStampaParam.valore || 0) : 0;
     const premontaggio = costoPremontaggio && formData.premontaggio ? elements.numeroPezzi * (costoPremontaggio.valore || 0) : 0;
 
-    const costoRetroParam = costiRetroilluminazione.find(c => c.altezza === formData.altezza);
+    const costoRetroParam = listinoRetroilluminazione.find(c => c.altezza === formData.altezza);
     const retroilluminazione = costoRetroParam ? formData.retroilluminazione * (costoRetroParam.costoAlMetro || 0) : 0;
 
     const extraPercComplex = formData.extraPercComplex || 0;
@@ -137,7 +137,7 @@ export function useStandCosts({
     physicalElements,
     parametri,
     parametriCostiUnitari,
-    costiRetroilluminazione,
+    listinoRetroilluminazione,
     accessoriStand,
   ]);
 }

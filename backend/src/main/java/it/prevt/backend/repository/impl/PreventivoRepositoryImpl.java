@@ -192,9 +192,9 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
   }
 
   @Override
-  public List<CostiRetroilluminazione> getCostiRetroilluminazione(
+  public List<ListinoRetroilluminazione> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest) {
-    Class<CostiRetroilluminazione> clazz = CostiRetroilluminazione.class;
+    Class<ListinoRetroilluminazione> clazz = ListinoRetroilluminazione.class;
     Map<String, Object> parameters = new HashMap<>();
 
     StringBuilder strQueryFrom = new StringBuilder(
@@ -208,7 +208,7 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
       strQueryWhere.append(strQueryOrderBy.toString());
     }
     String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
-    TypedQuery<CostiRetroilluminazione> query = entityManager.createQuery(strQueryFinal, clazz);
+    TypedQuery<ListinoRetroilluminazione> query = entityManager.createQuery(strQueryFinal, clazz);
     parameters.forEach(query::setParameter);
     return getResultList(query);
   }

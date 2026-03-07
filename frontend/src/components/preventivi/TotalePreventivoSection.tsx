@@ -255,10 +255,10 @@ export function TotalePreventivoSection({
 
   // Query per recuperare i costi retroilluminazione
   const {
-    data: costiRetroilluminazione = []
+    data: listinoRetroilluminazione = []
   } = useQuery({
     queryKey: ['costi-retroilluminazione'],
-    queryFn: () => ParametriAPI.getCostiRetroilluminazione({
+    queryFn: () => ParametriAPI.getListinoRetroilluminazione({
       sortFields: [{
         field: "PARAMETRI_COSTI_RETROILLUMINAZIONE_ALTEZZA",
         desc: false
@@ -271,7 +271,7 @@ export function TotalePreventivoSection({
     physicalElements,
     parametri,
     parametriCostiUnitari,
-    costiRetroilluminazione,
+    listinoRetroilluminazione: listinoRetroilluminazione,
     accessoriStand
   });
   const standMargins = {

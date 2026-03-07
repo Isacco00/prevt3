@@ -1,7 +1,7 @@
 package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
-import it.prevt.backend.bean.CostiRetroilluminazioneBean;
+import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
@@ -10,7 +10,6 @@ import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
-import it.prevt.backend.entity.ParametriACostiUnitari;
 import it.prevt.backend.manager.ParametriManager;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
@@ -18,7 +17,6 @@ import it.prevt.backend.service.rest.RestServiceParametri;
 
 import java.util.List;
 
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,14 +50,15 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   }
 
   @Override
-  public List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
+  public List<ListinoRetroilluminazioneBean> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest) {
-    return manager.getCostiRetroilluminazione(searchRequest);
+    return manager.getListinoRetroilluminazione(searchRequest);
   }
 
   @Override
-  public CostiRetroilluminazioneBean saveCostiRetroilluminazione(CostiRetroilluminazioneBean bean) {
-    return manager.saveCostiRetroilluminazione(bean);
+  public ListinoRetroilluminazioneBean saveListinoRetroilluminazione(
+      ListinoRetroilluminazioneBean bean) {
+    return manager.saveListinoRetroilluminazione(bean);
   }
 
   @Override

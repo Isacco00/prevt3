@@ -9,10 +9,13 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class CostiRetroilluminazioneBean {
+public class ListinoRetroilluminazioneBean {
   private UUID id;
   private BigDecimal altezza;
   private BigDecimal costoAlMetro;
+  private BigDecimal ricaricoPercentuale;
+  private BigDecimal prezzo;
+  private String descrizione;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
 }

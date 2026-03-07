@@ -34,10 +34,13 @@ export interface ListinoAccessoriDeskBean {
     attivo: boolean;
 }
 
-export interface CostiRetroilluminazioneBean {
+export interface ListinoRetroilluminazioneBean {
     id: string;
     altezza: number
     costoAlMetro: number;
+    ricaricoPercentuale: number;
+    prezzo: number;
+    descrizione: string;
 }
 
 export interface ListinoAccessoriEspositoriBean {

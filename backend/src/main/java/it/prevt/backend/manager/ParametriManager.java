@@ -1,7 +1,7 @@
 package it.prevt.backend.manager;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
-import it.prevt.backend.bean.CostiRetroilluminazioneBean;
+import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
@@ -25,10 +25,10 @@ public interface ParametriManager {
 
   ParametriACostiUnitariBean saveParametriCostiUnitari(ParametriACostiUnitariBean bean);
 
-  List<CostiRetroilluminazioneBean> getCostiRetroilluminazione(
+  List<ListinoRetroilluminazioneBean> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest);
 
-  CostiRetroilluminazioneBean saveCostiRetroilluminazione(CostiRetroilluminazioneBean bean);
+  ListinoRetroilluminazioneBean saveListinoRetroilluminazione(ListinoRetroilluminazioneBean bean);
 
   List<ListinoAccessoriStandBean> getListinoAccessoriStand(
       ListinoAccessoriRequestBean searchRequest);

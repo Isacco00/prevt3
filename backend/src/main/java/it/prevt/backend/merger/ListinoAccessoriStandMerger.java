@@ -1,8 +1,6 @@
 package it.prevt.backend.merger;
 
-import it.prevt.backend.bean.CostiRetroilluminazioneBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
-import it.prevt.backend.entity.CostiRetroilluminazione;
 import it.prevt.backend.entity.ListinoAccessoriStand;
 import org.springframework.stereotype.Component;
 

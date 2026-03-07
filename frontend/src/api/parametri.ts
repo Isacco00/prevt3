@@ -4,7 +4,7 @@ import {
     ListinoAccessoriStandBean,
     ParametriBean,
     ParametriRequestBean,
-    CostiRetroilluminazioneBean,
+    ListinoRetroilluminazioneBean,
     ListinoAccessoriDeskBean,
     ParametriACostiUnitariBean, ListinoAccessoriEspositoriBean, CostiStrutturaDeskBean,
     CostiStrutturaEspositoriLayoutBean, AltriBeniServiziBean
@@ -37,13 +37,13 @@ export const ParametriAPI = {
         return data.data;
     },
 
-    getCostiRetroilluminazione: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostiRetroilluminazioneBean[]> => {
-        const res = await api.post(entryPoint + "/getCostiRetroilluminazione", filter);
+    getListinoRetroilluminazione: async (filter: ListinoAccessoriRequestBean = {}): Promise<ListinoRetroilluminazioneBean[]> => {
+        const res = await api.post(entryPoint + "/getListinoRetroilluminazione", filter);
         return res.data;
     },
 
-    saveCostiRetroilluminazione: async (parametro: CostiRetroilluminazioneBean): Promise<CostiRetroilluminazioneBean> => {
-        const data = await api.post(entryPoint + "/saveCostiRetroilluminazione", parametro);
+    saveListinoRetroilluminazione: async (parametro: ListinoRetroilluminazioneBean): Promise<ListinoRetroilluminazioneBean> => {
+        const data = await api.post(entryPoint + "/saveListinoRetroilluminazione", parametro);
         return data.data;
     },
 

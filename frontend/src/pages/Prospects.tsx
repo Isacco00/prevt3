@@ -60,7 +60,8 @@ const Prospects = () => {
         telefono: "",
         email: "",
         tipo: "prospect" as "prospect" | "cliente",
-        tipoProspect: "Professional" as "Professional" | "Finale"
+        tipoProspect: "Professional" as "Professional" | "Finale",
+        scontoCliente: 0
     };
 
     const [formData, setFormData] = useState<ProspectBean>(emptyFormData);
@@ -76,7 +77,7 @@ const Prospects = () => {
         } catch (e: unknown) {
             toast({
                 title: "Errore",
-                description: err?.response?.data?.message,
+                description: "Errore durante il caricamento dei prospects",
                 variant: "destructive",
             });
         } finally {
@@ -121,7 +122,7 @@ const Prospects = () => {
         } catch (e: unknown) {
             toast({
                 title: "Errore",
-                description: err?.response?.data?.message,
+                description: "Errore durante il salvataggio",
                 variant: "destructive",
             });
         }
