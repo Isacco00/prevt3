@@ -5,6 +5,7 @@
     "success": "Successo"
   },
   "errors": {
+    "generic": "Errore interno",
     "genericTitle": "Errore",
     "validation": "Errore salvataggio"
   },

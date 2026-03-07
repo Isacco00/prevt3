@@ -9,10 +9,13 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class CostiStrutturaDeskLayoutBean {
+public class ListinoStrutturaDeskBean {
   private UUID id;
-  private String layoutDesk;
+  private BigDecimal layoutDesk;
   private BigDecimal costoUnitario;
+  private BigDecimal ricaricoPercentuale;
+  private BigDecimal prezzo;
+  private String descrizione;
   private boolean attivo;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;

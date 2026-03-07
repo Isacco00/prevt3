@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {Edit2, Save, X} from 'lucide-react';
+import {Edit, Edit2, Save, X} from 'lucide-react';
 
 import {
   Card,
@@ -255,7 +255,7 @@ export function CostoRetroilluminazione() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">Altezza</TableHead>
+                <TableHead className="w-[100px]">Altezza</TableHead>
                 <TableHead className="w-[100px]">Costo per m/l</TableHead>
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
@@ -274,8 +274,7 @@ export function CostoRetroilluminazione() {
                           <Input
                               value={editCosto}
                               onChange={(e) => setEditCosto(e.target.value)}
-                              className="w-24"
-                          />
+                              className="w-24"/>
                       ) : (
                           `€ ${row.costoAlMetro.toFixed(2).replace('.', ',')}`
                       )}
@@ -285,8 +284,7 @@ export function CostoRetroilluminazione() {
                           <Input
                               value={editRicarico}
                               onChange={(e) => setEditRicarico(e.target.value)}
-                              className="w-20"
-                          />
+                              className="w-20"/>
                       ) : (
                           `${row.ricaricoPercentuale ?? 0} %`
                       )}
@@ -312,8 +310,7 @@ export function CostoRetroilluminazione() {
                       {editingCosto?.id === row.id ? (
                           <Input
                               value={editDescrizione}
-                              onChange={(e) => setEditDescrizione(e.target.value)}
-                          />
+                              onChange={(e) => setEditDescrizione(e.target.value)}/>
                       ) : (
                           row.descrizione
                       )}
@@ -327,18 +324,16 @@ export function CostoRetroilluminazione() {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => setEditingCosto(null)}
-                            >
+                                onClick={() => setEditingCosto(null)}>
                               <X className="h-4 w-4"/>
                             </Button>
                           </div>
                       ) : (
                           <Button
                               size="sm"
-                              variant="ghost"
-                              onClick={() => handleEdit(row)}
-                          >
-                            <Edit2 className="h-4 w-4"/>
+                              variant="outline"
+                              onClick={() => handleEdit(row)}>
+                            <Edit className="h-4 w-4"/>
                           </Button>
                       )}
                     </TableCell>

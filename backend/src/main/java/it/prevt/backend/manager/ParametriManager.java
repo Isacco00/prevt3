@@ -2,7 +2,7 @@ package it.prevt.backend.manager;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
-import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
+import it.prevt.backend.bean.ListinoStrutturaDeskBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
 import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
@@ -50,12 +50,12 @@ public interface ParametriManager {
 
   void deleteListinoAccessoriEspositori(ListinoAccessoriEspositoriBean bean);
 
-  List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
+  List<ListinoStrutturaDeskBean> getListinoStrutturaDesk(
       ListinoAccessoriRequestBean searchRequest);
 
-  CostiStrutturaDeskLayoutBean saveCostiStrutturaDesk(CostiStrutturaDeskLayoutBean dto);
+  ListinoStrutturaDeskBean saveListinoStrutturaDesk(ListinoStrutturaDeskBean dto);
 
-  void deleteCostiStrutturaDesk(CostiStrutturaDeskLayoutBean bean);
+  void deleteListinoStrutturaDesk(ListinoStrutturaDeskBean bean);
 
   List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
       ListinoAccessoriRequestBean searchRequest);

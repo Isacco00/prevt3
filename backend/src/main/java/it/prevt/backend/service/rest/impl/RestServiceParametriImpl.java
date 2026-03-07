@@ -2,7 +2,7 @@ package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
-import it.prevt.backend.bean.CostiStrutturaDeskLayoutBean;
+import it.prevt.backend.bean.ListinoStrutturaDeskBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
 import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
@@ -111,19 +111,19 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   }
 
   @Override
-  public List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
+  public List<ListinoStrutturaDeskBean> getListinoStrutturaDesk(
       ListinoAccessoriRequestBean searchRequest) {
-    return manager.getCostiStrutturaDesk(searchRequest);
+    return manager.getListinoStrutturaDesk(searchRequest);
   }
 
   @Override
-  public CostiStrutturaDeskLayoutBean saveCostiStrutturaDesk(CostiStrutturaDeskLayoutBean dto) {
-    return manager.saveCostiStrutturaDesk(dto);
+  public ListinoStrutturaDeskBean saveListinoStrutturaDesk(ListinoStrutturaDeskBean dto) {
+    return manager.saveListinoStrutturaDesk(dto);
   }
 
   @Override
-  public void deleteCostiStrutturaDesk(CostiStrutturaDeskLayoutBean bean) {
-    manager.deleteCostiStrutturaDesk(bean);
+  public void deleteListinoStrutturaDesk(ListinoStrutturaDeskBean bean) {
+    manager.deleteListinoStrutturaDesk(bean);
   }
 
   @Override

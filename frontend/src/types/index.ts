@@ -12,7 +12,8 @@ type SortableColumn =
     | 'PARAMETRI_TIPO'
     | 'PARAMETRI_ORDINE'
     | 'PARAMETRI_NOME'
-    | 'PARAMETRI_VALORE';
+    | 'PARAMETRI_VALORE'
+    | 'LISTINO_STRUTTURA_DESK_LAYOUT';
 
 export interface SortableFieldBean {
     field: SortableColumn;

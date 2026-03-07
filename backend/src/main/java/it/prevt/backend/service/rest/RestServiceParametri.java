@@ -69,16 +69,16 @@ public interface RestServiceParametri {
   @PostMapping("/deleteListinoAccessoriEspositori")
   void deleteListinoAccessoriEspositori(@RequestBody ListinoAccessoriEspositoriBean bean);
 
-  @PostMapping("/getCostiStrutturaDesk")
-  List<CostiStrutturaDeskLayoutBean> getCostiStrutturaDesk(
+  @PostMapping("/getListinoStrutturaDesk")
+  List<ListinoStrutturaDeskBean> getListinoStrutturaDesk(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
 
-  @PostMapping("/saveCostiStrutturaDesk")
-  CostiStrutturaDeskLayoutBean saveCostiStrutturaDesk(
-      @RequestBody CostiStrutturaDeskLayoutBean dto);
+  @PostMapping("/saveListinoStrutturaDesk")
+  ListinoStrutturaDeskBean saveListinoStrutturaDesk(
+      @RequestBody ListinoStrutturaDeskBean dto);
 
-  @PostMapping("/deleteCostiStrutturaDesk")
-  void deleteCostiStrutturaDesk(@RequestBody CostiStrutturaDeskLayoutBean bean);
+  @PostMapping("/deleteListinoStrutturaDesk")
+  void deleteListinoStrutturaDesk(@RequestBody ListinoStrutturaDeskBean bean);
 
   @PostMapping("/getCostiStrutturaEspositoriLayout")
   List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(

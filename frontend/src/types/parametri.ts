@@ -24,6 +24,9 @@ export interface ListinoAccessoriStandBean {
     id: string;
     nome: string;
     costoUnitario: number;
+    ricaricoPercentuale: number;
+    prezzo: number;
+    descrizione: string;
     attivo: boolean;
 }
 
@@ -50,11 +53,13 @@ export interface ListinoAccessoriEspositoriBean {
     attivo: boolean;
 }
 
-export interface CostiStrutturaDeskBean {
-    id: string;
-    nome: string;
+export interface ListinoStrutturaDeskBean {
+    id?: string;
     costoUnitario: number;
-    layoutDesk: string;
+    ricaricoPercentuale: number;
+    prezzo?: number;
+    descrizione: string;
+    layoutDesk: number;
     attivo: boolean;
 }
 

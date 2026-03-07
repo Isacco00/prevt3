@@ -24,6 +24,9 @@ public class ListinoAccessoriStandMapper
     bean.setAttivo(entity.getAttivo());
     bean.setCreatedAt(entity.getCreatedAt());
     bean.setUpdatedAt(entity.getUpdatedAt());
+    bean.setRicaricoPercentuale(entity.getRicaricoPercentuale());
+    bean.setPrezzo(entity.getPrezzo());
+    bean.setDescrizione(entity.getDescrizione());
     return bean;
   }
 }

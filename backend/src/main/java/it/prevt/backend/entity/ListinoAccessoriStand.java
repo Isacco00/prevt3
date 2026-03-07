@@ -32,6 +32,15 @@ public class ListinoAccessoriStand {
     @Column(nullable = false)
     private Boolean attivo = true;
 
+    @Column(name = "ricarico_percentuale")
+    private BigDecimal ricaricoPercentuale;
+
+    @Column(name = "prezzo")
+    private BigDecimal prezzo;
+
+    @Column(name = "descrizione")
+    private String descrizione;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;

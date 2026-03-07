@@ -8,7 +8,7 @@ import {useQuery} from "@tanstack/react-query";
 import React, {useState} from "react";
 import {ParametriAPI} from "@/api/parametri.ts";
 import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
-import {CostiStrutturaDeskBean, ListinoAccessoriDeskBean} from "@/types/parametri.ts";
+import {ListinoStrutturaDeskBean, ListinoAccessoriDeskBean} from "@/types/parametri.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 interface DeskSectionProps {
@@ -64,10 +64,10 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
 
   // Fetch costi struttura desk
   const {
-    data: costiStrutturaDesk
+    data: listinoStrutturaDesk
   } = useQuery({
     queryKey: ["costi-struttura-desk-layout"],
-    queryFn: () => ParametriAPI.getCostiStrutturaDesk({attivo: true})
+    queryFn: () => ParametriAPI.getListinoStrutturaDesk({attivo: true})
   });
 
   const handleAccessorioChange = (accessorioNome: string, quantity: number) => {
@@ -80,8 +80,8 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     }));
   };
   const getLayoutCost = (layout: string) => {
-    if (!costiStrutturaDesk) return 0;
-    const costo = costiStrutturaDesk.find(c => c.layoutDesk === layout);
+    if (!listinoStrutturaDesk) return 0;
+    const costo = listinoStrutturaDesk.find(c => c.layoutDesk === layout);
     return costo ? Number(costo.costoUnitario) : 0;
   };
 
@@ -220,7 +220,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
 
     const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
-      const costoLayout = costiStrutturaDesk?.find((c: CostiStrutturaDeskBean) => c.layoutDesk === config.layout);
+      const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => c.layoutDesk === config.layout);
       return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costoUnitario) || 0);
     }, 0);
     // Grafica desk con cordino cucito

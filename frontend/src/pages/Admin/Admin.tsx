@@ -7,7 +7,7 @@ import {CostoRetroilluminazione} from "@/pages/Admin/Components/CostoRetroillumi
 import {ListinoAccessoriStand} from "@/pages/Admin/Components/ListinoAccessoriStand.tsx";
 import {ListinoAccessoriDesk} from "@/pages/Admin/Components/ListinoAccessoriDesk.tsx";
 import {ListinoAccessoriEspositori} from "@/pages/Admin/Components/ListinoAccessoriEspositori.tsx";
-import {CostiStrutturaDesk} from "@/pages/Admin/Components/CostiStrutturaDesk.tsx";
+import {ListinoStrutturaDesk} from "@/pages/Admin/Components/ListinoStrutturaDesk.tsx";
 import {CostiStrutturaEspositori} from "@/pages/Admin/Components/CostiStrutturaEspositori.tsx";
 import {
   CostoStrutturaStandMetroLineareAltezza
@@ -35,7 +35,7 @@ export default function Admin() {
             <ListinoAccessoriStand/>
             <ListinoAccessoriDesk/>
             <ListinoAccessoriEspositori/>
-            <CostiStrutturaDesk/>
+            <ListinoStrutturaDesk/>
             <CostiStrutturaEspositori/>
             <CostoStrutturaStandMetroLineareAltezza/>
 

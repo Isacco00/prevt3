@@ -14,8 +14,8 @@ import java.util.UUID;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity
-@Table(name = "costi_struttura_desk_layout")
-public class CostiStrutturaDeskLayout {
+@Table(name = "listino_struttura_desk")
+public class ListinoStrutturaDesk {
 
     @Id
     @GeneratedValue
@@ -24,13 +24,22 @@ public class CostiStrutturaDeskLayout {
     private UUID id;
 
     @Column(name = "layout_desk", nullable = false)
-    private String layoutDesk;
+    private BigDecimal layoutDesk;
 
     @Column(name = "costo_unitario", nullable = false)
     private BigDecimal costoUnitario = BigDecimal.ZERO;
 
     @Column(nullable = false)
     private Boolean attivo = true;
+
+    @Column(name = "ricarico_percentuale")
+    private BigDecimal ricaricoPercentuale;
+
+    @Column(name = "prezzo")
+    private BigDecimal prezzo;
+
+    @Column(name = "descrizione")
+    private String descrizione;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

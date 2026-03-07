@@ -3,7 +3,7 @@ import {Calculator} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card.tsx';
 import {useQuery} from "@tanstack/react-query";
 import {ParametriAPI} from "@/api/parametri.ts";
-import {CostiStrutturaDeskBean, ParametriBean, PreventivoServiziBean} from "@/types/parametri.ts";
+import {ListinoStrutturaDeskBean, ParametriBean, PreventivoServiziBean} from "@/types/parametri.ts";
 import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
 import {LayoutRouteProps} from "react-router-dom";
 import {useStandCosts} from "@/hooks/useStandCosts.ts";
@@ -110,10 +110,10 @@ export function TotalePreventivoSection({
 
   // Fetch costi struttura desk
   const {
-    data: costiStrutturaDesk
+    data: listinoStrutturaDesk
   } = useQuery({
     queryKey: ["costi-struttura-desk-layout"],
-    queryFn: () => ParametriAPI.getCostiStrutturaDesk({attivo: true})
+    queryFn: () => ParametriAPI.getListinoStrutturaDesk({attivo: true})
   });
 
   const parseAccessoriStand = (json?: string): AccessoriStandMap => {
@@ -474,7 +474,7 @@ export function TotalePreventivoSection({
 
   // Calcolo automatico dei costi desk (sempre aggiornato)
   const calculatedDeskCosts = React.useMemo(() => {
-    if (!accessoriDesk || !costiStrutturaDesk || !parametriCostiUnitari.length) {
+    if (!accessoriDesk || !listinoStrutturaDesk || !parametriCostiUnitari.length) {
       return {
         strutturaTerra: 0,
         graficaCordino: 0,
@@ -494,7 +494,7 @@ export function TotalePreventivoSection({
 
     // Costo struttura desk
     const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
-      const costoLayout = costiStrutturaDesk?.find((c: CostiStrutturaDeskBean) => c.layoutDesk === config.layout);
+      const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => c.layoutDesk === config.layout);
       return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costoUnitario) || 0);
     }, 0);
 
@@ -566,7 +566,7 @@ export function TotalePreventivoSection({
     formData.borsa,
     parametriCostiUnitari,
     accessoriDesk,
-    costiStrutturaDesk
+    listinoStrutturaDesk
   ]);
 
   // Usa i costi calcolati o quelli lifted (dai componenti figli quando le sezioni sono aperte)
