@@ -145,10 +145,8 @@ export function ListinoAccessoriStand() {
 
   const handleSave = () => {
     if (!editingAccessorio) return;
-
     const costo = parseDecimal(editCosto);
     const ricarico = parseDecimal(editRicarico);
-
     if (!editNome.trim() || costo === null || ricarico === null) {
       toast({
         title: 'Errore',
@@ -207,59 +205,46 @@ export function ListinoAccessoriStand() {
                 Gestione accessori stand con relativi costi
               </CardDescription>
             </div>
-
             <Button size="sm" onClick={() => setShowAdd((v) => !v)}>
               {showAdd ? 'Annulla' : 'Aggiungi accessorio'}
             </Button>
           </div>
         </CardHeader>
-
         <CardContent>
           {showAdd && (
               <div className="mb-4 grid grid-cols-5 gap-2 items-end">
-
                 <div className="space-y-2">
                   <Label>Nome</Label>
                   <Input
                       value={newNome}
-                      onChange={(e) => setNewNome(e.target.value)}
-                  />
+                      onChange={(e) => setNewNome(e.target.value)}/>
                 </div>
-
                 <div className="space-y-2">
                   <Label>Costo (€)</Label>
                   <Input
                       value={newCosto}
-                      onChange={(e) => setNewCosto(e.target.value)}
-                  />
+                      onChange={(e) => setNewCosto(e.target.value)}/>
                 </div>
-
                 <div className="space-y-2">
                   <Label>Ricarico %</Label>
                   <Input
                       value={newRicarico}
-                      onChange={(e) => setNewRicarico(e.target.value)}
-                  />
+                      onChange={(e) => setNewRicarico(e.target.value)}/>
                 </div>
-
                 <div className="space-y-2">
                   <Label>Descrizione</Label>
                   <Input
                       value={newDescrizione}
-                      onChange={(e) => setNewDescrizione(e.target.value)}
-                  />
+                      onChange={(e) => setNewDescrizione(e.target.value)}/>
                 </div>
-
                 <div className="flex gap-2">
                   <Button size="sm" onClick={handleAddSave}>
                     <Save className="h-4 w-4"/>
                   </Button>
-
                   <Button size="sm" variant="outline" onClick={() => setShowAdd(false)}>
                     <X className="h-4 w-4"/>
                   </Button>
                 </div>
-
               </div>
           )}
 

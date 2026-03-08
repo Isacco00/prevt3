@@ -30,6 +30,14 @@ public interface RestServiceParametri {
   @PostMapping("/saveParametriCostiUnitari")
   ParametriACostiUnitariBean saveParametriCostiUnitari(@RequestBody ParametriACostiUnitariBean dto);
 
+  @PostMapping("/getListinoServiziPrezzoUnitario")
+  List<ListinoServiziPrezzoUnitarioBean> getListinoServiziPrezzoUnitario(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/saveListinoServiziPrezzoUnitario")
+  ListinoServiziPrezzoUnitarioBean saveListinoServiziPrezzoUnitario(
+      @RequestBody ListinoServiziPrezzoUnitarioBean dto);
+
   @PostMapping("/getListinoRetroilluminazione")
   List<ListinoRetroilluminazioneBean> getListinoRetroilluminazione(
       @RequestBody ListinoAccessoriRequestBean searchRequest);

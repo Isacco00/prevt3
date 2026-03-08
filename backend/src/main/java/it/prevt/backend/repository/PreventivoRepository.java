@@ -21,6 +21,9 @@ public interface PreventivoRepository extends AbstractRepository {
 
   List<ParametriACostiUnitari> getParametriACostiUnitari(ListinoAccessoriRequestBean searchRequest);
 
+  List<ListinoServiziPrezzoUnitario> getListinoServiziPrezzoUnitario(
+      ListinoAccessoriRequestBean searchRequest);
+
   List<ListinoRetroilluminazione> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest);
 

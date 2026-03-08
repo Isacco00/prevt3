@@ -17,6 +17,7 @@ public enum SortableColumn {
   PARAMETRI_VALORE("valore", "u"),
   PARAMETRI_NOME("nome", "u"),
   LISTINO_STRUTTURA_DESK_LAYOUT("layoutDesk", "u"),
+  LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO("parametro", "u")
   ;
 
   SortableColumn(String fieldName, String classAlias) {

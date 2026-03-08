@@ -192,6 +192,35 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
   }
 
   @Override
+  public List<ListinoServiziPrezzoUnitario> getListinoServiziPrezzoUnitario(
+      ListinoAccessoriRequestBean searchRequest) {
+    Class<ListinoServiziPrezzoUnitario> clazz = ListinoServiziPrezzoUnitario.class;
+    Map<String, Object> parameters = new HashMap<>();
+
+    StringBuilder strQueryFrom = new StringBuilder(
+        " SELECT u FROM " + clazz.getSimpleName() + " u ");
+    StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
+
+    // Parameters
+    if (searchRequest != null) {
+      if (searchRequest.getAttivo() != null) {
+        strQueryWhere.append(" AND u.attivo = :attivo ");
+        parameters.put("attivo", searchRequest.getAttivo());
+      }
+    }
+    if (searchRequest != null && searchRequest.getSortFields() != null
+        && !searchRequest.getSortFields().isEmpty()) {
+      StringBuilder strQueryOrderBy = orderBy(null, searchRequest.getSortFields(), null);
+      strQueryWhere.append(strQueryOrderBy.toString());
+    }
+    String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
+    TypedQuery<ListinoServiziPrezzoUnitario> query = entityManager.createQuery(strQueryFinal,
+        clazz);
+    parameters.forEach(query::setParameter);
+    return getResultList(query);
+  }
+
+  @Override
   public List<ListinoRetroilluminazione> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest) {
     Class<ListinoRetroilluminazione> clazz = ListinoRetroilluminazione.class;

@@ -2,6 +2,7 @@ package it.prevt.backend.manager;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
+import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
@@ -10,6 +11,7 @@ import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
+import it.prevt.backend.entity.ListinoServiziPrezzoUnitario;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
 import java.util.List;
@@ -74,5 +76,11 @@ public interface ParametriManager {
   AltriBeniServiziBean saveAltriBeniServizi(AltriBeniServiziBean bean);
 
   void deleteAltriBeniServizi(AltriBeniServiziBean bean);
+
+  List<ListinoServiziPrezzoUnitarioBean> getListinoServiziPrezzoUnitario(
+      ListinoAccessoriRequestBean searchRequest);
+
+  ListinoServiziPrezzoUnitarioBean saveListinoServiziPrezzoUnitario(
+      ListinoServiziPrezzoUnitarioBean bean);
 
 }

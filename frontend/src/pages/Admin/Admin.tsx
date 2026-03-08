@@ -12,6 +12,9 @@ import {CostiStrutturaEspositori} from "@/pages/Admin/Components/CostiStrutturaE
 import {
   CostoStrutturaStandMetroLineareAltezza
 } from "@/pages/Admin/Components/CostiStandMetroLineareAltezza.tsx";
+import {
+  ListinoServiziPrezzoUnitario
+} from "@/pages/Admin/Components/ListinoServiziPrezzoUnitario.tsx";
 
 export default function Admin() {
   return (
@@ -30,6 +33,7 @@ export default function Admin() {
 
           <TabsContent value="parametri" className="space-y-6">
             <ParametriACostoUnitario/>
+            <ListinoServiziPrezzoUnitario/>
             <NumeroProfiliDistribuzione/>
             <CostoRetroilluminazione/>
             <ListinoAccessoriStand/>

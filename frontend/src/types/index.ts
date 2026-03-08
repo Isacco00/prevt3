@@ -13,7 +13,8 @@ type SortableColumn =
     | 'PARAMETRI_ORDINE'
     | 'PARAMETRI_NOME'
     | 'PARAMETRI_VALORE'
-    | 'LISTINO_STRUTTURA_DESK_LAYOUT';
+    | 'LISTINO_STRUTTURA_DESK_LAYOUT'
+    | 'LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO';
 
 export interface SortableFieldBean {
     field: SortableColumn;

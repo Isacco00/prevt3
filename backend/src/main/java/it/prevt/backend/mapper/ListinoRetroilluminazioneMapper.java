@@ -22,7 +22,6 @@ public class ListinoRetroilluminazioneMapper
     bean.setRicaricoPercentuale(entity.getRicaricoPercentuale());
     bean.setPrezzo(entity.getPrezzo());
     bean.setDescrizione(entity.getDescrizione());
-    bean.setDescrizione(entity.getDescrizione());
     bean.setCreatedAt(entity.getCreatedAt());
     bean.setUpdatedAt(entity.getUpdatedAt());
     return bean;

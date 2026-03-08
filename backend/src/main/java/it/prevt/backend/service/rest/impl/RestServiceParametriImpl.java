@@ -2,6 +2,7 @@ package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
+import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
 import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
@@ -163,5 +164,17 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   @Override
   public void deleteAltriBeniServizi(AltriBeniServiziBean bean) {
     manager.deleteAltriBeniServizi(bean);
+  }
+
+  @Override
+  public List<ListinoServiziPrezzoUnitarioBean> getListinoServiziPrezzoUnitario(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getListinoServiziPrezzoUnitario(searchRequest);
+  }
+
+  @Override
+  public ListinoServiziPrezzoUnitarioBean saveListinoServiziPrezzoUnitario(
+      ListinoServiziPrezzoUnitarioBean bean) {
+    return manager.saveListinoServiziPrezzoUnitario(bean);
   }
 }
