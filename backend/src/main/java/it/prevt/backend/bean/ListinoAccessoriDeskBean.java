@@ -14,6 +14,9 @@ public class ListinoAccessoriDeskBean {
   private UUID id;
   private String nome;
   private BigDecimal costoUnitario;
+  private BigDecimal ricaricoPercentuale;
+  private BigDecimal prezzo;
+  private String descrizione;
   private boolean attivo;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;

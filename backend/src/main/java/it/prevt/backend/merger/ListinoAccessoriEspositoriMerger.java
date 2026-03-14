@@ -15,6 +15,9 @@ public class ListinoAccessoriEspositoriMerger
     entity.setNome(bean.getNome());
     entity.setCostoUnitario(bean.getCostoUnitario());
     entity.setAttivo(bean.isAttivo());
+    entity.setRicaricoPercentuale(bean.getRicaricoPercentuale());
+    entity.setPrezzo(bean.getPrezzo());
+    entity.setDescrizione(bean.getDescrizione());
   }
 
 }

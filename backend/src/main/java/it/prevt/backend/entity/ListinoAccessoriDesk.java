@@ -11,32 +11,44 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "listino_accessori_desk")
 public class ListinoAccessoriDesk {
 
-    @Id
-    @GeneratedValue
-    @UuidGenerator
-    @Column(nullable = false, updatable = false)
-    private UUID id;
+  @Id
+  @GeneratedValue
+  @UuidGenerator
+  @Column(nullable = false, updatable = false)
+  private UUID id;
 
-    @Column(nullable = false)
-    private String nome;
+  @Column(nullable = false)
+  private String nome;
 
-    @Column(name = "costo_unitario", nullable = false)
-    private BigDecimal costoUnitario = BigDecimal.ZERO;
+  @Column(name = "costo_unitario", nullable = false)
+  private BigDecimal costoUnitario = BigDecimal.ZERO;
 
-    @Column(nullable = false)
-    private Boolean attivo = true;
+  @Column(name = "ricarico_percentuale")
+  private BigDecimal ricaricoPercentuale;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
+  @Column(name = "prezzo")
+  private BigDecimal prezzo;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private OffsetDateTime updatedAt;
+  @Column(name = "descrizione")
+  private String descrizione;
+
+  @Column(nullable = false)
+  private Boolean attivo = true;
+
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private OffsetDateTime createdAt;
+
+  @UpdateTimestamp
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
 }

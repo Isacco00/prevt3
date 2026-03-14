@@ -21,6 +21,9 @@ public class ListinoAccessoriDeskMapper
     bean.setId(entity.getId());
     bean.setNome(entity.getNome());
     bean.setCostoUnitario(entity.getCostoUnitario());
+    bean.setRicaricoPercentuale(entity.getRicaricoPercentuale());
+    bean.setPrezzo(entity.getPrezzo());
+    bean.setDescrizione(entity.getDescrizione());
     bean.setAttivo(entity.getAttivo());
     bean.setCreatedAt(entity.getCreatedAt());
     bean.setUpdatedAt(entity.getUpdatedAt());

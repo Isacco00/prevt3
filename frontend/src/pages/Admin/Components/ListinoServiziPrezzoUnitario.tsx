@@ -158,13 +158,13 @@ export function ListinoServiziPrezzoUnitario() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Parametro</TableHead>
-                <TableHead className="text-center">U.M.</TableHead>
-                <TableHead className="text-center">Costo</TableHead>
-                <TableHead className="text-center">Ricarico %</TableHead>
-                <TableHead className="text-center">Prezzo</TableHead>
-                <TableHead>Descrizione</TableHead>
-                <TableHead className="text-center">Azioni</TableHead>
+                <TableHead className="w-[200px]">Parametro</TableHead>
+                <TableHead className="w-[100px]">U.M.</TableHead>
+                <TableHead className="w-[100px]">Costo</TableHead>
+                <TableHead className="w-[100px]">Ricarico %</TableHead>
+                <TableHead className="w-[100px]">Prezzo</TableHead>
+                <TableHead className="w-[100px]">Descrizione</TableHead>
+                <TableHead className="w-[100px]">Azioni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -178,13 +178,13 @@ export function ListinoServiziPrezzoUnitario() {
                       <TableCell className="font-medium">
                         {p.parametro}
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell>
                         {p.unitaMisura}
                       </TableCell>
 
                       {/* COSTO */}
 
-                      <TableCell className="text-center">
+                      <TableCell>
                         {isEditing ? (
                             <Input
                                 value={editCosto}
@@ -196,7 +196,7 @@ export function ListinoServiziPrezzoUnitario() {
                       </TableCell>
 
                       {/* RICARICO */}
-                      <TableCell className="text-center">
+                      <TableCell>
                         {isEditing ? (
                             <Input
                                 value={editRicarico}
@@ -208,7 +208,7 @@ export function ListinoServiziPrezzoUnitario() {
                       </TableCell>
 
                       {/* PREZZO */}
-                      <TableCell className="text-center">
+                      <TableCell>
                         {isEditing ? (() => {
                           const costo = parseDecimal(editCosto);
                           const ricarico = parseDecimal(editRicarico);

@@ -18,6 +18,20 @@ alter table listino_accessori_stand
     add column ricarico_percentuale numeric(19, 2);
 alter table listino_accessori_stand
     add column prezzo numeric(19, 2);
+alter table listino_accessori_stand
+    add column descrizione text;
+alter table listino_accessori_desk
+    add column ricarico_percentuale numeric(19, 2);
+alter table listino_accessori_desk
+    add column prezzo numeric(19, 2);
+alter table listino_accessori_desk
+    add column descrizione text;
+alter table listino_accessori_espositori
+    add column ricarico_percentuale numeric(19, 2);
+alter table listino_accessori_espositori
+    add column prezzo numeric(19, 2);
+alter table listino_accessori_espositori
+    add column descrizione text;
 alter table listino_struttura_desk
     alter column layout_desk type numeric(19, 2) using layout_desk::numeric(19, 2);
 

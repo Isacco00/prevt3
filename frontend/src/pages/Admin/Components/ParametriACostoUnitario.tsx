@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit2, Save, X } from 'lucide-react';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {Edit, Edit2, Save, X} from "lucide-react";
 
 import {
     Card,
@@ -8,9 +8,11 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/card";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import {
     Table,
     TableBody,
@@ -18,32 +20,49 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/table";
 
-import { ParametriAPI } from '@/api/parametri';
-import { ParametriACostiUnitariBean } from '@/types/parametri';
+import { useToast } from "@/hooks/use-toast";
+
+import { ParametriAPI } from "@/api/parametri";
+import { ParametriACostiUnitariBean } from "@/types/parametri";
 
 /* =====================================================
-   ParametriTab — SOLO Parametri a Costo Unitario
+   Helpers
 ===================================================== */
+
+const parseDecimal = (value: string): number | null => {
+    const n = Number(value);
+    return isNaN(n) ? null : n;
+};
+
+const formatEuro = (value: number) => `€ ${value.toFixed(2)}`;
+
+/* =====================================================
+   Component
+===================================================== */
+
 export function ParametriACostoUnitario() {
+
     const queryClient = useQueryClient();
     const { toast } = useToast();
 
     /* =========================
        STATE
     ========================= */
+
     const [editingParametro, setEditingParametro] =
         useState<ParametriACostiUnitariBean | null>(null);
 
-    const [editValue, setEditValue] = useState<number | null>(null);
+    const [editCosto, setEditCosto] = useState("");
+    const [editRicarico, setEditRicarico] = useState("");
 
     /* =========================
        QUERY
     ========================= */
+
     const { data: parametriCostiUnitari = [] } = useQuery({
-        queryKey: ['parametri-costi-unitari'],
+        queryKey: ["parametri-costi-unitari"],
         queryFn: () =>
             ParametriAPI.getParametriACostiUnitari({
                 attivo: true,
@@ -53,23 +72,26 @@ export function ParametriACostoUnitario() {
     /* =========================
        MUTATION
     ========================= */
+
     const saveMutation = useMutation({
         mutationFn: ParametriAPI.saveParametriCostiUnitari,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['parametri-costi-unitari'] });
+            queryClient.invalidateQueries({
+                queryKey: ["parametri-costi-unitari"],
+            });
             setEditingParametro(null);
-            setEditValue(null);
-
+            setEditCosto("");
+            setEditRicarico("");
             toast({
-                title: 'Parametro aggiornato',
-                description: 'Il valore è stato aggiornato correttamente.',
+                title: "Parametro aggiornato",
+                description: "Il valore è stato aggiornato correttamente.",
             });
         },
         onError: () => {
             toast({
-                title: 'Errore',
-                description: 'Errore durante il salvataggio del parametro.',
-                variant: 'destructive',
+                title: "Errore",
+                description: "Errore durante il salvataggio.",
+                variant: "destructive",
             });
         },
     });
@@ -77,28 +99,33 @@ export function ParametriACostoUnitario() {
     /* =========================
        HANDLERS
     ========================= */
+
     const handleEdit = (parametro: ParametriACostiUnitariBean) => {
         setEditingParametro(parametro);
-        setEditValue(parametro.valore);
+        setEditCosto(String(parametro.valore));
+        setEditRicarico(String(parametro.ricaricoPercentuale ?? 0));
     };
 
     const handleCancel = () => {
         setEditingParametro(null);
-        setEditValue(null);
     };
 
     const handleSave = () => {
-        if (!editingParametro || editValue === null || isNaN(editValue)) {
+        if (!editingParametro) return;
+        const costo = parseDecimal(editCosto);
+        const ricarico = parseDecimal(editRicarico);
+        if (costo === null || ricarico === null) {
             toast({
-                title: 'Errore',
-                description: 'Inserire un valore numerico valido.',
-                variant: 'destructive',
+                title: "Errore",
+                description: "Inserire valori numerici validi.",
+                variant: "destructive",
             });
             return;
         }
         const updatedParametro: ParametriACostiUnitariBean = {
             ...editingParametro,
-            valore: editValue,
+            valore: costo,
+            ricaricoPercentuale: ricarico,
         };
 
         saveMutation.mutate(updatedParametro);
@@ -107,6 +134,7 @@ export function ParametriACostoUnitario() {
     /* =========================
        RENDER
     ========================= */
+
     return (
         <Card>
             <CardHeader>
@@ -122,69 +150,93 @@ export function ParametriACostoUnitario() {
                         <TableRow>
                             <TableHead className="w-[200px]">Parametro</TableHead>
                             <TableHead className="w-[100px]">U.M.</TableHead>
-                            <TableHead className="w-[100px]">Valore</TableHead>
-                            <TableHead className="w-[120px]">Azioni</TableHead>
+                            <TableHead className="w-[100px]">Costo</TableHead>
+                            <TableHead className="w-[100px]">Ricarico %</TableHead>
+                            <TableHead className="w-[200px]">Prezzo</TableHead>
+                            <TableHead className="w-[100px]">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 
                     <TableBody>
-                        {parametriCostiUnitari.map((parametro) => (
-                            <TableRow key={parametro.id}>
-                                <TableCell className="font-medium">
-                                    {parametro.parametro}
-                                </TableCell>
+                        {parametriCostiUnitari.map((p) => {
+                            const isEditing = editingParametro?.id === p.id;
+                            const prezzo =
+                                p.valore * (1 + (p.ricaricoPercentuale ?? 0) / 100);
+                            return (
+                                <TableRow key={p.id}>
+                                    <TableCell className="font-medium">
+                                        {p.parametro}
+                                    </TableCell>
+                                    <TableCell>
+                                        {p.unitaMisura}
+                                    </TableCell>
 
-                                <TableCell>
-                                    {parametro.unitaMisura}
-                                </TableCell>
+                                    {/* COSTO */}
+                                    <TableCell>
+                                        {isEditing ? (
+                                            <Input
+                                                value={editCosto}
+                                                onChange={(e) => setEditCosto(e.target.value)}
+                                                className="w-24 mx-auto"
+                                            />
+                                        ) : (
+                                            formatEuro(p.valore)
+                                        )}
+                                    </TableCell>
 
-                                <TableCell>
-                                    {editingParametro?.id === parametro.id ? (
-                                        <Input
-                                            type="number"
-                                            step="0.01"
-                                            value={editValue ?? ''}
-                                            onChange={(e) =>
-                                                setEditValue(Number(e.target.value))
-                                            }
-                                            className="w-24 mx-auto"
-                                        />
-                                    ) : (
-                                        `€ ${parametro.valore.toFixed(2)}`
-                                    )}
-                                </TableCell>
+                                    {/* RICARICO */}
 
-                                <TableCell>
-                                    {editingParametro?.id === parametro.id ? (
-                                        <div className="flex justify-center gap-2">
+                                    <TableCell>
+                                        {isEditing ? (
+                                            <Input
+                                                value={editRicarico}
+                                                onChange={(e) => setEditRicarico(e.target.value)}
+                                                className="w-20 mx-auto"/>
+                                        ) : (
+                                            `${p.ricaricoPercentuale ?? 0}%`
+                                        )}
+                                    </TableCell>
+
+                                    {/* PREZZO */}
+                                    <TableCell>
+                                        {isEditing ? (() => {
+                                            const costo = parseDecimal(editCosto);
+                                            const ricarico = parseDecimal(editRicarico);
+                                            if (costo === null || ricarico === null) return "-";
+                                            const prezzo = costo * (1 + ricarico / 100);
+                                            return formatEuro(prezzo);
+                                        })() : formatEuro(prezzo)}
+                                    </TableCell>
+
+                                    {/* AZIONI */}
+                                    <TableCell>
+                                        {isEditing ? (
+                                            <div className="flex justify-center gap-2">
+                                                <Button
+                                                    size="sm"
+                                                    onClick={handleSave}
+                                                    disabled={saveMutation.isPending}>
+                                                    <Save className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={handleCancel}>
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ) : (
                                             <Button
                                                 size="sm"
-                                                onClick={handleSave}
-                                                disabled={saveMutation.isPending}
-                                            >
-                                                <Save className="h-4 w-4" />
+                                                variant="ghost"
+                                                onClick={() => handleEdit(p)}>
+                                                <Edit className="h-4 w-4" />
                                             </Button>
-
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={handleCancel}
-                                            >
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            onClick={() => handleEdit(parametro)}
-                                        >
-                                            <Edit2 className="h-4 w-4" />
-                                        </Button>
-                                    )}
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </CardContent>

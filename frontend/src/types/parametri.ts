@@ -17,6 +17,8 @@ export interface ParametriACostiUnitariBean {
   parametro: string
   unitaMisura: string;
   valore: number;
+  ricaricoPercentuale: number;
+  prezzo: number;
   attivo: boolean;
 }
 
@@ -45,6 +47,9 @@ export interface ListinoAccessoriDeskBean {
   id: string;
   nome: string;
   costoUnitario: number;
+  ricaricoPercentuale: number;
+  prezzo: number;
+  descrizione: string;
   attivo: boolean;
 }
 
@@ -61,6 +66,9 @@ export interface ListinoAccessoriEspositoriBean {
   id: string;
   nome: string
   costoUnitario: number;
+  ricaricoPercentuale: number;
+  prezzo: number;
+  descrizione: string;
   attivo: boolean;
 }
 

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Save, X, Trash2 } from 'lucide-react';
+import {useState} from 'react'
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query'
+import {Edit, Save, X, Trash2} from 'lucide-react'
 
 import {
   Card,
@@ -8,10 +8,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/components/ui/card'
+
+import {Button} from '@/components/ui/button'
+import {Input} from '@/components/ui/input'
+import {Label} from '@/components/ui/label'
+
 import {
   Table,
   TableBody,
@@ -19,169 +21,207 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { useToast } from '@/hooks/use-toast';
+} from '@/components/ui/table'
 
-import { ParametriAPI } from '@/api/parametri';
-import { ListinoAccessoriDeskBean } from '@/types/parametri';
+import {useToast} from '@/hooks/use-toast'
+
+import {ParametriAPI} from '@/api/parametri'
+import {ListinoAccessoriDeskBean} from '@/types/parametri'
+
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
-  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
-  AlertDialogHeader, AlertDialogTitle,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger
-} from "@/components/ui/alert-dialog.tsx";
+} from "@/components/ui/alert-dialog"
+
+/* =====================================================
+   Helpers
+===================================================== */
+
+const parseDecimal = (v: string): number | null => {
+  const n = Number(v.replace(',', '.'))
+  return isNaN(n) ? null : n
+}
 
 /* =====================================================
    ListinoAccessoriDesk
 ===================================================== */
+
 export function ListinoAccessoriDesk() {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+
+  const queryClient = useQueryClient()
+  const {toast} = useToast()
 
   /* =========================
      STATE
   ========================= */
+
   const [editingAccessorio, setEditingAccessorio] =
-      useState<ListinoAccessoriDeskBean | null>(null);
+      useState<ListinoAccessoriDeskBean | null>(null)
 
-  const [editNome, setEditNome] = useState('');
-  const [editCosto, setEditCosto] = useState('');
+  const [editNome, setEditNome] = useState('')
+  const [editCosto, setEditCosto] = useState('')
+  const [editRicarico, setEditRicarico] = useState('')
+  const [editDescrizione, setEditDescrizione] = useState('')
 
-  const [showAdd, setShowAdd] = useState(false);
-  const [newNome, setNewNome] = useState('');
-  const [newCosto, setNewCosto] = useState('');
+  const [showAdd, setShowAdd] = useState(false)
+  const [newNome, setNewNome] = useState('')
+  const [newCosto, setNewCosto] = useState('')
 
   /* =========================
      QUERY
   ========================= */
-  const { data: accessori = [] } = useQuery<ListinoAccessoriDeskBean[]>({
+
+  const {data: accessori = []} = useQuery<ListinoAccessoriDeskBean[]>({
     queryKey: ['listino-accessori-desk'],
     queryFn: () =>
         ParametriAPI.getListinoAccessoriDesk({
           attivo: true,
+          sortFields: [{
+            field: "LISTINO_ACCESSORI_DESK_NAME",
+            desc: false
+          }]
         }),
-  });
+  })
 
   /* =========================
      MUTATIONS
   ========================= */
-  const saveMutation = useMutation<
-      ListinoAccessoriDeskBean,
-      unknown,
-      ListinoAccessoriDeskBean
-  >({
+
+  const saveMutation = useMutation({
     mutationFn: ParametriAPI.saveListinoAccessoriDesk,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['listino-accessori-desk'],
-      });
-      setEditingAccessorio(null);
-      setEditNome('');
-      setEditCosto('');
+      })
+
+      resetEdit()
+
       toast({
         title: 'Accessorio aggiornato',
         description: 'Accessorio desk aggiornato correttamente.',
-      });
+      })
     },
-  });
+  })
 
-  const addMutation = useMutation<
-      ListinoAccessoriDeskBean,
-      unknown,
-      ListinoAccessoriDeskBean
-  >({
+  const addMutation = useMutation({
     mutationFn: ParametriAPI.saveListinoAccessoriDesk,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['listino-accessori-desk'],
-      });
-      setShowAdd(false);
-      setNewNome('');
-      setNewCosto('');
+      })
+
+      setShowAdd(false)
+      setNewNome('')
+      setNewCosto('')
+
       toast({
         title: 'Accessorio aggiunto',
         description: 'Accessorio desk aggiunto correttamente.',
-      });
+      })
     },
-  });
+  })
 
-  const deleteMutation = useMutation<void, unknown, string>({
+  const deleteMutation = useMutation({
     mutationFn: ParametriAPI.deleteListinoAccessoriDesk,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['listino-accessori-desk'],
-      });
+      })
+
       toast({
         title: 'Accessorio eliminato',
         description: 'Accessorio desk disattivato.',
-      });
+      })
     },
-  });
+  })
 
   /* =========================
      HELPERS
   ========================= */
-  const parseDecimal = (v: string): number | null => {
-    const n = Number(v.replace(',', '.'));
-    return isNaN(n) ? null : n;
-  };
+
+  const resetEdit = () => {
+    setEditingAccessorio(null)
+    setEditNome('')
+    setEditCosto('')
+    setEditRicarico('')
+    setEditDescrizione('')
+  }
 
   /* =========================
      HANDLERS
   ========================= */
+
   const handleEdit = (a: ListinoAccessoriDeskBean) => {
-    setEditingAccessorio(a);
-    setEditNome(a.nome);
-    setEditCosto(a.costoUnitario.toString().replace('.', ','));
-  };
+    setEditingAccessorio(a)
+
+    setEditNome(a.nome)
+    setEditCosto(a.costoUnitario.toString().replace('.', ','))
+    setEditRicarico((a.ricaricoPercentuale ?? 0).toString())
+    setEditDescrizione(a.descrizione ?? '')
+  }
 
   const handleSave = () => {
-    if (!editingAccessorio) return;
+    if (!editingAccessorio) return
 
-    const costo = parseDecimal(editCosto);
-    if (!editNome.trim() || costo === null) {
+    const costo = parseDecimal(editCosto)
+    const ricarico = parseDecimal(editRicarico)
+
+    if (!editNome.trim() || costo === null || ricarico === null) {
       toast({
         title: 'Errore',
-        description: 'Inserire nome e costo validi.',
+        description: 'Inserire valori validi.',
         variant: 'destructive',
-      });
-      return;
+      })
+      return
     }
 
     saveMutation.mutate({
       ...editingAccessorio,
       nome: editNome.trim(),
       costoUnitario: costo,
-    });
-  };
+      ricaricoPercentuale: ricarico,
+      descrizione: editDescrizione,
+    })
+  }
 
   const handleAddSave = () => {
-    const costo = parseDecimal(newCosto);
+    const costo = parseDecimal(newCosto)
+
     if (!newNome.trim() || costo === null) {
       toast({
         title: 'Errore',
         description: 'Inserire nome e costo validi.',
         variant: 'destructive',
-      });
-      return;
+      })
+      return
     }
 
     addMutation.mutate({
       nome: newNome.trim(),
       costoUnitario: costo,
+      ricaricoPercentuale: 0,
+      descrizione: '',
       attivo: true,
-    } as ListinoAccessoriDeskBean);
-  };
+    } as ListinoAccessoriDeskBean)
+  }
 
   /* =========================
      RENDER
   ========================= */
+
   return (
       <Card>
+
         <CardHeader>
           <div className="flex items-center justify-between">
+
             <div>
               <CardTitle>Listino Accessori Desk</CardTitle>
               <CardDescription>
@@ -192,12 +232,15 @@ export function ListinoAccessoriDesk() {
             <Button size="sm" onClick={() => setShowAdd(v => !v)}>
               {showAdd ? 'Annulla' : 'Aggiungi accessorio'}
             </Button>
+
           </div>
         </CardHeader>
 
         <CardContent>
+
           {showAdd && (
               <div className="mb-4 flex items-end gap-2">
+
                 <div className="space-y-2 flex-1">
                   <Label>Nome accessorio</Label>
                   <Input
@@ -211,17 +254,12 @@ export function ListinoAccessoriDesk() {
                   <Input
                       value={newCosto}
                       onChange={e => setNewCosto(e.target.value)}
-                      placeholder="100,00"
                       className="w-32"
                   />
                 </div>
 
-                <Button
-                    size="sm"
-                    onClick={handleAddSave}
-                    disabled={addMutation.isPending}
-                >
-                  <Save className="h-4 w-4" />
+                <Button size="sm" onClick={handleAddSave}>
+                  <Save className="h-4 w-4"/>
                 </Button>
 
                 <Button
@@ -229,119 +267,149 @@ export function ListinoAccessoriDesk() {
                     variant="outline"
                     onClick={() => setShowAdd(false)}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4"/>
                 </Button>
+
               </div>
           )}
 
           <Table>
+
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">
-                  Nome
-                </TableHead>
-                <TableHead className="w-[200px]">
-                  Costo unitario
-                </TableHead>
-                <TableHead className="w-[120px]">
-                  Azioni
-                </TableHead>
+                <TableHead className="w-[100px]">Nome</TableHead>
+                <TableHead className="w-[100px]">Costo unitario</TableHead>
+                <TableHead className="w-[100px]">Ricarico %</TableHead>
+                <TableHead className="w-[100px]">Prezzo</TableHead>
+                <TableHead className="w-[200px]">Descrizione</TableHead>
+                <TableHead className="w-[120px]">Azioni</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody>
-              {accessori.map(a => (
-                  <TableRow key={a.id}>
-                    <TableCell>
-                      {editingAccessorio?.id === a.id ? (
-                          <Input
-                              value={editNome}
-                              onChange={e => setEditNome(e.target.value)}
-                          />
-                      ) : (
-                          a.nome
-                      )}
-                    </TableCell>
 
-                    <TableCell>
-                      {editingAccessorio?.id === a.id ? (
-                          <Input
-                              value={editCosto}
-                              onChange={e => setEditCosto(e.target.value)}
-                              className="w-32"
-                          />
-                      ) : (
-                          `€ ${a.costoUnitario
-                          .toFixed(2)
-                          .replace('.', ',')}`
-                      )}
-                    </TableCell>
+              {accessori.map(a => {
 
-                    <TableCell>
-                      {editingAccessorio?.id === a.id ? (
-                          <div className="flex gap-2">
-                            <Button size="sm" onClick={handleSave}>
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setEditingAccessorio(null)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                      ) : (
-                          <div className="flex gap-2">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleEdit(a)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    disabled={deleteMutation.isPending}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
+                const prezzo =
+                    a.costoUnitario *
+                    (1 + (a.ricaricoPercentuale ?? 0) / 100)
 
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Eliminare l’accessorio?
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Stai per disattivare l’accessorio "{a.nome}".
-                                    L’operazione non può essere annullata.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
+                return (
+                    <TableRow key={a.id}>
+                      <TableCell>
+                        {editingAccessorio?.id === a.id
+                            ? (
+                                <Input
+                                    value={editNome}
+                                    onChange={e => setEditNome(e.target.value)}
+                                />
+                            )
+                            : a.nome}
+                      </TableCell>
 
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Annulla</AlertDialogCancel>
+                      <TableCell>
+                        {editingAccessorio?.id === a.id
+                            ? (
+                                <Input
+                                    value={editCosto}
+                                    onChange={e => setEditCosto(e.target.value)}
+                                    className="w-32"/>
+                            )
+                            : `€ ${a.costoUnitario.toFixed(2).replace('.', ',')}`}
+                      </TableCell>
 
-                                  <AlertDialogAction
-                                      onClick={() => deleteMutation.mutate(a.id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Conferma eliminazione
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-              ))}
+                      <TableCell>
+                        {editingAccessorio?.id === a.id
+                            ? (
+                                <Input
+                                    value={editRicarico}
+                                    onChange={e => setEditRicarico(e.target.value)}
+                                    className="w-24"
+                                />
+                            )
+                            : `${a.ricaricoPercentuale ?? 0}%`}
+                      </TableCell>
+
+                      <TableCell>
+                        {editingAccessorio?.id === a.id
+                            ? (() => {
+                              const costo = parseDecimal(editCosto)
+                              const ricarico = parseDecimal(editRicarico)
+                              if (costo === null || ricarico === null) return '-'
+                              const prezzo = costo * (1 + ricarico / 100)
+                              return `€ ${prezzo.toFixed(2).replace('.', ',')}`
+                            })()
+                            : `€ ${prezzo.toFixed(2).replace('.', ',')}`}
+                      </TableCell>
+                      <TableCell>
+                        {editingAccessorio?.id === a.id
+                            ? (
+                                <Input
+                                    value={editDescrizione}
+                                    onChange={e => setEditDescrizione(e.target.value)}/>
+                            )
+                            : a.descrizione}
+                      </TableCell>
+                      <TableCell>
+                        {editingAccessorio?.id === a.id
+                            ? (
+                                <div className="flex gap-2">
+                                  <Button size="sm" onClick={handleSave}>
+                                    <Save className="h-4 w-4"/>
+                                  </Button>
+                                  <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={resetEdit}>
+                                    <X className="h-4 w-4"/>
+                                  </Button>
+                                </div>
+                            )
+                            : (
+                                <div className="flex gap-2">
+                                  <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => handleEdit(a)}>
+                                    <Edit className="h-4 w-4"/>
+                                  </Button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <Button size="sm" variant="outline">
+                                        <Trash2 className="h-4 w-4"/>
+                                      </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                          Eliminare l’accessorio?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                          Stai per disattivare "{a.nome}".
+                                        </AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>
+                                          Annulla
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={() =>
+                                                deleteMutation.mutate(a.id)
+                                            }>
+                                          Conferma
+                                        </AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
+                                </div>
+                            )}
+                      </TableCell>
+                    </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
-  );
+  )
 }

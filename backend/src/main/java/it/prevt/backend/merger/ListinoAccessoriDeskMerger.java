@@ -14,6 +14,9 @@ public class ListinoAccessoriDeskMerger
   protected void doMerge(ListinoAccessoriDeskBean bean, ListinoAccessoriDesk entity) {
     entity.setNome(bean.getNome());
     entity.setCostoUnitario(bean.getCostoUnitario());
+    entity.setRicaricoPercentuale(bean.getRicaricoPercentuale());
+    entity.setPrezzo(bean.getPrezzo());
+    entity.setDescrizione(bean.getDescrizione());
   }
 
 }

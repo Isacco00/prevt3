@@ -29,6 +29,15 @@ public class ListinoAccessoriEspositori {
     @Column(name = "costo_unitario", nullable = false)
     private BigDecimal costoUnitario = BigDecimal.ZERO;
 
+    @Column(name = "ricarico_percentuale")
+    private BigDecimal ricaricoPercentuale;
+
+    @Column(name = "prezzo")
+    private BigDecimal prezzo;
+
+    @Column(name = "descrizione")
+    private String descrizione;
+
     @Column(nullable = false)
     private Boolean attivo = true;
 
