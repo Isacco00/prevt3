@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit2, Save, X } from 'lucide-react';
+import {Edit, Edit2, Save, X} from 'lucide-react';
 
 import {
     Card,
@@ -129,13 +129,9 @@ export function NumeroProfiliDistribuzione() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[200px]">
-                                Distribuzione
-                            </TableHead>
-                            <TableHead className="w-[200px]">
-                                Numero di Profili m/l
-                            </TableHead>
-                            <TableHead className="w-[120px]" />
+                            <TableHead className="w-[150px]">Distribuzione</TableHead>
+                            <TableHead className="w-[500px]">Numero di Profili m/l</TableHead>
+                            <TableHead className="w-[100px]" />
                         </TableRow>
                     </TableHeader>
 
@@ -183,10 +179,9 @@ export function NumeroProfiliDistribuzione() {
                                     ) : (
                                         <Button
                                             size="sm"
-                                            variant="ghost"
-                                            onClick={() => handleEdit(parametro)}
-                                        >
-                                            <Edit2 className="h-4 w-4" />
+                                            variant="outline"
+                                            onClick={() => handleEdit(parametro)}>
+                                            <Edit className="h-4 w-4" />
                                         </Button>
                                     )}
                                 </TableCell>

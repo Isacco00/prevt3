@@ -26,9 +26,9 @@ import {ParametriAPI} from '@/api/parametri';
 import {ListinoRetroilluminazioneBean} from "@/types/parametri.ts";
 
 /* =====================================================
-   CostoRetroilluminazione
+   ListinoRetroilluminazione
 ===================================================== */
-export function CostoRetroilluminazione() {
+export function ListinoRetroilluminazione() {
   const queryClient = useQueryClient();
   const {toast} = useToast();
 
@@ -255,12 +255,12 @@ export function CostoRetroilluminazione() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Altezza</TableHead>
+                <TableHead className="w-[250px]">Altezza</TableHead>
                 <TableHead className="w-[100px]">Costo per m/l</TableHead>
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
-                <TableHead className="w-[200px]">Descrizione</TableHead>
-                <TableHead className="w-[120px]">Azioni</TableHead>
+                <TableHead className="w-[100px]">Descrizione</TableHead>
+                <TableHead className="w-[100px]">Azioni</TableHead>
               </TableRow>
             </TableHeader>
 

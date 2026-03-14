@@ -158,7 +158,7 @@ export function ListinoServiziPrezzoUnitario() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">Parametro</TableHead>
+                <TableHead className="w-[150px]">Parametro</TableHead>
                 <TableHead className="w-[100px]">U.M.</TableHead>
                 <TableHead className="w-[100px]">Costo</TableHead>
                 <TableHead className="w-[100px]">Ricarico %</TableHead>

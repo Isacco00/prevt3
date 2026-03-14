@@ -269,12 +269,12 @@ export function ListinoAccessoriEspositori() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Nome</TableHead>
+                <TableHead className="w-[250px]">Nome</TableHead>
                 <TableHead className="w-[100px]">Costo unitario</TableHead>
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
-                <TableHead className="w-[200px]">Descrizione</TableHead>
-                <TableHead className="w-[120px]">Azioni</TableHead>
+                <TableHead className="w-[100px]">Descrizione</TableHead>
+                <TableHead className="w-[100px]">Azioni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

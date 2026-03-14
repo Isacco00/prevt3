@@ -3,7 +3,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs.tsx
 import {UserManagement} from '@/components/UserManagement.tsx';
 import {ParametriACostoUnitario} from "@/pages/Admin/Components/ParametriACostoUnitario.tsx";
 import {NumeroProfiliDistribuzione} from "@/pages/Admin/Components/NumeroProfiliDistribuzione.tsx";
-import {CostoRetroilluminazione} from "@/pages/Admin/Components/CostoRetroilluminazione.tsx";
+import {ListinoRetroilluminazione} from "@/pages/Admin/Components/ListinoRetroilluminazione.tsx";
 import {ListinoAccessoriStand} from "@/pages/Admin/Components/ListinoAccessoriStand.tsx";
 import {ListinoAccessoriDesk} from "@/pages/Admin/Components/ListinoAccessoriDesk.tsx";
 import {ListinoAccessoriEspositori} from "@/pages/Admin/Components/ListinoAccessoriEspositori.tsx";
@@ -35,7 +35,7 @@ export default function Admin() {
             <ParametriACostoUnitario/>
             <ListinoServiziPrezzoUnitario/>
             <NumeroProfiliDistribuzione/>
-            <CostoRetroilluminazione/>
+            <ListinoRetroilluminazione/>
             <ListinoAccessoriStand/>
             <ListinoAccessoriDesk/>
             <ListinoAccessoriEspositori/>
