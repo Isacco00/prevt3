@@ -20,6 +20,8 @@ public class ParametriMapper extends AbstractMapper<Parametri, ParametriBean> {
     bean.setNome(entity.getNome());
     bean.setValore(entity.getValore());
     bean.setValoreTesto(entity.getValoreTesto());
+    bean.setRicaricoPercentuale(entity.getRicaricoPercentuale());
+    bean.setPrezzo(entity.getPrezzo());
     bean.setDescrizione(entity.getDescrizione());
     bean.setAttivo(entity.getAttivo());
     bean.setCreatedAt(entity.getCreatedAt());

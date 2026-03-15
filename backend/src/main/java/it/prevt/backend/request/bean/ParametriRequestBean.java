@@ -7,4 +7,7 @@ import lombok.Setter;
 @Setter
 public class ParametriRequestBean extends AbstractSearchRequestBean {
 
+  private String tipo;
+  private Boolean attivo;
+
 }

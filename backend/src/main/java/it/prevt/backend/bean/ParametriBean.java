@@ -15,6 +15,8 @@ public class ParametriBean {
   private String nome;
   private BigDecimal valore;
   private String valoreTesto;
+  private BigDecimal ricaricoPercentuale;
+  private BigDecimal prezzo;
   private String descrizione;
   private boolean attivo;
   private OffsetDateTime createdAt;

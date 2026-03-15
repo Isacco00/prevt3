@@ -92,6 +92,18 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
     StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
 
     // Parameters
+    if (searchRequest != null) {
+      if (searchRequest.getAttivo() != null) {
+        strQueryWhere.append(" AND u.attivo = :attivo ");
+        parameters.put("attivo", searchRequest.getAttivo());
+      }
+      if (searchRequest.getTipo() != null) {
+        strQueryWhere.append(" AND u.tipo = :tipo ");
+        parameters.put("tipo", searchRequest.getTipo());
+      }
+    }
+
+    // Parameters
     if (searchRequest != null && searchRequest.getSortFields() != null
         && !searchRequest.getSortFields().isEmpty()) {
       StringBuilder strQueryOrderBy = orderBy(null, searchRequest.getSortFields(), null);

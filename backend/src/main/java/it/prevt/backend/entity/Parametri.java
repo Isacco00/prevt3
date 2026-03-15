@@ -36,6 +36,12 @@ public class Parametri {
 
     private String descrizione;
 
+    @Column(name = "ricarico_percentuale")
+    private BigDecimal ricaricoPercentuale;
+
+    @Column(name = "prezzo")
+    private BigDecimal prezzo;
+
     @Column(nullable = false)
     private Boolean attivo = true;
 

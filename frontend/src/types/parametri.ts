@@ -5,11 +5,13 @@ export interface ParametriBean {
   tipo: string;
   nome: string;
   valore: number;
-  valoreTesto: string;
+  valoreTesto?: string;
+  ricaricoPercentuale: number;
+  prezzo: number;
   descrizione: string;
   attivo: boolean;
-  valoreChiave: string;
-  ordine: number;
+  valoreChiave?: string;
+  ordine?: number;
 }
 
 export interface ParametriACostiUnitariBean {
@@ -111,4 +113,7 @@ export interface PreventivoServiziBean {
   totaleCostoSmontaggio?: number;
 }
 
-export type ParametriRequestBean = AbstractSearchRequestBean
+export interface ParametriRequestBean extends AbstractSearchRequestBean {
+  attivo?: boolean;
+  tipo?: string;
+}

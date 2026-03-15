@@ -10,8 +10,8 @@ import {ListinoAccessoriEspositori} from "@/pages/Admin/Components/ListinoAccess
 import {ListinoStrutturaDesk} from "@/pages/Admin/Components/ListinoStrutturaDesk.tsx";
 import {ListinoStrutturaEspositori} from "@/pages/Admin/Components/ListinoStrutturaEspositori.tsx";
 import {
-  CostoStrutturaStandMetroLineareAltezza
-} from "@/pages/Admin/Components/CostiStandMetroLineareAltezza.tsx";
+  ListinoStrutturaStand
+} from "@/pages/Admin/Components/ListinoStrutturaStand.tsx";
 import {
   ListinoServiziPrezzoUnitario
 } from "@/pages/Admin/Components/ListinoServiziPrezzoUnitario.tsx";
@@ -41,7 +41,7 @@ export default function Admin() {
             <ListinoAccessoriEspositori/>
             <ListinoStrutturaDesk/>
             <ListinoStrutturaEspositori/>
-            <CostoStrutturaStandMetroLineareAltezza/>
+            <ListinoStrutturaStand/>
 
           </TabsContent>
         </Tabs>

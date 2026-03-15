@@ -12,6 +12,9 @@ public class ParametriMerger extends AbstractMerger<ParametriBean, Parametri> {
   @Override
   protected void doMerge(ParametriBean bean, Parametri entity) {
     entity.setValore(bean.getValore());
+    entity.setRicaricoPercentuale(bean.getRicaricoPercentuale());
+    entity.setPrezzo(bean.getPrezzo());
+    entity.setDescrizione(bean.getDescrizione());
   }
 
 }
