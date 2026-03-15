@@ -27,7 +27,7 @@ public interface PreventivoRepository extends AbstractRepository {
   List<ListinoRetroilluminazione> getListinoRetroilluminazione(
       ListinoAccessoriRequestBean searchRequest);
 
-  List<CostiStrutturaEspositoriLayout> getCostiStrutturaEspositoriLayout(
+  List<ListinoStrutturaEspositori> getListinoStrutturaEspositori(
       ListinoAccessoriRequestBean searchRequest);
 
   List<ListinoAccessoriEspositori> getListinoAccessoriEspositori(

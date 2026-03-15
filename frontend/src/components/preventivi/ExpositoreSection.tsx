@@ -95,10 +95,10 @@ export function ExpositoreSection({
   const {
     data: layoutCostsData = []
   } = useQuery({
-    queryKey: ['costi_struttura_espositori_layout'],
-    queryFn: () => ParametriAPI.getCostiStrutturaEspositoriLayout({
+    queryKey: ['listino_struttura_espositori'],
+    queryFn: () => ParametriAPI.getListinoStrutturaEspositori({
       attivo: true, sortFields: [{
-        field: "COSTI_STRUTTURA_ESPOSITORI_LAYOUT_ESPOSITORE",
+        field: "LISTINO_STRUTTURA_ESPOSITORI_LAYOUT_ESPOSITORE",
         desc: false
       }]
     })

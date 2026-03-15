@@ -32,6 +32,15 @@ public class ParametriACostiUnitari {
     @Column(nullable = false)
     private BigDecimal valore = BigDecimal.ZERO;
 
+    @Column(name = "ricarico_percentuale")
+    private BigDecimal ricaricoPercentuale;
+
+    @Column(name = "prezzo")
+    private BigDecimal prezzo;
+
+    @Column(name = "descrizione")
+    private String descrizione;
+
     @Column(nullable = false)
     private Boolean attivo = true;
 

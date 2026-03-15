@@ -82,10 +82,13 @@ export interface ListinoStrutturaDeskBean {
   attivo: boolean;
 }
 
-export interface CostiStrutturaEspositoriLayoutBean {
+export interface ListinoStrutturaEspositoriBean {
   id: string;
-  layoutEspositore: string
+  layoutEspositore: number
   costoUnitario: number;
+  ricaricoPercentuale: number;
+  prezzo?: number;
+  descrizione: string;
   attivo: boolean;
 }
 

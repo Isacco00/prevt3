@@ -4,7 +4,7 @@ import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
-import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
+import it.prevt.backend.bean.ListinoStrutturaEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
 import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
@@ -128,20 +128,20 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   }
 
   @Override
-  public List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
+  public List<ListinoStrutturaEspositoriBean> getListinoStrutturaEspositori(
       ListinoAccessoriRequestBean searchRequest) {
-    return manager.getCostiStrutturaEspositoriLayout(searchRequest);
+    return manager.getListinoStrutturaEspositori(searchRequest);
   }
 
   @Override
-  public CostiStrutturaEspositoriLayoutBean saveCostiStrutturaEspositoriLayout(
-      CostiStrutturaEspositoriLayoutBean dto) {
-    return manager.saveCostiStrutturaEspositoriLayout(dto);
+  public ListinoStrutturaEspositoriBean saveListinoStrutturaEspositori(
+      ListinoStrutturaEspositoriBean dto) {
+    return manager.saveListinoStrutturaEspositori(dto);
   }
 
   @Override
-  public void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean) {
-    manager.deleteCostiStrutturaEspositoriLayout(bean);
+  public void deleteListinoStrutturaEspositori(ListinoStrutturaEspositoriBean bean) {
+    manager.deleteListinoStrutturaEspositori(bean);
   }
 
   @Override

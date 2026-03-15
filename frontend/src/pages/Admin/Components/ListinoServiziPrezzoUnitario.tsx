@@ -189,7 +189,7 @@ export function ListinoServiziPrezzoUnitario() {
                             <Input
                                 value={editCosto}
                                 onChange={(e) => setEditCosto(e.target.value)}
-                                className="w-24 mx-auto"/>
+                                className="w-24"/>
                         ) : (
                             formatEuro(p.costo)
                         )}
@@ -201,7 +201,7 @@ export function ListinoServiziPrezzoUnitario() {
                             <Input
                                 value={editRicarico}
                                 onChange={(e) => setEditRicarico(e.target.value)}
-                                className="w-20 mx-auto"/>
+                                className="w-20"/>
                         ) : (
                             `${p.ricaricoPercentuale ?? 0}%`
                         )}
@@ -232,7 +232,7 @@ export function ListinoServiziPrezzoUnitario() {
                       {/* AZIONI */}
                       <TableCell>
                         {isEditing ? (
-                            <div className="flex justify-center gap-2">
+                            <div className="flex gap-2">
                               <Button
                                   size="sm"
                                   onClick={handleSave}

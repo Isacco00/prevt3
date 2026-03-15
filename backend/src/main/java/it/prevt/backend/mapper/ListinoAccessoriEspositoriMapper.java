@@ -1,8 +1,6 @@
 package it.prevt.backend.mapper;
 
-import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
-import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
 import it.prevt.backend.entity.ListinoAccessoriEspositori;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

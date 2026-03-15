@@ -14,6 +14,9 @@ public class ParametriACostiUnitariBean {
   private String parametro;
   private String unitaMisura;
   private BigDecimal valore;
+  private BigDecimal ricaricoPercentuale;
+  private BigDecimal prezzo;
+  private String descrizione;
   private boolean attivo;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;

@@ -32,8 +32,24 @@ alter table listino_accessori_espositori
     add column prezzo numeric(19, 2);
 alter table listino_accessori_espositori
     add column descrizione text;
+alter table costi_struttura_espositori_layout
+    rename to listino_struttura_espositori;
+alter table listino_struttura_espositori
+    add column ricarico_percentuale numeric(19, 2);
+alter table listino_struttura_espositori
+    add column prezzo numeric(19, 2);
+alter table listino_struttura_espositori
+    add column descrizione text;
+alter table parametri_a_costi_unitari
+    add column ricarico_percentuale numeric(19, 2);
+alter table parametri_a_costi_unitari
+    add column prezzo numeric(19, 2);
+alter table parametri_a_costi_unitari
+    add column descrizione text;
 alter table listino_struttura_desk
     alter column layout_desk type numeric(19, 2) using layout_desk::numeric(19, 2);
+alter table listino_struttura_espositori
+    alter column layout_espositore type numeric(19, 2) using layout_espositore::numeric(19, 2);
 
 create table listino_servizi_prezzo_unitario
 (

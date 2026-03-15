@@ -243,9 +243,9 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
   }
 
   @Override
-  public List<CostiStrutturaEspositoriLayout> getCostiStrutturaEspositoriLayout(
+  public List<ListinoStrutturaEspositori> getListinoStrutturaEspositori(
       ListinoAccessoriRequestBean searchRequest) {
-    Class<CostiStrutturaEspositoriLayout> clazz = CostiStrutturaEspositoriLayout.class;
+    Class<ListinoStrutturaEspositori> clazz = ListinoStrutturaEspositori.class;
     Map<String, Object> parameters = new HashMap<>();
 
     StringBuilder strQueryFrom = new StringBuilder(
@@ -265,7 +265,7 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
       strQueryWhere.append(strQueryOrderBy.toString());
     }
     String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
-    TypedQuery<CostiStrutturaEspositoriLayout> query = entityManager.createQuery(strQueryFinal,
+    TypedQuery<ListinoStrutturaEspositori> query = entityManager.createQuery(strQueryFinal,
         clazz);
     parameters.forEach(query::setParameter);
     return getResultList(query);

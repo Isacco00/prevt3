@@ -4,7 +4,7 @@ import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
-import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
+import it.prevt.backend.bean.ListinoStrutturaEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
 import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
@@ -13,7 +13,7 @@ import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
 import it.prevt.backend.entity.AltriBeniServizi;
 import it.prevt.backend.entity.ListinoRetroilluminazione;
-import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
+import it.prevt.backend.entity.ListinoStrutturaEspositori;
 import it.prevt.backend.entity.ListinoServiziPrezzoUnitario;
 import it.prevt.backend.entity.ListinoStrutturaDesk;
 import it.prevt.backend.entity.ListinoAccessoriDesk;
@@ -25,7 +25,7 @@ import it.prevt.backend.entity.PreventivoServizi;
 import it.prevt.backend.manager.ParametriManager;
 import it.prevt.backend.mapper.AltriBeniServiziMapper;
 import it.prevt.backend.mapper.ListinoRetroilluminazioneMapper;
-import it.prevt.backend.mapper.CostiStrutturaEspositoriLayoutMapper;
+import it.prevt.backend.mapper.ListinoStrutturaEspositoriMapper;
 import it.prevt.backend.mapper.ListinoServiziPrezzoUnitarioMapper;
 import it.prevt.backend.mapper.ListinoStrutturaDeskMapper;
 import it.prevt.backend.mapper.ListinoAccessoriDeskMapper;
@@ -38,7 +38,7 @@ import it.prevt.backend.merger.AltriBeniServiziMerger;
 import it.prevt.backend.merger.ListinoRetroilluminazioneMerger;
 import it.prevt.backend.merger.ListinoServiziPrezzoUnitarioMerger;
 import it.prevt.backend.merger.ListinoStrutturaDeskMerger;
-import it.prevt.backend.merger.CostiStrutturaEspositoriLayoutMerger;
+import it.prevt.backend.merger.ListinoStrutturaEspositoriMerger;
 import it.prevt.backend.merger.ListinoAccessoriDeskMerger;
 import it.prevt.backend.merger.ListinoAccessoriEspositoriMerger;
 import it.prevt.backend.merger.ListinoAccessoriStandMerger;
@@ -78,8 +78,8 @@ public class ParametriManagerImpl implements ParametriManager {
   private final ListinoAccessoriEspositoriMerger listinoAccessoriEspositoriMerger;
   private final ListinoStrutturaDeskMapper listinoStrutturaDeskMapper;
   private final ListinoStrutturaDeskMerger listinoStrutturaDeskMerger;
-  private final CostiStrutturaEspositoriLayoutMapper costiStrutturaEspositoriLayoutMapper;
-  private final CostiStrutturaEspositoriLayoutMerger costiStrutturaEspositoriLayoutMerger;
+  private final ListinoStrutturaEspositoriMapper listinoStrutturaEspositoriMapper;
+  private final ListinoStrutturaEspositoriMerger listinoStrutturaEspositoriMerger;
   private final AltriBeniServiziMapper altriBeniServiziMapper;
   private final AltriBeniServiziMerger altriBeniServiziMerger;
   private final PreventivoServiziMapper preventivoServiziMapper;
@@ -324,39 +324,39 @@ public class ParametriManagerImpl implements ParametriManager {
   }
 
   @Override
-  public List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
+  public List<ListinoStrutturaEspositoriBean> getListinoStrutturaEspositori(
       ListinoAccessoriRequestBean searchRequest) {
-    List<CostiStrutturaEspositoriLayout> costiStrutturaEspositoriLayoutList = repository.getCostiStrutturaEspositoriLayout(
+    List<ListinoStrutturaEspositori> listinoStrutturaEspositoriList = repository.getListinoStrutturaEspositori(
         searchRequest);
-    if (costiStrutturaEspositoriLayoutList == null) {
-      throw new UsernameNotFoundException("error.costistrutturaespositorilayout.notfound");
+    if (listinoStrutturaEspositoriList == null) {
+      throw new UsernameNotFoundException("error.listinostrutturaespositori.notfound");
     }
-    return costiStrutturaEspositoriLayoutMapper.mapEntitiesToBeans(
-        costiStrutturaEspositoriLayoutList);
+    return listinoStrutturaEspositoriMapper.mapEntitiesToBeans(
+        listinoStrutturaEspositoriList);
   }
 
   @Override
-  public CostiStrutturaEspositoriLayoutBean saveCostiStrutturaEspositoriLayout(
-      CostiStrutturaEspositoriLayoutBean bean) {
-    CostiStrutturaEspositoriLayout entity;
+  public ListinoStrutturaEspositoriBean saveListinoStrutturaEspositori(
+      ListinoStrutturaEspositoriBean bean) {
+    ListinoStrutturaEspositori entity;
     if (bean.getId() == null) {
-      entity = costiStrutturaEspositoriLayoutMerger.mapNew(bean,
-          CostiStrutturaEspositoriLayout.class);
+      entity = listinoStrutturaEspositoriMerger.mapNew(bean,
+          ListinoStrutturaEspositori.class);
     } else {
-      entity = repository.find(CostiStrutturaEspositoriLayout.class, bean.getId());
+      entity = repository.find(ListinoStrutturaEspositori.class, bean.getId());
       if (entity == null) {
         throw new EntityNotFoundException();
       }
-      costiStrutturaEspositoriLayoutMerger.merge(bean, entity);
+      listinoStrutturaEspositoriMerger.merge(bean, entity);
     }
     this.repository.save(entity);
-    return costiStrutturaEspositoriLayoutMapper.mapEntityToBean(entity);
+    return listinoStrutturaEspositoriMapper.mapEntityToBean(entity);
   }
 
   @Override
-  public void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean) {
+  public void deleteListinoStrutturaEspositori(ListinoStrutturaEspositoriBean bean) {
     if (bean != null) {
-      CostiStrutturaEspositoriLayout entity = repository.find(CostiStrutturaEspositoriLayout.class,
+      ListinoStrutturaEspositori entity = repository.find(ListinoStrutturaEspositori.class,
           bean.getId());
       if (entity == null) {
         throw new EntityNotFoundException();

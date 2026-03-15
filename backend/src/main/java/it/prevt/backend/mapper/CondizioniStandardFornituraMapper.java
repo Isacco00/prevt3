@@ -1,9 +1,7 @@
 package it.prevt.backend.mapper;
 
 import it.prevt.backend.bean.CondizioniStandardFornituraBean;
-import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
 import it.prevt.backend.entity.CondizioniStandardFornitura;
-import it.prevt.backend.entity.CostiStrutturaEspositoriLayout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

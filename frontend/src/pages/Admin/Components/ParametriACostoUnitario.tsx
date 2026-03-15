@@ -177,7 +177,6 @@ export function ParametriACostoUnitario() {
                                             <Input
                                                 value={editCosto}
                                                 onChange={(e) => setEditCosto(e.target.value)}
-                                                className="w-24 mx-auto"
                                             />
                                         ) : (
                                             formatEuro(p.valore)
@@ -190,8 +189,7 @@ export function ParametriACostoUnitario() {
                                         {isEditing ? (
                                             <Input
                                                 value={editRicarico}
-                                                onChange={(e) => setEditRicarico(e.target.value)}
-                                                className="w-20 mx-auto"/>
+                                                onChange={(e) => setEditRicarico(e.target.value)}/>
                                         ) : (
                                             `${p.ricaricoPercentuale ?? 0}%`
                                         )}
@@ -211,7 +209,7 @@ export function ParametriACostoUnitario() {
                                     {/* AZIONI */}
                                     <TableCell>
                                         {isEditing ? (
-                                            <div className="flex justify-center gap-2">
+                                            <div className="flex gap-2">
                                                 <Button
                                                     size="sm"
                                                     onClick={handleSave}

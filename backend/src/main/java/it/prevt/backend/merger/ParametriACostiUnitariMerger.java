@@ -13,6 +13,9 @@ public class ParametriACostiUnitariMerger
   @Override
   protected void doMerge(ParametriACostiUnitariBean bean, ParametriACostiUnitari entity) {
     entity.setValore(bean.getValore());
+    entity.setRicaricoPercentuale(bean.getRicaricoPercentuale());
+    entity.setPrezzo(bean.getPrezzo());
+    entity.setDescrizione(bean.getDescrizione());
   }
 
 }

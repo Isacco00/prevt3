@@ -4,14 +4,13 @@ import it.prevt.backend.bean.AltriBeniServiziBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
-import it.prevt.backend.bean.CostiStrutturaEspositoriLayoutBean;
+import it.prevt.backend.bean.ListinoStrutturaEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriDeskBean;
 import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
-import it.prevt.backend.entity.ListinoServiziPrezzoUnitario;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
 import java.util.List;
@@ -59,13 +58,13 @@ public interface ParametriManager {
 
   void deleteListinoStrutturaDesk(ListinoStrutturaDeskBean bean);
 
-  List<CostiStrutturaEspositoriLayoutBean> getCostiStrutturaEspositoriLayout(
+  List<ListinoStrutturaEspositoriBean> getListinoStrutturaEspositori(
       ListinoAccessoriRequestBean searchRequest);
 
-  CostiStrutturaEspositoriLayoutBean saveCostiStrutturaEspositoriLayout(
-      CostiStrutturaEspositoriLayoutBean dto);
+  ListinoStrutturaEspositoriBean saveListinoStrutturaEspositori(
+      ListinoStrutturaEspositoriBean dto);
 
-  void deleteCostiStrutturaEspositoriLayout(CostiStrutturaEspositoriLayoutBean bean);
+  void deleteListinoStrutturaEspositori(ListinoStrutturaEspositoriBean bean);
 
   List<AltriBeniServiziBean> getAltriBeniServiziByPreventivoId(
       ListinoAccessoriRequestBean searchRequest);
