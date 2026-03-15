@@ -283,12 +283,12 @@ export function ListinoStrutturaStand() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Nome</TableHead>
-                            <TableHead>Costo</TableHead>
-                            <TableHead>Ricarico %</TableHead>
-                            <TableHead>Prezzo</TableHead>
-                            <TableHead>Descrizione</TableHead>
-                            <TableHead>Azioni</TableHead>
+                            <TableHead className="w-[250px]">Nome</TableHead>
+                            <TableHead className="w-[100px]">Costo</TableHead>
+                            <TableHead className="w-[100px]">Ricarico %</TableHead>
+                            <TableHead className="w-[100px]">Prezzo</TableHead>
+                            <TableHead className="w-[100px]">Descrizione</TableHead>
+                            <TableHead className="w-[100px]">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
