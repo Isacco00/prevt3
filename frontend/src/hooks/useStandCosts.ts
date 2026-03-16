@@ -68,7 +68,8 @@ export function useStandCosts({
     const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valoreChiave === String(formData.altezza));
 
-    const strutturaTerra = costoAltezzaParam ? elements.sviluppoLineare * (costoAltezzaParam.valore || 0) : 0;
+    const strutturaTerra = elements.sviluppoLineare * (costoAltezzaParam.valore || 0)
+                                    + formData.bifaccialita * (costoAltezzaParam.valore || 0) * 0.5;
     const graficaCordino = costoStampaParam ? elements.superficieStampa * (costoStampaParam.valore || 0) : 0;
     const premontaggio = costoPremontaggio && formData.premontaggio ? elements.numeroPezzi * (costoPremontaggio.valore || 0) : 0;
 
