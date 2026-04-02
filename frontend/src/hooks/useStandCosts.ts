@@ -64,12 +64,33 @@ const empty = {
   prezzoNoleggioAccessori: 0,
   totaleAccessori: 0,
 
+  prezzoNoleggioStrutturaTerra: 0,
+  prezzoNoleggioRetroilluminazione: 0,
+
   extraStandComplesso: 0,
   extraStandComplessoNetto: 0,
 
   totalePreventivoStand: 0,
   totaleCostiStand: 0,
   marginalitaMedia: 0,
+
+  // vendita
+  totalePrezzoListinoVendita: 0,
+  totalePrezzoNettoVendita: 0,
+  totaleCostiVendita: 0,
+  scontoMedioVendita: 0,
+  marginalitaVendita: 0,
+
+  // noleggio
+  totalePrezzoListinoNoleggio: 0,
+  totalePrezzoNettoNoleggio: 0,
+  totaleCostiNoleggio: 0,
+  scontoMedioNoleggio: 0,
+  marginalitaNoleggio: 0,
+  premontaggio: 0,
+  extraComplesso: 0,
+  totalePrezzoNoleggio: 0,
+  totalePreventivoFinale: 0,
 };
 
 export function useStandCosts({
@@ -228,6 +249,79 @@ export function useStandCosts({
         extraBase * (1 - (formData.scontoExtraStandComplesso ?? 0) / 100);
 
     // =========================
+    // PREZZI NOLEGGIO PER VOCE
+    // =========================
+    const coeff = formData.coefficienteNoleggio?.valore ?? 0;
+
+    const prezzoNoleggioStrutturaTerra = prezzoNettoStrutturaTerra * coeff;
+    const prezzoNoleggioRetroilluminazione = prezzoNettoRetroilluminazione * coeff;
+
+    // =========================
+    // TOTALI VENDITA
+    // =========================
+    const totalePrezzoListinoVendita =
+        prezzoStrutturaTerra +
+        (formData.graficaCordinoAttiva ? prezzoGraficaCordino : 0) +
+        prezzoRetroilluminazione +
+        prezzoPremontaggio +
+        costiAccessoriVendita +
+        extraStandComplesso;
+
+    const totalePrezzoNettoVendita =
+        prezzoNettoStrutturaTerra +
+        prezzoNettoGraficaCordino +
+        prezzoNettoRetroilluminazione +
+        prezzoNettoPremontaggio +
+        nettoAccessoriVendita +
+        extraStandComplessoNetto;
+
+    const totaleCostiVendita =
+        costoStrutturaTerra +
+        (formData.graficaCordinoAttiva ? costoGraficaCordino : 0) +
+        costoRetroilluminazione +
+        costoPremontaggio +
+        costiAccessoriVendita;
+
+    const scontoMedioVendita =
+        totalePrezzoListinoVendita > 0
+            ? ((totalePrezzoListinoVendita - totalePrezzoNettoVendita) / totalePrezzoListinoVendita) * 100
+            : 0;
+
+    const marginalitaVendita =
+        totalePrezzoNettoVendita > 0
+            ? ((totalePrezzoNettoVendita - totaleCostiVendita) / totalePrezzoNettoVendita) * 100
+            : 0;
+
+    // =========================
+    // TOTALI NOLEGGIO
+    // =========================
+    const totalePrezzoListinoNoleggio =
+        costiAccessoriVendita +
+        (formData.graficaCordinoAttiva ? prezzoGraficaCordino : 0) +
+        prezzoPremontaggio +
+        extraStandComplesso;
+
+    const totalePrezzoNettoNoleggio =
+        nettoAccessoriVendita +
+        prezzoNettoGraficaCordino +
+        prezzoNettoPremontaggio +
+        extraStandComplessoNetto;
+
+    const totaleCostiNoleggio =
+        costoGraficaCordino +
+        costiAccessoriVendita;
+
+    const scontoMedioNoleggio =
+        totalePrezzoListinoNoleggio > 0
+            ? ((totalePrezzoListinoNoleggio - totalePrezzoNettoNoleggio) / totalePrezzoListinoNoleggio) * 100
+            : 0;
+
+    const marginalitaNoleggio =
+        totalePrezzoNettoNoleggio > 0
+            ? ((totalePrezzoNettoNoleggio - totaleCostiNoleggio) / totalePrezzoNettoNoleggio) * 100
+            : 0;
+
+    // =========================
     // TOTALI
     // =========================
     const totalePreventivoStand =
@@ -280,6 +374,10 @@ export function useStandCosts({
       prezzoNoleggioAccessori,
       totaleAccessori,
 
+      // noleggio per voce
+      prezzoNoleggioStrutturaTerra,
+      prezzoNoleggioRetroilluminazione,
+
       // extra
       extraStandComplesso,
       extraStandComplessoNetto,
@@ -288,6 +386,24 @@ export function useStandCosts({
       totalePreventivoStand,
       totaleCostiStand,
       marginalitaMedia,
+
+      // vendita
+      totalePrezzoListinoVendita,
+      totalePrezzoNettoVendita,
+      totaleCostiVendita,
+      scontoMedioVendita,
+      marginalitaVendita,
+
+      // noleggio
+      totalePrezzoListinoNoleggio,
+      totalePrezzoNettoNoleggio,
+      totaleCostiNoleggio,
+      scontoMedioNoleggio,
+      marginalitaNoleggio,
+      premontaggio: prezzoNettoPremontaggio,
+      extraComplesso: extraStandComplessoNetto,
+      totalePrezzoNoleggio: prezzoNoleggioStrutturaTerra + prezzoNoleggioRetroilluminazione + prezzoNoleggioAccessori,
+      totalePreventivoFinale: totalePrezzoNettoNoleggio + (prezzoNoleggioStrutturaTerra + prezzoNoleggioRetroilluminazione + prezzoNoleggioAccessori),
     };
 
   }, [

@@ -229,6 +229,18 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     listinoServizi
   });
 
+  const venditaTotaleListino = costs.totalePrezzoListinoVendita;
+  const venditaTotaleNetto = costs.totalePrezzoNettoVendita;
+  const venditaTotaleCosti = costs.totaleCostiVendita;
+  const venditaScontoMedio = costs.scontoMedioVendita;
+  const venditaMarginalita = costs.marginalitaVendita;
+
+  const noleggioTotaleListino = costs.totalePrezzoListinoNoleggio;
+  const noleggioTotaleNetto = costs.totalePrezzoNettoNoleggio;
+  const noleggioTotaleCosti = costs.totaleCostiNoleggio;
+  const noleggioScontoMedio = costs.scontoMedioNoleggio;
+  const noleggioMarginalita = costs.marginalitaNoleggio;
+
   const handleNoleggioChange = (id: string, value: boolean) => {
     setFormData(prev => {
       const current = parseAccessoriStand(prev.accessoriStandConfig);
@@ -1088,34 +1100,146 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                   </div>
                 </Card>
               </div>
-              {/* Summary */}
               <Card className="border-2 border-primary/20 bg-primary/5">
-                <CardContent className="pt-4">
+                <CardContent className="pt-4 space-y-6">
 
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <div className="text-sm text-muted-foreground mb-1">Totale preventivo stand
-                      </div>
-                      <div className="text-2xl font-bold text-primary">
-                        €{costs.totalePreventivoStand.toFixed(2)}
-                      </div>
+                  {/* ===================== VENDITA ===================== */}
+                  <div>
+                    <div className="text-lg font-semibold text-primary mb-2">
+                      Vendita
                     </div>
 
-                    <div>
-                      <div className="text-sm text-muted-foreground mb-1">Totale costi stand</div>
-                      <div className="text-2xl font-bold">
-                        €{costs.totaleCostiStand.toFixed(2)}
-                      </div>
-                    </div>
+                    <div className="grid grid-cols-5 gap-4 text-center">
 
-                    <div>
-                      <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                        <div className="text-lg font-bold">
+                          €{costs.totalePrezzoListinoVendita?.toFixed(2) ?? "0.00"}
+                        </div>
                       </div>
-                      <div className="text-2xl font-bold text-green-600">
-                        {costs.marginalitaMedia.toFixed(1)}%
+
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
+                        <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
+                        <div className="text-lg font-bold text-primary">
+                          €{costs.totalePrezzoNettoVendita?.toFixed(2) ?? "0.00"}
+                        </div>
                       </div>
+
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Costi</div>
+                        <div className="text-lg font-bold">
+                          €{costs.totaleCostiVendita?.toFixed(2) ?? "0.00"}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                        <div className="text-lg font-bold">
+                          {costs.scontoMedioVendita?.toFixed(1) ?? "0.0"}%
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                        <div className="text-lg font-bold text-green-600">
+                          {costs.marginalitaVendita?.toFixed(1) ?? "0.0"}%
+                        </div>
+                      </div>
+
                     </div>
                   </div>
+
+                  {/* ===================== SEPARATORE ===================== */}
+                  <div className="border-t pt-4" />
+
+                  {/* ===================== NOLEGGIO ===================== */}
+                  <div>
+
+                    {/* Titolo + Totale Prezzo Noleggio allineato sopra col 2 */}
+                    <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                      <div className="text-left">
+                        <div className="text-lg font-semibold text-primary">Noleggio</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Noleggio</div>
+                        <div className="text-xl font-bold">
+                          €{costs.totalePrezzoNoleggio?.toFixed(2) ?? "0.00"}
+                        </div>
+                      </div>
+                      <div /><div /><div />
+                    </div>
+
+                    {/* Griglia a 5 colonne */}
+                    <div className="grid grid-cols-5 gap-4 text-center">
+
+                      {/* Col 1 – Totale Prezzo Listino */}
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                        <div className="text-lg font-bold">
+                          €{costs.totalePrezzoListinoNoleggio?.toFixed(2) ?? "0.00"}
+                        </div>
+                      </div>
+
+                      {/* Col 2 – Totale Prezzo Netto + di cui + Totale Preventivo Finale */}
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
+                        <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
+                        <div className="text-lg font-bold text-primary">
+                          €{costs.totalePrezzoNettoNoleggio?.toFixed(2) ?? "0.00"}
+                        </div>
+
+                        {/* di cui */}
+                        <div className="text-xs text-muted-foreground mt-2">di cui:</div>
+                        <div className="text-xs text-muted-foreground">
+                          Premontaggio:{" "}
+                          <span className="font-medium text-foreground">
+                            €{costs.premontaggio?.toFixed(2) ?? "0.00"}
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Extra complesso:{" "}
+                          <span className="font-medium text-foreground">
+                            €{costs.extraComplesso?.toFixed(2) ?? "0.00"}
+                          </span>
+                        </div>
+
+                        {/* Totale Preventivo Finale */}
+                        <div className="mt-3">
+                          <div className="text-xs text-muted-foreground">Totale Preventivo Finale</div>
+                          <div className="text-xl font-bold text-primary">
+                            €{costs.totalePreventivoFinale?.toFixed(2) ?? "0.00"}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Col 3 – Totale Costi Vendita */}
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
+                        <div className="text-lg font-bold">
+                          €{costs.totaleCostiNoleggio?.toFixed(2) ?? "0.00"}
+                        </div>
+                      </div>
+
+                      {/* Col 4 – Sconto Medio */}
+                      <div>
+                        <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                        <div className="text-lg font-bold">
+                          {costs.scontoMedioNoleggio?.toFixed(1) ?? "0.0"}%
+                        </div>
+                      </div>
+
+                      {/* Col 5 – Marginalità su Venduto */}
+                      <div>
+                        <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                        <div className="text-lg font-bold text-green-600">
+                          {costs.marginalitaNoleggio?.toFixed(1) ?? "0.0"}%
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
                 </CardContent>
               </Card>
             </div>
