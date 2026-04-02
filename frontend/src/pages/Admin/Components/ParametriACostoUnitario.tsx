@@ -66,6 +66,10 @@ export function ParametriACostoUnitario() {
         queryFn: () =>
             ParametriAPI.getParametriACostiUnitari({
                 attivo: true,
+                sortFields: [{
+                    field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
+                    desc: false
+                }]
             }),
     });
 
@@ -138,7 +142,7 @@ export function ParametriACostoUnitario() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Parametri a costo unitario</CardTitle>
+                <CardTitle>Parametri a prezzo unitario</CardTitle>
                 <CardDescription>
                     Personalizzare i parametri elencati
                 </CardDescription>
@@ -150,7 +154,7 @@ export function ParametriACostoUnitario() {
                         <TableRow>
                             <TableHead className="w-[150px]">Parametro</TableHead>
                             <TableHead className="w-[100px]">U.M.</TableHead>
-                            <TableHead className="w-[100px]">Costo</TableHead>
+                            <TableHead className="w-[100px]">Prezzo</TableHead>
                             <TableHead className="w-[100px]">Ricarico %</TableHead>
                             <TableHead className="w-[200px]">Prezzo</TableHead>
                             <TableHead className="w-[100px]">Azioni</TableHead>
