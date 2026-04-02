@@ -266,14 +266,24 @@ export function TotalePreventivoSection({
     })
   });
 
+  const {data: listinoServizi = []} = useQuery({
+    queryKey: ["listino-servizi-prezzo-unitario"],
+    queryFn: () =>
+        ParametriAPI.getListinoServiziPrezzoUnitario({
+          attivo: true,
+        }),
+  });
+
   const standCosts = useStandCosts({
     formData,
     physicalElements,
     parametri,
     parametriCostiUnitari,
     listinoRetroilluminazione: listinoRetroilluminazione,
-    accessoriStand
+    accessoriStand,
+    listinoServizi
   });
+
   const standMargins = {
     marginalitaStruttura: formData.marginalitaStruttura,
     marginalitaGrafica: formData.marginalitaGrafica,

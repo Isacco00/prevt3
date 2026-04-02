@@ -13,7 +13,6 @@ export function usePreventivoMargins({
 }) {
     const updateMarginsBasedOnProspect = (prospectId: string) => {
         const selectedProspect = prospects.find(p => p.id === prospectId);
-
         if (!selectedProspect) {
             setFormData(prev => ({
                 ...prev,
@@ -21,11 +20,9 @@ export function usePreventivoMargins({
             }));
             return;
         }
-
         const defaultMargin = marginalitaProspect.find(
             m => m.tipoProspect === selectedProspect.tipoProspect
         );
-
         if (!defaultMargin) {
             setFormData(prev => ({
                 ...prev,
@@ -33,15 +30,13 @@ export function usePreventivoMargins({
             }));
             return;
         }
-
         setFormData(prev => ({
             ...prev,
 
             // 🔗 collega il prospect
             prospect: { id: prospectId },
-
+            scontoStrutturaTerra: selectedProspect.scontoCliente,
             // Stand
-            marginalitaStruttura: defaultMargin.marginalita,
             marginalitaGrafica: defaultMargin.marginalita,
             marginalitaRetroilluminazione: defaultMargin.marginalita,
             marginalitaAccessori: defaultMargin.marginalita,

@@ -17,6 +17,7 @@ import {TableBody, Table, TableCell, TableHead, TableHeader, TableRow} from "../
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "../ui/collapsible";
 import {ParametriBean} from "@/types/parametri.ts";
 import {useStandCosts} from "@/hooks/useStandCosts.ts";
+import {Checkbox} from "@/components/ui/checkbox.tsx";
 
 interface StandSectionProps {
   formData: PreventivoBean;
@@ -25,10 +26,16 @@ interface StandSectionProps {
 
 export function StandSection({formData, setFormData}: StandSectionProps) {
 
-  type AccessoriStandMap = Record<string, number>;
+  type AccessorioItem = {
+    qty: number;
+    noleggio: boolean;
+  };
+
+  type AccessoriStandMap = Record<string, AccessorioItem>;
 
   const parseAccessoriStand = (json?: string): AccessoriStandMap => {
     if (!json) return {};
+
     try {
       const parsed = JSON.parse(json);
       return typeof parsed === "object" && parsed !== null ? parsed : {};
@@ -157,23 +164,22 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
   }, [formData.accessoriStandConfig]);
 
 
-  const handleAccessorioChange = (accessorioId: string, quantity: number) => {
+  const handleAccessorioChange = (id: string, quantity: number) => {
     setFormData(prev => {
-      const currentMap = parseAccessoriStand(prev.accessoriStandConfig);
-
-      const updatedMap: AccessoriStandMap = {
-        ...currentMap,
-        [accessorioId]: quantity,
+      const current = parseAccessoriStand(prev.accessoriStandConfig);
+      const updated: AccessoriStandMap = {
+        ...current,
+        [id]: {
+          qty: quantity,
+          noleggio: current[id]?.noleggio ?? false,
+        },
       };
-
-      // opzionale: non salvare zeri
       if (quantity <= 0) {
-        delete updatedMap[accessorioId];
+        delete updated[id];
       }
-
       return {
         ...prev,
-        accessoriStandConfig: stringifyAccessoriStand(updatedMap),
+        accessoriStandConfig: stringifyAccessoriStand(updated),
       };
     });
   };
@@ -204,6 +210,14 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     })
   });
 
+  const {data: listinoServizi = []} = useQuery({
+    queryKey: ["listino-servizi-prezzo-unitario"],
+    queryFn: () =>
+        ParametriAPI.getListinoServiziPrezzoUnitario({
+          attivo: true,
+        }),
+  });
+
   // Calcolo dei costi automatici
   const costs = useStandCosts({
     formData,
@@ -211,8 +225,27 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     parametri,
     parametriCostiUnitari,
     listinoRetroilluminazione: listinoRetroilluminazione,
-    accessoriStand
+    accessoriStand,
+    listinoServizi
   });
+
+  const handleNoleggioChange = (id: string, value: boolean) => {
+    setFormData(prev => {
+      const current = parseAccessoriStand(prev.accessoriStandConfig);
+      if (!current[id] && !value) return prev;
+      const updated: AccessoriStandMap = {
+        ...current,
+        [id]: {
+          qty: current[id]?.qty ?? 0,
+          noleggio: value,
+        },
+      };
+      return {
+        ...prev,
+        accessoriStandConfig: stringifyAccessoriStand(updated),
+      };
+    });
+  };
 
   return (
       <div className="space-y-6">
@@ -487,12 +520,15 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           <TableHead>Accessorio</TableHead>
                           <TableHead className="text-center">Costo unitario</TableHead>
                           <TableHead className="text-center w-24">Quantità</TableHead>
+                          <TableHead className="text-center w-24">Noleggio</TableHead>
                           <TableHead className="text-right">Costo totale</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {accessoriStand.map(accessorio => {
-                          const quantity = accessoriStandMap[accessorio.id] || 0;
+                          const item = accessoriStandMap[accessorio.id];
+                          const quantity = item?.qty || 0;
+                          const noleggio = item?.noleggio || false;
                           const totalCost = quantity * accessorio.costoUnitario;
 
                           return (
@@ -521,6 +557,16 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                                   />
                                 </TableCell>
 
+                                {/* NUOVO FLAG NOLEGGIO */}
+                                <TableCell className="text-center">
+                                  <Checkbox
+                                      checked={noleggio}
+                                      onCheckedChange={(checked) =>
+                                          handleNoleggioChange(accessorio.id, !!checked)
+                                      }
+                                  />
+                                </TableCell>
+
                                 <TableCell className="text-right font-medium">
                                   € {totalCost.toFixed(2).replace(".", ",")}
                                 </TableCell>
@@ -545,25 +591,68 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Struttura a terra */}
                 <Card className="p-4">
+                  {/* HEADER */}
                   <div className="flex justify-between items-start mb-3">
                     <div className="text-sm font-medium">Struttura a terra</div>
-                    <div className="text-lg font-bold">€{costs.strutturaTerra.toFixed(2)}</div>
+                    <div className="text-lg font-bold">
+                      €{costs.prezzoStrutturaTerra.toFixed(2)}
+                    </div>
                   </div>
-                  <div className="flex justify-between items-end">
+
+                  {/* COSTO */}
+                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                    <span>Costo componenti</span>
+                    <span>€{costs.costoStrutturaTerra.toFixed(2)}</span>
+                  </div>
+
+                  {/* SCONTO */}
+                  <div className="flex justify-between items-center mb-2">
                     <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Ricarico</div>
+                      <div className="text-xs text-muted-foreground">Sconto</div>
                       <div className="flex items-center gap-1">
-                        <Input type="number" min="0" max="200" step="1"
-                               value={formData.marginalitaStruttura || 0}
-                               onChange={e => setFormData({
-                                 ...formData,
-                                 marginalitaStruttura: parseFloat(e.target.value) || 0
-                               })} className="w-16 h-6 text-xs text-center"/>
+                        <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={formData.scontoStrutturaTerra || 0}
+                            onChange={e =>
+                                setFormData({
+                                  ...formData,
+                                  scontoStrutturaTerra: parseFloat(e.target.value) || 0,
+                                })
+                            }
+                            className="w-16 h-6 text-xs text-center"
+                        />
                         <span className="text-xs">%</span>
                       </div>
                     </div>
-                    <div
-                        className="text-lg font-bold text-primary">€{costs.preventivoStruttura.toFixed(2)}</div>
+
+                    <div className="text-sm font-medium">
+                      -€{(costs.prezzoStrutturaTerra * (formData.scontoStrutturaTerra || 0) / 100).toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* NETTO */}
+                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
+                    <span className="text-sm font-medium">Prezzo netto</span>
+                    <span className="text-lg font-bold text-primary">
+                      €{costs.prezzoNettoStrutturaTerra.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* COEFF NOLEGGIO */}
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-xs text-muted-foreground">Coeff. noleggio</span>
+                    <span
+                        className="text-sm font-medium">{formData.coefficienteNoleggio ? formData.coefficienteNoleggio.nome : 0}</span>
+                  </div>
+                  {/* PREZZO NOLEGGIO */}
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-sm font-medium">Prezzo noleggio</span>
+                    <span className="text-lg font-bold">
+                      €{(costs.prezzoNettoStrutturaTerra * (formData.coefficienteNoleggio ? formData.coefficienteNoleggio.valore : 0)).toFixed(2)}
+                    </span>
                   </div>
                 </Card>
 
@@ -571,22 +660,89 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                 <Card className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div className="text-sm font-medium">Grafica con cordino</div>
-                    <div className="text-lg font-bold">€{costs.graficaCordino.toFixed(2)}</div>
+
+                    {/* FLAG ATTIVO */}
+                    <Input
+                        type="checkbox"
+                        checked={formData.graficaCordinoAttiva ?? false}
+                        onChange={e =>
+                            setFormData({
+                              ...formData,
+                              graficaCordinoAttiva: e.target.checked,
+                            })
+                        }
+                        className="w-4 h-4"
+                    />
                   </div>
-                  <div className="flex justify-between items-end">
+
+                  {/* COSTO */}
+                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                    <span>Costo componenti</span>
+                    <span>€{costs.costoGraficaCordino.toFixed(2)}</span>
+                  </div>
+
+                  {/* PREZZO BASE */}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-muted-foreground">Prezzo</span>
+                    <span className="text-sm font-medium">€
+                      {(
+                          formData.graficaCordinoAttiva
+                              ? costs.prezzoGraficaCordino
+                              : 0
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* SCONTO */}
+                  <div className="flex justify-between items-center mb-2">
                     <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Ricarico</div>
+                      <div className="text-xs text-muted-foreground">Sconto</div>
                       <div className="flex items-center gap-1">
-                        <Input type="number" min="0" max="200" step="1"
-                               value={formData.marginalitaGrafica || 0} onChange={e => setFormData({
-                          ...formData,
-                          marginalitaGrafica: parseFloat(e.target.value) || 0
-                        })} className="w-16 h-6 text-xs text-center"/>
+                        <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={formData.scontoGraficaCordino || 0}
+                            onChange={e =>
+                                setFormData({
+                                  ...formData,
+                                  scontoGraficaCordino: parseFloat(e.target.value) || 0,
+                                })
+                            }
+                            className="w-16 h-6 text-xs text-center"
+                        />
                         <span className="text-xs">%</span>
                       </div>
                     </div>
-                    <div
-                        className="text-lg font-bold text-primary">€{costs.preventivoGrafica.toFixed(2)}</div>
+
+                    <div className="text-sm font-medium">
+                      -€
+                      {(
+                          (formData.graficaCordinoAttiva
+                              ? costs.prezzoGraficaCordino
+                              : 0) *
+                          (formData.scontoGraficaCordino || 0) /
+                          100
+                      ).toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* NETTO */}
+                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
+                    <span className="text-sm font-medium">Prezzo netto</span>
+                    <span className="text-lg font-bold text-primary">€
+                      {(
+                          (formData.graficaCordinoAttiva
+                              ? costs.prezzoGraficaCordino
+                              : 0) -
+                          ((formData.graficaCordinoAttiva
+                                  ? costs.prezzoGraficaCordino
+                                  : 0) *
+                              (formData.scontoGraficaCordino || 0)) /
+                          100
+                      ).toFixed(2)}
+                    </span>
                   </div>
                 </Card>
 
@@ -594,23 +750,84 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                 <Card className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div className="text-sm font-medium">Retroilluminazione</div>
-                    <div className="text-lg font-bold">€{costs.retroilluminazione.toFixed(2)}</div>
                   </div>
-                  <div className="flex justify-between items-end">
+
+                  {/* COSTO */}
+                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                    <span>Costo componenti</span>
+                    <span>€{costs.costoRetroilluminazione.toFixed(2)}</span>
+                  </div>
+
+                  {/* PREZZO */}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-muted-foreground">Prezzo</span>
+                    <span className="text-sm font-medium">
+                      €{costs.prezzoRetroilluminazione.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* SCONTO */}
+                  <div className="flex justify-between items-center mb-2">
                     <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Ricarico</div>
+                      <div className="text-xs text-muted-foreground">Sconto</div>
                       <div className="flex items-center gap-1">
-                        <Input type="number" min="0" max="200" step="1"
-                               value={formData.marginalitaRetroilluminazione || 0}
-                               onChange={e => setFormData({
-                                 ...formData,
-                                 marginalitaRetroilluminazione: parseFloat(e.target.value) || 0
-                               })} className="w-16 h-6 text-xs text-center"/>
+                        <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={formData.scontoRetroilluminazione || 0}
+                            onChange={e =>
+                                setFormData({
+                                  ...formData,
+                                  scontoRetroilluminazione: parseFloat(e.target.value) || 0,
+                                })
+                            }
+                            className="w-16 h-6 text-xs text-center"
+                        />
                         <span className="text-xs">%</span>
                       </div>
                     </div>
-                    <div
-                        className="text-lg font-bold text-primary">€{costs.preventivoRetroilluminazione.toFixed(2)}</div>
+
+                    <div className="text-sm font-medium">
+                      -€
+                      {(
+                          costs.costoRetroilluminazione *
+                          (formData.scontoRetroilluminazione || 0) /
+                          100
+                      ).toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* NETTO */}
+                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
+                    <span className="text-sm font-medium">Prezzo netto</span>
+                    <span className="text-lg font-bold text-primary">€
+                      {(
+                          costs.prezzoNettoRetroilluminazione
+                      ).toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* COEFF NOLEGGIO */}
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-xs text-muted-foreground">Coeff. noleggio</span>
+                    <span className="text-sm font-medium">
+                      {formData.coefficienteNoleggio
+                          ? formData.coefficienteNoleggio.nome
+                          : 0}
+                    </span>
+                  </div>
+
+                  {/* PREZZO NOLEGGIO */}
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-sm font-medium">Prezzo noleggio</span>
+                    <span className="text-lg font-bold">€
+                      {(
+                          costs.prezzoNettoRetroilluminazione *
+                          (formData.coefficienteNoleggio?.valore ?? 0)
+                      ).toFixed(2)}
+                    </span>
                   </div>
                 </Card>
               </div>
@@ -618,25 +835,116 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Accessori */}
                 <Card className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium">Accessori</div>
-                    <div className="text-lg font-bold">€{costs.costiAccessori.toFixed(2)}</div>
-                  </div>
-                  <div className="flex justify-between items-end">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Ricarico</div>
-                      <div className="flex items-center gap-1">
-                        <Input type="number" min="0" max="200" step="1"
-                               value={formData.marginalitaAccessori || 0}
-                               onChange={e => setFormData({
-                                 ...formData,
-                                 marginalitaAccessori: parseFloat(e.target.value) || 0
-                               })} className="w-16 h-6 text-xs text-center"/>
-                        <span className="text-xs">%</span>
+                  <div className="text-sm font-medium mb-3">Accessori</div>
+
+                  {/* =========================
+        ACCESSORI VENDITA
+     ========================= */}
+                  <div className="mb-4">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>Accessori vendita</span>
+                      <span>€{costs.costiAccessoriVendita.toFixed(2)}</span>
+                    </div>
+
+                    {/* SCONTO */}
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="flex flex-col gap-1">
+                        <div className="text-xs text-muted-foreground">Sconto cliente</div>
+                        <div className="flex items-center gap-1">
+                          <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value={formData.scontoAccessoriVendita || 0}
+                              onChange={e =>
+                                  setFormData({
+                                    ...formData,
+                                    scontoAccessoriVendita: parseFloat(e.target.value) || 0,
+                                  })
+                              }
+                              className="w-14 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </div>
+
+                      <div className="text-xs">
+                        -€{(costs.costiAccessoriVendita - costs.nettoAccessoriVendita).toFixed(2)}
                       </div>
                     </div>
-                    <div
-                        className="text-lg font-bold text-primary">€{costs.preventivoAccessori.toFixed(2)}</div>
+
+                    {/* NETTO */}
+                    <div className="flex justify-between font-medium text-sm">
+                      <span>Netto vendita</span>
+                      <span>€{costs.nettoAccessoriVendita.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* =========================
+        ACCESSORI NOLEGGIO
+     ========================= */}
+                  <div className="pt-3 border-t">
+                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                      <span>Accessori noleggio</span>
+                      <span>€{costs.costiAccessoriNoleggio.toFixed(2)}</span>
+                    </div>
+
+                    {/* SCONTO */}
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="flex flex-col gap-1">
+                        <div className="text-xs text-muted-foreground">Sconto cliente</div>
+                        <div className="flex items-center gap-1">
+                          <Input
+                              type="number"
+                              min="0"
+                              max="100"
+                              step="1"
+                              value={formData.scontoAccessoriNoleggio || 0}
+                              onChange={e =>
+                                  setFormData({
+                                    ...formData,
+                                    scontoAccessoriNoleggio: parseFloat(e.target.value) || 0,
+                                  })
+                              }
+                              className="w-14 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </div>
+
+                      <div className="text-xs">
+                        -€{(costs.costiAccessoriNoleggio - costs.nettoAccessoriNoleggio).toFixed(2)}
+                      </div>
+                    </div>
+
+                    {/* NETTO */}
+                    <div className="flex justify-between text-sm mb-1">
+                      <span>Netto noleggio</span>
+                      <span>€{costs.nettoAccessoriNoleggio.toFixed(2)}</span>
+                    </div>
+
+                    {/* COEFF */}
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Coeff. noleggio</span>
+                      <span>{formData.coefficienteNoleggio?.nome || "-"}</span>
+                    </div>
+
+                    {/* PREZZO NOLEGGIO */}
+                    <div className="flex justify-between font-bold text-sm mt-1">
+                      <span>Prezzo noleggio</span>
+                      <span>€{costs.prezzoNoleggioAccessori.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* =========================
+        TOTALE
+     ========================= */}
+                  <div className="flex justify-between items-end mt-4 pt-2 border-t">
+                    <span className="text-sm font-medium">Totale accessori</span>
+                    <span className="text-lg font-bold text-primary">
+      €{costs.totaleAccessori.toFixed(2)}
+    </span>
                   </div>
                 </Card>
 
@@ -644,51 +952,140 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                 <Card className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div className="text-sm font-medium">Premontaggio</div>
-                    <div className="text-lg font-bold">€{costs.premontaggio.toFixed(2)}</div>
                   </div>
 
-                  <div className="flex justify-between items-end">
+                  {/* COSTO */}
+                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                    <span>Costo componenti</span>
+                    <span>€{costs.costoPremontaggio.toFixed(2)}</span>
+                  </div>
+
+                  {/* PREZZO */}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-muted-foreground">Prezzo</span>
+                    <span className="text-sm font-medium">
+                      €{costs.prezzoPremontaggio.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {/* SCONTO */}
+                  <div className="flex justify-between items-center mb-2">
                     <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Ricarico</div>
+                      <div className="text-xs text-muted-foreground">Sconto</div>
                       <div className="flex items-center gap-1">
-                        <Input type="number" min="0" max="200" step="1"
-                               value={formData.marginalitaPremontaggio || 0}
-                               onChange={e => setFormData({
-                                 ...formData,
-                                 marginalitaPremontaggio: parseFloat(e.target.value) || 0
-                               })} className="w-16 h-6 text-xs text-center"/>
+                        <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={formData.scontoPremontaggio || 0}
+                            onChange={e =>
+                                setFormData({
+                                  ...formData,
+                                  scontoPremontaggio: parseFloat(e.target.value) || 0,
+                                })
+                            }
+                            className="w-16 h-6 text-xs text-center"
+                        />
                         <span className="text-xs">%</span>
                       </div>
                     </div>
-                    <div
-                        className="text-lg font-bold text-primary">€{costs.preventivoPremontaggio.toFixed(2)}</div>
+
+                    <div className="text-sm font-medium">
+                      -€{
+                      (costs.prezzoPremontaggio *
+                          (formData.scontoPremontaggio || 0) /
+                          100
+                      ).toFixed(2)
+                    }
+                    </div>
+                  </div>
+
+                  {/* NETTO */}
+                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
+                    <span className="text-sm font-medium">Prezzo netto</span>
+                    <span className="text-lg font-bold text-primary">€
+                      €{costs.prezzoNettoPremontaggio.toFixed(2)}
+                    </span>
                   </div>
                 </Card>
 
                 {/* Extra Stand Complesso */}
                 <Card className="p-4">
                   <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium my-0 py-0">Extra Stand Complesso</div>
+                    <div className="text-sm font-medium">Extra Stand Complesso</div>
                   </div>
-                  <div className="flex justify-between items-end">
+
+                  {/* COSTO BASE */}
+                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                    <span>Extra base</span>
+                    <span>€{costs.extraStandComplesso.toFixed(2)}</span>
+                  </div>
+
+                  {/* PERCENTUALE EXTRA */}
+                  <div className="flex justify-between items-center mb-2">
                     <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground my-[4px] py-px">Extra % su Costo
-                        Struttura
-                      </div>
+                      <div className="text-xs text-muted-foreground">Extra % su struttura</div>
                       <div className="flex items-center gap-1">
-                        <Input type="number" min="0" max="200" step="1"
-                               value={formData.extraPercComplex || 0}
-                               onChange={e => setFormData({
-                                 ...formData,
-                                 extraPercComplex: parseFloat(e.target.value) || 0
-                               })} className="w-16 h-6 text-xs text-center"/>
+                        <Input
+                            type="number"
+                            min="0"
+                            max="200"
+                            step="1"
+                            value={formData.extraPercComplex || 0}
+                            onChange={e =>
+                                setFormData({
+                                  ...formData,
+                                  extraPercComplex: parseFloat(e.target.value) || 0,
+                                })
+                            }
+                            className="w-16 h-6 text-xs text-center"
+                        />
                         <span className="text-xs">%</span>
                       </div>
                     </div>
-                    <div
-                        className="text-lg font-bold text-primary">€{costs.extraStandComplesso.toFixed(2)}</div>
                   </div>
 
+                  {/* SCONTO */}
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex flex-col gap-1">
+                      <div className="text-xs text-muted-foreground">Sconto</div>
+                      <div className="flex items-center gap-1">
+                        <Input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="1"
+                            value={formData.scontoExtraStandComplesso || 0}
+                            onChange={e =>
+                                setFormData({
+                                  ...formData,
+                                  scontoExtraStandComplesso: parseFloat(e.target.value) || 0,
+                                })
+                            }
+                            className="w-16 h-6 text-xs text-center"
+                        />
+                        <span className="text-xs">%</span>
+                      </div>
+                    </div>
+
+                    <div className="text-sm font-medium">
+                      -€
+                      {(
+                          costs.extraStandComplesso *
+                          (formData.scontoExtraStandComplesso || 0) /
+                          100
+                      ).toFixed(2)}
+                    </div>
+                  </div>
+
+                  {/* NETTO */}
+                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
+                    <span className="text-sm font-medium">Prezzo netto</span>
+                    <span className="text-lg font-bold text-primary">
+                      €{costs.extraStandComplessoNetto.toFixed(2)}
+                    </span>
+                  </div>
                 </Card>
               </div>
               {/* Summary */}

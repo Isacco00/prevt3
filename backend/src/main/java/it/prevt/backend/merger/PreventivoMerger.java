@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.prevt.backend.bean.LayoutDeskBean;
 import it.prevt.backend.bean.PreventivoBean;
 import it.prevt.backend.bean.ProspectBean;
+import it.prevt.backend.entity.Parametri;
 import it.prevt.backend.entity.Preventivo;
 import it.prevt.backend.entity.Prospect;
 import it.prevt.backend.repository.ProspectRepository;
@@ -131,7 +132,7 @@ public class PreventivoMerger extends AbstractMerger<PreventivoBean, Preventivo>
     entity.setPremontaggioDesk(bean.isPremontaggioDesk());
     entity.setPremontaggioEspositori(bean.isPremontaggioEspositori());
 
-    entity.setMarginalitaStruttura(bean.getMarginalitaStruttura());
+    entity.setScontoStrutturaTerra(bean.getScontoStrutturaTerra());
     entity.setMarginalitaGrafica(bean.getMarginalitaGrafica());
     entity.setMarginalitaRetroilluminazione(bean.getMarginalitaRetroilluminazione());
     entity.setMarginalitaAccessori(bean.getMarginalitaAccessori());
@@ -156,6 +157,9 @@ public class PreventivoMerger extends AbstractMerger<PreventivoBean, Preventivo>
 
     if (bean.getProspect() != null) {
       entity.setProspect(repository.find(Prospect.class, bean.getProspect().getId()));
+    }
+    if (bean.getCoefficienteNoleggio() != null) {
+      entity.setCoefficienteNoleggio(repository.find(Parametri.class, bean.getCoefficienteNoleggio().getId()));
     }
   }
 

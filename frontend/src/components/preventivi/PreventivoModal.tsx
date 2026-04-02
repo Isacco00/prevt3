@@ -342,7 +342,7 @@ export function PreventivoModal({
             </div>
 
             {/* Sezione Totale Preventivo Fornitura */}
-            <TotalePreventivoSection formData={formData} setFormData={setFormData}/>
+            {/*<TotalePreventivoSection formData={formData} setFormData={setFormData}/>*/}
             <div className="space-y-2">
               <Label htmlFor="note">Note</Label>
               <Textarea id="note" value={formData.note} onChange={e => setFormData({

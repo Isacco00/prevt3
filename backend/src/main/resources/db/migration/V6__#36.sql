@@ -95,3 +95,12 @@ WHERE id = '451ae3eb-f61d-457e-adff-82dd4cca219d';
 DELETE
 FROM public.parametri_a_costi_unitari
 WHERE id = 'febf22ae-de2f-443a-87dc-66d6facf5cc8';
+
+alter table preventivo
+    add column coefficiente_noleggio_id uuid;
+
+alter table preventivo
+    add constraint fk_preventivo_coefficiente_noleggio foreign key (coefficiente_noleggio_id) references parametri (id);
+
+alter table preventivo drop column marginalita_struttura;
+alter table preventivo add column sconto_struttura_terra numeric(19, 2);

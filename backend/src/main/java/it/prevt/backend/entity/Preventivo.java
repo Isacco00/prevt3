@@ -1,5 +1,6 @@
 package it.prevt.backend.entity;
 
+import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.enumerator.PreventivoStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +40,10 @@ public class Preventivo {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "prospect_id")
   private Prospect prospect;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "coefficiente_noleggio_id")
+  private Parametri coefficienteNoleggio;
 
   @Column(name = "numero_preventivo", nullable = false)
   private String numeroPreventivo;
@@ -256,17 +261,17 @@ public class Preventivo {
 
   private Boolean premontaggio = true;
 
-    @Column(name = "premontaggio_storage")
-    private Boolean premontaggioStorage = false;
+  @Column(name = "premontaggio_storage")
+  private Boolean premontaggioStorage = false;
 
-    @Column(name = "premontaggio_desk")
-    private Boolean premontaggioDesk = false;
+  @Column(name = "premontaggio_desk")
+  private Boolean premontaggioDesk = false;
 
-    @Column(name = "premontaggio_espositori")
-    private Boolean premontaggioEspositori = false;
+  @Column(name = "premontaggio_espositori")
+  private Boolean premontaggioEspositori = false;
 
-    @Column(name = "marginalita_struttura")
-    private BigDecimal marginalitaStruttura = new BigDecimal("50");
+  @Column(name = "sconto_struttura_terra")
+  private BigDecimal scontoStrutturaTerra;
 
   @Column(name = "marginalita_grafica")
   private BigDecimal marginalitaGrafica = new BigDecimal("50");

@@ -30,7 +30,7 @@ public class PreventivoValidator extends AbstractValidator<PreventivoBean> {
     PreventiviRequestBean request = new PreventiviRequestBean();
     request.setNumeroPreventivo(bean.getNumeroPreventivo());
     List<Preventivo> exists = preventivoRepository.getPreventiviList(request);
-    if (!exists.isEmpty()) {
+    if (!exists.isEmpty() && exists.stream().anyMatch(p -> !p.getId().equals(bean.getId()))) {
       addMessage("numeroPreventivo", bean.getNumeroPreventivo(),
           "preventivo.message.error.numeroDuplicato");
     }

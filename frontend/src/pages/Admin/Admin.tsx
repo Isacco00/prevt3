@@ -15,6 +15,7 @@ import {
 import {
   ListinoServiziPrezzoUnitario
 } from "@/pages/Admin/Components/ListinoServiziPrezzoUnitario.tsx";
+import {CoefficientiNoleggio} from "@/pages/Admin/Components/CoefficienteNoleggio.tsx";
 
 export default function Admin() {
   return (
@@ -42,6 +43,7 @@ export default function Admin() {
             <ListinoStrutturaDesk/>
             <ListinoStrutturaEspositori/>
             <ListinoStrutturaStand/>
+            <CoefficientiNoleggio/>
 
           </TabsContent>
         </Tabs>

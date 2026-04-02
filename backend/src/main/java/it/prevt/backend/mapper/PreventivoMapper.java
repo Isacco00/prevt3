@@ -18,6 +18,7 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
 
   private static final ObjectMapper MAPPER = new ObjectMapper();
   private final ProspectMapper prospectMapper;
+  private final ParametriMapper coefficentiNoleggioMapper;
 
   public static List<LayoutDeskBean> parseLayoutDesk(String json) {
     if (json == null || json.isBlank()) {
@@ -136,7 +137,7 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
     bean.setPremontaggioDesk(entity.getPremontaggioDesk());
     bean.setPremontaggioEspositori(entity.getPremontaggioEspositori());
 
-    bean.setMarginalitaStruttura(entity.getMarginalitaStruttura());
+    bean.setScontoStrutturaTerra(entity.getScontoStrutturaTerra());
     bean.setMarginalitaGrafica(entity.getMarginalitaGrafica());
     bean.setMarginalitaRetroilluminazione(entity.getMarginalitaRetroilluminazione());
     bean.setMarginalitaAccessori(entity.getMarginalitaAccessori());
@@ -161,6 +162,9 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
 
     if (entity.getProspect() != null) {
       bean.setProspect(prospectMapper.mapEntityToBean(entity.getProspect()));
+    }
+    if (entity.getCoefficienteNoleggio() != null) {
+      bean.setCoefficienteNoleggio(coefficentiNoleggioMapper.mapEntityToBean(entity.getCoefficienteNoleggio()));
     }
     return bean;
   }

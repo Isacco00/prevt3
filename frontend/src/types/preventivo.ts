@@ -1,5 +1,6 @@
 import {ProspectBean} from "@/types/prospect.ts";
 import {AbstractSearchRequestBean} from "@/types/index.ts";
+import {ParametriBean} from "@/types/parametri.ts";
 
 export type PreventivoSectionKey =
     | 'stand'
@@ -35,6 +36,7 @@ export interface PreventivoBean {
 
     createdAt: string;
     updatedAt: string;
+    coefficienteNoleggio: ParametriBean;
 
     layout: string;
     distribuzione: number;
@@ -125,11 +127,14 @@ export interface PreventivoBean {
     premontaggioDesk: boolean;
     premontaggioEspositori: boolean;
 
-    marginalitaStruttura: number;
-    marginalitaGrafica: number;
-    marginalitaRetroilluminazione: number;
-    marginalitaAccessori: number;
-    marginalitaPremontaggio: number;
+    graficaCordinoAttiva: boolean;
+    scontoStrutturaTerra: number;
+    scontoGraficaCordino: number;
+    scontoRetroilluminazione: number;
+    scontoAccessoriVendita: number;
+    scontoAccessoriNoleggio: number;
+    scontoPremontaggio: number;
+    scontoExtraStandComplesso: number;
 
     marginalitaStrutturaStorage: number;
     marginalitaGraficaStorage: number;

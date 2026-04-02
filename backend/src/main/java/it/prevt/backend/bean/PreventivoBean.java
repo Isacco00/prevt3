@@ -29,6 +29,7 @@ public class PreventivoBean {
   private String note;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
+  private ParametriBean coefficienteNoleggio;
   private BigDecimal profondita;
   private String layout;
   private Integer distribuzione;
@@ -112,7 +113,7 @@ public class PreventivoBean {
   private boolean premontaggioDesk;
   private boolean premontaggioEspositori;
 
-  private BigDecimal marginalitaStruttura;
+  private BigDecimal scontoStrutturaTerra;
   private BigDecimal marginalitaGrafica;
   private BigDecimal marginalitaRetroilluminazione;
   private BigDecimal marginalitaAccessori;
