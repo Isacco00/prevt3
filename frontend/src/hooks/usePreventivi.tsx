@@ -35,7 +35,16 @@ export function usePreventivoMargins({
 
             // 🔗 collega il prospect
             prospect: { id: prospectId },
+
+            // Sconti stand
             scontoStrutturaTerra: selectedProspect.scontoCliente,
+            scontoGraficaCordino: selectedProspect.scontoCliente,
+            scontoRetroilluminazione: selectedProspect.scontoCliente,
+            scontoAccessoriVendita: selectedProspect.scontoCliente,
+            scontoAccessoriNoleggio: selectedProspect.scontoCliente,
+            scontoPremontaggio: selectedProspect.scontoCliente,
+            scontoExtraStandComplesso: selectedProspect.scontoCliente,
+
             // Stand
             marginalitaGrafica: defaultMargin.marginalita,
             marginalitaRetroilluminazione: defaultMargin.marginalita,

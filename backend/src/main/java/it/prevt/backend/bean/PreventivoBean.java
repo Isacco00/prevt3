@@ -114,10 +114,13 @@ public class PreventivoBean {
   private boolean premontaggioEspositori;
 
   private BigDecimal scontoStrutturaTerra;
-  private BigDecimal marginalitaGrafica;
-  private BigDecimal marginalitaRetroilluminazione;
-  private BigDecimal marginalitaAccessori;
-  private BigDecimal marginalitaPremontaggio;
+  private Boolean graficaCordinoAttiva;
+  private BigDecimal scontoGraficaCordino;
+  private BigDecimal scontoRetroilluminazione;
+  private BigDecimal scontoAccessoriVendita;
+  private BigDecimal scontoAccessoriNoleggio;
+  private BigDecimal scontoPremontaggio;
+  private BigDecimal scontoExtraStandComplesso;
 
   private BigDecimal marginalitaStrutturaStorage;
   private BigDecimal marginalitaGraficaStorage;

@@ -273,17 +273,27 @@ public class Preventivo {
   @Column(name = "sconto_struttura_terra")
   private BigDecimal scontoStrutturaTerra;
 
-  @Column(name = "marginalita_grafica")
-  private BigDecimal marginalitaGrafica = new BigDecimal("50");
+  @Column(name = "grafica_cordino_attiva")
+  private Boolean graficaCordinoAttiva = false;
 
-  @Column(name = "marginalita_retroilluminazione")
-  private BigDecimal marginalitaRetroilluminazione = new BigDecimal("50");
+  @Column(name = "sconto_grafica_cordino")
+  private BigDecimal scontoGraficaCordino = BigDecimal.ZERO;
 
-  @Column(name = "marginalita_accessori")
-  private BigDecimal marginalitaAccessori = new BigDecimal("50");
+  @Column(name = "sconto_retroilluminazione")
+  private BigDecimal scontoRetroilluminazione = BigDecimal.ZERO;
 
-  @Column(name = "marginalita_premontaggio")
-  private BigDecimal marginalitaPremontaggio = new BigDecimal("50");
+  @Column(name = "sconto_accessori_vendita")
+  private BigDecimal scontoAccessoriVendita = BigDecimal.ZERO;
+
+  @Column(name = "sconto_accessori_noleggio")
+  private BigDecimal scontoAccessoriNoleggio = BigDecimal.ZERO;
+
+  @Column(name = "sconto_premontaggio")
+  private BigDecimal scontoPremontaggio = BigDecimal.ZERO;
+
+  @Column(name = "sconto_extra_stand_complesso")
+  private BigDecimal scontoExtraStandComplesso = BigDecimal.ZERO;
+
 
   @Column(name = "marginalita_struttura_storage")
   private BigDecimal marginalitaStrutturaStorage = new BigDecimal("50");
