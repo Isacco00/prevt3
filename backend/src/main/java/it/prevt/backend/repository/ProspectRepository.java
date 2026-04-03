@@ -10,6 +10,8 @@ public interface ProspectRepository extends AbstractRepository {
 
   List<Prospect> getProspectList();
 
+  List<Prospect> findByPartitaIva(String partitaIva);
+
   List<MarginalitaPerProspect> getMarginalitaPerProspectList(
       ListinoAccessoriRequestBean searchRequest);
 }

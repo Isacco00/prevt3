@@ -34,6 +34,14 @@ public class ProspectRepositoryImpl extends AbstractRepositoryImpl implements Pr
   }
 
   @Override
+  public List<Prospect> findByPartitaIva(String partitaIva) {
+    String jpql = "SELECT p FROM Prospect p WHERE p.partitaIva = :partitaIva";
+    TypedQuery<Prospect> query = entityManager.createQuery(jpql, Prospect.class);
+    query.setParameter("partitaIva", partitaIva);
+    return getResultList(query);
+  }
+
+  @Override
   public List<MarginalitaPerProspect> getMarginalitaPerProspectList(
       ListinoAccessoriRequestBean searchRequest) {
     Class<MarginalitaPerProspect> clazz = MarginalitaPerProspect.class;

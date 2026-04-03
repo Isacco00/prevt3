@@ -120,11 +120,14 @@ const Prospects = () => {
             setIsDialogOpen(false);
             loadProspects();
         } catch (e: unknown) {
-            toast({
-                title: "Errore",
-                description: "Errore durante il salvataggio",
-                variant: "destructive",
-            });
+            const axiosErr = e as { response?: { data?: { errors?: unknown[] } } };
+            if (!axiosErr?.response?.data?.errors?.length) {
+                toast({
+                    title: "Errore",
+                    description: "Errore durante il salvataggio",
+                    variant: "destructive",
+                });
+            }
         }
     };
 

@@ -7,6 +7,9 @@ import it.prevt.backend.manager.ProspectManager;
 import it.prevt.backend.mapper.ProspectMapper;
 import it.prevt.backend.merger.ProspectMerger;
 import it.prevt.backend.repository.ProspectRepository;
+import it.prevt.backend.validator.ProspectValidator;
+import it.prevt.backend.validator.internal.ValidationException;
+import it.prevt.backend.validator.internal.ValidationMessages;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -25,6 +28,7 @@ public class ProspectManagerImpl implements ProspectManager {
   private final ProspectRepository repository;
   private final ProspectMapper mapper;
   private final ProspectMerger merger;
+  private final ProspectValidator validator;
 
   @Override
   public List<ProspectBean> getProspectList() {
@@ -37,6 +41,10 @@ public class ProspectManagerImpl implements ProspectManager {
 
   @Override
   public ProspectBean saveProspect(ProspectBean bean, Authentication authentication) {
+    ValidationMessages<ProspectBean> result = validator.validate(bean);
+    if (result.hasErrors()) {
+      throw new ValidationException(result.getErrors());
+    }
     Prospect entity;
     if (bean.getId() == null) {
       entity = merger.mapNew(bean, Prospect.class);
