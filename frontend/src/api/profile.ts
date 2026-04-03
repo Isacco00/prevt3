@@ -6,8 +6,8 @@ const entryPoint = "/profile";
 
 export const ProfileAPI = {
 
-  getProfile: async (): Promise<UserBean> => {
-    const res = await api.get(entryPoint + '/getProfile');
+  getProfile: async (silent?: boolean): Promise<UserBean> => {
+    const res = await api.get(entryPoint + '/getProfile', { silent });
     return res.data;
   },
 

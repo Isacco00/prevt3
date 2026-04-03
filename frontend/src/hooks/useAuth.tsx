@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const loadUser = async () => {
             try {
-                const me = await ProfileAPI.getProfile();
+                const me = await ProfileAPI.getProfile(true);
                 setUser(me);
             } catch {
                 setUser(null);

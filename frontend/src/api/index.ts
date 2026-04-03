@@ -2,6 +2,12 @@ import axios from "axios";
 import {toast} from "@/hooks/use-toast";
 import i18n from "@/i18n";
 
+declare module "axios" {
+  interface InternalAxiosRequestConfig {
+    silent?: boolean;
+  }
+}
+
 export const api = axios.create({
   baseURL: "/api",
   withCredentials: true,
@@ -44,6 +50,7 @@ api.interceptors.response.use(
     },
     err => {
       apiEnd();
+      if (err.config?.silent) return Promise.reject(err);
       const backendErrors = err?.response?.data?.errors;
       if (backendErrors && backendErrors.length > 0) {
         const errorKey = backendErrors[0].message;
