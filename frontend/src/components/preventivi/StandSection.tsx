@@ -512,7 +512,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
           </div>
           {/* Accessori Stand */}
           <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
-            <div className="space-y-4">
+            <div className="space-y-4 mb-4">
               <CollapsibleTrigger
                   className="flex items-center justify-between w-full p-2 hover:bg-accent rounded-lg transition-colors mx-0 px-0 py-[13px]">
                 <div className="flex items-center gap-2">
@@ -599,507 +599,278 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                 <h4 className="text-md font-semibold">Calcolo Preventivo Stand</h4>
               </div>
 
-              {/* Layout 3x2 - Prima riga */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Struttura a terra */}
-                <Card className="p-4">
-                  {/* HEADER */}
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium">Struttura a terra</div>
-                    <div className="text-lg font-bold">
-                      €{costs.prezzoStrutturaTerra.toFixed(2)}
-                    </div>
-                  </div>
+              {/* Tabella Calcolo Costi */}
+              <Card>
+                <CardContent className="pt-4 px-2">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Voce</TableHead>
+                        <TableHead className="text-right">Costo</TableHead>
+                        <TableHead className="text-right">Prezzo</TableHead>
+                        <TableHead className="text-center w-32">Sconto %</TableHead>
+                        <TableHead className="text-right">Sconto €</TableHead>
+                        <TableHead className="text-right">Prezzo Netto</TableHead>
+                        <TableHead className="text-center">Coeff. Noleggio</TableHead>
+                        <TableHead className="text-right">Prezzo Noleggio</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* Struttura a terra */}
+                      <TableRow>
+                        <TableCell className="font-medium">Struttura a terra</TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costoStrutturaTerra.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{costs.prezzoStrutturaTerra.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoStrutturaTerra || 0}
+                                onChange={e => setFormData({...formData, scontoStrutturaTerra: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.prezzoStrutturaTerra * (formData.scontoStrutturaTerra || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.prezzoNettoStrutturaTerra.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-sm">
+                          {formData.coefficienteNoleggio ? formData.coefficienteNoleggio.nome : "-"}
+                        </TableCell>
+                        <TableCell className="text-right font-bold">
+                          €{(costs.prezzoNettoStrutturaTerra * (formData.coefficienteNoleggio?.valore ?? 0)).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
 
-                  {/* COSTO */}
-                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                    <span>Costo componenti</span>
-                    <span>€{costs.costoStrutturaTerra.toFixed(2)}</span>
-                  </div>
+                      {/* Grafica con cordino */}
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            Grafica con cordino
+                            <Checkbox
+                                checked={formData.graficaCordinoAttiva ?? false}
+                                onCheckedChange={checked => setFormData({...formData, graficaCordinoAttiva: Boolean(checked)})}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costoGraficaCordino.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{(formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoGraficaCordino || 0}
+                                onChange={e => setFormData({...formData, scontoGraficaCordino: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{((formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0) * (formData.scontoGraficaCordino || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{((formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0) - ((formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0) * (formData.scontoGraficaCordino || 0)) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
 
-                  {/* SCONTO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Sconto</div>
-                      <div className="flex items-center gap-1">
-                        <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={formData.scontoStrutturaTerra || 0}
-                            onChange={e =>
-                                setFormData({
-                                  ...formData,
-                                  scontoStrutturaTerra: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="w-16 h-6 text-xs text-center"
-                        />
-                        <span className="text-xs">%</span>
-                      </div>
-                    </div>
+                      {/* Retroilluminazione */}
+                      <TableRow>
+                        <TableCell className="font-medium">Retroilluminazione</TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costoRetroilluminazione.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{costs.prezzoRetroilluminazione.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoRetroilluminazione || 0}
+                                onChange={e => setFormData({...formData, scontoRetroilluminazione: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.costoRetroilluminazione * (formData.scontoRetroilluminazione || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.prezzoNettoRetroilluminazione.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-sm">
+                          {formData.coefficienteNoleggio ? formData.coefficienteNoleggio.nome : "-"}
+                        </TableCell>
+                        <TableCell className="text-right font-bold">
+                          €{(costs.prezzoNettoRetroilluminazione * (formData.coefficienteNoleggio?.valore ?? 0)).toFixed(2)}
+                        </TableCell>
+                      </TableRow>
 
-                    <div className="text-sm font-medium">
-                      -€{(costs.prezzoStrutturaTerra * (formData.scontoStrutturaTerra || 0) / 100).toFixed(2)}
-                    </div>
-                  </div>
+                      {/* Accessori vendita */}
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-muted-foreground">Accessori</span>
+                            <span>Vendita</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costiAccessoriVendita.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{costs.costiAccessoriVendita.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoAccessoriVendita || 0}
+                                onChange={e => setFormData({...formData, scontoAccessoriVendita: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.costiAccessoriVendita - costs.nettoAccessoriVendita).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.nettoAccessoriVendita.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
 
-                  {/* NETTO */}
-                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
-                    <span className="text-sm font-medium">Prezzo netto</span>
-                    <span className="text-lg font-bold text-primary">
-                      €{costs.prezzoNettoStrutturaTerra.toFixed(2)}
-                    </span>
-                  </div>
+                      {/* Accessori noleggio */}
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-muted-foreground">Accessori</span>
+                            <span>Noleggio</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costiAccessoriNoleggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{costs.costiAccessoriNoleggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoAccessoriNoleggio || 0}
+                                onChange={e => setFormData({...formData, scontoAccessoriNoleggio: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.costiAccessoriNoleggio - costs.nettoAccessoriNoleggio).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.nettoAccessoriNoleggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-sm">
+                          {formData.coefficienteNoleggio?.nome || "-"}
+                        </TableCell>
+                        <TableCell className="text-right font-bold">
+                          €{costs.prezzoNoleggioAccessori.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
 
-                  {/* COEFF NOLEGGIO */}
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-muted-foreground">Coeff. noleggio</span>
-                    <span
-                        className="text-sm font-medium">{formData.coefficienteNoleggio ? formData.coefficienteNoleggio.nome : 0}</span>
-                  </div>
-                  {/* PREZZO NOLEGGIO */}
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-sm font-medium">Prezzo noleggio</span>
-                    <span className="text-lg font-bold">
-                      €{(costs.prezzoNettoStrutturaTerra * (formData.coefficienteNoleggio ? formData.coefficienteNoleggio.valore : 0)).toFixed(2)}
-                    </span>
-                  </div>
-                </Card>
+                      {/* Premontaggio */}
+                      <TableRow>
+                        <TableCell className="font-medium">Premontaggio</TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costoPremontaggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{costs.prezzoPremontaggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoPremontaggio || 0}
+                                onChange={e => setFormData({...formData, scontoPremontaggio: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.prezzoPremontaggio * (formData.scontoPremontaggio || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.prezzoNettoPremontaggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
 
-                {/* Grafica con cordino a terra */}
-                <Card className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium">Grafica con cordino</div>
-
-                    {/* FLAG ATTIVO */}
-                    <Input
-                        type="checkbox"
-                        checked={formData.graficaCordinoAttiva ?? false}
-                        onChange={e =>
-                            setFormData({
-                              ...formData,
-                              graficaCordinoAttiva: e.target.checked,
-                            })
-                        }
-                        className="w-4 h-4"
-                    />
-                  </div>
-
-                  {/* COSTO */}
-                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                    <span>Costo componenti</span>
-                    <span>€{costs.costoGraficaCordino.toFixed(2)}</span>
-                  </div>
-
-                  {/* PREZZO BASE */}
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-muted-foreground">Prezzo</span>
-                    <span className="text-sm font-medium">€
-                      {(
-                          formData.graficaCordinoAttiva
-                              ? costs.prezzoGraficaCordino
-                              : 0
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* SCONTO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Sconto</div>
-                      <div className="flex items-center gap-1">
-                        <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={formData.scontoGraficaCordino || 0}
-                            onChange={e =>
-                                setFormData({
-                                  ...formData,
-                                  scontoGraficaCordino: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="w-16 h-6 text-xs text-center"
-                        />
-                        <span className="text-xs">%</span>
-                      </div>
-                    </div>
-
-                    <div className="text-sm font-medium">
-                      -€
-                      {(
-                          (formData.graficaCordinoAttiva
-                              ? costs.prezzoGraficaCordino
-                              : 0) *
-                          (formData.scontoGraficaCordino || 0) /
-                          100
-                      ).toFixed(2)}
-                    </div>
-                  </div>
-
-                  {/* NETTO */}
-                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
-                    <span className="text-sm font-medium">Prezzo netto</span>
-                    <span className="text-lg font-bold text-primary">€
-                      {(
-                          (formData.graficaCordinoAttiva
-                              ? costs.prezzoGraficaCordino
-                              : 0) -
-                          ((formData.graficaCordinoAttiva
-                                  ? costs.prezzoGraficaCordino
-                                  : 0) *
-                              (formData.scontoGraficaCordino || 0)) /
-                          100
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                </Card>
-
-                {/* Retroilluminazione */}
-                <Card className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium">Retroilluminazione</div>
-                  </div>
-
-                  {/* COSTO */}
-                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                    <span>Costo componenti</span>
-                    <span>€{costs.costoRetroilluminazione.toFixed(2)}</span>
-                  </div>
-
-                  {/* PREZZO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-muted-foreground">Prezzo</span>
-                    <span className="text-sm font-medium">
-                      €{costs.prezzoRetroilluminazione.toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* SCONTO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Sconto</div>
-                      <div className="flex items-center gap-1">
-                        <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={formData.scontoRetroilluminazione || 0}
-                            onChange={e =>
-                                setFormData({
-                                  ...formData,
-                                  scontoRetroilluminazione: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="w-16 h-6 text-xs text-center"
-                        />
-                        <span className="text-xs">%</span>
-                      </div>
-                    </div>
-
-                    <div className="text-sm font-medium">
-                      -€
-                      {(
-                          costs.costoRetroilluminazione *
-                          (formData.scontoRetroilluminazione || 0) /
-                          100
-                      ).toFixed(2)}
-                    </div>
-                  </div>
-
-                  {/* NETTO */}
-                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
-                    <span className="text-sm font-medium">Prezzo netto</span>
-                    <span className="text-lg font-bold text-primary">€
-                      {(
-                          costs.prezzoNettoRetroilluminazione
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* COEFF NOLEGGIO */}
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-xs text-muted-foreground">Coeff. noleggio</span>
-                    <span className="text-sm font-medium">
-                      {formData.coefficienteNoleggio
-                          ? formData.coefficienteNoleggio.nome
-                          : 0}
-                    </span>
-                  </div>
-
-                  {/* PREZZO NOLEGGIO */}
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-sm font-medium">Prezzo noleggio</span>
-                    <span className="text-lg font-bold">€
-                      {(
-                          costs.prezzoNettoRetroilluminazione *
-                          (formData.coefficienteNoleggio?.valore ?? 0)
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                </Card>
-              </div>
-              {/* Layout 3x2 - Seconda riga */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Accessori */}
-                <Card className="p-4">
-                  <div className="text-sm font-medium mb-3">Accessori</div>
-
-                  {/* =========================
-        ACCESSORI VENDITA
-     ========================= */}
-                  <div className="mb-4">
-                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                      <span>Accessori vendita</span>
-                      <span>€{costs.costiAccessoriVendita.toFixed(2)}</span>
-                    </div>
-
-                    {/* SCONTO */}
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex flex-col gap-1">
-                        <div className="text-xs text-muted-foreground">Sconto cliente</div>
-                        <div className="flex items-center gap-1">
-                          <Input
-                              type="number"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={formData.scontoAccessoriVendita || 0}
-                              onChange={e =>
-                                  setFormData({
-                                    ...formData,
-                                    scontoAccessoriVendita: parseFloat(e.target.value) || 0,
-                                  })
-                              }
-                              className="w-14 h-6 text-xs text-center"
-                          />
-                          <span className="text-xs">%</span>
-                        </div>
-                      </div>
-
-                      <div className="text-xs">
-                        -€{(costs.costiAccessoriVendita - costs.nettoAccessoriVendita).toFixed(2)}
-                      </div>
-                    </div>
-
-                    {/* NETTO */}
-                    <div className="flex justify-between font-medium text-sm">
-                      <span>Netto vendita</span>
-                      <span>€{costs.nettoAccessoriVendita.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  {/* =========================
-        ACCESSORI NOLEGGIO
-     ========================= */}
-                  <div className="pt-3 border-t">
-                    <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                      <span>Accessori noleggio</span>
-                      <span>€{costs.costiAccessoriNoleggio.toFixed(2)}</span>
-                    </div>
-
-                    {/* SCONTO */}
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex flex-col gap-1">
-                        <div className="text-xs text-muted-foreground">Sconto cliente</div>
-                        <div className="flex items-center gap-1">
-                          <Input
-                              type="number"
-                              min="0"
-                              max="100"
-                              step="1"
-                              value={formData.scontoAccessoriNoleggio || 0}
-                              onChange={e =>
-                                  setFormData({
-                                    ...formData,
-                                    scontoAccessoriNoleggio: parseFloat(e.target.value) || 0,
-                                  })
-                              }
-                              className="w-14 h-6 text-xs text-center"
-                          />
-                          <span className="text-xs">%</span>
-                        </div>
-                      </div>
-
-                      <div className="text-xs">
-                        -€{(costs.costiAccessoriNoleggio - costs.nettoAccessoriNoleggio).toFixed(2)}
-                      </div>
-                    </div>
-
-                    {/* NETTO */}
-                    <div className="flex justify-between text-sm mb-1">
-                      <span>Netto noleggio</span>
-                      <span>€{costs.nettoAccessoriNoleggio.toFixed(2)}</span>
-                    </div>
-
-                    {/* COEFF */}
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Coeff. noleggio</span>
-                      <span>{formData.coefficienteNoleggio?.nome || "-"}</span>
-                    </div>
-
-                    {/* PREZZO NOLEGGIO */}
-                    <div className="flex justify-between font-bold text-sm mt-1">
-                      <span>Prezzo noleggio</span>
-                      <span>€{costs.prezzoNoleggioAccessori.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  {/* =========================
-        TOTALE
-     ========================= */}
-                  <div className="flex justify-between items-end mt-4 pt-2 border-t">
-                    <span className="text-sm font-medium">Totale accessori</span>
-                    <span className="text-lg font-bold text-primary">
-      €{costs.totaleAccessori.toFixed(2)}
-    </span>
-                  </div>
-                </Card>
-
-                {/* Premontaggio */}
-                <Card className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium">Premontaggio</div>
-                  </div>
-
-                  {/* COSTO */}
-                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                    <span>Costo componenti</span>
-                    <span>€{costs.costoPremontaggio.toFixed(2)}</span>
-                  </div>
-
-                  {/* PREZZO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-muted-foreground">Prezzo</span>
-                    <span className="text-sm font-medium">
-                      €{costs.prezzoPremontaggio.toFixed(2)}
-                    </span>
-                  </div>
-
-                  {/* SCONTO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Sconto</div>
-                      <div className="flex items-center gap-1">
-                        <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={formData.scontoPremontaggio || 0}
-                            onChange={e =>
-                                setFormData({
-                                  ...formData,
-                                  scontoPremontaggio: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="w-16 h-6 text-xs text-center"
-                        />
-                        <span className="text-xs">%</span>
-                      </div>
-                    </div>
-
-                    <div className="text-sm font-medium">
-                      -€{
-                      (costs.prezzoPremontaggio *
-                          (formData.scontoPremontaggio || 0) /
-                          100
-                      ).toFixed(2)
-                    }
-                    </div>
-                  </div>
-
-                  {/* NETTO */}
-                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
-                    <span className="text-sm font-medium">Prezzo netto</span>
-                    <span className="text-lg font-bold text-primary">€
-                      €{costs.prezzoNettoPremontaggio.toFixed(2)}
-                    </span>
-                  </div>
-                </Card>
-
-                {/* Extra Stand Complesso */}
-                <Card className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="text-sm font-medium">Extra Stand Complesso</div>
-                  </div>
-
-                  {/* COSTO BASE */}
-                  <div className="flex justify-between text-xs text-muted-foreground mb-2">
-                    <span>Extra base</span>
-                    <span>€{costs.extraStandComplesso.toFixed(2)}</span>
-                  </div>
-
-                  {/* PERCENTUALE EXTRA */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Extra % su struttura</div>
-                      <div className="flex items-center gap-1">
-                        <Input
-                            type="number"
-                            min="0"
-                            max="200"
-                            step="1"
-                            value={formData.extraPercComplex || 0}
-                            onChange={e =>
-                                setFormData({
-                                  ...formData,
-                                  extraPercComplex: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="w-16 h-6 text-xs text-center"
-                        />
-                        <span className="text-xs">%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* SCONTO */}
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex flex-col gap-1">
-                      <div className="text-xs text-muted-foreground">Sconto</div>
-                      <div className="flex items-center gap-1">
-                        <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            value={formData.scontoExtraStandComplesso || 0}
-                            onChange={e =>
-                                setFormData({
-                                  ...formData,
-                                  scontoExtraStandComplesso: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="w-16 h-6 text-xs text-center"
-                        />
-                        <span className="text-xs">%</span>
-                      </div>
-                    </div>
-
-                    <div className="text-sm font-medium">
-                      -€
-                      {(
-                          costs.extraStandComplesso *
-                          (formData.scontoExtraStandComplesso || 0) /
-                          100
-                      ).toFixed(2)}
-                    </div>
-                  </div>
-
-                  {/* NETTO */}
-                  <div className="flex justify-between items-end mt-3 pt-2 border-t">
-                    <span className="text-sm font-medium">Prezzo netto</span>
-                    <span className="text-lg font-bold text-primary">
-                      €{costs.extraStandComplessoNetto.toFixed(2)}
-                    </span>
-                  </div>
-                </Card>
-              </div>
+                      {/* Extra Stand Complesso */}
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col gap-1">
+                            <span>Extra Stand Complesso</span>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <span>Extra %:</span>
+                              <Input
+                                  type="number" min="0" max="200" step="1"
+                                  value={formData.extraPercComplex || 0}
+                                  onChange={e => setFormData({...formData, extraPercComplex: parseFloat(e.target.value) || 0})}
+                                  className="w-14 h-6 text-xs text-center"
+                              />
+                              <span>%</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.extraStandComplesso.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoExtraStandComplesso || 0}
+                                onChange={e => setFormData({...formData, scontoExtraStandComplesso: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.extraStandComplesso * (formData.scontoExtraStandComplesso || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.extraStandComplessoNetto.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
               <Card className="border-2 border-primary/20 bg-primary/5">
                 <CardContent className="pt-4 space-y-6">
 
