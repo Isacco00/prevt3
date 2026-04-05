@@ -229,18 +229,6 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     listinoServizi
   });
 
-  const venditaTotaleListino = costs.totalePrezzoListinoVendita;
-  const venditaTotaleNetto = costs.totalePrezzoNettoVendita;
-  const venditaTotaleCosti = costs.totaleCostiVendita;
-  const venditaScontoMedio = costs.scontoMedioVendita;
-  const venditaMarginalita = costs.marginalitaVendita;
-
-  const noleggioTotaleListino = costs.totalePrezzoListinoNoleggio;
-  const noleggioTotaleNetto = costs.totalePrezzoNettoNoleggio;
-  const noleggioTotaleCosti = costs.totaleCostiNoleggio;
-  const noleggioScontoMedio = costs.scontoMedioNoleggio;
-  const noleggioMarginalita = costs.marginalitaNoleggio;
-
   const handleNoleggioChange = (id: string, value: boolean) => {
     setFormData(prev => {
       const current = parseAccessoriStand(prev.accessoriStandConfig);
@@ -531,9 +519,10 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <TableRow>
                           <TableHead>Accessorio</TableHead>
                           <TableHead className="text-center">Costo unitario</TableHead>
+                          <TableHead className="text-center">Prezzo Unitario</TableHead>
                           <TableHead className="text-center w-24">Quantità</TableHead>
                           <TableHead className="text-center w-24">Noleggio</TableHead>
-                          <TableHead className="text-right">Costo totale</TableHead>
+                          <TableHead className="text-right">Prezzo</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -541,7 +530,11 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           const item = accessoriStandMap[accessorio.id];
                           const quantity = item?.qty || 0;
                           const noleggio = item?.noleggio || false;
-                          const totalCost = quantity * accessorio.costoUnitario;
+                          const prezzoUnitario = accessorio.costoUnitario * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                          const coeff = formData.coefficienteNoleggio?.valore ?? 0;
+                          const prezzo = noleggio
+                              ? prezzoUnitario * quantity * coeff
+                              : prezzoUnitario * quantity;
 
                           return (
                               <TableRow key={accessorio.id}>
@@ -551,6 +544,10 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
                                 <TableCell className="text-center py-1">
                                   € {accessorio.costoUnitario.toFixed(2).replace(".", ",")}
+                                </TableCell>
+
+                                <TableCell className="text-center py-1">
+                                  € {prezzoUnitario.toFixed(2).replace(".", ",")}
                                 </TableCell>
 
                                 <TableCell className="text-center">
@@ -580,7 +577,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                                 </TableCell>
 
                                 <TableCell className="text-right font-medium">
-                                  € {totalCost.toFixed(2).replace(".", ",")}
+                                  € {prezzo.toFixed(2).replace(".", ",")}
                                 </TableCell>
                               </TableRow>
                           );
@@ -594,9 +591,16 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
             {/* Calcolo Costi Stand */}
             <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Calculator className="h-5 w-5"/>
-                <h4 className="text-md font-semibold">Calcolo Preventivo Stand</h4>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5"/>
+                  <h4 className="text-md font-semibold">Calcolo Preventivo Stand</h4>
+                </div>
+                {formData.coefficienteNoleggio && (
+                  <span className="text-sm text-muted-foreground">
+                    Coeff. Noleggio: <span className="font-semibold text-foreground">{formData.coefficienteNoleggio.nome}</span>
+                  </span>
+                )}
               </div>
 
               {/* Tabella Calcolo Costi */}
@@ -611,7 +615,6 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <TableHead className="text-center w-32">Sconto %</TableHead>
                         <TableHead className="text-right">Sconto €</TableHead>
                         <TableHead className="text-right">Prezzo Netto</TableHead>
-                        <TableHead className="text-center">Coeff. Noleggio</TableHead>
                         <TableHead className="text-right">Prezzo Noleggio</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -642,11 +645,8 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <TableCell className="text-right font-bold text-primary">
                           €{costs.prezzoNettoStrutturaTerra.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-sm">
-                          {formData.coefficienteNoleggio ? formData.coefficienteNoleggio.nome : "-"}
-                        </TableCell>
                         <TableCell className="text-right font-bold">
-                          €{(costs.prezzoNettoStrutturaTerra * (formData.coefficienteNoleggio?.valore ?? 0)).toFixed(2)}
+                          €{costs.prezzoNoleggioStrutturaTerra.toFixed(2)}
                         </TableCell>
                       </TableRow>
 
@@ -682,9 +682,8 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           -€{((formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0) * (formData.scontoGraficaCordino || 0) / 100).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right font-bold text-primary">
-                          €{((formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0) - ((formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0) * (formData.scontoGraficaCordino || 0)) / 100).toFixed(2)}
+                          €{costs.prezzoNettoGraficaCordino.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                         <TableCell className="text-center text-muted-foreground">-</TableCell>
                       </TableRow>
 
@@ -714,11 +713,8 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <TableCell className="text-right font-bold text-primary">
                           €{costs.prezzoNettoRetroilluminazione.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-sm">
-                          {formData.coefficienteNoleggio ? formData.coefficienteNoleggio.nome : "-"}
-                        </TableCell>
                         <TableCell className="text-right font-bold">
-                          €{(costs.prezzoNettoRetroilluminazione * (formData.coefficienteNoleggio?.valore ?? 0)).toFixed(2)}
+                          €{costs.prezzoNoleggioRetroilluminazione.toFixed(2)}
                         </TableCell>
                       </TableRow>
 
@@ -734,7 +730,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           €{costs.costiAccessoriVendita.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-sm">
-                          €{costs.costiAccessoriVendita.toFixed(2)}
+                          €{costs.prezziAccessoriVendita.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="flex items-center justify-center gap-1">
@@ -748,12 +744,11 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-right text-sm">
-                          -€{(costs.costiAccessoriVendita - costs.nettoAccessoriVendita).toFixed(2)}
+                          -€{(costs.prezziAccessoriVendita - costs.nettoAccessoriVendita).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right font-bold text-primary">
                           €{costs.nettoAccessoriVendita.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                         <TableCell className="text-center text-muted-foreground">-</TableCell>
                       </TableRow>
 
@@ -769,7 +764,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           €{costs.costiAccessoriNoleggio.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-sm">
-                          €{costs.costiAccessoriNoleggio.toFixed(2)}
+                          €{costs.prezziAccessoriNoleggio.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="flex items-center justify-center gap-1">
@@ -783,13 +778,10 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-right text-sm">
-                          -€{(costs.costiAccessoriNoleggio - costs.nettoAccessoriNoleggio).toFixed(2)}
+                          -€{(costs.prezziAccessoriNoleggio - costs.nettoAccessoriNoleggio).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right font-bold text-primary">
                           €{costs.nettoAccessoriNoleggio.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-center text-sm">
-                          {formData.coefficienteNoleggio?.nome || "-"}
                         </TableCell>
                         <TableCell className="text-right font-bold">
                           €{costs.prezzoNoleggioAccessori.toFixed(2)}
@@ -822,7 +814,6 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <TableCell className="text-right font-bold text-primary">
                           €{costs.prezzoNettoPremontaggio.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                         <TableCell className="text-center text-muted-foreground">-</TableCell>
                       </TableRow>
 
@@ -865,7 +856,6 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           €{costs.extraStandComplessoNetto.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center text-muted-foreground">-</TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -884,6 +874,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           €{costs.totalePrezzoListinoVendita?.toFixed(2) ?? "0.00"}
                         </div>
@@ -899,6 +890,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Costi</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           €{costs.totaleCostiVendita?.toFixed(2) ?? "0.00"}
                         </div>
@@ -906,6 +898,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           {costs.scontoMedioVendita?.toFixed(1) ?? "0.0"}%
                         </div>
@@ -913,6 +906,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
                       <div>
                         <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold text-green-600">
                           {costs.marginalitaVendita?.toFixed(1) ?? "0.0"}%
                         </div>
@@ -947,6 +941,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       {/* Col 1 – Totale Prezzo Listino */}
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           €{costs.totalePrezzoListinoNoleggio?.toFixed(2) ?? "0.00"}
                         </div>
@@ -987,6 +982,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       {/* Col 3 – Totale Costi Vendita */}
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           €{costs.totaleCostiNoleggio?.toFixed(2) ?? "0.00"}
                         </div>
@@ -995,6 +991,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       {/* Col 4 – Sconto Medio */}
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           {costs.scontoMedioNoleggio?.toFixed(1) ?? "0.0"}%
                         </div>
@@ -1003,6 +1000,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       {/* Col 5 – Marginalità su Venduto */}
                       <div>
                         <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                        <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold text-green-600">
                           {costs.marginalitaNoleggio?.toFixed(1) ?? "0.0"}%
                         </div>

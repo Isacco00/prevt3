@@ -21,9 +21,12 @@ export default function Admin() {
 
   useEffect(() => {
     const hash = location.hash.slice(1);
-    if (!hash) return;
     const timer = setTimeout(() => {
-      document.getElementById(hash)?.scrollIntoView({behavior: 'smooth', block: 'start'});
+      if (hash) {
+        document.getElementById(hash)?.scrollIntoView({behavior: 'smooth', block: 'start'});
+      } else {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+      }
     }, 150);
     return () => clearTimeout(timer);
   }, [location.hash, location.search]);
