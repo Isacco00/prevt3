@@ -287,6 +287,7 @@ export function useStandCosts({
         prezzoRetroilluminazione +
         prezzoPremontaggio +
         prezziAccessoriVendita +
+        prezziAccessoriNoleggio +
         extraStandComplesso
     );
 
@@ -296,6 +297,7 @@ export function useStandCosts({
         prezzoNettoRetroilluminazione +
         prezzoNettoPremontaggio +
         nettoAccessoriVendita +
+        nettoAccessoriNoleggio +
         extraStandComplessoNetto
     );
 
@@ -304,7 +306,8 @@ export function useStandCosts({
         (formData.graficaCordinoAttiva ? costoGraficaCordino : 0) +
         costoRetroilluminazione +
         costoPremontaggio +
-        costiAccessoriVendita
+        costiAccessoriVendita +
+        costiAccessoriNoleggio
     );
 
     const scontoMedioVendita =

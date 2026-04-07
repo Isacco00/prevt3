@@ -834,10 +834,10 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                             </div>
                           </div>
                         </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
                           €{costs.extraStandComplesso.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                         <TableCell className="text-center">
                           <div className="flex items-center justify-center gap-1">
                             <Input
