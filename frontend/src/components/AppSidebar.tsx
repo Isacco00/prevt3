@@ -27,7 +27,7 @@ const navigationItems = [
 
 const adminSubItems = [
   {title: 'Gestione Utenti', url: '/admin?tab=utenti'},
-  {title: 'Parametri Costi', url: '/admin?tab=parametri'},
+  {title: 'Parametri Prezzi', url: '/admin?tab=parametri'},
   {title: 'Listino Servizi', url: '/admin?tab=parametri#servizi'},
   {title: 'Profili Distribuzione', url: '/admin?tab=parametri#profili'},
   {title: 'Retroilluminazione', url: '/admin?tab=parametri#retroilluminazione'},

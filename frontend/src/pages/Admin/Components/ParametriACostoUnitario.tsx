@@ -154,7 +154,7 @@ export function ParametriACostoUnitario() {
                         <TableRow>
                             <TableHead className="w-[150px]">Parametro</TableHead>
                             <TableHead className="w-[100px]">U.M.</TableHead>
-                            <TableHead className="w-[100px]">Prezzo</TableHead>
+                            <TableHead className="w-[100px]">Costo</TableHead>
                             <TableHead className="w-[100px]">Ricarico %</TableHead>
                             <TableHead className="w-[200px]">Prezzo</TableHead>
                             <TableHead className="w-[100px]">Azioni</TableHead>
