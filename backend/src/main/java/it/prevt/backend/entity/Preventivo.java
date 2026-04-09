@@ -304,6 +304,39 @@ public class Preventivo {
   @Column(name = "marginalita_premontaggio_storage")
   private BigDecimal marginalitaPremontaggioStorage = new BigDecimal("50");
 
+  @Column(name = "sconto_struttura_storage")
+  private BigDecimal scontoStrutturaStorage = BigDecimal.ZERO;
+
+  @Column(name = "sconto_grafica_storage")
+  private BigDecimal scontoGraficaStorage = BigDecimal.ZERO;
+
+  @Column(name = "sconto_premontaggio_storage")
+  private BigDecimal scontoPremontaggioStorage = BigDecimal.ZERO;
+
+  @Column(name = "grafica_storage_attiva")
+  private Boolean graficaStorageAttiva = false;
+
+  @Column(name = "sconto_struttura_globale")
+  private BigDecimal scontoStrutturaGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_grafica_globale")
+  private BigDecimal scontoGraficaGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_retroilluminazione_globale")
+  private BigDecimal scontoRetroilluminazioneGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_accessori_globale")
+  private BigDecimal scontoAccessoriGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_premontaggi_globale")
+  private BigDecimal scontoPremontaggiGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_servizi_globale")
+  private BigDecimal scontoServiziGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_altri_beni_globale")
+  private BigDecimal scontoAltriBeniGlobale = BigDecimal.ZERO;
+
   @Column(name = "marginalita_struttura_desk")
   private BigDecimal marginalitaStrutturaDesk = new BigDecimal("50");
 

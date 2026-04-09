@@ -11,9 +11,11 @@ import {
   SelectValue
 } from '@/components/ui/select.tsx';
 import {Calculator} from 'lucide-react';
+import {Checkbox} from '@/components/ui/checkbox.tsx';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table.tsx';
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {ParametriAPI} from "@/api/parametri.ts";
-import {ParametriBean} from "@/types/parametri.ts";
+import {ParametriBean, ListinoServiziPrezzoUnitarioBean} from "@/types/parametri.ts";
 
 interface StorageSectionProps {
   formData: PreventivoBean;
@@ -44,14 +46,14 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
     return map;
   }, [parametri]);
 
-  // Query per recuperare i parametri a costi unitari
+  // Fetch listino servizi
   const {
-    data: parametriCostiUnitari = []
+    data: listinoServizi = []
   } = useQuery({
-    queryKey: ['parametri-costi-unitari'],
-    queryFn: () => ParametriAPI.getParametriACostiUnitari({
+    queryKey: ['listino-servizi-prezzo-unitario'],
+    queryFn: () => ParametriAPI.getListinoServiziPrezzoUnitario({
       attivo: true, sortFields: [{
-        field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
+        field: "LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO",
         desc: false
       }]
     })
@@ -132,13 +134,17 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
         costoStrutturaStorage: 0,
         costoGraficaStorage: 0,
         costoPremontaggioStorage: 0,
-        costoTotaleStorage: 0
+        costoTotaleStorage: 0,
+        costoTotaleStorageNoleggio: 0,
+        prezzoStrutturaStorage: 0,
+        prezzoGraficaStorage: 0,
+        prezzoPremontaggioStorage: 0,
       };
     }
 
     // Trova i parametri necessari
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+    const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
+    const costoPremontaggioParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && p.valoreChiave === String(formData.altezzaStorage));
 
     // Trova il costo della porta dagli accessori stand
@@ -152,23 +158,37 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
     const costoPorte = numeroPorte * costoPorta;
     const costoStrutturaStorage = costoStrutturaBase + costoPorte;
 
-    // Costo grafica storage con cordino cucito: superficie stampa * costo stampa grafica al mq
+    // Costo grafica storage: superficie stampa * costo stampa grafica al mq
     const costoGraficaStorage = costoStampaParam ?
-        storageElements.superficieStampa * (costoStampaParam.valore || 0) : 0;
+        storageElements.superficieStampa * (costoStampaParam.costo || 0) : 0;
 
     // Costo premontaggio storage: numero pezzi * costo premontaggio al pezzo
-    const costoPremontaggioStorage = costoPremontaggio && formData.premontaggioStorage ?
-        storageElements.numeroPezzi * (costoPremontaggio.valore || 0) : 0;
+    const costoPremontaggioStorage = costoPremontaggioParam && formData.premontaggioStorage ?
+        storageElements.numeroPezzi * (costoPremontaggioParam.costo || 0) : 0;
 
     const costoTotaleStorage = costoStrutturaStorage + costoGraficaStorage + costoPremontaggioStorage;
+    const costoTotaleStorageNoleggio = (formData.graficaStorageAttiva ? costoGraficaStorage : 0) + costoPremontaggioStorage;
+
+    // Prezzi con ricarico dal parametro
+    const prezzoStrutturaStorage = costoStrutturaStorage * (1 + (costoAltezzaParam?.ricaricoPercentuale || 0) / 100);
+    const prezzoGraficaStorage = costoStampaParam
+        ? storageElements.superficieStampa * (costoStampaParam.costo || 0) * (1 + (costoStampaParam.ricaricoPercentuale || 0) / 100)
+        : 0;
+    const prezzoPremontaggioStorage = costoPremontaggioParam && formData.premontaggioStorage
+        ? storageElements.numeroPezzi * (costoPremontaggioParam.costo || 0) * (1 + (costoPremontaggioParam.ricaricoPercentuale || 0) / 100)
+        : 0;
 
     return {
       costoStrutturaStorage,
       costoGraficaStorage,
       costoPremontaggioStorage,
-      costoTotaleStorage
+      costoTotaleStorage,
+      costoTotaleStorageNoleggio,
+      prezzoStrutturaStorage,
+      prezzoGraficaStorage,
+      prezzoPremontaggioStorage,
     };
-  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.numeroPorte, formData.premontaggioStorage, storageElements, parametri, parametriCostiUnitari, accessoriStand]);
+  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.numeroPorte, formData.premontaggioStorage, formData.graficaStorageAttiva, storageElements, parametri, listinoServizi, accessoriStand]);
 
   return (
       <div className="space-y-6">
@@ -328,140 +348,265 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
             <h4 className="text-md font-semibold">Calcolo Preventivo Storage</h4>
           </div>
 
-          {/* Cost cards layout matching StandSection */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Struttura storage */}
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div className="text-sm font-medium">Struttura storage</div>
-                <div
-                    className="text-lg font-bold">€{storageCosts.costoStrutturaStorage.toFixed(2)}</div>
-              </div>
-              <div className="flex justify-between items-end">
-                <div className="flex flex-col gap-1">
-                  <div className="text-xs text-muted-foreground">Ricarico</div>
-                  <div className="flex items-center gap-1">
-                    <Input
-                        type="number"
-                        min="0"
-                        max="200"
-                        step="1"
-                        value={formData.marginalitaStrutturaStorage || 0}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          marginalitaStrutturaStorage: parseFloat(e.target.value) || 0
-                        })}
-                        className="w-16 h-6 text-xs text-center"
-                    />
-                    <span className="text-xs">%</span>
-                  </div>
-                </div>
-                <div
-                    className="text-lg font-bold text-primary">€{(storageCosts.costoStrutturaStorage * (1 + (formData.marginalitaStrutturaStorage || 0) / 100)).toFixed(2)}</div>
-              </div>
-            </Card>
+          {/* Tabella Calcolo Costi */}
+          <Card>
+            <CardContent className="pt-4 px-2">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Voce</TableHead>
+                    <TableHead className="text-right">Costo</TableHead>
+                    <TableHead className="text-right">Prezzo</TableHead>
+                    <TableHead className="text-center w-32">Sconto %</TableHead>
+                    <TableHead className="text-right">Sconto €</TableHead>
+                    <TableHead className="text-right">Prezzo Netto</TableHead>
+                    <TableHead className="text-right">Prezzo Noleggio</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {/* Struttura storage */}
+                  {(() => {
+                    const prezzo = storageCosts.prezzoStrutturaStorage;
+                    const scontoPerc = formData.scontoStrutturaStorage || 0;
+                    const scontoEuro = prezzo * scontoPerc / 100;
+                    const prezzoNetto = prezzo - scontoEuro;
+                    const prezzoNoleggio = prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0);
+                    return (
+                      <TableRow>
+                        <TableCell className="font-medium">Struttura storage</TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{storageCosts.costoStrutturaStorage.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{prezzo.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={scontoPerc}
+                                onChange={(e) => setFormData({...formData, scontoStrutturaStorage: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{scontoEuro.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{prezzoNetto.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold">
+                          €{prezzoNoleggio.toFixed(2)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })()}
 
-            {/* Grafica storage */}
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div className="text-sm font-medium">Grafica storage</div>
-                <div
-                    className="text-lg font-bold">€{storageCosts.costoGraficaStorage.toFixed(2)}</div>
-              </div>
-              <div className="flex justify-between items-end">
-                <div className="flex flex-col gap-1">
-                  <div className="text-xs text-muted-foreground">Ricarico</div>
-                  <div className="flex items-center gap-1">
-                    <Input
-                        type="number"
-                        min="0"
-                        max="200"
-                        step="1"
-                        value={formData.marginalitaGraficaStorage || 0}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          marginalitaGraficaStorage: parseFloat(e.target.value) || 0
-                        })}
-                        className="w-16 h-6 text-xs text-center"
-                    />
-                    <span className="text-xs">%</span>
-                  </div>
-                </div>
-                <div
-                    className="text-lg font-bold text-primary">€{(storageCosts.costoGraficaStorage * (1 + (formData.marginalitaGraficaStorage || 0) / 100)).toFixed(2)}</div>
-              </div>
-            </Card>
+                  {/* Grafica storage */}
+                  {(() => {
+                    const prezzo = storageCosts.prezzoGraficaStorage;
+                    const attiva = formData.graficaStorageAttiva ?? false;
+                    const scontoPerc = formData.scontoGraficaStorage || 0;
+                    const scontoEuro = (attiva ? prezzo : 0) * scontoPerc / 100;
+                    const prezzoNetto = (attiva ? prezzo : 0) - scontoEuro;
+                    return (
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            Grafica storage
+                            <Checkbox
+                                checked={attiva}
+                                onCheckedChange={checked => setFormData({...formData, graficaStorageAttiva: Boolean(checked)})}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{storageCosts.costoGraficaStorage.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{(attiva ? prezzo : 0).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={scontoPerc}
+                                onChange={(e) => setFormData({...formData, scontoGraficaStorage: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{scontoEuro.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{prezzoNetto.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
+                    );
+                  })()}
 
-            {/* Premontaggio storage */}
-            <Card className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div className="text-sm font-medium">Premontaggio Storage</div>
-                <div
-                    className="text-lg font-bold">€{storageCosts.costoPremontaggioStorage.toFixed(2)}</div>
-              </div>
-              <div className="flex justify-between items-end">
-                <div className="flex flex-col gap-1">
-                  <div className="text-xs text-muted-foreground">Ricarico</div>
-                  <div className="flex items-center gap-1">
-                    <Input
-                        type="number"
-                        min="0"
-                        max="200"
-                        step="1"
-                        value={formData.marginalitaPremontaggioStorage || 0}
-                        onChange={(e) => setFormData({
-                          ...formData,
-                          marginalitaPremontaggioStorage: parseFloat(e.target.value) || 0
-                        })}
-                        className="w-16 h-6 text-xs text-center"
-                    />
-                    <span className="text-xs">%</span>
-                  </div>
-                </div>
-                <div
-                    className="text-lg font-bold text-primary">€{(storageCosts.costoPremontaggioStorage * (1 + (formData.marginalitaPremontaggioStorage || 0) / 100)).toFixed(2)}</div>
-              </div>
-            </Card>
-          </div>
+                  {/* Premontaggio storage */}
+                  {(() => {
+                    const prezzo = storageCosts.prezzoPremontaggioStorage;
+                    const scontoPerc = formData.scontoPremontaggioStorage || 0;
+                    const scontoEuro = prezzo * scontoPerc / 100;
+                    const prezzoNetto = prezzo - scontoEuro;
+                    return (
+                      <TableRow>
+                        <TableCell className="font-medium">Premontaggio Storage</TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{storageCosts.costoPremontaggioStorage.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{prezzo.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={scontoPerc}
+                                onChange={(e) => setFormData({...formData, scontoPremontaggioStorage: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{scontoEuro.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{prezzoNetto.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
+                    );
+                  })()}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
 
           {/* Summary */}
           <Card className="border-2 border-primary/20 bg-primary/5">
-            <CardContent className="pt-4">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Totale preventivo storage
-                  </div>
-                  <div className="text-2xl font-bold text-primary">
-                    €{(() => {
-                    const totalePreventivo =
-                        storageCosts.costoStrutturaStorage * (1 + (formData.marginalitaStrutturaStorage || 0) / 100) +
-                        storageCosts.costoGraficaStorage * (1 + (formData.marginalitaGraficaStorage || 0) / 100) +
-                        storageCosts.costoPremontaggioStorage * (1 + (formData.marginalitaPremontaggioStorage || 0) / 100);
-                    return totalePreventivo.toFixed(2);
-                  })()}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Totale costi storage</div>
-                  <div className="text-2xl font-bold">
-                    €{storageCosts.costoTotaleStorage.toFixed(2)}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {(() => {
-                      if (storageCosts.costoTotaleStorage === 0) return '0.0%';
-                      const totalePreventivo =
-                          storageCosts.costoStrutturaStorage * (1 + (formData.marginalitaStrutturaStorage || 0) / 100) +
-                          storageCosts.costoGraficaStorage * (1 + (formData.marginalitaGraficaStorage || 0) / 100) +
-                          storageCosts.costoPremontaggioStorage * (1 + (formData.marginalitaPremontaggioStorage) / 100);
-                      const marginalitaMedia = ((totalePreventivo - storageCosts.costoTotaleStorage) / storageCosts.costoTotaleStorage * 100);
-                      return marginalitaMedia.toFixed(1) + '%';
-                    })()}
-                  </div>
-                </div>
-              </div>
+            <CardContent className="pt-4 space-y-6">
+              {(() => {
+                const graficaAttiva = formData.graficaStorageAttiva ?? false;
+                const listStruttura = storageCosts.prezzoStrutturaStorage;
+                const listGrafica = graficaAttiva ? storageCosts.prezzoGraficaStorage : 0;
+                const listPremontaggio = storageCosts.prezzoPremontaggioStorage;
+                const totalListinoVendita = listStruttura + listGrafica + listPremontaggio;
+
+                const nettoStruttura = listStruttura * (1 - (formData.scontoStrutturaStorage || 0) / 100);
+                const nettoGrafica = listGrafica * (1 - (formData.scontoGraficaStorage || 0) / 100);
+                const nettoPremontaggio = listPremontaggio * (1 - (formData.scontoPremontaggioStorage || 0) / 100);
+                const totalNettoVendita = nettoStruttura + nettoGrafica + nettoPremontaggio;
+                const totalNettoNoleggio = nettoGrafica + nettoPremontaggio;
+
+                const costoTotale = storageCosts.costoTotaleStorage;
+                const costoTotaleNoleggio = storageCosts.costoTotaleStorageNoleggio;
+                const scontoMedioVendita = totalListinoVendita > 0 ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
+                const marginalitaVendita = costoTotale > 0 ? (totalNettoVendita - costoTotale) / costoTotale * 100 : 0;
+
+                const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
+                const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
+                const totalePreventivoFinale = prezzoNoleggioStruttura + nettoGrafica + nettoPremontaggio;
+                const scontoMedioNoleggio = listStruttura > 0 ? (listStruttura - nettoStruttura) / listStruttura * 100 : 0;
+                const marginalitaNoleggio = costoTotale > 0 ? (totalePreventivoFinale - costoTotale) / costoTotale * 100 : 0;
+
+                return (
+                  <>
+                    {/* VENDITA */}
+                    <div>
+                      <div className="text-lg font-semibold text-primary mb-2">Vendita</div>
+                      <div className="grid grid-cols-5 gap-4 text-center">
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold">€{totalListinoVendita.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
+                          <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
+                          <div className="text-lg font-bold text-primary">€{totalNettoVendita.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Costi</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold">{scontoMedioVendita.toFixed(1)}%</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold text-green-600">{marginalitaVendita.toFixed(1)}%</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-4" />
+
+                    {/* NOLEGGIO */}
+                    <div>
+                      <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                        <div className="text-left">
+                          <div className="text-lg font-semibold text-primary">Noleggio</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Prezzo Noleggio</div>
+                          <div className="text-xl font-bold">€{prezzoNoleggioStruttura.toFixed(2)}</div>
+                        </div>
+                        <div /><div /><div />
+                      </div>
+
+                      <div className="grid grid-cols-5 gap-4 text-center">
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold">€{listStruttura.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
+                          <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
+                          <div className="text-lg font-bold text-primary">€{totalNettoNoleggio.toFixed(2)}</div>
+                          <div className="text-xs text-muted-foreground mt-2">di cui:</div>
+                          <div className="text-xs text-muted-foreground">
+                            Premontaggio:{" "}
+                            <span className="font-medium text-foreground">€{nettoPremontaggio.toFixed(2)}</span>
+                          </div>
+                          <div className="mt-3">
+                            <div className="text-xs text-muted-foreground">Totale Preventivo Finale</div>
+                            <div className="text-xl font-bold text-primary">€{totalePreventivoFinale.toFixed(2)}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold">€{costoTotaleNoleggio.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold">{scontoMedioNoleggio.toFixed(1)}%</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold text-green-600">{marginalitaNoleggio.toFixed(1)}%</div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </CardContent>
           </Card>
         </div>

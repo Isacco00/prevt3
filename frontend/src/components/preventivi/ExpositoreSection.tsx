@@ -146,14 +146,14 @@ export function ExpositoreSection({
     return (formData.qtaTipo30 || 0) * getLayoutCost('30') + (formData.qtaTipo50 || 0) * getLayoutCost('50') + (formData.qtaTipo100 || 0) * getLayoutCost('100');
   };
   const calculateGraphicsCost = (): number => {
-    const costoStampaGrafica = getParameterValue('Costo Stampa Grafica');
+    const costoStampaGrafica = getParameterValue('Stampa Grafica');
     return physicalElements.superficieStampaEspositori * costoStampaGrafica;
   };
   const calculatePreassemblyCost = (): number => {
     if (!formData.premontaggioEspositori) {
       return 0;
     }
-    const costoPremontaggio = getParameterValue('Costo Premontaggio');
+    const costoPremontaggio = getParameterValue('Premontaggio');
     return physicalElements.numeroPezziEspositori * costoPremontaggio;
   };
   const calculateAccessoriesTotal = (): number => {

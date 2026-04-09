@@ -1,11 +1,12 @@
 import React, {useMemo} from 'react';
 import {Calculator} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card.tsx';
+import {Input} from '@/components/ui/input.tsx';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table.tsx';
 import {useQuery} from "@tanstack/react-query";
 import {ParametriAPI} from "@/api/parametri.ts";
 import {ListinoStrutturaDeskBean, ParametriBean, PreventivoServiziBean} from "@/types/parametri.ts";
 import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
-import {LayoutRouteProps} from "react-router-dom";
 import {useStandCosts} from "@/hooks/useStandCosts.ts";
 
 interface TotalePreventivoSectionProps {
@@ -359,8 +360,8 @@ export function TotalePreventivoSection({
     const numeroPezzi = sviluppoLineare * fattoreDistribuzione;
 
     // Parametri necessari
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
+    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && Number(p.valoreChiave) === formData.altezzaStorage);
 
     // Trova il costo della porta
@@ -427,11 +428,11 @@ export function TotalePreventivoSection({
         qta100 * (layoutCost100?.costoUnitario || 0);
 
     // Calcolo costi grafiche
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
     const graficaEspositori = costoStampaParam ? superficieStampaEspositori * (costoStampaParam.valore || 0) : 0;
 
     // Calcolo costi premontaggio
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Premontaggio');
     const premontaggioEspositori = costoPremontaggio ? numeroPezziEspositori * (costoPremontaggio.valore || 0) : 0;
 
     // Calcolo costi accessori
@@ -526,7 +527,7 @@ export function TotalePreventivoSection({
       }
     }, 0);
 
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
+    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
     const graficaCordinoDesk = costoStampaParam ? superficieStampaDesk * (costoStampaParam.valore || 0) : 0;
 
     // Premontaggio desk
@@ -640,12 +641,23 @@ export function TotalePreventivoSection({
   const costoTotale = costoStruttura + costoGrafiche + costoRetroilluminazione + costoAccessori +
       costoPremontaggi + servicesCost + altriBeniServiziCost;
 
-  const preventivoTotale = preventivoStruttura + preventivoGrafiche + preventivoRetroilluminazione +
-      costoExtraComplessa + preventivoAccessori + preventivoPremontaggi +
-      servicesTotal + altriBeniServiziTotal;
+  const rows: { voce: string; costo: number; prezzo: number; scontoField: keyof PreventivoBean; noleggio: boolean }[] = [
+    {voce: 'Struttura', costo: costoStruttura, prezzo: preventivoStruttura, scontoField: 'scontoStrutturaGlobale', noleggio: true},
+    {voce: 'Grafica', costo: costoGrafiche, prezzo: preventivoGrafiche, scontoField: 'scontoGraficaGlobale', noleggio: false},
+    {voce: 'Retroilluminazione', costo: costoRetroilluminazione, prezzo: preventivoRetroilluminazione, scontoField: 'scontoRetroilluminazioneGlobale', noleggio: false},
+    {voce: 'Accessori', costo: costoAccessori, prezzo: preventivoAccessori, scontoField: 'scontoAccessoriGlobale', noleggio: false},
+    {voce: 'Premontaggi', costo: costoPremontaggi, prezzo: preventivoPremontaggi, scontoField: 'scontoPremontaggiGlobale', noleggio: false},
+    {voce: 'Servizi', costo: servicesCost, prezzo: servicesTotal, scontoField: 'scontoServiziGlobale', noleggio: false},
+    {voce: 'Altri Beni/Servizi', costo: altriBeniServiziCost, prezzo: altriBeniServiziTotal, scontoField: 'scontoAltriBeniGlobale', noleggio: false},
+  ];
 
-  // Marginalità media
-  const marginalitaMedia = costoTotale > 0 ? ((preventivoTotale - costoTotale) / costoTotale) * 100 : 0;
+  const totaleNetto = rows.reduce((sum, row) => {
+    const scontoPerc = (formData[row.scontoField] as number) || 0;
+    return sum + row.prezzo * (1 - scontoPerc / 100);
+  }, 0);
+
+  const marginalitaFinale = costoTotale === 0 ? 0 : (totaleNetto - costoTotale) / costoTotale * 100;
+
   React.useEffect(() => {
     if (!physicalElements) return;
 
@@ -680,13 +692,14 @@ export function TotalePreventivoSection({
   React.useEffect(() => {
     if (!formData) return;
     // Evita set inutili (importantissimo per non fare loop)
-    if (formData.totalePreventivo !== preventivoTotale) {
+    if (formData.totalePreventivo !== totaleNetto) {
       setFormData(prev => ({
         ...prev,
-        totalePreventivo: preventivoTotale
+        totalePreventivo: totaleNetto
       }));
     }
-  }, [preventivoTotale, setFormData]);
+  }, [totaleNetto, setFormData]);
+
   return (
       <div className="space-y-6">
         <div className="flex items-center gap-2">
@@ -694,96 +707,79 @@ export function TotalePreventivoSection({
           <h3 className="text-lg font-semibold">Totale Preventivo Fornitura</h3>
         </div>
 
-        {/* Grid with individual category cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Totale Struttura</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{preventivoStruttura.toFixed(2)}</div>
-            </CardContent>
-          </Card>
+        <Card>
+          <CardContent className="pt-4 px-2">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Voce</TableHead>
+                  <TableHead className="text-right">Costo</TableHead>
+                  <TableHead className="text-right">Prezzo</TableHead>
+                  <TableHead className="text-center w-32">Sconto %</TableHead>
+                  <TableHead className="text-right">Sconto €</TableHead>
+                  <TableHead className="text-right">Prezzo Netto</TableHead>
+                  <TableHead className="text-right">Prezzo Noleggio</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {rows.map((row) => {
+                  const scontoPerc = (formData[row.scontoField] as number) || 0;
+                  const scontoEuro = row.prezzo * scontoPerc / 100;
+                  const prezzoNetto = row.prezzo - scontoEuro;
+                  const prezzoNoleggio = row.noleggio ? prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0) : null;
+                  return (
+                    <TableRow key={row.voce}>
+                      <TableCell className="font-medium">{row.voce}</TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        €{row.costo.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        €{row.prezzo.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Input
+                              type="number" min="0" max="100" step="1"
+                              value={scontoPerc}
+                              onChange={(e) => setFormData({...formData, [row.scontoField]: parseFloat(e.target.value) || 0})}
+                              className="w-16 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        -€{scontoEuro.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right font-bold text-primary">
+                        €{prezzoNetto.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right font-bold">
+                        {prezzoNoleggio !== null ? `€${prezzoNoleggio.toFixed(2)}` : <span className="text-muted-foreground">-</span>}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Totale grafiche</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{preventivoGrafiche.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Retroilluminazione</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{preventivoRetroilluminazione.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Extra per struttura complessa</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{costoExtraComplessa.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Totali accessori</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{preventivoAccessori.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Totali Premontaggi</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{preventivoPremontaggi.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Totali Servizi</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{servicesTotal.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-
-          <Card className="text-center">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Totali Altri Beni/Servizi</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">€{altriBeniServiziTotal.toFixed(2)}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Final totals card */}
-        <Card className="border-2 border-primary">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-3 gap-8 text-center">
+        <Card className="border-2 border-primary/20 bg-primary/5">
+          <CardContent className="pt-4">
+            <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-sm font-medium mb-2">Totale preventivo</div>
-                <div className="text-3xl font-bold">€{preventivoTotale.toFixed(2)}</div>
+                <div className="text-sm text-muted-foreground mb-1">Totale preventivo</div>
+                <div className="text-2xl font-bold text-primary">€{totaleNetto.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-sm font-medium mb-2">Totale costi</div>
-                <div className="text-3xl font-bold">€{costoTotale.toFixed(2)}</div>
+                <div className="text-sm text-muted-foreground mb-1">Totale costi</div>
+                <div className="text-2xl font-bold">€{costoTotale.toFixed(2)}</div>
               </div>
               <div>
-                <div className="text-sm font-medium mb-2">Marginalità Media (%)</div>
-                <div className="text-3xl font-bold">{marginalitaMedia.toFixed(1)}%</div>
+                <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {costoTotale === 0 ? '0.0%' : marginalitaFinale.toFixed(1) + '%'}
+                </div>
               </div>
             </div>
           </CardContent>

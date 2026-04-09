@@ -216,8 +216,8 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     }
 
     // Calcolo costi desk
-    const costoStampaDeskParam = parametriCostiUnitari.find(p => p.parametro === 'Costo Stampa Grafica');
-    const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
+    const costoStampaDeskParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
+    const costoPremontaggerDesk = parametriCostiUnitari.find(p => p.parametro === 'Premontaggio');
 
     const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
       const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => c.layoutDesk === config.layout);

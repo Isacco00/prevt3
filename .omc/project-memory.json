@@ -1,0 +1,190 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775692520412,
+  "projectRoot": "/home/ubuntu/prevt3",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": null
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 8,
+      "lastAccessed": 1775692520406,
+      "keyFiles": [
+        "HELP.md",
+        "docker-entrypoint.local.sh",
+        "dockerfile.local",
+        "mvnw",
+        "mvnw.cmd"
+      ]
+    },
+    "deployment": {
+      "path": "deployment",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1775692520407,
+      "keyFiles": []
+    },
+    "frontend": {
+      "path": "frontend",
+      "purpose": null,
+      "fileCount": 13,
+      "lastAccessed": 1775692520409,
+      "keyFiles": [
+        "components.json",
+        "dockerfile",
+        "eslint.config.js",
+        "index.html",
+        "nginx.conf"
+      ]
+    },
+    "frontend/node_modules": {
+      "path": "frontend/node_modules",
+      "purpose": "Dependencies",
+      "fileCount": 1,
+      "lastAccessed": 1775692520410,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "frontend/src/components/preventivi/StorageSection.tsx",
+      "accessCount": 32,
+      "lastAccessed": 1775697351599,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
+      "accessCount": 12,
+      "lastAccessed": 1775696327643,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/entity/Preventivo.java",
+      "accessCount": 10,
+      "lastAccessed": 1775696229061,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
+      "accessCount": 10,
+      "lastAccessed": 1775696709436,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
+      "accessCount": 9,
+      "lastAccessed": 1775696235032,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/StandSection.tsx",
+      "accessCount": 9,
+      "lastAccessed": 1775696416643,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/merger/PreventivoMerger.java",
+      "accessCount": 8,
+      "lastAccessed": 1775696690202,
+      "type": "directory"
+    },
+    {
+      "path": "frontend/src/types/preventivo.ts",
+      "accessCount": 8,
+      "lastAccessed": 1775697329220,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java",
+      "accessCount": 4,
+      "lastAccessed": 1775694448435,
+      "type": "directory"
+    },
+    {
+      "path": "backend",
+      "accessCount": 3,
+      "lastAccessed": 1775694226397,
+      "type": "directory"
+    },
+    {
+      "path": "frontend/src/hooks/useStandCosts.ts",
+      "accessCount": 3,
+      "lastAccessed": 1775695776293,
+      "type": "directory"
+    },
+    {
+      "path": "frontend/src/types/parametri.ts",
+      "accessCount": 2,
+      "lastAccessed": 1775695510322,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V8__storage_sconti.sql",
+      "accessCount": 2,
+      "lastAccessed": 1775695889440,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V7__stand_sconti.sql",
+      "accessCount": 1,
+      "lastAccessed": 1775694230307,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/mapper/AbstractMapper.java",
+      "accessCount": 1,
+      "lastAccessed": 1775694447675,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/types",
+      "accessCount": 1,
+      "lastAccessed": 1775695103765,
+      "type": "directory"
+    },
+    {
+      "path": "frontend/src/api",
+      "accessCount": 1,
+      "lastAccessed": 1775695504644,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V9__grafica_storage_attiva.sql",
+      "accessCount": 1,
+      "lastAccessed": 1775695895648,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V10__totale_sconti.sql",
+      "accessCount": 1,
+      "lastAccessed": 1775696216040,
+      "type": "file"
+    }
+  ],
+  "userDirectives": []
+}

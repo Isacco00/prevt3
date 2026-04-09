@@ -125,6 +125,17 @@ public class PreventivoBean {
   private BigDecimal marginalitaStrutturaStorage;
   private BigDecimal marginalitaGraficaStorage;
   private BigDecimal marginalitaPremontaggioStorage;
+  private BigDecimal scontoStrutturaStorage;
+  private BigDecimal scontoGraficaStorage;
+  private BigDecimal scontoPremontaggioStorage;
+  private Boolean graficaStorageAttiva;
+  private BigDecimal scontoStrutturaGlobale;
+  private BigDecimal scontoGraficaGlobale;
+  private BigDecimal scontoRetroilluminazioneGlobale;
+  private BigDecimal scontoAccessoriGlobale;
+  private BigDecimal scontoPremontaggiGlobale;
+  private BigDecimal scontoServiziGlobale;
+  private BigDecimal scontoAltriBeniGlobale;
 
   private BigDecimal marginalitaStrutturaDesk;
   private BigDecimal marginalitaGraficaDesk;

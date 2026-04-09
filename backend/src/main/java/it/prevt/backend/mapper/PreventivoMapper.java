@@ -149,6 +149,17 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
     bean.setMarginalitaStrutturaStorage(entity.getMarginalitaStrutturaStorage());
     bean.setMarginalitaGraficaStorage(entity.getMarginalitaGraficaStorage());
     bean.setMarginalitaPremontaggioStorage(entity.getMarginalitaPremontaggioStorage());
+    bean.setScontoStrutturaStorage(entity.getScontoStrutturaStorage());
+    bean.setScontoGraficaStorage(entity.getScontoGraficaStorage());
+    bean.setScontoPremontaggioStorage(entity.getScontoPremontaggioStorage());
+    bean.setGraficaStorageAttiva(entity.getGraficaStorageAttiva());
+    bean.setScontoStrutturaGlobale(entity.getScontoStrutturaGlobale());
+    bean.setScontoGraficaGlobale(entity.getScontoGraficaGlobale());
+    bean.setScontoRetroilluminazioneGlobale(entity.getScontoRetroilluminazioneGlobale());
+    bean.setScontoAccessoriGlobale(entity.getScontoAccessoriGlobale());
+    bean.setScontoPremontaggiGlobale(entity.getScontoPremontaggiGlobale());
+    bean.setScontoServiziGlobale(entity.getScontoServiziGlobale());
+    bean.setScontoAltriBeniGlobale(entity.getScontoAltriBeniGlobale());
 
     bean.setMarginalitaStrutturaDesk(entity.getMarginalitaStrutturaDesk());
     bean.setMarginalitaGraficaDesk(entity.getMarginalitaGraficaDesk());

@@ -128,6 +128,14 @@ export interface PreventivoBean {
     premontaggioEspositori: boolean;
 
     graficaCordinoAttiva: boolean;
+    graficaStorageAttiva: boolean;
+    scontoStrutturaGlobale: number;
+    scontoGraficaGlobale: number;
+    scontoRetroilluminazioneGlobale: number;
+    scontoAccessoriGlobale: number;
+    scontoPremontaggiGlobale: number;
+    scontoServiziGlobale: number;
+    scontoAltriBeniGlobale: number;
     scontoStrutturaTerra: number;
     scontoGraficaCordino: number;
     scontoRetroilluminazione: number;
@@ -139,6 +147,9 @@ export interface PreventivoBean {
     marginalitaStrutturaStorage: number;
     marginalitaGraficaStorage: number;
     marginalitaPremontaggioStorage: number;
+    scontoStrutturaStorage: number;
+    scontoGraficaStorage: number;
+    scontoPremontaggioStorage: number;
 
     marginalitaStrutturaDesk: number;
     marginalitaGraficaDesk: number;
