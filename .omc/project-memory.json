@@ -73,56 +73,74 @@
   "hotPaths": [
     {
       "path": "frontend/src/components/preventivi/StorageSection.tsx",
-      "accessCount": 32,
-      "lastAccessed": 1775697351599,
+      "accessCount": 35,
+      "lastAccessed": 1775719418366,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/DeskSection.tsx",
+      "accessCount": 29,
+      "lastAccessed": 1775742603073,
       "type": "file"
     },
     {
       "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
-      "accessCount": 12,
-      "lastAccessed": 1775696327643,
+      "accessCount": 21,
+      "lastAccessed": 1775719614939,
       "type": "file"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/entity/Preventivo.java",
-      "accessCount": 10,
-      "lastAccessed": 1775696229061,
+      "accessCount": 17,
+      "lastAccessed": 1775719987322,
       "type": "file"
-    },
-    {
-      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
-      "accessCount": 10,
-      "lastAccessed": 1775696709436,
-      "type": "directory"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
-      "accessCount": 9,
-      "lastAccessed": 1775696235032,
+      "accessCount": 16,
+      "lastAccessed": 1775719989673,
       "type": "file"
     },
     {
+      "path": "frontend/src/types/preventivo.ts",
+      "accessCount": 16,
+      "lastAccessed": 1775719991887,
+      "type": "directory"
+    },
+    {
       "path": "frontend/src/components/preventivi/StandSection.tsx",
-      "accessCount": 9,
-      "lastAccessed": 1775696416643,
+      "accessCount": 15,
+      "lastAccessed": 1775742333064,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
+      "accessCount": 13,
+      "lastAccessed": 1775719998497,
       "type": "directory"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/merger/PreventivoMerger.java",
-      "accessCount": 8,
-      "lastAccessed": 1775696690202,
+      "accessCount": 11,
+      "lastAccessed": 1775720001973,
       "type": "directory"
     },
     {
-      "path": "frontend/src/types/preventivo.ts",
-      "accessCount": 8,
-      "lastAccessed": 1775697329220,
-      "type": "directory"
+      "path": "frontend/src/components/preventivi/ExpositoreSection.tsx",
+      "accessCount": 5,
+      "lastAccessed": 1775719499455,
+      "type": "file"
     },
     {
       "path": "backend/src/main/java",
       "accessCount": 4,
       "lastAccessed": 1775694448435,
+      "type": "directory"
+    },
+    {
+      "path": "frontend/src/hooks/useStandCosts.ts",
+      "accessCount": 4,
+      "lastAccessed": 1775742343410,
       "type": "directory"
     },
     {
@@ -132,21 +150,39 @@
       "type": "directory"
     },
     {
-      "path": "frontend/src/hooks/useStandCosts.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775695776293,
-      "type": "directory"
-    },
-    {
       "path": "frontend/src/types/parametri.ts",
-      "accessCount": 2,
-      "lastAccessed": 1775695510322,
+      "accessCount": 3,
+      "lastAccessed": 1775718619060,
       "type": "file"
     },
     {
       "path": "backend/src/main/resources/db/migration/V8__storage_sconti.sql",
+      "accessCount": 3,
+      "lastAccessed": 1775719718745,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/types",
       "accessCount": 2,
-      "lastAccessed": 1775695889440,
+      "lastAccessed": 1775718614290,
+      "type": "directory"
+    },
+    {
+      "path": "",
+      "accessCount": 2,
+      "lastAccessed": 1775718707750,
+      "type": "directory"
+    },
+    {
+      "path": "frontend/src/components/preventivi",
+      "accessCount": 2,
+      "lastAccessed": 1775719618851,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/mapper/AbstractMapper.java",
+      "accessCount": 2,
+      "lastAccessed": 1775719745930,
       "type": "file"
     },
     {
@@ -154,18 +190,6 @@
       "accessCount": 1,
       "lastAccessed": 1775694230307,
       "type": "file"
-    },
-    {
-      "path": "backend/src/main/java/it/prevt/backend/mapper/AbstractMapper.java",
-      "accessCount": 1,
-      "lastAccessed": 1775694447675,
-      "type": "file"
-    },
-    {
-      "path": "frontend/src/types",
-      "accessCount": 1,
-      "lastAccessed": 1775695103765,
-      "type": "directory"
     },
     {
       "path": "frontend/src/api",
@@ -183,6 +207,24 @@
       "path": "backend/src/main/resources/db/migration/V10__totale_sconti.sql",
       "accessCount": 1,
       "lastAccessed": 1775696216040,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src",
+      "accessCount": 1,
+      "lastAccessed": 1775719622906,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/merger/AbstractMerger.java",
+      "accessCount": 1,
+      "lastAccessed": 1775719746051,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V12__desk_sconti.sql",
+      "accessCount": 1,
+      "lastAccessed": 1775719964667,
       "type": "file"
     }
   ],

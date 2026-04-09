@@ -5,7 +5,7 @@ import {Input} from '@/components/ui/input.tsx';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table.tsx';
 import {useQuery} from "@tanstack/react-query";
 import {ParametriAPI} from "@/api/parametri.ts";
-import {ListinoStrutturaDeskBean, ParametriBean, PreventivoServiziBean} from "@/types/parametri.ts";
+import {ListinoStrutturaDeskBean, ListinoServiziPrezzoUnitarioBean, ParametriBean, PreventivoServiziBean} from "@/types/parametri.ts";
 import {LayoutDeskBean, PreventivoBean} from "@/types/preventivo.ts";
 import {useStandCosts} from "@/hooks/useStandCosts.ts";
 
@@ -312,7 +312,7 @@ export function TotalePreventivoSection({
 
   // Calcolo automatico dei costi storage (sempre aggiornato)
   const calculatedStorageCosts = React.useMemo(() => {
-    if (!formData.larghezzaStorage || !formData.profonditaStorage || !formData.altezzaStorage || !parametri.length || !parametriCostiUnitari.length || !accessoriStand.length) {
+    if (!formData.larghezzaStorage || !formData.profonditaStorage || !formData.altezzaStorage || !parametri.length || !listinoServizi.length || !accessoriStand.length) {
       return {
         costoStrutturaStorage: 0,
         costoGraficaStorage: 0,
@@ -360,8 +360,8 @@ export function TotalePreventivoSection({
     const numeroPezzi = sviluppoLineare * fattoreDistribuzione;
 
     // Parametri necessari
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Premontaggio');
+    const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
+    const costoPremontaggio = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
     const costoAltezzaParam = parametri.find(p => p.tipo === 'costo_altezza' && Number(p.valoreChiave) === formData.altezzaStorage);
 
     // Trova il costo della porta
@@ -374,8 +374,8 @@ export function TotalePreventivoSection({
     const costoPorte = numeroPorte * costoPorta;
     const costoStrutturaStorage = costoStrutturaBase + costoPorte;
 
-    const costoGraficaStorage = costoStampaParam ? superficieStampa * (costoStampaParam.valore || 0) : 0;
-    const costoPremontaggioStorage = costoPremontaggio ? numeroPezzi * (costoPremontaggio.valore || 0) : 0;
+    const costoGraficaStorage = costoStampaParam ? superficieStampa * (costoStampaParam.costo || 0) : 0;
+    const costoPremontaggioStorage = costoPremontaggio ? numeroPezzi * (costoPremontaggio.costo || 0) : 0;
     const costoTotaleStorage = costoStrutturaStorage + costoGraficaStorage + costoPremontaggioStorage;
 
     return {
@@ -392,7 +392,7 @@ export function TotalePreventivoSection({
     formData.numeroPorte,
     formData.distribuzione,
     parametri,
-    parametriCostiUnitari,
+    listinoServizi,
     profiliDistribuzioneMap,
     accessoriStand
   ]);
@@ -403,7 +403,7 @@ export function TotalePreventivoSection({
     const qta50 = parseInt(formData.qtaTipo30?.toString() || '0') || 0;
     const qta100 = parseInt(formData.qtaTipo30?.toString() || '0') || 0;
 
-    if ((qta30 + qta50 + qta100) === 0 || !parametriCostiUnitari.length || !layoutCostsEspositori.length) {
+    if ((qta30 + qta50 + qta100) === 0 || !listinoServizi.length || !layoutCostsEspositori.length) {
       return {
         strutturaEspositori: 0,
         graficaEspositori: 0,
@@ -428,12 +428,12 @@ export function TotalePreventivoSection({
         qta100 * (layoutCost100?.costoUnitario || 0);
 
     // Calcolo costi grafiche
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
-    const graficaEspositori = costoStampaParam ? superficieStampaEspositori * (costoStampaParam.valore || 0) : 0;
+    const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
+    const graficaEspositori = costoStampaParam ? superficieStampaEspositori * (costoStampaParam.costo || 0) : 0;
 
     // Calcolo costi premontaggio
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Premontaggio');
-    const premontaggioEspositori = costoPremontaggio ? numeroPezziEspositori * (costoPremontaggio.valore || 0) : 0;
+    const costoPremontaggio = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
+    const premontaggioEspositori = costoPremontaggio ? numeroPezziEspositori * (costoPremontaggio.costo || 0) : 0;
 
     // Calcolo costi accessori
     let accessoriEspositori = 0;
@@ -478,14 +478,14 @@ export function TotalePreventivoSection({
     formData.retroilluminazione50x50x100h,
     formData.retroilluminazione100x50x100h,
     formData.borsaEspositori,
-    parametriCostiUnitari,
+    listinoServizi,
     layoutCostsEspositori,
     accessoriesData
   ]);
 
   // Calcolo automatico dei costi desk (sempre aggiornato)
   const calculatedDeskCosts = React.useMemo(() => {
-    if (!accessoriDesk || !listinoStrutturaDesk || !parametriCostiUnitari.length) {
+    if (!accessoriDesk || !listinoStrutturaDesk || !listinoServizi.length) {
       return {
         strutturaTerra: 0,
         graficaCordino: 0,
@@ -527,8 +527,8 @@ export function TotalePreventivoSection({
       }
     }, 0);
 
-    const costoStampaParam = parametriCostiUnitari.find(p => p.parametro === 'Stampa Grafica');
-    const graficaCordinoDesk = costoStampaParam ? superficieStampaDesk * (costoStampaParam.valore || 0) : 0;
+    const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
+    const graficaCordinoDesk = costoStampaParam ? superficieStampaDesk * (costoStampaParam.costo || 0) : 0;
 
     // Premontaggio desk
     const numeroPezziDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
@@ -546,8 +546,8 @@ export function TotalePreventivoSection({
       }
     }, 0);
 
-    const costoPremontaggio = parametriCostiUnitari.find(p => p.parametro === 'Costo Premontaggio');
-    const premontaggioDesk = costoPremontaggio ? numeroPezziDesk * (costoPremontaggio.valore || 0) : 0;
+    const costoPremontaggio = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
+    const premontaggioDesk = costoPremontaggio ? numeroPezziDesk * (costoPremontaggio.costo || 0) : 0;
 
     // Accessori desk
     const costiAccessoriDesk =
@@ -575,7 +575,7 @@ export function TotalePreventivoSection({
     formData.tecaPlexiglass,
     formData.fronteLuminoso,
     formData.borsa,
-    parametriCostiUnitari,
+    listinoServizi,
     accessoriDesk,
     listinoStrutturaDesk
   ]);

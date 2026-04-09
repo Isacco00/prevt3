@@ -106,6 +106,7 @@ public class PreventivoBean {
   private BigDecimal costoRetroilluminazione;
 
   private String accessoriStandConfig;
+  private String accessoriDeskConfig;
 
   private Integer borsaEspositori;
   private boolean premontaggio;
@@ -128,6 +129,10 @@ public class PreventivoBean {
   private BigDecimal scontoStrutturaStorage;
   private BigDecimal scontoGraficaStorage;
   private BigDecimal scontoPremontaggioStorage;
+  private BigDecimal scontoStrutturaDesk;
+  private BigDecimal scontoGraficaDesk;
+  private BigDecimal scontoPremontaggioDesk;
+  private BigDecimal scontoAccessoriDesk;
   private Boolean graficaStorageAttiva;
   private BigDecimal scontoStrutturaGlobale;
   private BigDecimal scontoGraficaGlobale;

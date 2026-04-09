@@ -343,9 +343,16 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
 
         {/* Calcolo Costi Storage */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Calculator className="h-5 w-5"/>
-            <h4 className="text-md font-semibold">Calcolo Preventivo Storage</h4>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <Calculator className="h-5 w-5"/>
+              <h4 className="text-md font-semibold">Calcolo Preventivo Storage</h4>
+            </div>
+            {formData.coefficienteNoleggio && (
+              <span className="text-sm text-muted-foreground">
+                Coeff. Noleggio: <span className="font-semibold text-foreground">{formData.coefficienteNoleggio.nome}</span>
+              </span>
+            )}
           </div>
 
           {/* Tabella Calcolo Costi */}

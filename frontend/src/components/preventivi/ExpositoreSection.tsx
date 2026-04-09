@@ -7,6 +7,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '../
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "../ui/collapsible.tsx";
 import {useQuery} from '@tanstack/react-query';
 import {ParametriAPI} from "@/api/parametri.ts";
+import {ListinoServiziPrezzoUnitarioBean} from "@/types/parametri.ts";
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 
@@ -104,14 +105,14 @@ export function ExpositoreSection({
     })
   });
 
-  // Query per recuperare i parametri a costi unitari
+  // Fetch listino servizi
   const {
-    data: parametriCostiUnitari = []
+    data: listinoServizi = []
   } = useQuery({
-    queryKey: ['parametri-costi-unitari'],
-    queryFn: () => ParametriAPI.getParametriACostiUnitari({
+    queryKey: ['listino-servizi-prezzo-unitario'],
+    queryFn: () => ParametriAPI.getListinoServiziPrezzoUnitario({
       attivo: true, sortFields: [{
-        field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
+        field: "LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO",
         desc: false
       }]
     })
@@ -131,8 +132,8 @@ export function ExpositoreSection({
 
   // Helper function to get parameter value
   const getParameterValue = (parameterName: string): number => {
-    const parameter = parametriCostiUnitari.find(p => p.parametro === parameterName);
-    return parameter ? Number(parameter.valore) : 0;
+    const parameter = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === parameterName);
+    return parameter ? Number(parameter.costo) : 0;
   };
 
   // Helper function to get layout cost
@@ -205,7 +206,7 @@ export function ExpositoreSection({
     premontaggioEspositori: calculatePreassemblyCost(),
     accessoriEspositori: calculateAccessoriesTotal(),
     costoTotaleEspositori: calculateTotalCost()
-  }), [formData, physicalElements, accessoriesData, layoutCostsData, parametriCostiUnitari]);
+  }), [formData, physicalElements, accessoriesData, layoutCostsData, listinoServizi]);
 
   return <div className="space-y-4">
     <div className="flex items-center gap-2">

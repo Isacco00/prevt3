@@ -120,6 +120,7 @@ export interface PreventivoBean {
     costoRetroilluminazione: number;
 
     accessoriStandConfig: string;
+    accessoriDeskConfig: string;
 
     borsaEspositori: number;
     premontaggio: boolean;
@@ -155,6 +156,10 @@ export interface PreventivoBean {
     marginalitaGraficaDesk: number;
     marginalitaPremontaggioDesk: number;
     marginalitaAccessoriDesk: number;
+    scontoStrutturaDesk: number;
+    scontoGraficaDesk: number;
+    scontoPremontaggioDesk: number;
+    scontoAccessoriDesk: number;
 
     marginalitaStrutturaEspositori: number;
     marginalitaGraficaEspositori: number;

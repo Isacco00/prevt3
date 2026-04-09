@@ -256,6 +256,9 @@ public class Preventivo {
   @Column(name = "accessori_stand_config")
   private String accessoriStandConfig = "{}";
 
+  @Column(name = "accessori_desk_config")
+  private String accessoriDeskConfig = "{}";
+
   @Column(name = "borsa_espositori")
   private Integer borsaEspositori = 0;
 
@@ -336,6 +339,18 @@ public class Preventivo {
 
   @Column(name = "sconto_altri_beni_globale")
   private BigDecimal scontoAltriBeniGlobale = BigDecimal.ZERO;
+
+  @Column(name = "sconto_struttura_desk")
+  private BigDecimal scontoStrutturaDesk = BigDecimal.ZERO;
+
+  @Column(name = "sconto_grafica_desk")
+  private BigDecimal scontoGraficaDesk = BigDecimal.ZERO;
+
+  @Column(name = "sconto_premontaggio_desk")
+  private BigDecimal scontoPremontaggioDesk = BigDecimal.ZERO;
+
+  @Column(name = "sconto_accessori_desk")
+  private BigDecimal scontoAccessoriDesk = BigDecimal.ZERO;
 
   @Column(name = "marginalita_struttura_desk")
   private BigDecimal marginalitaStrutturaDesk = new BigDecimal("50");
