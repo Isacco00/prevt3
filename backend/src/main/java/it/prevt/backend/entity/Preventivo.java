@@ -376,6 +376,18 @@ public class Preventivo {
   @Column(name = "marginalita_accessori_espositori")
   private BigDecimal marginalitaAccessoriEspositori = new BigDecimal("50");
 
+  @Column(name = "sconto_struttura_espositori")
+  private BigDecimal scontoStrutturaEspositori = BigDecimal.ZERO;
+
+  @Column(name = "sconto_grafica_espositori")
+  private BigDecimal scontoGraficaEspositori = BigDecimal.ZERO;
+
+  @Column(name = "sconto_premontaggio_espositori")
+  private BigDecimal scontoPremontaggioEspositori = BigDecimal.ZERO;
+
+  @Column(name = "sconto_accessori_espositori")
+  private BigDecimal scontoAccessoriEspositori = BigDecimal.ZERO;
+
   @Column(name = "totale_preventivo")
   private BigDecimal totalePreventivo = BigDecimal.ZERO;
 

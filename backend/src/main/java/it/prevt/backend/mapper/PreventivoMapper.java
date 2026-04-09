@@ -176,6 +176,11 @@ public class PreventivoMapper extends AbstractMapper<Preventivo, PreventivoBean>
     bean.setMarginalitaPremontaggioEspositori(entity.getMarginalitaPremontaggioEspositori());
     bean.setMarginalitaAccessoriEspositori(entity.getMarginalitaAccessoriEspositori());
 
+    bean.setScontoStrutturaEspositori(entity.getScontoStrutturaEspositori());
+    bean.setScontoGraficaEspositori(entity.getScontoGraficaEspositori());
+    bean.setScontoPremontaggioEspositori(entity.getScontoPremontaggioEspositori());
+    bean.setScontoAccessoriEspositori(entity.getScontoAccessoriEspositori());
+
     bean.setTotalePreventivo(entity.getTotalePreventivo());
     bean.setTotaleCosti(entity.getTotaleCosti());
 

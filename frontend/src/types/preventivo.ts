@@ -166,6 +166,11 @@ export interface PreventivoBean {
     marginalitaPremontaggioEspositori: number;
     marginalitaAccessoriEspositori: number;
 
+    scontoStrutturaEspositori: number;
+    scontoGraficaEspositori: number;
+    scontoPremontaggioEspositori: number;
+    scontoAccessoriEspositori: number;
+
     totalePreventivo: number;
     totaleCosti: number;
 }

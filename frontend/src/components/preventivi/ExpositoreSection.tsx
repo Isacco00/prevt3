@@ -7,7 +7,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '../
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "../ui/collapsible.tsx";
 import {useQuery} from '@tanstack/react-query';
 import {ParametriAPI} from "@/api/parametri.ts";
-import {ListinoServiziPrezzoUnitarioBean} from "@/types/parametri.ts";
+import {ListinoAccessoriEspositoriBean, ListinoServiziPrezzoUnitarioBean, ListinoStrutturaEspositoriBean} from "@/types/parametri.ts";
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 
@@ -25,9 +25,7 @@ interface EspositoriSectionProps {
   setFormData: React.Dispatch<React.SetStateAction<PreventivoBean>>;
 }
 
-function EspositorePhysicalElements({
-                                      physicalElements
-                                    }: EspositorePhysicalElementsProps) {
+function EspositorePhysicalElements({physicalElements}: EspositorePhysicalElementsProps) {
   return <Card className="border-l-4 border-l-espositore">
     <CardHeader className="pb-3">
       <CardTitle className="text-sm flex items-center gap-2 text-espositore">
@@ -43,7 +41,6 @@ function EspositorePhysicalElements({
             {physicalElements.numeroPezziEspositori}
           </div>
         </div>
-
         <div className="space-y-2">
           <Label className="text-xs text-muted-foreground">Superficie stampa espositori (mq)</Label>
           <div className="text-lg font-semibold text-espositore">
@@ -55,23 +52,58 @@ function EspositorePhysicalElements({
   </Card>;
 }
 
-export function ExpositoreSection({
-                                    formData,
-                                    setFormData
-                                  }: EspositoriSectionProps) {
+export function ExpositoreSection({formData, setFormData}: EspositoriSectionProps) {
+
+  type AccessorioItem = { qty: number; noleggio: boolean };
+  type AccessoriEspositoriMap = Record<string, AccessorioItem>;
+
+  const parseEspositoriConfig = (json?: string): AccessoriEspositoriMap => {
+    if (!json) return {};
+    try {
+      const parsed = JSON.parse(json);
+      return typeof parsed === "object" && parsed !== null ? parsed : {};
+    } catch {
+      return {};
+    }
+  };
+
+  const stringifyEspositoriConfig = (map: AccessoriEspositoriMap): string => JSON.stringify(map);
+
+  const espositoriMap = parseEspositoriConfig(formData.espositoriConfig);
+
+  const handleAccessorioChange = (id: string, quantity: number) => {
+    setFormData(prev => {
+      const current = parseEspositoriConfig(prev.espositoriConfig);
+      const updated: AccessoriEspositoriMap = {
+        ...current,
+        [id]: {qty: quantity, noleggio: current[id]?.noleggio ?? false},
+      };
+      if (quantity <= 0) delete updated[id];
+      return {...prev, espositoriConfig: stringifyEspositoriConfig(updated)};
+    });
+  };
+
+  const handleNoleggioChange = (id: string, value: boolean) => {
+    setFormData(prev => {
+      const current = parseEspositoriConfig(prev.espositoriConfig);
+      if (!current[id] && !value) return prev;
+      const updated: AccessoriEspositoriMap = {
+        ...current,
+        [id]: {qty: current[id]?.qty ?? 0, noleggio: value},
+      };
+      return {...prev, espositoriConfig: stringifyEspositoriConfig(updated)};
+    });
+  };
+
   const updateIntField = (field: keyof PreventivoBean, value: string) => {
     const v = value === '' ? 0 : parseInt(value, 10);
-    setFormData(prev => ({
-      ...prev,
-      [field]: Number.isFinite(v) ? v : 0
-    }));
+    setFormData(prev => ({...prev, [field]: Number.isFinite(v) ? v : 0}));
   };
 
   const physicalElements = useMemo(() => {
     const qta30 = Number(formData.qtaTipo30 ?? 0);
     const qta50 = Number(formData.qtaTipo50 ?? 0);
     const qta100 = Number(formData.qtaTipo100 ?? 0);
-
     return {
       numeroPezziEspositori: (qta30 + qta50 + qta100) * 12,
       superficieStampaEspositori: qta30 * 1.2 + qta50 * 2 + qta100 * 3
@@ -79,385 +111,513 @@ export function ExpositoreSection({
   }, [formData.qtaTipo30, formData.qtaTipo50, formData.qtaTipo100]);
 
   const [accessoriOpen, setAccessoriOpen] = useState(true);
-  // Query for accessories prices
-  const {
-    data: accessoriesData = []
-  } = useQuery({
+
+  const {data: accessoriesData = []} = useQuery({
     queryKey: ['listino_accessori_espositori'],
     queryFn: () => ParametriAPI.getListinoAccessoriEspositori({
-      attivo: true, sortFields: [{
-        field: "LISTINO_ACCESSORI_ESPOSITORI_NOME",
-        desc: false
-      }]
+      attivo: true, sortFields: [{field: "LISTINO_ACCESSORI_ESPOSITORI_NOME", desc: false}]
     })
   });
 
-  // Query for expositor layout costs
-  const {
-    data: layoutCostsData = []
-  } = useQuery({
+  const {data: layoutCostsData = []} = useQuery({
     queryKey: ['listino_struttura_espositori'],
     queryFn: () => ParametriAPI.getListinoStrutturaEspositori({
-      attivo: true, sortFields: [{
-        field: "LISTINO_STRUTTURA_ESPOSITORI_LAYOUT_ESPOSITORE",
-        desc: false
-      }]
+      attivo: true, sortFields: [{field: "LISTINO_STRUTTURA_ESPOSITORI_LAYOUT_ESPOSITORE", desc: false}]
     })
   });
 
-  // Fetch listino servizi
-  const {
-    data: listinoServizi = []
-  } = useQuery({
+  const {data: listinoServizi = []} = useQuery({
     queryKey: ['listino-servizi-prezzo-unitario'],
     queryFn: () => ParametriAPI.getListinoServiziPrezzoUnitario({
-      attivo: true, sortFields: [{
-        field: "LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO",
-        desc: false
-      }]
+      attivo: true, sortFields: [{field: "LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO", desc: false}]
     })
   });
 
-  // Helper functions for accessories
-  const getAccessoryPrice = (name: string): number => {
-    const accessory = accessoriesData.find(item => item.nome === name);
-    return accessory ? Number(accessory.costoUnitario) : 0;
-  };
-  const getAccessoryQuantity = (fieldName: keyof PreventivoBean): number =>
-      Number(formData[fieldName]) || 0;
-  const calculateAccessoryTotal = (fieldName: keyof PreventivoBean, unitPrice: number): number => {
-    const quantity = getAccessoryQuantity(fieldName);
-    return quantity * unitPrice;
-  };
+  // === STRUTTURA HELPERS ===
+  const getLayoutEntry = (layout: string) =>
+    (layoutCostsData as ListinoStrutturaEspositoriBean[]).find(l => l.layoutEspositore === Number(layout));
 
-  // Helper function to get parameter value
-  const getParameterValue = (parameterName: string): number => {
-    const parameter = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === parameterName);
-    return parameter ? Number(parameter.costo) : 0;
+  const getLayoutCostUnitario = (layout: string) => Number(getLayoutEntry(layout)?.costoUnitario ?? 0);
+
+  const getLayoutPrezzoUnitario = (layout: string) => {
+    const e = getLayoutEntry(layout);
+    if (!e) return 0;
+    return Number(e.costoUnitario) * (1 + (e.ricaricoPercentuale ?? 0) / 100);
   };
 
-  // Helper function to get layout cost
-  const getLayoutCost = (layout: string): number => {
-    const layoutCost = layoutCostsData.find(l => l.layoutEspositore === layout);
-    return layoutCost ? Number(layoutCost.costoUnitario) : 0;
-  };
+  const strutturaCosto =
+    (formData.qtaTipo30 || 0) * getLayoutCostUnitario('30') +
+    (formData.qtaTipo50 || 0) * getLayoutCostUnitario('50') +
+    (formData.qtaTipo100 || 0) * getLayoutCostUnitario('100');
 
-  // Calculate costs
-  const calculateStructureCost = (): number => {
-    return (formData.qtaTipo30 || 0) * getLayoutCost('30') + (formData.qtaTipo50 || 0) * getLayoutCost('50') + (formData.qtaTipo100 || 0) * getLayoutCost('100');
-  };
-  const calculateGraphicsCost = (): number => {
-    const costoStampaGrafica = getParameterValue('Stampa Grafica');
-    return physicalElements.superficieStampaEspositori * costoStampaGrafica;
-  };
-  const calculatePreassemblyCost = (): number => {
-    if (!formData.premontaggioEspositori) {
-      return 0;
-    }
-    const costoPremontaggio = getParameterValue('Premontaggio');
-    return physicalElements.numeroPezziEspositori * costoPremontaggio;
-  };
-  const calculateAccessoriesTotal = (): number => {
-    return accessoryMapping.reduce((total, accessory) => {
-      const unitPrice = getAccessoryPrice(accessory.name);
-      const quantity = getAccessoryQuantity(accessory.field);
-      return total + quantity * unitPrice;
-    }, 0);
-  };
-  const calculateTotalCost = (): number => {
-    return calculateStructureCost() + calculateGraphicsCost() + calculatePreassemblyCost() + calculateAccessoriesTotal();
-  };
+  const strutturaPrezzo =
+    (formData.qtaTipo30 || 0) * getLayoutPrezzoUnitario('30') +
+    (formData.qtaTipo50 || 0) * getLayoutPrezzoUnitario('50') +
+    (formData.qtaTipo100 || 0) * getLayoutPrezzoUnitario('100');
 
-  // Mapping between field names and display names
-  const accessoryMapping = [{
-    field: 'ripiano30x30' as keyof PreventivoBean,
-    name: 'Ripiano 30x30'
-  }, {
-    field: 'ripiano50x50' as keyof PreventivoBean,
-    name: 'Ripiano 50x50'
-  }, {
-    field: 'ripiano100x50' as keyof PreventivoBean,
-    name: 'Ripiano 100x50'
-  }, {
-    field: 'tecaPlexiglass30x30x30' as keyof PreventivoBean,
-    name: 'Teca in plexiglass 30x30x30'
-  }, {
-    field: 'tecaPlexiglass50x50x50' as keyof PreventivoBean,
-    name: 'Teca in plexiglass 50x50x50'
-  }, {
-    field: 'tecaPlexiglass100x50x30' as keyof PreventivoBean,
-    name: 'Teca in plexiglass 100x50x30'
-  }, {
-    field: 'retroilluminazione30x30x100h' as keyof PreventivoBean,
-    name: 'Retroilluminazione 30x30x100 H'
-  }, {
-    field: 'retroilluminazione50x50x100h' as keyof PreventivoBean,
-    name: 'Retroilluminazione 50x50x100 H'
-  }, {
-    field: 'retroilluminazione100x50x100h' as keyof PreventivoBean,
-    name: 'Retroilluminazione 100x50x100 H'
-  }, {
-    field: 'borsaEspositori' as keyof PreventivoBean,
-    name: 'Borsa'
-  }];
-  const costiEspositori = useMemo(() => ({
-    strutturaEspositori: calculateStructureCost(),
-    graficaEspositori: calculateGraphicsCost(),
-    premontaggioEspositori: calculatePreassemblyCost(),
-    accessoriEspositori: calculateAccessoriesTotal(),
-    costoTotaleEspositori: calculateTotalCost()
-  }), [formData, physicalElements, accessoriesData, layoutCostsData, listinoServizi]);
+  // === GRAFICA HELPERS ===
+  const graficaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
+  const graficaCosto = graficaParam ? physicalElements.superficieStampaEspositori * (graficaParam.costo || 0) : 0;
+  const graficaPrezzo = graficaParam
+    ? physicalElements.superficieStampaEspositori * (graficaParam.costo || 0) * (1 + (graficaParam.ricaricoPercentuale || 0) / 100)
+    : 0;
 
-  return <div className="space-y-4">
-    <div className="flex items-center gap-2">
-      <Calculator className="h-5 w-5"/>
-      <h4 className="text-md font-semibold">Dati di Ingresso per Espositori</h4>
-    </div>
+  // === PREMONTAGGIO HELPERS ===
+  const premontaggioParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
+  const premontaggioCosto = premontaggioParam && formData.premontaggioEspositori
+    ? physicalElements.numeroPezziEspositori * (premontaggioParam.costo || 0) : 0;
+  const premontaggioPrezzo = premontaggioParam && formData.premontaggioEspositori
+    ? physicalElements.numeroPezziEspositori * (premontaggioParam.costo || 0) * (1 + (premontaggioParam.ricaricoPercentuale || 0) / 100)
+    : 0;
 
-    {/* Configurazione Espositori */}
-    <Card className="border-l-4 border-l-espositore">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-sm text-espositore">Configurazione Espositori</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {/* Headers row */}
-          <div className="grid grid-cols-4 gap-4 text-sm font-medium text-muted-foreground">
-            <div className="text-center">Tipo espositore</div>
-            <div className="text-center">Tipo 30</div>
-            <div className="text-center">Tipo 50</div>
-            <div className="text-center">Tipo 100</div>
-          </div>
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Calculator className="h-5 w-5"/>
+        <h4 className="text-md font-semibold">Dati di Ingresso per Espositori</h4>
+      </div>
 
-          {/* Quantity inputs row */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="flex items-center justify-center">
-              <Label className="text-sm font-medium">Quantità</Label>
-            </div>
-
-            <div className="space-y-1">
-              <Input type="number" min="0"
-                     value={formData.qtaTipo30}
-                     onChange={e => updateIntField('qtaTipo30', e.target.value)}
-                     placeholder="0"/>
-            </div>
-
-            <div className="space-y-1">
-              <Input type="number" min="0"
-                     value={formData.qtaTipo50}
-                     onChange={e => updateIntField('qtaTipo50', e.target.value)}
-                     placeholder="0"/>
-            </div>
-
-            <div className="space-y-1">
-              <Input type="number" min="0"
-                     value={formData.qtaTipo100}
-                     onChange={e => updateIntField('qtaTipo100', e.target.value)}
-                     placeholder="0"/>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-
-    {/* Elementi Fisici */}
-    <EspositorePhysicalElements physicalElements={physicalElements}/>
-
-    {/* Accessori Espositori - Table Format */}
-    <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
+      {/* Configurazione Espositori */}
       <Card className="border-l-4 border-l-espositore">
-        <CardHeader className="pb-3 py-[16px]">
-          <CollapsibleTrigger className="flex items-center gap-2 w-full">
-            <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
-            {accessoriOpen ? <ChevronDown className="h-4 w-4"/> :
-                <ChevronRight className="h-4 w-4"/>}
-          </CollapsibleTrigger>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm text-espositore">Configurazione Espositori</CardTitle>
         </CardHeader>
-        <CollapsibleContent>
-          <CardContent>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="grid grid-cols-4 gap-4 text-sm font-medium text-muted-foreground">
+              <div className="text-center">Tipo espositore</div>
+              <div className="text-center">Tipo 30</div>
+              <div className="text-center">Tipo 50</div>
+              <div className="text-center">Tipo 100</div>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="flex items-center justify-center">
+                <Label className="text-sm font-medium">Quantità</Label>
+              </div>
+              <div className="space-y-1">
+                <Input type="number" min="0"
+                       value={formData.qtaTipo30}
+                       onChange={e => updateIntField('qtaTipo30', e.target.value)}
+                       placeholder="0"/>
+              </div>
+              <div className="space-y-1">
+                <Input type="number" min="0"
+                       value={formData.qtaTipo50}
+                       onChange={e => updateIntField('qtaTipo50', e.target.value)}
+                       placeholder="0"/>
+              </div>
+              <div className="space-y-1">
+                <Input type="number" min="0"
+                       value={formData.qtaTipo100}
+                       onChange={e => updateIntField('qtaTipo100', e.target.value)}
+                       placeholder="0"/>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Elementi Fisici */}
+      <EspositorePhysicalElements physicalElements={physicalElements}/>
+
+      {/* Accessori Espositori */}
+      <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
+        <Card className="border-l-4 border-l-espositore">
+          <CardHeader className="pb-3 py-[16px]">
+            <CollapsibleTrigger className="flex items-center gap-2 w-full">
+              <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
+              {accessoriOpen ? <ChevronDown className="h-4 w-4"/> : <ChevronRight className="h-4 w-4"/>}
+            </CollapsibleTrigger>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Accessorio</TableHead>
+                    <TableHead className="text-center">Costo unitario</TableHead>
+                    <TableHead className="text-center">Prezzo unitario</TableHead>
+                    <TableHead className="text-center w-24">Quantità</TableHead>
+                    <TableHead className="text-center w-24">Noleggio</TableHead>
+                    <TableHead className="text-right">Prezzo</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(accessoriesData as ListinoAccessoriEspositoriBean[]).map(accessorio => {
+                    const item = espositoriMap[accessorio.id];
+                    const quantity = item?.qty ?? 0;
+                    const noleggio = item?.noleggio ?? false;
+                    const prezzoUnitario = Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                    const coeff = formData.coefficienteNoleggio?.valore ?? 0;
+                    const prezzo = noleggio
+                      ? prezzoUnitario * quantity * coeff
+                      : prezzoUnitario * quantity;
+                    return (
+                      <TableRow key={accessorio.id}>
+                        <TableCell className="font-medium py-1">{accessorio.nome}</TableCell>
+                        <TableCell className="text-center py-1">
+                          € {Number(accessorio.costoUnitario).toFixed(2).replace('.', ',')}
+                        </TableCell>
+                        <TableCell className="text-center py-1">
+                          € {prezzoUnitario.toFixed(2).replace('.', ',')}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Input
+                            type="number" min="0" max="99"
+                            value={quantity}
+                            onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
+                            className="w-14 text-center"
+                          />
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Checkbox
+                            checked={noleggio}
+                            onCheckedChange={(checked) => handleNoleggioChange(accessorio.id, !!checked)}
+                          />
+                        </TableCell>
+                        <TableCell className="text-right font-medium py-1">
+                          € {prezzo.toFixed(2).replace('.', ',')}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
+
+      {/* Calcolo Preventivo Espositori */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2">
+            <Calculator className="h-5 w-5"/>
+            <h4 className="text-md font-semibold">Calcolo Preventivo Espositori</h4>
+          </div>
+          {formData.coefficienteNoleggio && (
+            <span className="text-sm text-muted-foreground">
+              Coeff. Noleggio: <span className="font-semibold text-foreground">{formData.coefficienteNoleggio.nome}</span>
+            </span>
+          )}
+        </div>
+
+        <Card>
+          <CardContent className="pt-4 px-2">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Accessorio</TableHead>
-                  <TableHead className="text-center">Prezzo unitario</TableHead>
-                  <TableHead className="text-center">Quantità</TableHead>
-                  <TableHead className="text-center">Costo totale</TableHead>
+                  <TableHead>Voce</TableHead>
+                  <TableHead className="text-right">Costo</TableHead>
+                  <TableHead className="text-right">Prezzo</TableHead>
+                  <TableHead className="text-center w-32">Sconto %</TableHead>
+                  <TableHead className="text-right">Sconto €</TableHead>
+                  <TableHead className="text-right">Prezzo Netto</TableHead>
+                  <TableHead className="text-right">Prezzo Noleggio</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {accessoryMapping.map(accessory => {
-                  const unitPrice = getAccessoryPrice(accessory.name);
-                  const quantity = getAccessoryQuantity(accessory.field);
-                  const total = calculateAccessoryTotal(accessory.field, unitPrice);
-                  return <TableRow key={accessory.field}>
-                    <TableCell className="font-medium">{accessory.name}</TableCell>
-                    <TableCell className="text-center">
-                      €{unitPrice.toFixed(2)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Input type="number" min="0" max="10" value={quantity || 0} onChange={e => {
-                        const newQuantity = parseInt(e.target.value) || 0;
-                        updateIntField(accessory.field, newQuantity.toString());
-                      }} className="w-20 text-center"/>
-                    </TableCell>
-                    <TableCell className="text-center font-semibold">
-                      €{total.toFixed(2)}
-                    </TableCell>
-                  </TableRow>;
-                })}
+                {/* Struttura espositori */}
+                {(() => {
+                  const scontoPerc = formData.scontoStrutturaEspositori || 0;
+                  const scontoEuro = strutturaPrezzo * scontoPerc / 100;
+                  const prezzoNetto = strutturaPrezzo - scontoEuro;
+                  const prezzoNoleggio = prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0);
+                  return (
+                    <TableRow>
+                      <TableCell className="font-medium">Struttura espositori</TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        €{strutturaCosto.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        €{strutturaPrezzo.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Input
+                            type="number" min="0" max="100" step="1"
+                            value={scontoPerc}
+                            onChange={(e) => setFormData({...formData, scontoStrutturaEspositori: parseFloat(e.target.value) || 0})}
+                            className="w-16 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">-€{scontoEuro.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold text-primary">€{prezzoNetto.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold">€{prezzoNoleggio.toFixed(2)}</TableCell>
+                    </TableRow>
+                  );
+                })()}
+
+                {/* Grafica espositori */}
+                {(() => {
+                  const scontoPerc = formData.scontoGraficaEspositori || 0;
+                  const scontoEuro = graficaPrezzo * scontoPerc / 100;
+                  const prezzoNetto = graficaPrezzo - scontoEuro;
+                  return (
+                    <TableRow>
+                      <TableCell className="font-medium">Grafica espositori</TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        €{graficaCosto.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        €{graficaPrezzo.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Input
+                            type="number" min="0" max="100" step="1"
+                            value={scontoPerc}
+                            onChange={(e) => setFormData({...formData, scontoGraficaEspositori: parseFloat(e.target.value) || 0})}
+                            className="w-16 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">-€{scontoEuro.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold text-primary">€{prezzoNetto.toFixed(2)}</TableCell>
+                      <TableCell className="text-center text-muted-foreground">-</TableCell>
+                    </TableRow>
+                  );
+                })()}
+
+                {/* Premontaggio espositori */}
+                {(() => {
+                  const scontoPerc = formData.scontoPremontaggioEspositori || 0;
+                  const scontoEuro = premontaggioPrezzo * scontoPerc / 100;
+                  const prezzoNetto = premontaggioPrezzo - scontoEuro;
+                  return (
+                    <TableRow>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          Premontaggio espositori
+                          <Checkbox
+                            checked={formData.premontaggioEspositori ?? false}
+                            onCheckedChange={(checked) => setFormData({...formData, premontaggioEspositori: Boolean(checked)})}
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        €{premontaggioCosto.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        €{premontaggioPrezzo.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Input
+                            type="number" min="0" max="100" step="1"
+                            value={scontoPerc}
+                            onChange={(e) => setFormData({...formData, scontoPremontaggioEspositori: parseFloat(e.target.value) || 0})}
+                            className="w-16 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">-€{scontoEuro.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold text-primary">€{prezzoNetto.toFixed(2)}</TableCell>
+                      <TableCell className="text-center text-muted-foreground">-</TableCell>
+                    </TableRow>
+                  );
+                })()}
+
+                {/* Accessori espositori */}
+                {(() => {
+                  let costoAccessori = 0;
+                  let prezzoAccessoriVendita = 0;
+                  let prezzoAccessoriNoleggio = 0;
+                  for (const accessorio of accessoriesData as ListinoAccessoriEspositoriBean[]) {
+                    const item = espositoriMap[accessorio.id];
+                    if (!item) continue;
+                    const costo = item.qty * Number(accessorio.costoUnitario);
+                    const p = item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                    costoAccessori += costo;
+                    if (item.noleggio) prezzoAccessoriNoleggio += p;
+                    else prezzoAccessoriVendita += p;
+                  }
+                  const prezzoAccessori = prezzoAccessoriVendita + prezzoAccessoriNoleggio;
+                  const scontoPerc = formData.scontoAccessoriEspositori || 0;
+                  const scontoEuro = prezzoAccessori * scontoPerc / 100;
+                  const prezzoNetto = prezzoAccessori - scontoEuro;
+                  const nettoNoleggioAcc = prezzoAccessoriNoleggio * (1 - scontoPerc / 100);
+                  const prezzoNoleggioAcc = nettoNoleggioAcc * (formData.coefficienteNoleggio?.valore ?? 0);
+                  return (
+                    <TableRow>
+                      <TableCell className="font-medium">Accessori espositori</TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        €{costoAccessori.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        €{prezzoAccessori.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Input
+                            type="number" min="0" max="100" step="1"
+                            value={scontoPerc}
+                            onChange={(e) => setFormData({...formData, scontoAccessoriEspositori: parseFloat(e.target.value) || 0})}
+                            className="w-16 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">-€{scontoEuro.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold text-primary">€{prezzoNetto.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold">
+                        {prezzoNoleggioAcc > 0
+                          ? `€${prezzoNoleggioAcc.toFixed(2)}`
+                          : <span className="text-muted-foreground">-</span>}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })()}
               </TableBody>
             </Table>
           </CardContent>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
+        </Card>
 
-    {/* Calcolo Costi Espositori */}
-    <Card>
-      <CardContent className="pt-6">
-        <h4 className="text-lg font-semibold mb-4 text-desk">Calcolo Preventivo Espositori</h4>
+        {/* Summary */}
+        <Card className="border-2 border-primary/20 bg-primary/5">
+          <CardContent className="pt-4 space-y-6">
+            {(() => {
+              const scontoPercStruttura = formData.scontoStrutturaEspositori || 0;
+              const scontoPercGrafica = formData.scontoGraficaEspositori || 0;
+              const scontoPercPremontaggio = formData.scontoPremontaggioEspositori || 0;
+              const scontoPercAccessori = formData.scontoAccessoriEspositori || 0;
 
-        {/* Cost cards in 2x2 layout (4 items) */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
+              const nettoStruttura = strutturaPrezzo * (1 - scontoPercStruttura / 100);
+              const nettoGrafica = graficaPrezzo * (1 - scontoPercGrafica / 100);
+              const nettoPremontaggio = premontaggioPrezzo * (1 - scontoPercPremontaggio / 100);
 
-          {/* Struttura espositori */}
-          <Card className="p-4">
-            <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium">Struttura espositori</div>
-              <div
-                  className="text-lg font-bold">€{(costiEspositori?.strutturaEspositori ?? 0).toFixed(2)}</div>
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="flex flex-col gap-1">
-                <div className="text-xs text-muted-foreground">Ricarico</div>
-                <div className="flex items-center gap-1">
-                  <Input
-                      type="number" min="0" max="200" step="1"
-                      value={formData.marginalitaStrutturaEspositori ?? 0}
-                      onChange={(e) => updateIntField("marginalitaStrutturaEspositori", e.target.value)}
-                      className="w-16 h-6 text-xs text-center"/>
-                  <span className="text-xs">%</span>
-                </div>
-              </div>
-              <div className="text-lg font-bold text-primary">
-                €{((costiEspositori?.strutturaEspositori ?? 0) * (1 + (formData.marginalitaStrutturaEspositori ?? 0) / 100)).toFixed(2)}
-              </div>
-            </div>
-          </Card>
+              let costoAccessori = 0;
+              let listAccessoriVendita = 0;
+              let listAccessoriNoleggio = 0;
+              for (const accessorio of accessoriesData as ListinoAccessoriEspositoriBean[]) {
+                const item = espositoriMap[accessorio.id];
+                if (!item) continue;
+                costoAccessori += item.qty * Number(accessorio.costoUnitario);
+                const p = item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                if (item.noleggio) listAccessoriNoleggio += p;
+                else listAccessoriVendita += p;
+              }
+              const listAccessori = listAccessoriVendita + listAccessoriNoleggio;
+              const nettoAccessoriVendita = listAccessoriVendita * (1 - scontoPercAccessori / 100);
+              const nettoAccessoriNoleggio = listAccessoriNoleggio * (1 - scontoPercAccessori / 100);
+              const nettoAccessori = nettoAccessoriVendita + nettoAccessoriNoleggio;
 
-          {/* Grafica espositori */}
-          <Card className="p-4">
-            <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium">Grafica espositori</div>
-              <div
-                  className="text-lg font-bold">€{(costiEspositori?.graficaEspositori ?? 0).toFixed(2)}</div>
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="flex flex-col gap-1">
-                <div className="text-xs text-muted-foreground">Ricarico</div>
-                <div className="flex items-center gap-1">
-                  <Input type="number" min="0" max="200" step="1"
-                         value={formData.marginalitaGraficaEspositori ?? 0}
-                         onChange={e => updateIntField('marginalitaGraficaEspositori', e.target.value)}
-                         className="w-16 h-6 text-xs text-center"/>
-                  <span className="text-xs">%</span>
-                </div>
-              </div>
-              <div className="text-lg font-bold text-primary">
-                €{((costiEspositori?.graficaEspositori ?? 0) * (1 + (formData.marginalitaGraficaEspositori ?? 0) / 100)).toFixed(2)}
-              </div>
-            </div>
-          </Card>
+              const costoTotale = strutturaCosto + graficaCosto + premontaggioCosto + costoAccessori;
+              const totalListinoVendita = strutturaPrezzo + graficaPrezzo + premontaggioPrezzo + listAccessori;
+              const totalNettoVendita = nettoStruttura + nettoGrafica + nettoPremontaggio + nettoAccessori;
 
-          {/* Premontaggio espositori */}
-          <Card className="p-4">
-            <div className="flex justify-between items-start mb-3">
-              <div className="flex items-center gap-2">
-                <div className="text-sm font-medium">Premontaggio espositori</div>
-                <Checkbox
-                    checked={formData.premontaggioEspositori ?? false}
-                    onCheckedChange={(checked) =>
-                        setFormData({
-                          ...formData,
-                          premontaggioEspositori: Boolean(checked)
-                        })
-                    }
-                />
-              </div>
-              <div
-                  className="text-lg font-bold">€{(costiEspositori?.premontaggioEspositori ?? 0).toFixed(2)}</div>
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="flex flex-col gap-1">
-                <div className="text-xs text-muted-foreground">Ricarico</div>
-                <div className="flex items-center gap-1">
-                  <Input type="number" min="0" max="200" step="1"
-                         value={formData.marginalitaPremontaggioEspositori ?? 0}
-                         onChange={e => updateIntField('marginalitaPremontaggioEspositori', e.target.value)}
-                         className="w-16 h-6 text-xs text-center"/>
-                  <span className="text-xs">%</span>
-                </div>
-              </div>
-              <div className="text-lg font-bold text-primary">
-                €{((costiEspositori?.premontaggioEspositori ?? 0) * (1 + (formData.marginalitaPremontaggioEspositori ?? 0) / 100)).toFixed(2)}
-              </div>
-            </div>
-          </Card>
+              const scontoMedioVendita = totalListinoVendita > 0
+                ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
+              const marginalitaVendita = costoTotale > 0
+                ? (totalNettoVendita - costoTotale) / costoTotale * 100 : 0;
 
-          {/* Accessori espositori */}
-          <Card className="p-4">
-            <div className="flex justify-between items-start mb-3">
-              <div className="text-sm font-medium">Accessori espositori</div>
-              <div
-                  className="text-lg font-bold">€{(costiEspositori?.accessoriEspositori ?? 0).toFixed(2)}</div>
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="flex flex-col gap-1">
-                <div className="text-xs text-muted-foreground">Ricarico</div>
-                <div className="flex items-center gap-1">
-                  <Input type="number" min="0" max="200" step="1"
-                         value={formData.marginalitaAccessoriEspositori ?? 0}
-                         onChange={e => updateIntField('marginalitaAccessoriEspositori', e.target.value)}
-                         className="w-16 h-6 text-xs text-center"/>
-                  <span className="text-xs">%</span>
-                </div>
-              </div>
-              <div className="text-lg font-bold text-primary">
-                €{((costiEspositori?.accessoriEspositori ?? 0) * (1 + (formData.marginalitaAccessoriEspositori ?? 0) / 100)).toFixed(2)}
-              </div>
-            </div>
-          </Card>
-        </div>
+              const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
+              const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
+              const prezzoNoleggioAccessori = nettoAccessoriNoleggio * coeffNoleggio;
+              const totalNettoNoleggio = nettoGrafica + nettoPremontaggio + nettoAccessoriVendita;
+              const totalePreventivoFinale = prezzoNoleggioStruttura + totalNettoNoleggio + prezzoNoleggioAccessori;
 
-        {/* Summary cards with totals */}
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t">
-          <Card className="p-4 bg-primary/5 border-primary/20">
-            <div className="text-sm text-muted-foreground">Totale preventivo espositori</div>
-            <div className="text-2xl font-bold text-primary">
-              €{((costiEspositori?.strutturaEspositori ?? 0) * (1 + (formData.marginalitaStrutturaEspositori ?? 0) / 100) + (costiEspositori?.graficaEspositori ?? 0) * (1 + (formData.marginalitaGraficaEspositori ?? 0) / 100) + (costiEspositori?.premontaggioEspositori ?? 0) * (1 + (formData.marginalitaPremontaggioEspositori ?? 0) / 100) + (costiEspositori?.accessoriEspositori ?? 0) * (1 + (formData.marginalitaAccessoriEspositori ?? 0) / 100)).toFixed(2)}
-            </div>
-          </Card>
+              const scontoMedioNoleggio = strutturaPrezzo > 0
+                ? (strutturaPrezzo - nettoStruttura) / strutturaPrezzo * 100 : 0;
+              const marginalitaNoleggio = costoTotale > 0
+                ? (totalePreventivoFinale - costoTotale) / costoTotale * 100 : 0;
 
-          <Card className="p-4 bg-muted/30">
-            <div className="text-sm text-muted-foreground">Totale costi espositori</div>
-            <div className="text-2xl font-bold">
-              €{((costiEspositori?.strutturaEspositori ?? 0) + (costiEspositori?.graficaEspositori ?? 0) + (costiEspositori?.premontaggioEspositori ?? 0) + (costiEspositori?.accessoriEspositori ?? 0)).toFixed(2)}
-            </div>
-          </Card>
+              return (
+                <>
+                  {/* VENDITA */}
+                  <div>
+                    <div className="text-lg font-semibold text-primary mb-2">Vendita</div>
+                    <div className="grid grid-cols-5 gap-4 text-center">
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold">€{totalListinoVendita.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
+                        <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
+                        <div className="text-lg font-bold text-primary">€{totalNettoVendita.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Costi</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold">{scontoMedioVendita.toFixed(1)}%</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold text-green-600">{marginalitaVendita.toFixed(1)}%</div>
+                      </div>
+                    </div>
+                  </div>
 
-          <Card className="p-4 bg-green-50 border-green-200">
-            <div className="text-sm text-muted-foreground">Marginalità media</div>
-            <div className="text-2xl font-bold text-green-600">
-              {(() => {
-                const totalCosts = (costiEspositori?.strutturaEspositori ?? 0) + (costiEspositori?.graficaEspositori ?? 0) + (costiEspositori?.premontaggioEspositori ?? 0) + (costiEspositori?.accessoriEspositori ?? 0);
-                const totalQuoted = (costiEspositori?.strutturaEspositori ?? 0) * (1 + (formData.marginalitaStrutturaEspositori ?? 0) / 100) + (costiEspositori?.graficaEspositori ?? 0) * (1 + (formData.marginalitaGraficaEspositori ?? 0) / 100) + (costiEspositori?.premontaggioEspositori ?? 0) * (1 + (formData.marginalitaPremontaggioEspositori ?? 0) / 100) + (costiEspositori?.accessoriEspositori ?? 0) * (1 + (formData.marginalitaAccessoriEspositori ?? 0) / 100);
-                const margin = totalCosts > 0 ? (totalQuoted - totalCosts) / totalCosts * 100 : 0;
-                return margin.toFixed(1);
-              })()}%
-            </div>
-          </Card>
-        </div>
-      </CardContent>
-    </Card>
-  </div>;
+                  <div className="border-t pt-4"/>
+
+                  {/* NOLEGGIO */}
+                  <div>
+                    <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                      <div className="text-left">
+                        <div className="text-lg font-semibold text-primary">Noleggio</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Noleggio</div>
+                        <div className="text-xl font-bold">€{(prezzoNoleggioStruttura + prezzoNoleggioAccessori).toFixed(2)}</div>
+                      </div>
+                      <div/><div/><div/>
+                    </div>
+
+                    <div className="grid grid-cols-5 gap-4 text-center">
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold">€{strutturaPrezzo.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
+                        <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
+                        <div className="text-lg font-bold text-primary">€{totalNettoNoleggio.toFixed(2)}</div>
+                        <div className="text-xs text-muted-foreground mt-2">di cui:</div>
+                        <div className="text-xs text-muted-foreground">
+                          Premontaggio:{" "}
+                          <span className="font-medium text-foreground">€{nettoPremontaggio.toFixed(2)}</span>
+                        </div>
+                        <div className="mt-3">
+                          <div className="text-xs text-muted-foreground">Totale Preventivo Finale</div>
+                          <div className="text-xl font-bold text-primary">€{totalePreventivoFinale.toFixed(2)}</div>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Sconto Medio</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold">{scontoMedioNoleggio.toFixed(1)}%</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold text-green-600">{marginalitaNoleggio.toFixed(1)}%</div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 }

@@ -91,20 +91,32 @@
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/entity/Preventivo.java",
-      "accessCount": 17,
-      "lastAccessed": 1775719987322,
-      "type": "file"
-    },
-    {
-      "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
-      "accessCount": 16,
-      "lastAccessed": 1775719989673,
+      "accessCount": 21,
+      "lastAccessed": 1775743101283,
       "type": "file"
     },
     {
       "path": "frontend/src/types/preventivo.ts",
+      "accessCount": 20,
+      "lastAccessed": 1775743123128,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
+      "accessCount": 19,
+      "lastAccessed": 1775743105728,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
       "accessCount": 16,
-      "lastAccessed": 1775719991887,
+      "lastAccessed": 1775743112021,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/merger/PreventivoMerger.java",
+      "accessCount": 16,
+      "lastAccessed": 1775743115950,
       "type": "directory"
     },
     {
@@ -114,21 +126,15 @@
       "type": "directory"
     },
     {
-      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
-      "accessCount": 13,
-      "lastAccessed": 1775719998497,
-      "type": "directory"
-    },
-    {
-      "path": "backend/src/main/java/it/prevt/backend/merger/PreventivoMerger.java",
-      "accessCount": 11,
-      "lastAccessed": 1775720001973,
-      "type": "directory"
-    },
-    {
       "path": "frontend/src/components/preventivi/ExpositoreSection.tsx",
-      "accessCount": 5,
-      "lastAccessed": 1775719499455,
+      "accessCount": 9,
+      "lastAccessed": 1775743216554,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/types/parametri.ts",
+      "accessCount": 6,
+      "lastAccessed": 1775742934969,
       "type": "file"
     },
     {
@@ -150,12 +156,6 @@
       "type": "directory"
     },
     {
-      "path": "frontend/src/types/parametri.ts",
-      "accessCount": 3,
-      "lastAccessed": 1775718619060,
-      "type": "file"
-    },
-    {
       "path": "backend/src/main/resources/db/migration/V8__storage_sconti.sql",
       "accessCount": 3,
       "lastAccessed": 1775719718745,
@@ -163,8 +163,8 @@
     },
     {
       "path": "frontend/src/types",
-      "accessCount": 2,
-      "lastAccessed": 1775718614290,
+      "accessCount": 3,
+      "lastAccessed": 1775742931649,
       "type": "directory"
     },
     {
@@ -183,6 +183,12 @@
       "path": "backend/src/main/java/it/prevt/backend/mapper/AbstractMapper.java",
       "accessCount": 2,
       "lastAccessed": 1775719745930,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V12__desk_sconti.sql",
+      "accessCount": 2,
+      "lastAccessed": 1775742991794,
       "type": "file"
     },
     {
@@ -222,9 +228,15 @@
       "type": "file"
     },
     {
-      "path": "backend/src/main/resources/db/migration/V12__desk_sconti.sql",
+      "path": "backend/src/main/java/it/prevt/backend",
       "accessCount": 1,
-      "lastAccessed": 1775719964667,
+      "lastAccessed": 1775742959406,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V13__espositori_sconti.sql",
+      "accessCount": 1,
+      "lastAccessed": 1775743096125,
       "type": "file"
     }
   ],

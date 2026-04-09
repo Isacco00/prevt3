@@ -171,6 +171,11 @@ public class PreventivoMerger extends AbstractMerger<PreventivoBean, Preventivo>
     entity.setMarginalitaPremontaggioEspositori(bean.getMarginalitaPremontaggioEspositori());
     entity.setMarginalitaAccessoriEspositori(bean.getMarginalitaAccessoriEspositori());
 
+    entity.setScontoStrutturaEspositori(bean.getScontoStrutturaEspositori());
+    entity.setScontoGraficaEspositori(bean.getScontoGraficaEspositori());
+    entity.setScontoPremontaggioEspositori(bean.getScontoPremontaggioEspositori());
+    entity.setScontoAccessoriEspositori(bean.getScontoAccessoriEspositori());
+
     entity.setTotalePreventivo(bean.getTotalePreventivo());
     entity.setTotaleCosti(bean.getTotaleCosti());
 
