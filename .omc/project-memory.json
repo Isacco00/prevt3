@@ -72,6 +72,12 @@
   },
   "hotPaths": [
     {
+      "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
+      "accessCount": 36,
+      "lastAccessed": 1775769944414,
+      "type": "file"
+    },
+    {
       "path": "frontend/src/components/preventivi/StorageSection.tsx",
       "accessCount": 35,
       "lastAccessed": 1775719418366,
@@ -81,12 +87,6 @@
       "path": "frontend/src/components/preventivi/DeskSection.tsx",
       "accessCount": 29,
       "lastAccessed": 1775742603073,
-      "type": "file"
-    },
-    {
-      "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
-      "accessCount": 21,
-      "lastAccessed": 1775719614939,
       "type": "file"
     },
     {
@@ -138,15 +138,15 @@
       "type": "file"
     },
     {
-      "path": "backend/src/main/java",
-      "accessCount": 4,
-      "lastAccessed": 1775694448435,
+      "path": "frontend/src/hooks/useStandCosts.ts",
+      "accessCount": 5,
+      "lastAccessed": 1775769783090,
       "type": "directory"
     },
     {
-      "path": "frontend/src/hooks/useStandCosts.ts",
+      "path": "backend/src/main/java",
       "accessCount": 4,
-      "lastAccessed": 1775742343410,
+      "lastAccessed": 1775694448435,
       "type": "directory"
     },
     {
@@ -237,6 +237,12 @@
       "path": "backend/src/main/resources/db/migration/V13__espositori_sconti.sql",
       "accessCount": 1,
       "lastAccessed": 1775743096125,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/PreventivoModal.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1775769714971,
       "type": "file"
     }
   ],

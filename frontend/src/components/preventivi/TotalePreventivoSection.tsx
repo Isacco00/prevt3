@@ -590,42 +590,43 @@ export function TotalePreventivoSection({
     return cost * (1 + margin / 100);
   };
   // Struttura totals
-  const costoStruttura = standCosts.strutturaTerra + storageCosts.costoStrutturaStorage + (deskCosts.strutturaTerra || 0) + espositoriCosts.strutturaEspositori;
+  const costoStruttura = (standCosts.costoStrutturaTerra ?? 0) + (storageCosts.costoStrutturaStorage ?? 0) + (deskCosts.strutturaTerra || 0) + (espositoriCosts.strutturaEspositori ?? 0);
   const preventivoStruttura =
-      calculatePreventivoWithMargin(standCosts.strutturaTerra, standMargins.marginalitaStruttura) +
-      calculatePreventivoWithMargin(storageCosts.costoStrutturaStorage, storageMargins.marginalitaStrutturaStorage) +
-      calculatePreventivoWithMargin(deskCosts.strutturaTerra, deskMargins.marginalitaStrutturaDesk) +
-      calculatePreventivoWithMargin(espositoriCosts.strutturaEspositori, espositoriMargins.marginalitaStrutturaEspositori);
+      calculatePreventivoWithMargin(standCosts.costoStrutturaTerra ?? 0, standMargins.marginalitaStruttura ?? 0) +
+      calculatePreventivoWithMargin(storageCosts.costoStrutturaStorage ?? 0, storageMargins.marginalitaStrutturaStorage ?? 0) +
+      calculatePreventivoWithMargin(deskCosts.strutturaTerra ?? 0, deskMargins.marginalitaStrutturaDesk ?? 0) +
+      calculatePreventivoWithMargin(espositoriCosts.strutturaEspositori ?? 0, espositoriMargins.marginalitaStrutturaEspositori ?? 0);
 
   // Grafiche totals
-  const costoGrafiche = standCosts.graficaCordino + storageCosts.costoGraficaStorage + (deskCosts.graficaCordino || 0) + espositoriCosts.graficaEspositori;
+  const costoGrafiche = (standCosts.costoGraficaCordino ?? 0) + (storageCosts.costoGraficaStorage ?? 0) + (deskCosts.graficaCordino || 0) + (espositoriCosts.graficaEspositori ?? 0);
   const preventivoGrafiche =
-      calculatePreventivoWithMargin(standCosts.graficaCordino, standMargins.marginalitaGrafica) +
-      calculatePreventivoWithMargin(storageCosts.costoGraficaStorage, storageMargins.marginalitaGraficaStorage) +
-      calculatePreventivoWithMargin(deskCosts.graficaCordino, deskMargins.marginalitaGraficaDesk) +
-      calculatePreventivoWithMargin(espositoriCosts.graficaEspositori, espositoriMargins.marginalitaGraficaEspositori);
+      calculatePreventivoWithMargin(standCosts.costoGraficaCordino ?? 0, standMargins.marginalitaGrafica ?? 0) +
+      calculatePreventivoWithMargin(storageCosts.costoGraficaStorage ?? 0, storageMargins.marginalitaGraficaStorage ?? 0) +
+      calculatePreventivoWithMargin(deskCosts.graficaCordino ?? 0, deskMargins.marginalitaGraficaDesk ?? 0) +
+      calculatePreventivoWithMargin(espositoriCosts.graficaEspositori ?? 0, espositoriMargins.marginalitaGraficaEspositori ?? 0);
 
   // Retroilluminazione (only for stands)
-  const costoRetroilluminazione = standCosts.retroilluminazione;
-  const preventivoRetroilluminazione = calculatePreventivoWithMargin(standCosts.retroilluminazione, standMargins.marginalitaRetroilluminazione);
+  const costoRetroilluminazione = standCosts.costoRetroilluminazione ?? 0;
+  const preventivoRetroilluminazione = calculatePreventivoWithMargin(standCosts.costoRetroilluminazione ?? 0, standMargins.marginalitaRetroilluminazione ?? 0);
 
   // Extra per struttura complessa (only for stands)
-  const costoExtraComplessa = standCosts.extraStandComplesso;
-  calculatePreventivoWithMargin(standCosts.extraStandComplesso, standMargins.marginalitaStruttura);
+  const costoExtraComplessa = standCosts.extraStandComplesso ?? 0;
+  calculatePreventivoWithMargin(standCosts.extraStandComplesso ?? 0, standMargins.marginalitaStruttura ?? 0);
 // Accessori totals
-  const costoAccessori = standCosts.costiAccessori + (deskCosts.accessori ?? 0) + espositoriCosts.accessoriEspositori;
+  const costoAccessoriStand = (standCosts.costiAccessoriVendita ?? 0) + (standCosts.costiAccessoriNoleggio ?? 0);
+  const costoAccessori = costoAccessoriStand + (deskCosts.accessori ?? 0) + (espositoriCosts.accessoriEspositori ?? 0);
   const preventivoAccessori =
-      calculatePreventivoWithMargin(standCosts.costiAccessori, standMargins.marginalitaAccessori) +
-      calculatePreventivoWithMargin(deskCosts.accessori ?? 0, deskMargins.marginalitaAccessoriDesk) +
-      calculatePreventivoWithMargin(espositoriCosts.accessoriEspositori, espositoriMargins.marginalitaAccessoriEspositori);
+      calculatePreventivoWithMargin(costoAccessoriStand, standMargins.marginalitaAccessori ?? 0) +
+      calculatePreventivoWithMargin(deskCosts.accessori ?? 0, deskMargins.marginalitaAccessoriDesk ?? 0) +
+      calculatePreventivoWithMargin(espositoriCosts.accessoriEspositori ?? 0, espositoriMargins.marginalitaAccessoriEspositori ?? 0);
 
   // Premontaggi totals
-  const costoPremontaggi = standCosts.premontaggio + storageCosts.costoPremontaggioStorage + (deskCosts.premontaggio ?? 0) + espositoriCosts.premontaggioEspositori;
+  const costoPremontaggi = (standCosts.premontaggio ?? 0) + (storageCosts.costoPremontaggioStorage ?? 0) + (deskCosts.premontaggio ?? 0) + (espositoriCosts.premontaggioEspositori ?? 0);
   const preventivoPremontaggi =
-      calculatePreventivoWithMargin(standCosts.premontaggio, standMargins.marginalitaPremontaggio) +
-      calculatePreventivoWithMargin(storageCosts.costoPremontaggioStorage, storageMargins.marginalitaPremontaggioStorage) +
-      calculatePreventivoWithMargin(deskCosts.premontaggio ?? 0, deskMargins.marginalitaPremontaggioDesk) +
-      calculatePreventivoWithMargin(espositoriCosts.premontaggioEspositori, espositoriMargins.marginalitaPremontaggioEspositori);
+      calculatePreventivoWithMargin(standCosts.premontaggio ?? 0, standMargins.marginalitaPremontaggio ?? 0) +
+      calculatePreventivoWithMargin(storageCosts.costoPremontaggioStorage ?? 0, storageMargins.marginalitaPremontaggioStorage ?? 0) +
+      calculatePreventivoWithMargin(deskCosts.premontaggio ?? 0, deskMargins.marginalitaPremontaggioDesk ?? 0) +
+      calculatePreventivoWithMargin(espositoriCosts.premontaggioEspositori ?? 0, espositoriMargins.marginalitaPremontaggioEspositori ?? 0);
 
   const costoMontaggio = formData.servizioMontaggioSmontaggio ? (preventivoServizi?.preventivoMontaggio || 0) + (preventivoServizi?.preventivoSmontaggio || 0) : 0;
   const costoCertificazioni = formData.servizioCertificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
@@ -731,10 +732,10 @@ export function TotalePreventivoSection({
                     <TableRow key={row.voce}>
                       <TableCell className="font-medium">{row.voce}</TableCell>
                       <TableCell className="text-right text-sm text-muted-foreground">
-                        €{row.costo.toFixed(2)}
+                        €{(row.costo ?? 0).toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right text-sm">
-                        €{row.prezzo.toFixed(2)}
+                        €{(row.prezzo ?? 0).toFixed(2)}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -748,13 +749,13 @@ export function TotalePreventivoSection({
                         </div>
                       </TableCell>
                       <TableCell className="text-right text-sm">
-                        -€{scontoEuro.toFixed(2)}
+                        -€{(scontoEuro ?? 0).toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right font-bold text-primary">
-                        €{prezzoNetto.toFixed(2)}
+                        €{(prezzoNetto ?? 0).toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right font-bold">
-                        {prezzoNoleggio !== null ? `€${prezzoNoleggio.toFixed(2)}` : <span className="text-muted-foreground">-</span>}
+                        {prezzoNoleggio !== null ? `€${(prezzoNoleggio ?? 0).toFixed(2)}` : <span className="text-muted-foreground">-</span>}
                       </TableCell>
                     </TableRow>
                   );
@@ -769,11 +770,11 @@ export function TotalePreventivoSection({
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Totale preventivo</div>
-                <div className="text-2xl font-bold text-primary">€{totaleNetto.toFixed(2)}</div>
+                <div className="text-2xl font-bold text-primary">€{(totaleNetto ?? 0).toFixed(2)}</div>
               </div>
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Totale costi</div>
-                <div className="text-2xl font-bold">€{costoTotale.toFixed(2)}</div>
+                <div className="text-2xl font-bold">€{(costoTotale ?? 0).toFixed(2)}</div>
               </div>
               <div>
                 <div className="text-sm text-muted-foreground mb-1">Marginalità Media (%)</div>
