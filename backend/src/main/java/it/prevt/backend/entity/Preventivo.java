@@ -319,6 +319,12 @@ public class Preventivo {
   @Column(name = "grafica_storage_attiva")
   private Boolean graficaStorageAttiva = false;
 
+  @Column(name = "grafica_desk_attiva")
+  private Boolean graficaDeskAttiva = true;
+
+  @Column(name = "grafica_espositori_attiva")
+  private Boolean graficaEspositoriAttiva = true;
+
   @Column(name = "sconto_struttura_globale")
   private BigDecimal scontoStrutturaGlobale = BigDecimal.ZERO;
 

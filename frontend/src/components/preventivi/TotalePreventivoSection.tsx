@@ -427,33 +427,34 @@ export function TotalePreventivoSection({
         qta50 * (layoutCost50?.costoUnitario || 0) +
         qta100 * (layoutCost100?.costoUnitario || 0);
 
-    // Calcolo costi grafiche
+    // Calcolo costi grafiche (attivabile da flag graficaEspositoriAttiva)
     const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
-    const graficaEspositori = costoStampaParam ? superficieStampaEspositori * (costoStampaParam.costo || 0) : 0;
+    const graficaEspositori = (formData.graficaEspositoriAttiva ?? true) && costoStampaParam
+        ? superficieStampaEspositori * (costoStampaParam.costo || 0)
+        : 0;
 
     // Calcolo costi premontaggio
     const costoPremontaggio = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
     const premontaggioEspositori = costoPremontaggio ? numeroPezziEspositori * (costoPremontaggio.costo || 0) : 0;
 
-    // Calcolo costi accessori
-    let accessoriEspositori = 0;
+    // Calcolo costi accessori (splittati in vendita/noleggio in base al flag in espositoriConfig)
+    let accessoriEspositoriVendita = 0;
+    let accessoriEspositoriNoleggio = 0;
     if (accessoriesData && accessoriesData.length > 0) {
-      const getAccessoryPrice = (name: string): number => {
-        const accessory = accessoriesData.find(item => item.nome === name);
-        return accessory ? Number(accessory.costoUnitario) : 0;
-      };
-
-      accessoriEspositori += (formData.ripiano30x30 || 0) * getAccessoryPrice('Ripiano 30x30');
-      accessoriEspositori += (formData.ripiano50x50 || 0) * getAccessoryPrice('Ripiano 50x50');
-      accessoriEspositori += (formData.ripiano100x50 || 0) * getAccessoryPrice('Ripiano 100x50');
-      accessoriEspositori += (formData.tecaPlexiglass30x30x30 || 0) * getAccessoryPrice('Teca in plexiglass 30x30x30');
-      accessoriEspositori += (formData.tecaPlexiglass50x50x50 || 0) * getAccessoryPrice('Teca in plexiglass 50x50x50');
-      accessoriEspositori += (formData.tecaPlexiglass100x50x30 || 0) * getAccessoryPrice('Teca in plexiglass 100x50x30');
-      accessoriEspositori += (formData.retroilluminazione30x30x100h || 0) * getAccessoryPrice('Retroilluminazione 30x30x100 H');
-      accessoriEspositori += (formData.retroilluminazione50x50x100h || 0) * getAccessoryPrice('Retroilluminazione 50x50x100 H');
-      accessoriEspositori += (formData.retroilluminazione100x50x100h || 0) * getAccessoryPrice('Retroilluminazione 100x50x100 H');
-      accessoriEspositori += (formData.borsaEspositori || 0) * getAccessoryPrice('Borsa');
+      try {
+        const map = formData.espositoriConfig ? JSON.parse(formData.espositoriConfig) : {};
+        if (map && typeof map === 'object') {
+          Object.entries(map as Record<string, { qty?: number; noleggio?: boolean }>).forEach(([id, item]) => {
+            const acc = accessoriesData.find(a => a.id === id);
+            if (!acc) return;
+            const costo = (Number(item?.qty) || 0) * (Number(acc.costoUnitario) || 0);
+            if (item?.noleggio) accessoriEspositoriNoleggio += costo;
+            else accessoriEspositoriVendita += costo;
+          });
+        }
+      } catch { /* ignore malformed config */ }
     }
+    const accessoriEspositori = accessoriEspositoriVendita + accessoriEspositoriNoleggio;
 
     const costoTotaleEspositori = strutturaEspositori + graficaEspositori + premontaggioEspositori + accessoriEspositori;
 
@@ -462,22 +463,16 @@ export function TotalePreventivoSection({
       graficaEspositori,
       premontaggioEspositori,
       accessoriEspositori,
+      accessoriEspositoriVendita,
+      accessoriEspositoriNoleggio,
       costoTotaleEspositori
     };
   }, [
     formData.qtaTipo30,
     formData.qtaTipo50,
     formData.qtaTipo100,
-    formData.ripiano30x30,
-    formData.ripiano50x50,
-    formData.ripiano100x50,
-    formData.tecaPlexiglass30x30x30,
-    formData.tecaPlexiglass50x50x50,
-    formData.tecaPlexiglass100x50x30,
-    formData.retroilluminazione30x30x100h,
-    formData.retroilluminazione50x50x100h,
-    formData.retroilluminazione100x50x100h,
-    formData.borsaEspositori,
+    formData.espositoriConfig,
+    formData.graficaEspositoriAttiva,
     listinoServizi,
     layoutCostsEspositori,
     accessoriesData
@@ -528,7 +523,9 @@ export function TotalePreventivoSection({
     }, 0);
 
     const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
-    const graficaCordinoDesk = costoStampaParam ? superficieStampaDesk * (costoStampaParam.costo || 0) : 0;
+    const graficaCordinoDesk = (formData.graficaDeskAttiva ?? true) && costoStampaParam
+        ? superficieStampaDesk * (costoStampaParam.costo || 0)
+        : 0;
 
     // Premontaggio desk
     const numeroPezziDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
@@ -549,14 +546,22 @@ export function TotalePreventivoSection({
     const costoPremontaggio = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
     const premontaggioDesk = costoPremontaggio ? numeroPezziDesk * (costoPremontaggio.costo || 0) : 0;
 
-    // Accessori desk
-    const costiAccessoriDesk =
-        (formData.portaScorrevole || 0) * (accessoriDesk.find(a => a.nome === 'Porta scorrevole con chiave')?.costoUnitario || 0) +
-        (formData.ripianoSuperiore || 0) * (accessoriDesk.find(a => a.nome === 'Ripiano Superiore L 100')?.costoUnitario || 0) +
-        (formData.ripianoInferiore || 0) * (accessoriDesk.find(a => a.nome === 'Ripiano Inferiore L 100')?.costoUnitario || 0) +
-        (formData.tecaPlexiglass || 0) * (accessoriDesk.find(a => a.nome === 'Teca in plexiglass')?.costoUnitario || 0) +
-        (formData.fronteLuminoso || 0) * (accessoriDesk.find(a => a.nome === 'Fronte luminoso dim. 100x100')?.costoUnitario || 0) +
-        (formData.borsa || 0) * (accessoriDesk.find(a => a.nome === 'Borsa')?.costoUnitario || 0);
+    // Accessori desk (splittati in vendita/noleggio in base al flag in accessoriDeskConfig)
+    let accessoriDeskVendita = 0;
+    let accessoriDeskNoleggio = 0;
+    try {
+      const map = formData.accessoriDeskConfig ? JSON.parse(formData.accessoriDeskConfig) : {};
+      if (map && typeof map === 'object') {
+        Object.entries(map as Record<string, { qty?: number; noleggio?: boolean }>).forEach(([id, item]) => {
+          const acc = accessoriDesk.find(a => a.id === id);
+          if (!acc) return;
+          const costo = (Number(item?.qty) || 0) * (Number(acc.costoUnitario) || 0);
+          if (item?.noleggio) accessoriDeskNoleggio += costo;
+          else accessoriDeskVendita += costo;
+        });
+      }
+    } catch { /* ignore malformed config */ }
+    const costiAccessoriDesk = accessoriDeskVendita + accessoriDeskNoleggio;
 
     const totaleDesk = strutturaTerraDesk + graficaCordinoDesk + premontaggioDesk + costiAccessoriDesk;
 
@@ -565,16 +570,14 @@ export function TotalePreventivoSection({
       graficaCordino: graficaCordinoDesk,
       premontaggio: premontaggioDesk,
       accessori: costiAccessoriDesk,
+      accessoriVendita: accessoriDeskVendita,
+      accessoriNoleggio: accessoriDeskNoleggio,
       totale: totaleDesk
     };
   }, [
     formData.layoutDesk,
-    formData.portaScorrevole,
-    formData.ripianoSuperiore,
-    formData.ripianoInferiore,
-    formData.tecaPlexiglass,
-    formData.fronteLuminoso,
-    formData.borsa,
+    formData.accessoriDeskConfig,
+    formData.graficaDeskAttiva,
     listinoServizi,
     accessoriDesk,
     listinoStrutturaDesk
@@ -612,13 +615,27 @@ export function TotalePreventivoSection({
   // Extra per struttura complessa (only for stands)
   const costoExtraComplessa = standCosts.extraStandComplesso ?? 0;
   calculatePreventivoWithMargin(standCosts.extraStandComplesso ?? 0, standMargins.marginalitaStruttura ?? 0);
-// Accessori totals
-  const costoAccessoriStand = (standCosts.costiAccessoriVendita ?? 0) + (standCosts.costiAccessoriNoleggio ?? 0);
-  const costoAccessori = costoAccessoriStand + (deskCosts.accessori ?? 0) + (espositoriCosts.accessoriEspositori ?? 0);
-  const preventivoAccessori =
-      calculatePreventivoWithMargin(costoAccessoriStand, standMargins.marginalitaAccessori ?? 0) +
-      calculatePreventivoWithMargin(deskCosts.accessori ?? 0, deskMargins.marginalitaAccessoriDesk ?? 0) +
-      calculatePreventivoWithMargin(espositoriCosts.accessoriEspositori ?? 0, espositoriMargins.marginalitaAccessoriEspositori ?? 0);
+// Accessori totals (splittati in vendita e noleggio per stand, desk, espositori)
+  const costoAccessoriVenditaStand = standCosts.costiAccessoriVendita ?? 0;
+  const costoAccessoriNoleggioStand = standCosts.costiAccessoriNoleggio ?? 0;
+  const costoAccessoriVenditaDesk = deskCosts.accessoriVendita ?? 0;
+  const costoAccessoriNoleggioDesk = deskCosts.accessoriNoleggio ?? 0;
+  const costoAccessoriVenditaEspositori = espositoriCosts.accessoriEspositoriVendita ?? 0;
+  const costoAccessoriNoleggioEspositori = espositoriCosts.accessoriEspositoriNoleggio ?? 0;
+
+  const costoAccessoriVendita = costoAccessoriVenditaStand + costoAccessoriVenditaDesk + costoAccessoriVenditaEspositori;
+  const costoAccessoriNoleggio = costoAccessoriNoleggioStand + costoAccessoriNoleggioDesk + costoAccessoriNoleggioEspositori;
+  const costoAccessori = costoAccessoriVendita + costoAccessoriNoleggio;
+
+  const preventivoAccessoriVendita =
+      calculatePreventivoWithMargin(costoAccessoriVenditaStand, standMargins.marginalitaAccessori ?? 0) +
+      calculatePreventivoWithMargin(costoAccessoriVenditaDesk, deskMargins.marginalitaAccessoriDesk ?? 0) +
+      calculatePreventivoWithMargin(costoAccessoriVenditaEspositori, espositoriMargins.marginalitaAccessoriEspositori ?? 0);
+
+  const preventivoAccessoriNoleggio =
+      calculatePreventivoWithMargin(costoAccessoriNoleggioStand, standMargins.marginalitaAccessori ?? 0) +
+      calculatePreventivoWithMargin(costoAccessoriNoleggioDesk, deskMargins.marginalitaAccessoriDesk ?? 0) +
+      calculatePreventivoWithMargin(costoAccessoriNoleggioEspositori, espositoriMargins.marginalitaAccessoriEspositori ?? 0);
 
   // Premontaggi totals
   const costoPremontaggi = (standCosts.premontaggio ?? 0) + (storageCosts.costoPremontaggioStorage ?? 0) + (deskCosts.premontaggio ?? 0) + (espositoriCosts.premontaggioEspositori ?? 0);
@@ -646,7 +663,8 @@ export function TotalePreventivoSection({
     {voce: 'Struttura', costo: costoStruttura, prezzo: preventivoStruttura, scontoField: 'scontoStrutturaGlobale', noleggio: true},
     {voce: 'Grafica', costo: costoGrafiche, prezzo: preventivoGrafiche, scontoField: 'scontoGraficaGlobale', noleggio: false},
     {voce: 'Retroilluminazione', costo: costoRetroilluminazione, prezzo: preventivoRetroilluminazione, scontoField: 'scontoRetroilluminazioneGlobale', noleggio: false},
-    {voce: 'Accessori', costo: costoAccessori, prezzo: preventivoAccessori, scontoField: 'scontoAccessoriGlobale', noleggio: false},
+    {voce: 'Accessori Vendita', costo: costoAccessoriVendita, prezzo: preventivoAccessoriVendita, scontoField: 'scontoAccessoriGlobale', noleggio: false},
+    {voce: 'Accessori Noleggio', costo: costoAccessoriNoleggio, prezzo: preventivoAccessoriNoleggio, scontoField: 'scontoAccessoriGlobale', noleggio: true},
     {voce: 'Premontaggi', costo: costoPremontaggi, prezzo: preventivoPremontaggi, scontoField: 'scontoPremontaggiGlobale', noleggio: false},
     {voce: 'Servizi', costo: servicesCost, prezzo: servicesTotal, scontoField: 'scontoServiziGlobale', noleggio: false},
     {voce: 'Altri Beni/Servizi', costo: altriBeniServiziCost, prezzo: altriBeniServiziTotal, scontoField: 'scontoAltriBeniGlobale', noleggio: false},

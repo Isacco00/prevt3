@@ -276,26 +276,6 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="premontaggio">Premontaggio</Label>
-              <Select
-                  value={formData.premontaggioStorage ? "SI" : "NO"}
-                  onValueChange={(value) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        premontaggioStorage: value === "SI",
-                      }))
-                  }
-              >
-                <SelectTrigger>
-                  <SelectValue/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="SI">SI</SelectItem>
-                  <SelectItem value="NO">NO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </div>
 
@@ -465,7 +445,15 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                     const prezzoNetto = prezzo - scontoEuro;
                     return (
                       <TableRow>
-                        <TableCell className="font-medium">Premontaggio Storage</TableCell>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            Premontaggio Storage
+                            <Checkbox
+                                checked={formData.premontaggioStorage ?? false}
+                                onCheckedChange={(checked) => setFormData({...formData, premontaggioStorage: Boolean(checked)})}
+                            />
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
                           €{storageCosts.costoPremontaggioStorage.toFixed(2)}
                         </TableCell>

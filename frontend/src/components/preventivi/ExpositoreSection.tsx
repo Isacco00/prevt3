@@ -157,8 +157,11 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
 
   // === GRAFICA HELPERS ===
   const graficaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
-  const graficaCosto = graficaParam ? physicalElements.superficieStampaEspositori * (graficaParam.costo || 0) : 0;
-  const graficaPrezzo = graficaParam
+  const graficaEspositoriAttiva = formData.graficaEspositoriAttiva ?? true;
+  const graficaCosto = graficaEspositoriAttiva && graficaParam
+    ? physicalElements.superficieStampaEspositori * (graficaParam.costo || 0)
+    : 0;
+  const graficaPrezzo = graficaEspositoriAttiva && graficaParam
     ? physicalElements.superficieStampaEspositori * (graficaParam.costo || 0) * (1 + (graficaParam.ricaricoPercentuale || 0) / 100)
     : 0;
 
@@ -352,17 +355,28 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
 
                 {/* Grafica espositori */}
                 {(() => {
+                  const attiva = formData.graficaEspositoriAttiva ?? true;
+                  const costoEff = attiva ? graficaCosto : 0;
+                  const prezzoEff = attiva ? graficaPrezzo : 0;
                   const scontoPerc = formData.scontoGraficaEspositori || 0;
-                  const scontoEuro = graficaPrezzo * scontoPerc / 100;
-                  const prezzoNetto = graficaPrezzo - scontoEuro;
+                  const scontoEuro = prezzoEff * scontoPerc / 100;
+                  const prezzoNetto = prezzoEff - scontoEuro;
                   return (
                     <TableRow>
-                      <TableCell className="font-medium">Grafica espositori</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          Grafica espositori
+                          <Checkbox
+                            checked={attiva}
+                            onCheckedChange={(checked) => setFormData({...formData, graficaEspositoriAttiva: Boolean(checked)})}
+                          />
+                        </div>
+                      </TableCell>
                       <TableCell className="text-right text-sm text-muted-foreground">
-                        €{graficaCosto.toFixed(2)}
+                        €{costoEff.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right text-sm">
-                        €{graficaPrezzo.toFixed(2)}
+                        €{prezzoEff.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -422,34 +436,78 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                   );
                 })()}
 
-                {/* Accessori espositori */}
+                {/* Accessori espositori vendita */}
                 {(() => {
-                  let costoAccessori = 0;
-                  let prezzoAccessoriVendita = 0;
-                  let prezzoAccessoriNoleggio = 0;
+                  let costoV = 0;
+                  let prezzoV = 0;
                   for (const accessorio of accessoriesData as ListinoAccessoriEspositoriBean[]) {
                     const item = espositoriMap[accessorio.id];
-                    if (!item) continue;
-                    const costo = item.qty * Number(accessorio.costoUnitario);
-                    const p = item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
-                    costoAccessori += costo;
-                    if (item.noleggio) prezzoAccessoriNoleggio += p;
-                    else prezzoAccessoriVendita += p;
+                    if (!item || item.noleggio) continue;
+                    costoV += item.qty * Number(accessorio.costoUnitario);
+                    prezzoV += item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
                   }
-                  const prezzoAccessori = prezzoAccessoriVendita + prezzoAccessoriNoleggio;
                   const scontoPerc = formData.scontoAccessoriEspositori || 0;
-                  const scontoEuro = prezzoAccessori * scontoPerc / 100;
-                  const prezzoNetto = prezzoAccessori - scontoEuro;
-                  const nettoNoleggioAcc = prezzoAccessoriNoleggio * (1 - scontoPerc / 100);
-                  const prezzoNoleggioAcc = nettoNoleggioAcc * (formData.coefficienteNoleggio?.valore ?? 0);
+                  const scontoEuro = prezzoV * scontoPerc / 100;
+                  const prezzoNetto = prezzoV - scontoEuro;
                   return (
                     <TableRow>
-                      <TableCell className="font-medium">Accessori espositori</TableCell>
+                      <TableCell className="font-medium">
+                        <div className="flex flex-col">
+                          <span className="text-xs text-muted-foreground">Accessori espositori</span>
+                          <span>Vendita</span>
+                        </div>
+                      </TableCell>
                       <TableCell className="text-right text-sm text-muted-foreground">
-                        €{costoAccessori.toFixed(2)}
+                        €{costoV.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-right text-sm">
-                        €{prezzoAccessori.toFixed(2)}
+                        €{prezzoV.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Input
+                            type="number" min="0" max="100" step="1"
+                            value={scontoPerc}
+                            onChange={(e) => setFormData({...formData, scontoAccessoriEspositori: parseFloat(e.target.value) || 0})}
+                            className="w-16 h-6 text-xs text-center"
+                          />
+                          <span className="text-xs">%</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">-€{scontoEuro.toFixed(2)}</TableCell>
+                      <TableCell className="text-right font-bold text-primary">€{prezzoNetto.toFixed(2)}</TableCell>
+                      <TableCell className="text-center text-muted-foreground">-</TableCell>
+                    </TableRow>
+                  );
+                })()}
+
+                {/* Accessori espositori noleggio */}
+                {(() => {
+                  let costoN = 0;
+                  let prezzoN = 0;
+                  for (const accessorio of accessoriesData as ListinoAccessoriEspositoriBean[]) {
+                    const item = espositoriMap[accessorio.id];
+                    if (!item || !item.noleggio) continue;
+                    costoN += item.qty * Number(accessorio.costoUnitario);
+                    prezzoN += item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                  }
+                  const scontoPerc = formData.scontoAccessoriEspositori || 0;
+                  const scontoEuro = prezzoN * scontoPerc / 100;
+                  const prezzoNetto = prezzoN - scontoEuro;
+                  const prezzoNoleggioAcc = prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0);
+                  return (
+                    <TableRow>
+                      <TableCell className="font-medium">
+                        <div className="flex flex-col">
+                          <span className="text-xs text-muted-foreground">Accessori espositori</span>
+                          <span>Noleggio</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm text-muted-foreground">
+                        €{costoN.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        €{prezzoN.toFixed(2)}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">

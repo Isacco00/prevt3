@@ -130,6 +130,8 @@ export interface PreventivoBean {
 
     graficaCordinoAttiva: boolean;
     graficaStorageAttiva: boolean;
+    graficaDeskAttiva: boolean;
+    graficaEspositoriAttiva: boolean;
     scontoStrutturaGlobale: number;
     scontoGraficaGlobale: number;
     scontoRetroilluminazioneGlobale: number;

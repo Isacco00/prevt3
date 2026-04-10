@@ -519,10 +519,12 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
 
                   {/* Grafica desk */}
                   {(() => {
-                    const costoGrafica = costs.costiDesk?.graficaCordino ?? 0;
+                    const attiva = formData.graficaDeskAttiva ?? true;
+                    const costoGraficaRaw = costs.costiDesk?.graficaCordino ?? 0;
+                    const costoGrafica = attiva ? costoGraficaRaw : 0;
                     const costoStampaParam = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Stampa Grafica');
                     const superficieStampaDesk = calculateSuperficieStampaDesk();
-                    const prezzo = costoStampaParam
+                    const prezzo = attiva && costoStampaParam
                         ? superficieStampaDesk * (costoStampaParam.costo || 0) * (1 + (costoStampaParam.ricaricoPercentuale || 0) / 100)
                         : 0;
                     const scontoPerc = formData.scontoGraficaDesk || 0;
@@ -530,7 +532,15 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                     const prezzoNetto = prezzo - scontoEuro;
                     return (
                       <TableRow>
-                        <TableCell className="font-medium">Grafica desk</TableCell>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            Grafica desk
+                            <Checkbox
+                                checked={attiva}
+                                onCheckedChange={checked => setFormData({...formData, graficaDeskAttiva: Boolean(checked)})}
+                            />
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
                           €{costoGrafica.toFixed(2)}
                         </TableCell>
@@ -609,32 +619,82 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                     );
                   })()}
 
-                  {/* Accessori desk */}
+                  {/* Accessori desk vendita */}
                   {(() => {
-                    const costoAccessori = costs.costiAccessoriDesk ?? 0;
-                    let prezzoAccessoriVendita = 0;
-                    let prezzoAccessoriNoleggio = 0;
+                    let costoV = 0;
+                    let prezzoV = 0;
                     for (const accessorio of accessoriDesk as ListinoAccessoriDeskBean[]) {
                       const item = accessoriDeskMap[accessorio.id];
-                      if (!item) continue;
-                      const p = item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
-                      if (item.noleggio) prezzoAccessoriNoleggio += p;
-                      else prezzoAccessoriVendita += p;
+                      if (!item || item.noleggio) continue;
+                      costoV += item.qty * Number(accessorio.costoUnitario);
+                      prezzoV += item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
                     }
-                    const prezzoAccessori = prezzoAccessoriVendita + prezzoAccessoriNoleggio;
                     const scontoPerc = formData.scontoAccessoriDesk || 0;
-                    const scontoEuro = prezzoAccessori * scontoPerc / 100;
-                    const prezzoNetto = prezzoAccessori - scontoEuro;
-                    const nettoNoleggioAcc = prezzoAccessoriNoleggio * (1 - scontoPerc / 100);
-                    const prezzoNoleggioAcc = nettoNoleggioAcc * (formData.coefficienteNoleggio?.valore ?? 0);
+                    const scontoEuro = prezzoV * scontoPerc / 100;
+                    const prezzoNetto = prezzoV - scontoEuro;
                     return (
                       <TableRow>
-                        <TableCell className="font-medium">Accessori desk</TableCell>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-muted-foreground">Accessori desk</span>
+                            <span>Vendita</span>
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
-                          €{costoAccessori.toFixed(2)}
+                          €{costoV.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-sm">
-                          €{prezzoAccessori.toFixed(2)}
+                          €{prezzoV.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={scontoPerc}
+                                onChange={(e) => setFormData({...formData, scontoAccessoriDesk: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{scontoEuro.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{prezzoNetto.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
+                    );
+                  })()}
+
+                  {/* Accessori desk noleggio */}
+                  {(() => {
+                    let costoN = 0;
+                    let prezzoN = 0;
+                    for (const accessorio of accessoriDesk as ListinoAccessoriDeskBean[]) {
+                      const item = accessoriDeskMap[accessorio.id];
+                      if (!item || !item.noleggio) continue;
+                      costoN += item.qty * Number(accessorio.costoUnitario);
+                      prezzoN += item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                    }
+                    const scontoPerc = formData.scontoAccessoriDesk || 0;
+                    const scontoEuro = prezzoN * scontoPerc / 100;
+                    const prezzoNetto = prezzoN - scontoEuro;
+                    const prezzoNoleggioAcc = prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0);
+                    return (
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-muted-foreground">Accessori desk</span>
+                            <span>Noleggio</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costoN.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{prezzoN.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="flex items-center justify-center gap-1">
@@ -668,8 +728,9 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
           <Card className="border-2 border-primary/20 bg-primary/5">
             <CardContent className="pt-4 space-y-6">
               {(() => {
+                const graficaAttiva = formData.graficaDeskAttiva ?? true;
                 const costoStruttura = costs.costiDesk?.strutturaTerra ?? 0;
-                const costoGrafica = costs.costiDesk?.graficaCordino ?? 0;
+                const costoGrafica = graficaAttiva ? (costs.costiDesk?.graficaCordino ?? 0) : 0;
                 const costoPremontaggio = costs.costiDesk?.premontaggio ?? 0;
                 const costoAccessori = costs.costiAccessoriDesk ?? 0;
                 const costoTotale = costoStruttura + costoGrafica + costoPremontaggio + costoAccessori;
@@ -680,7 +741,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                 const numeroPezziDesk = calculateNumeroPezziDesk();
 
                 const listStruttura = calculateTotalStructureCost();
-                const listGrafica = costoStampaParam
+                const listGrafica = graficaAttiva && costoStampaParam
                     ? superficieStampaDesk * (costoStampaParam.costo || 0) * (1 + (costoStampaParam.ricaricoPercentuale || 0) / 100)
                     : 0;
                 const listPremontaggio = costoPremParam && formData.premontaggioDesk

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775692520412,
+  "lastScanned": 1775858923102,
   "projectRoot": "/home/ubuntu/prevt3",
   "techStack": {
     "languages": [],
@@ -33,7 +33,7 @@
       "path": "backend",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1775692520406,
+      "lastAccessed": 1775858923096,
       "keyFiles": [
         "HELP.md",
         "docker-entrypoint.local.sh",
@@ -46,14 +46,14 @@
       "path": "deployment",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1775692520407,
+      "lastAccessed": 1775858923097,
       "keyFiles": []
     },
     "frontend": {
       "path": "frontend",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1775692520409,
+      "lastAccessed": 1775858923098,
       "keyFiles": [
         "components.json",
         "dockerfile",
@@ -66,45 +66,57 @@
       "path": "frontend/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1775692520410,
+      "lastAccessed": 1775858923100,
       "keyFiles": []
     }
   },
   "hotPaths": [
     {
       "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
-      "accessCount": 36,
-      "lastAccessed": 1775769944414,
+      "accessCount": 50,
+      "lastAccessed": 1775860437614,
       "type": "file"
     },
     {
       "path": "frontend/src/components/preventivi/StorageSection.tsx",
-      "accessCount": 35,
-      "lastAccessed": 1775719418366,
+      "accessCount": 44,
+      "lastAccessed": 1775860728988,
       "type": "file"
     },
     {
       "path": "frontend/src/components/preventivi/DeskSection.tsx",
-      "accessCount": 29,
-      "lastAccessed": 1775742603073,
-      "type": "file"
-    },
-    {
-      "path": "backend/src/main/java/it/prevt/backend/entity/Preventivo.java",
-      "accessCount": 21,
-      "lastAccessed": 1775743101283,
+      "accessCount": 35,
+      "lastAccessed": 1775860372058,
       "type": "file"
     },
     {
       "path": "frontend/src/types/preventivo.ts",
-      "accessCount": 20,
-      "lastAccessed": 1775743123128,
+      "accessCount": 24,
+      "lastAccessed": 1775860334933,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/entity/Preventivo.java",
+      "accessCount": 23,
+      "lastAccessed": 1775860325469,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/StandSection.tsx",
+      "accessCount": 23,
+      "lastAccessed": 1775860750126,
       "type": "directory"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
-      "accessCount": 19,
-      "lastAccessed": 1775743105728,
+      "accessCount": 21,
+      "lastAccessed": 1775860330065,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/ExpositoreSection.tsx",
+      "accessCount": 17,
+      "lastAccessed": 1775860403369,
       "type": "file"
     },
     {
@@ -120,18 +132,6 @@
       "type": "directory"
     },
     {
-      "path": "frontend/src/components/preventivi/StandSection.tsx",
-      "accessCount": 15,
-      "lastAccessed": 1775742333064,
-      "type": "directory"
-    },
-    {
-      "path": "frontend/src/components/preventivi/ExpositoreSection.tsx",
-      "accessCount": 9,
-      "lastAccessed": 1775743216554,
-      "type": "file"
-    },
-    {
       "path": "frontend/src/types/parametri.ts",
       "accessCount": 6,
       "lastAccessed": 1775742934969,
@@ -139,8 +139,14 @@
     },
     {
       "path": "frontend/src/hooks/useStandCosts.ts",
+      "accessCount": 6,
+      "lastAccessed": 1775859706468,
+      "type": "directory"
+    },
+    {
+      "path": "backend",
       "accessCount": 5,
-      "lastAccessed": 1775769783090,
+      "lastAccessed": 1775860268716,
       "type": "directory"
     },
     {
@@ -150,9 +156,9 @@
       "type": "directory"
     },
     {
-      "path": "backend",
-      "accessCount": 3,
-      "lastAccessed": 1775694226397,
+      "path": "frontend/src/types",
+      "accessCount": 4,
+      "lastAccessed": 1775859782844,
       "type": "directory"
     },
     {
@@ -162,15 +168,9 @@
       "type": "file"
     },
     {
-      "path": "frontend/src/types",
-      "accessCount": 3,
-      "lastAccessed": 1775742931649,
-      "type": "directory"
-    },
-    {
       "path": "",
-      "accessCount": 2,
-      "lastAccessed": 1775718707750,
+      "accessCount": 3,
+      "lastAccessed": 1775859815269,
       "type": "directory"
     },
     {
@@ -192,6 +192,18 @@
       "type": "file"
     },
     {
+      "path": "frontend/src",
+      "accessCount": 2,
+      "lastAccessed": 1775860272979,
+      "type": "directory"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V9__grafica_storage_attiva.sql",
+      "accessCount": 2,
+      "lastAccessed": 1775860295841,
+      "type": "file"
+    },
+    {
       "path": "backend/src/main/resources/db/migration/V7__stand_sconti.sql",
       "accessCount": 1,
       "lastAccessed": 1775694230307,
@@ -204,22 +216,10 @@
       "type": "directory"
     },
     {
-      "path": "backend/src/main/resources/db/migration/V9__grafica_storage_attiva.sql",
-      "accessCount": 1,
-      "lastAccessed": 1775695895648,
-      "type": "file"
-    },
-    {
       "path": "backend/src/main/resources/db/migration/V10__totale_sconti.sql",
       "accessCount": 1,
       "lastAccessed": 1775696216040,
       "type": "file"
-    },
-    {
-      "path": "frontend/src",
-      "accessCount": 1,
-      "lastAccessed": 1775719622906,
-      "type": "directory"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/merger/AbstractMerger.java",
@@ -243,6 +243,12 @@
       "path": "frontend/src/components/preventivi/PreventivoModal.tsx",
       "accessCount": 1,
       "lastAccessed": 1775769714971,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V14__grafica_desk_espositori_attiva.sql",
+      "accessCount": 1,
+      "lastAccessed": 1775860320155,
       "type": "file"
     }
   ],

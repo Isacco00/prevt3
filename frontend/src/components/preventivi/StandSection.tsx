@@ -426,26 +426,6 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="premontaggio">Premontaggio</Label>
-              <Select
-                  value={formData.premontaggio ? "SI" : "NO"}
-                  onValueChange={(value) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        premontaggio: value === "SI",
-                      }))
-                  }
-              >
-                <SelectTrigger>
-                  <SelectValue/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="SI">SI</SelectItem>
-                  <SelectItem value="NO">NO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </div>
 
@@ -790,7 +770,15 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
 
                       {/* Premontaggio */}
                       <TableRow>
-                        <TableCell className="font-medium">Premontaggio</TableCell>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            Premontaggio
+                            <Checkbox
+                                checked={formData.premontaggio ?? false}
+                                onCheckedChange={(checked) => setFormData({...formData, premontaggio: Boolean(checked)})}
+                            />
+                          </div>
+                        </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
                           €{costs.costoPremontaggio.toFixed(2)}
                         </TableCell>
