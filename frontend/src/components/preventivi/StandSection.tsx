@@ -71,6 +71,29 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     return map;
   }, [parametri]);
 
+  // Fetch accessori stand from database
+  const {
+    data: accessoriStand = [],
+  } = useQuery({
+    queryKey: ["listino-accessori-stand", true],
+    queryFn: () => ParametriAPI.getListinoAccessoriStand({
+      attivo: true, sortFields: [{
+        field: "LISTINO_ACCESSORI_STAND_NAME",
+        desc: false
+      }]
+    }),
+  });
+
+  const accessoriStandMap = useMemo<AccessoriStandMap>(() => {
+    return parseAccessoriStand(formData.accessoriStandConfig);
+  }, [formData.accessoriStandConfig]);
+
+  const numeroPorte = useMemo(() => {
+    const porta = accessoriStand.find(acc => acc.nome?.toLowerCase().includes('porta'));
+    if (!porta) return 0;
+    return accessoriStandMap[porta.id]?.qty ?? 0;
+  }, [accessoriStand, accessoriStandMap]);
+
   const physicalElements = useMemo(() => {
     const profondita = Number(formData.profondita);
     const larghezza = Number(formData.larghezza);
@@ -87,21 +110,22 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     }
 
     const bifaccialitaEffettiva = bifaccialita + (layout === "4_lati" ? larghezza : 0);
+    const superficiePorte = layout === "0_lati" ? 0 : numeroPorte * 2;
 
     // Superficie di stampa
     let superficieStampa: number;
     switch (layout) {
       case "4_lati":
-        superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza;
+        superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + superficiePorte;
         break;
       case "3_lati":
-        superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + altezza;
+        superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + altezza + superficiePorte;
         break;
       case "2_lati":
-        superficieStampa = (larghezza + profondita) * altezza + bifaccialitaEffettiva * altezza + altezza;
+        superficieStampa = (larghezza + profondita) * altezza + bifaccialitaEffettiva * altezza + altezza + superficiePorte;
         break;
       case "1_lato":
-        superficieStampa = larghezza * altezza + bifaccialitaEffettiva * altezza + altezza;
+        superficieStampa = larghezza * altezza + bifaccialitaEffettiva * altezza + altezza + superficiePorte;
         break;
       case "0_lati":
       default:
@@ -145,26 +169,9 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     formData.layout,
     formData.distribuzione,
     formData.bifaccialita,
+    numeroPorte,
     profiliDistribuzioneMap,
   ]);
-
-  // Fetch accessori stand from database
-  const {
-    data: accessoriStand = [],
-  } = useQuery({
-    queryKey: ["listino-accessori-stand", true],
-    queryFn: () => ParametriAPI.getListinoAccessoriStand({
-      attivo: true, sortFields: [{
-        field: "LISTINO_ACCESSORI_STAND_NAME",
-        desc: false
-      }]
-    }),
-  });
-
-  const accessoriStandMap = useMemo<AccessoriStandMap>(() => {
-    return parseAccessoriStand(formData.accessoriStandConfig);
-  }, [formData.accessoriStandConfig]);
-
 
   const handleAccessorioChange = (id: string, quantity: number) => {
     setFormData(prev => {

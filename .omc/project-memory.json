@@ -72,21 +72,21 @@
   },
   "hotPaths": [
     {
-      "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
-      "accessCount": 54,
-      "lastAccessed": 1776360648580,
-      "type": "file"
-    },
-    {
       "path": "frontend/src/components/preventivi/StorageSection.tsx",
-      "accessCount": 52,
-      "lastAccessed": 1776360345895,
+      "accessCount": 58,
+      "lastAccessed": 1776361926555,
       "type": "file"
     },
     {
       "path": "frontend/src/components/preventivi/DeskSection.tsx",
-      "accessCount": 52,
-      "lastAccessed": 1776360357235,
+      "accessCount": 55,
+      "lastAccessed": 1776361825565,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
+      "accessCount": 54,
+      "lastAccessed": 1776360648580,
       "type": "file"
     },
     {
@@ -97,8 +97,8 @@
     },
     {
       "path": "frontend/src/components/preventivi/StandSection.tsx",
-      "accessCount": 28,
-      "lastAccessed": 1776360637154,
+      "accessCount": 32,
+      "lastAccessed": 1776361779137,
       "type": "directory"
     },
     {
@@ -156,6 +156,12 @@
       "type": "directory"
     },
     {
+      "path": "",
+      "accessCount": 7,
+      "lastAccessed": 1776361918097,
+      "type": "directory"
+    },
+    {
       "path": "frontend/src/types/parametri.ts",
       "accessCount": 6,
       "lastAccessed": 1775742934969,
@@ -177,12 +183,6 @@
       "path": "frontend/src/types",
       "accessCount": 4,
       "lastAccessed": 1775859782844,
-      "type": "directory"
-    },
-    {
-      "path": "",
-      "accessCount": 4,
-      "lastAccessed": 1776361147918,
       "type": "directory"
     },
     {

@@ -108,11 +108,19 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     return costo ? Number(costo.costoUnitario) : 0;
   };
 
+  const LAYOUT_DESK_PREZZO_MULTIPLIER: Record<string, number> = {
+    "50": 2,
+    "100": 3,
+    "150": 1,
+    "200": 1,
+  };
+
   const getLayoutPrezzoUnitario = (layout: string) => {
     if (!listinoStrutturaDesk) return 0;
     const entry = listinoStrutturaDesk.find(c => String(c.layoutDesk) === layout);
     if (!entry) return 0;
-    return Number(entry.costoUnitario) * (1 + (entry.ricaricoPercentuale ?? 0) / 100);
+    const multiplier = LAYOUT_DESK_PREZZO_MULTIPLIER[layout] ?? 1;
+    return Number(entry.costoUnitario) * multiplier;
   };
 
   const calculateLayoutTotal = (layout: string, quantity: number) => {

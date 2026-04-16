@@ -87,18 +87,20 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
     const alt = formData.altezzaStorage;
     const layout = formData.layoutStorage;
     const distribuzione = formData.distribuzione;
+    const numeroPorte = parseInt(formData.numeroPorte) || 0;
+    const superficiePorte = numeroPorte * 2;
 
     // Superficie di stampa Storage
     let superficieStampa = 0;
     switch (layout) {
       case '0':
-        superficieStampa = (2 * larg + 2 * prof) * alt;
+        superficieStampa = (2 * larg + 2 * prof) * alt + superficiePorte;
         break;
       case '1':
-        superficieStampa = (2 * larg + 2 * prof) * alt + 2;
+        superficieStampa = (2 * larg + 2 * prof) * alt + superficiePorte;
         break;
       case '2':
-        superficieStampa = (larg + prof) * alt + 2;
+        superficieStampa = (larg + prof) * alt + superficiePorte;
         break;
     }
 
@@ -125,7 +127,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
       sviluppoLineare,
       numeroPezzi
     };
-  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.layoutStorage, formData.distribuzione, profiliDistribuzioneMap]);
+  }, [formData.larghezzaStorage, formData.profonditaStorage, formData.altezzaStorage, formData.layoutStorage, formData.distribuzione, formData.numeroPorte, profiliDistribuzioneMap]);
 
   // Calcolo dei costi Storage
   const storageCosts = useMemo(() => {
