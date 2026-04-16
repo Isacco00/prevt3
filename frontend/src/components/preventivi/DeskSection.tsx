@@ -285,10 +285,10 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Layout</TableHead>
-                    <TableHead className="text-center">Costo Unitario</TableHead>
-                    <TableHead className="text-center">Prezzo Unitario</TableHead>
-                    <TableHead className="text-center">Quantità</TableHead>
-                    <TableHead className="text-right">Prezzo</TableHead>
+                    <TableHead className="text-center w-36">Costo Unitario</TableHead>
+                    <TableHead className="text-center w-36">Prezzo Unitario</TableHead>
+                    <TableHead className="text-center w-28">Quantità</TableHead>
+                    <TableHead className="text-right w-36">Prezzo</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -327,7 +327,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                                 className="w-20 text-center"
                             />
                           </TableCell>
-                          <TableCell className="text-right font-medium py-1">
+                          <TableCell className="text-right font-medium py-1 whitespace-nowrap">
                             € {prezzo.toFixed(2).replace('.', ',')}
                           </TableCell>
                         </TableRow>
@@ -779,7 +779,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                 const totalNettoVendita = nettoStruttura + nettoGrafica + nettoPremontaggio + nettoAccessori;
 
                 const scontoMedioVendita = totalListinoVendita > 0 ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
-                const marginalitaVendita = costoTotale > 0 ? (totalNettoVendita - costoTotale) / costoTotale * 100 : 0;
+                const marginalitaVendita = totalNettoVendita > 0 ? (totalNettoVendita - costoTotale) / totalNettoVendita * 100 : 0;
 
                 const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
                 const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
@@ -787,7 +787,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                 const totalNettoNoleggio = nettoGrafica + nettoPremontaggio + nettoAccessoriVendita;
                 const totalePreventivoFinale = prezzoNoleggioStruttura + totalNettoNoleggio + prezzoNoleggioAccessori;
                 const scontoMedioNoleggio = listStruttura > 0 ? (listStruttura - nettoStruttura) / listStruttura * 100 : 0;
-                const marginalitaNoleggio = costoTotale > 0 ? (totalePreventivoFinale - costoTotale) / costoTotale * 100 : 0;
+                const marginalitaNoleggio = totalePreventivoFinale > 0 ? (totalePreventivoFinale - costoTotale) / totalePreventivoFinale * 100 : 0;
 
                 return (
                   <>

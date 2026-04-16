@@ -505,13 +505,13 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                 const costoTotale = storageCosts.costoTotaleStorage;
                 const costoTotaleNoleggio = storageCosts.costoTotaleStorageNoleggio;
                 const scontoMedioVendita = totalListinoVendita > 0 ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
-                const marginalitaVendita = costoTotale > 0 ? (totalNettoVendita - costoTotale) / costoTotale * 100 : 0;
+                const marginalitaVendita = totalNettoVendita > 0 ? (totalNettoVendita - costoTotale) / totalNettoVendita * 100 : 0;
 
                 const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
                 const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
                 const totalePreventivoFinale = prezzoNoleggioStruttura + nettoGrafica + nettoPremontaggio;
                 const scontoMedioNoleggio = listStruttura > 0 ? (listStruttura - nettoStruttura) / listStruttura * 100 : 0;
-                const marginalitaNoleggio = costoTotale > 0 ? (totalePreventivoFinale - costoTotale) / costoTotale * 100 : 0;
+                const marginalitaNoleggio = totalePreventivoFinale > 0 ? (totalePreventivoFinale - costoTotale) / totalePreventivoFinale * 100 : 0;
 
                 return (
                   <>

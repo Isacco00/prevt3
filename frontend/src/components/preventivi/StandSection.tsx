@@ -698,6 +698,84 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         </TableCell>
                       </TableRow>
 
+                      {/* Extra Stand Complesso */}
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col gap-1">
+                            <span>Extra Stand Complesso</span>
+                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <span>Extra %:</span>
+                              <Input
+                                  type="number" min="0" max="200" step="1"
+                                  value={formData.extraPercComplex || 0}
+                                  onChange={e => setFormData({...formData, extraPercComplex: parseFloat(e.target.value) || 0})}
+                                  className="w-14 h-6 text-xs text-center"
+                              />
+                              <span>%</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.extraStandComplesso.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoExtraStandComplesso || 0}
+                                onChange={e => setFormData({...formData, scontoExtraStandComplesso: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.extraStandComplesso * (formData.scontoExtraStandComplesso || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.extraStandComplessoNetto.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
+
+                      {/* Premontaggio */}
+                      <TableRow>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            Premontaggio
+                            <Checkbox
+                                checked={formData.premontaggio ?? false}
+                                onCheckedChange={(checked) => setFormData({...formData, premontaggio: Boolean(checked)})}
+                            />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          €{costs.costoPremontaggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          €{costs.prezzoPremontaggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Input
+                                type="number" min="0" max="100" step="1"
+                                value={formData.scontoPremontaggio || 0}
+                                onChange={e => setFormData({...formData, scontoPremontaggio: parseFloat(e.target.value) || 0})}
+                                className="w-16 h-6 text-xs text-center"
+                            />
+                            <span className="text-xs">%</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right text-sm">
+                          -€{(costs.prezzoPremontaggio * (formData.scontoPremontaggio || 0) / 100).toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-primary">
+                          €{costs.prezzoNettoPremontaggio.toFixed(2)}
+                        </TableCell>
+                        <TableCell className="text-center text-muted-foreground">-</TableCell>
+                      </TableRow>
+
                       {/* Accessori vendita */}
                       <TableRow>
                         <TableCell className="font-medium">
@@ -766,84 +844,6 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <TableCell className="text-right font-bold">
                           €{costs.prezzoNoleggioAccessori.toFixed(2)}
                         </TableCell>
-                      </TableRow>
-
-                      {/* Premontaggio */}
-                      <TableRow>
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            Premontaggio
-                            <Checkbox
-                                checked={formData.premontaggio ?? false}
-                                onCheckedChange={(checked) => setFormData({...formData, premontaggio: Boolean(checked)})}
-                            />
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right text-sm text-muted-foreground">
-                          €{costs.costoPremontaggio.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right text-sm">
-                          €{costs.prezzoPremontaggio.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <Input
-                                type="number" min="0" max="100" step="1"
-                                value={formData.scontoPremontaggio || 0}
-                                onChange={e => setFormData({...formData, scontoPremontaggio: parseFloat(e.target.value) || 0})}
-                                className="w-16 h-6 text-xs text-center"
-                            />
-                            <span className="text-xs">%</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right text-sm">
-                          -€{(costs.prezzoPremontaggio * (formData.scontoPremontaggio || 0) / 100).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right font-bold text-primary">
-                          €{costs.prezzoNettoPremontaggio.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
-                      </TableRow>
-
-                      {/* Extra Stand Complesso */}
-                      <TableRow>
-                        <TableCell className="font-medium">
-                          <div className="flex flex-col gap-1">
-                            <span>Extra Stand Complesso</span>
-                            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <span>Extra %:</span>
-                              <Input
-                                  type="number" min="0" max="200" step="1"
-                                  value={formData.extraPercComplex || 0}
-                                  onChange={e => setFormData({...formData, extraPercComplex: parseFloat(e.target.value) || 0})}
-                                  className="w-14 h-6 text-xs text-center"
-                              />
-                              <span>%</span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
-                        <TableCell className="text-right text-sm text-muted-foreground">
-                          €{costs.extraStandComplesso.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-1">
-                            <Input
-                                type="number" min="0" max="100" step="1"
-                                value={formData.scontoExtraStandComplesso || 0}
-                                onChange={e => setFormData({...formData, scontoExtraStandComplesso: parseFloat(e.target.value) || 0})}
-                                className="w-16 h-6 text-xs text-center"
-                            />
-                            <span className="text-xs">%</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right text-sm">
-                          -€{(costs.extraStandComplesso * (formData.scontoExtraStandComplesso || 0) / 100).toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-right font-bold text-primary">
-                          €{costs.extraStandComplessoNetto.toFixed(2)}
-                        </TableCell>
-                        <TableCell className="text-center text-muted-foreground">-</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>

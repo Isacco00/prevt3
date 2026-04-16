@@ -675,7 +675,7 @@ export function TotalePreventivoSection({
     return sum + row.prezzo * (1 - scontoPerc / 100);
   }, 0);
 
-  const marginalitaFinale = costoTotale === 0 ? 0 : (totaleNetto - costoTotale) / costoTotale * 100;
+  const marginalitaFinale = totaleNetto === 0 ? 0 : (totaleNetto - costoTotale) / totaleNetto * 100;
 
   React.useEffect(() => {
     if (!physicalElements) return;
