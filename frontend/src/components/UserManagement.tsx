@@ -38,6 +38,7 @@ import {
 } from '@/components/ui/table';
 import { ProfileAPI } from '@/api/profile';
 import { UserBean } from '@/types/profile';
+import { useAuth } from '@/hooks/useAuth';
 
 /* =========================
    COMPONENT
@@ -45,6 +46,8 @@ import { UserBean } from '@/types/profile';
 export function UserManagement() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuth();
+  const currentUserId = currentUser?.id ?? null;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [editingUser, setEditingUser] = useState<UserBean | null>(null);
@@ -281,7 +284,9 @@ export function UserManagement() {
               </TableHeader>
 
               <TableBody>
-                {filteredUsers.map((u) => (
+                {filteredUsers.map((u) => {
+                  const isSelf = !!currentUserId && u.id === currentUserId;
+                  return (
                     <TableRow key={u.id}>
                       <TableCell>
                         {editingUser?.id === u.id ? (
@@ -295,7 +300,14 @@ export function UserManagement() {
                                 }
                             />
                         ) : (
-                            u.firstName
+                            <span className="flex items-center gap-2">
+                              {u.firstName}
+                              {isSelf && (
+                                <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-muted text-muted-foreground">
+                                  Tu
+                                </span>
+                              )}
+                            </span>
                         )}
                       </TableCell>
 
@@ -332,7 +344,7 @@ export function UserManagement() {
                       </TableCell>
 
                       <TableCell>
-                        {editingUser?.id === u.id ? (
+                        {editingUser?.id === u.id && !isSelf ? (
                             <Select
                                 value={editForm.role}
                                 onValueChange={(value) =>
@@ -360,7 +372,7 @@ export function UserManagement() {
                       </TableCell>
 
                       <TableCell>
-                        {editingUser?.id === u.id ? (
+                        {editingUser?.id === u.id && !isSelf ? (
                             <Checkbox
                                 checked={!!editForm.active}
                                 onCheckedChange={(v) =>
@@ -416,7 +428,8 @@ export function UserManagement() {
                         )}
                       </TableCell>
                     </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </CardContent>

@@ -14,6 +14,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -51,13 +53,30 @@ public class UserManagerImpl implements UserManager {
 
   @Override
   public UserBean saveProfile(UserBean bean) {
+    User caller = repository.find(User.class, UUID.fromString(userHelper.getCurrentUserId()));
+    if (caller == null) {
+      throw new UsernameNotFoundException("error.user.notfound");
+    }
+    boolean callerAdmin = "admin".equalsIgnoreCase(caller.getRole());
+
     User entity;
     if (bean.getId() == null) {
+      if (!callerAdmin) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "error.user.forbidden");
+      }
       entity = merger.mapNew(bean, User.class);
     } else {
       entity = repository.find(User.class, bean.getId());
       if (entity == null) {
         throw new EntityNotFoundException();
+      }
+      boolean self = caller.getId().equals(entity.getId());
+      if (!self && !callerAdmin) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "error.user.forbidden");
+      }
+      if (self) {
+        bean.setRole(entity.getRole());
+        bean.setActive(entity.isActive());
       }
       merger.merge(bean, entity);
     }
@@ -101,8 +120,6 @@ public class UserManagerImpl implements UserManager {
 
   @Override
   public List<UserBean> getUserList(UserRequestBean request) {
-    String userId = userHelper.getCurrentUserId();
-    request.setUserIdNot(List.of(userId));
     List<User> userList = repository.getUserList(request);
     return mapper.mapEntitiesToBeans(userList);
   }

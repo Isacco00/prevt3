@@ -45,13 +45,13 @@ public class UserRepositoryImpl extends AbstractRepositoryImpl implements UserRe
     StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
 
     // Parameters
-    if (searchRequest != null) {
-      if (!searchRequest.getUserIdNot().isEmpty()) {
-        createListNotWhereClause("u", "id",
-            searchRequest.getUserIdNot().stream().map(UUID::fromString).toList(),
-            strQueryWhere,
-            parameters);
-      }
+    if (searchRequest != null
+        && searchRequest.getUserIdNot() != null
+        && !searchRequest.getUserIdNot().isEmpty()) {
+      createListNotWhereClause("u", "id",
+          searchRequest.getUserIdNot().stream().map(UUID::fromString).toList(),
+          strQueryWhere,
+          parameters);
     }
     if (searchRequest != null && searchRequest.getSortFields() != null
         && !searchRequest.getSortFields()
