@@ -358,6 +358,9 @@ public class Preventivo {
   @Column(name = "sconto_accessori_desk")
   private BigDecimal scontoAccessoriDesk = BigDecimal.ZERO;
 
+  @Column(name = "sconto_accessori_desk_noleggio")
+  private BigDecimal scontoAccessoriDeskNoleggio = BigDecimal.ZERO;
+
   @Column(name = "marginalita_struttura_desk")
   private BigDecimal marginalitaStrutturaDesk = new BigDecimal("50");
 

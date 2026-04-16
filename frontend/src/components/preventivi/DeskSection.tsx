@@ -678,7 +678,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                       costoN += item.qty * Number(accessorio.costoUnitario);
                       prezzoN += item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
                     }
-                    const scontoPerc = formData.scontoAccessoriDesk || 0;
+                    const scontoPerc = formData.scontoAccessoriDeskNoleggio || 0;
                     const scontoEuro = prezzoN * scontoPerc / 100;
                     const prezzoNetto = prezzoN - scontoEuro;
                     const prezzoNoleggioAcc = prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0);
@@ -701,7 +701,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                             <Input
                                 type="number" min="0" max="100" step="1"
                                 value={scontoPerc}
-                                onChange={(e) => setFormData({...formData, scontoAccessoriDesk: parseFloat(e.target.value) || 0})}
+                                onChange={(e) => setFormData({...formData, scontoAccessoriDeskNoleggio: parseFloat(e.target.value) || 0})}
                                 className="w-16 h-6 text-xs text-center"
                             />
                             <span className="text-xs">%</span>
@@ -747,14 +747,22 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                 const listPremontaggio = costoPremParam && formData.premontaggioDesk
                     ? numeroPezziDesk * (costoPremParam.costo || 0) * (1 + (costoPremParam.ricaricoPercentuale || 0) / 100)
                     : 0;
+                let costoAccessoriVendita = 0;
+                let costoAccessoriNoleggio = 0;
                 let listAccessoriVendita = 0;
                 let listAccessoriNoleggio = 0;
                 for (const accessorio of accessoriDesk as ListinoAccessoriDeskBean[]) {
                   const item = accessoriDeskMap[accessorio.id];
                   if (!item) continue;
-                  const p = item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
-                  if (item.noleggio) listAccessoriNoleggio += p;
-                  else listAccessoriVendita += p;
+                  const c = item.qty * Number(accessorio.costoUnitario);
+                  const p = c * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                  if (item.noleggio) {
+                    costoAccessoriNoleggio += c;
+                    listAccessoriNoleggio += p;
+                  } else {
+                    costoAccessoriVendita += c;
+                    listAccessoriVendita += p;
+                  }
                 }
                 const listAccessori = listAccessoriVendita + listAccessoriNoleggio;
 
@@ -763,9 +771,10 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                 const nettoStruttura = listStruttura * (1 - (formData.scontoStrutturaDesk || 0) / 100);
                 const nettoGrafica = listGrafica * (1 - (formData.scontoGraficaDesk || 0) / 100);
                 const nettoPremontaggio = listPremontaggio * (1 - (formData.scontoPremontaggioDesk || 0) / 100);
-                const scontoPercAcc = formData.scontoAccessoriDesk || 0;
-                const nettoAccessoriVendita = listAccessoriVendita * (1 - scontoPercAcc / 100);
-                const nettoAccessoriNoleggio = listAccessoriNoleggio * (1 - scontoPercAcc / 100);
+                const scontoPercAccVendita = formData.scontoAccessoriDesk || 0;
+                const scontoPercAccNoleggio = formData.scontoAccessoriDeskNoleggio || 0;
+                const nettoAccessoriVendita = listAccessoriVendita * (1 - scontoPercAccVendita / 100);
+                const nettoAccessoriNoleggio = listAccessoriNoleggio * (1 - scontoPercAccNoleggio / 100);
                 const nettoAccessori = nettoAccessoriVendita + nettoAccessoriNoleggio;
                 const totalNettoVendita = nettoStruttura + nettoGrafica + nettoPremontaggio + nettoAccessori;
 
@@ -833,7 +842,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold">€{listStruttura.toFixed(2)}</div>
+                          <div className="text-lg font-bold">€{(listGrafica + listPremontaggio + listAccessoriVendita).toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
@@ -852,7 +861,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                          <div className="text-lg font-bold">€{(costoGrafica + costoPremontaggio + costoAccessoriVendita).toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>

@@ -162,6 +162,7 @@ export interface PreventivoBean {
     scontoGraficaDesk: number;
     scontoPremontaggioDesk: number;
     scontoAccessoriDesk: number;
+    scontoAccessoriDeskNoleggio: number;
 
     marginalitaStrutturaEspositori: number;
     marginalitaGraficaEspositori: number;

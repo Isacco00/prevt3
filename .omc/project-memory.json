@@ -79,14 +79,14 @@
     },
     {
       "path": "frontend/src/components/preventivi/StorageSection.tsx",
-      "accessCount": 44,
-      "lastAccessed": 1775860728988,
+      "accessCount": 49,
+      "lastAccessed": 1776359892805,
       "type": "file"
     },
     {
       "path": "frontend/src/components/preventivi/DeskSection.tsx",
-      "accessCount": 35,
-      "lastAccessed": 1775860372058,
+      "accessCount": 43,
+      "lastAccessed": 1776340833479,
       "type": "file"
     },
     {
@@ -97,14 +97,20 @@
     },
     {
       "path": "frontend/src/types/preventivo.ts",
-      "accessCount": 26,
-      "lastAccessed": 1776340578404,
+      "accessCount": 27,
+      "lastAccessed": 1776340792063,
       "type": "directory"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/entity/Preventivo.java",
-      "accessCount": 25,
-      "lastAccessed": 1776340576606,
+      "accessCount": 26,
+      "lastAccessed": 1776340790081,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
+      "accessCount": 24,
+      "lastAccessed": 1776340791229,
       "type": "file"
     },
     {
@@ -112,12 +118,6 @@
       "accessCount": 23,
       "lastAccessed": 1775860750126,
       "type": "directory"
-    },
-    {
-      "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
-      "accessCount": 23,
-      "lastAccessed": 1776340577420,
-      "type": "file"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
@@ -256,6 +256,18 @@
       "accessCount": 1,
       "lastAccessed": 1776340575463,
       "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V16__sconto_accessori_desk_noleggio.sql",
+      "accessCount": 1,
+      "lastAccessed": 1776340788050,
+      "type": "file"
+    },
+    {
+      "path": "frontend/src/pages",
+      "accessCount": 1,
+      "lastAccessed": 1776359963226,
+      "type": "directory"
     }
   ],
   "userDirectives": []

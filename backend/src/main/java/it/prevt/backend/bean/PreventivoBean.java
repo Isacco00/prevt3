@@ -133,6 +133,7 @@ public class PreventivoBean {
   private BigDecimal scontoGraficaDesk;
   private BigDecimal scontoPremontaggioDesk;
   private BigDecimal scontoAccessoriDesk;
+  private BigDecimal scontoAccessoriDeskNoleggio;
   private Boolean graficaStorageAttiva;
   private Boolean graficaDeskAttiva;
   private Boolean graficaEspositoriAttiva;

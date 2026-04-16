@@ -566,7 +566,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold">€{listStruttura.toFixed(2)}</div>
+                          <div className="text-lg font-bold">€{(listGrafica + listPremontaggio).toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
