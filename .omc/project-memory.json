@@ -73,8 +73,8 @@
   "hotPaths": [
     {
       "path": "frontend/src/components/preventivi/TotalePreventivoSection.tsx",
-      "accessCount": 52,
-      "lastAccessed": 1776360236931,
+      "accessCount": 54,
+      "lastAccessed": 1776360648580,
       "type": "file"
     },
     {
@@ -96,6 +96,12 @@
       "type": "file"
     },
     {
+      "path": "frontend/src/components/preventivi/StandSection.tsx",
+      "accessCount": 28,
+      "lastAccessed": 1776360637154,
+      "type": "directory"
+    },
+    {
       "path": "frontend/src/types/preventivo.ts",
       "accessCount": 27,
       "lastAccessed": 1776340792063,
@@ -106,12 +112,6 @@
       "accessCount": 26,
       "lastAccessed": 1776340790081,
       "type": "file"
-    },
-    {
-      "path": "frontend/src/components/preventivi/StandSection.tsx",
-      "accessCount": 26,
-      "lastAccessed": 1776360405668,
-      "type": "directory"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/bean/PreventivoBean.java",
@@ -150,15 +150,15 @@
       "type": "file"
     },
     {
-      "path": "backend/src/main/java",
-      "accessCount": 5,
-      "lastAccessed": 1776340554504,
+      "path": "frontend/src",
+      "accessCount": 6,
+      "lastAccessed": 1776360572263,
       "type": "directory"
     },
     {
-      "path": "frontend/src",
+      "path": "backend/src/main/java",
       "accessCount": 5,
-      "lastAccessed": 1776360208706,
+      "lastAccessed": 1776340554504,
       "type": "directory"
     },
     {
@@ -184,6 +184,18 @@
       "accessCount": 3,
       "lastAccessed": 1776360204924,
       "type": "directory"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__init.sql",
+      "accessCount": 3,
+      "lastAccessed": 1776360889935,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V17__cleanup_old_massimo_piva_user.sql",
+      "accessCount": 3,
+      "lastAccessed": 1776360898841,
+      "type": "file"
     },
     {
       "path": "backend/src/main/java/it/prevt/backend/mapper/AbstractMapper.java",
@@ -282,12 +294,6 @@
       "type": "file"
     },
     {
-      "path": "backend/src/main/resources/db/migration/V1__init.sql",
-      "accessCount": 1,
-      "lastAccessed": 1776359980900,
-      "type": "file"
-    },
-    {
       "path": "backend/src/main/java/it/prevt/backend/repository/impl/UserRepositoryImpl.java",
       "accessCount": 1,
       "lastAccessed": 1776359988777,
@@ -297,12 +303,6 @@
       "path": "backend/src/main/java/it/prevt/backend/manager/impl/UserManagerImpl.java",
       "accessCount": 1,
       "lastAccessed": 1776359989109,
-      "type": "file"
-    },
-    {
-      "path": "backend/src/main/resources/db/migration/V17__cleanup_old_massimo_piva_user.sql",
-      "accessCount": 1,
-      "lastAccessed": 1776360137387,
       "type": "file"
     }
   ],
