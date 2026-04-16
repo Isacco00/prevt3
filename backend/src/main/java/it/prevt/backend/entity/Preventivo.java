@@ -394,6 +394,9 @@ public class Preventivo {
   @Column(name = "sconto_accessori_espositori")
   private BigDecimal scontoAccessoriEspositori = BigDecimal.ZERO;
 
+  @Column(name = "sconto_accessori_espositori_noleggio")
+  private BigDecimal scontoAccessoriEspositoriNoleggio = BigDecimal.ZERO;
+
   @Column(name = "totale_preventivo")
   private BigDecimal totalePreventivo = BigDecimal.ZERO;
 

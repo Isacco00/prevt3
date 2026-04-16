@@ -158,6 +158,7 @@ public class PreventivoBean {
   private BigDecimal scontoGraficaEspositori;
   private BigDecimal scontoPremontaggioEspositori;
   private BigDecimal scontoAccessoriEspositori;
+  private BigDecimal scontoAccessoriEspositoriNoleggio;
 
   private BigDecimal totalePreventivo;
   private BigDecimal totaleCosti;

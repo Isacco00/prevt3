@@ -172,6 +172,7 @@ export interface PreventivoBean {
     scontoGraficaEspositori: number;
     scontoPremontaggioEspositori: number;
     scontoAccessoriEspositori: number;
+    scontoAccessoriEspositoriNoleggio: number;
 
     totalePreventivo: number;
     totaleCosti: number;

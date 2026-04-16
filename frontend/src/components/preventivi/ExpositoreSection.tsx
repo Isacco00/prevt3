@@ -491,7 +491,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                     costoN += item.qty * Number(accessorio.costoUnitario);
                     prezzoN += item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
                   }
-                  const scontoPerc = formData.scontoAccessoriEspositori || 0;
+                  const scontoPerc = formData.scontoAccessoriEspositoriNoleggio || 0;
                   const scontoEuro = prezzoN * scontoPerc / 100;
                   const prezzoNetto = prezzoN - scontoEuro;
                   const prezzoNoleggioAcc = prezzoNetto * (formData.coefficienteNoleggio?.valore ?? 0);
@@ -514,7 +514,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                           <Input
                             type="number" min="0" max="100" step="1"
                             value={scontoPerc}
-                            onChange={(e) => setFormData({...formData, scontoAccessoriEspositori: parseFloat(e.target.value) || 0})}
+                            onChange={(e) => setFormData({...formData, scontoAccessoriEspositoriNoleggio: parseFloat(e.target.value) || 0})}
                             className="w-16 h-6 text-xs text-center"
                           />
                           <span className="text-xs">%</span>
@@ -542,26 +542,34 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
               const scontoPercStruttura = formData.scontoStrutturaEspositori || 0;
               const scontoPercGrafica = formData.scontoGraficaEspositori || 0;
               const scontoPercPremontaggio = formData.scontoPremontaggioEspositori || 0;
-              const scontoPercAccessori = formData.scontoAccessoriEspositori || 0;
+              const scontoPercAccessoriVendita = formData.scontoAccessoriEspositori || 0;
+              const scontoPercAccessoriNoleggio = formData.scontoAccessoriEspositoriNoleggio || 0;
 
               const nettoStruttura = strutturaPrezzo * (1 - scontoPercStruttura / 100);
               const nettoGrafica = graficaPrezzo * (1 - scontoPercGrafica / 100);
               const nettoPremontaggio = premontaggioPrezzo * (1 - scontoPercPremontaggio / 100);
 
-              let costoAccessori = 0;
+              let costoAccessoriVendita = 0;
+              let costoAccessoriNoleggio = 0;
               let listAccessoriVendita = 0;
               let listAccessoriNoleggio = 0;
               for (const accessorio of accessoriesData as ListinoAccessoriEspositoriBean[]) {
                 const item = espositoriMap[accessorio.id];
                 if (!item) continue;
-                costoAccessori += item.qty * Number(accessorio.costoUnitario);
-                const p = item.qty * Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
-                if (item.noleggio) listAccessoriNoleggio += p;
-                else listAccessoriVendita += p;
+                const c = item.qty * Number(accessorio.costoUnitario);
+                const p = c * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                if (item.noleggio) {
+                  costoAccessoriNoleggio += c;
+                  listAccessoriNoleggio += p;
+                } else {
+                  costoAccessoriVendita += c;
+                  listAccessoriVendita += p;
+                }
               }
+              const costoAccessori = costoAccessoriVendita + costoAccessoriNoleggio;
               const listAccessori = listAccessoriVendita + listAccessoriNoleggio;
-              const nettoAccessoriVendita = listAccessoriVendita * (1 - scontoPercAccessori / 100);
-              const nettoAccessoriNoleggio = listAccessoriNoleggio * (1 - scontoPercAccessori / 100);
+              const nettoAccessoriVendita = listAccessoriVendita * (1 - scontoPercAccessoriVendita / 100);
+              const nettoAccessoriNoleggio = listAccessoriNoleggio * (1 - scontoPercAccessoriNoleggio / 100);
               const nettoAccessori = nettoAccessoriVendita + nettoAccessoriNoleggio;
 
               const costoTotale = strutturaCosto + graficaCosto + premontaggioCosto + costoAccessori;
@@ -637,7 +645,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold">€{strutturaPrezzo.toFixed(2)}</div>
+                        <div className="text-lg font-bold">€{(graficaPrezzo + premontaggioPrezzo + listAccessoriVendita).toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
@@ -656,7 +664,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                        <div className="text-lg font-bold">€{(graficaCosto + premontaggioCosto + costoAccessoriVendita).toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>

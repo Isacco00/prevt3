@@ -1,7 +1,0 @@
-{
-  "tool_name": "Read",
-  "tool_input_preview": "{\"file_path\":\"/home/ubuntu/prevt3/frontend/src/components/preventivi/TotalePreventivoSection.tsx\"}",
-  "error": "File content (11260 tokens) exceeds maximum allowed tokens (10000). Use offset and limit parameters to read specific portions of the file, or search for specific content instead of reading the whole file.",
-  "timestamp": "2026-04-10T22:21:02.253Z",
-  "retry_count": 1
-}

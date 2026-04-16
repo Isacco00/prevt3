@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1775760874306,
+  "lastScanned": 1776340076593,
   "projectRoot": "/home/ubuntu/prevt3/frontend",
   "techStack": {
     "languages": [
@@ -75,7 +75,7 @@
       "path": "public",
       "purpose": "Public files",
       "fileCount": 3,
-      "lastAccessed": 1775760874292,
+      "lastAccessed": 1776340076572,
       "keyFiles": [
         "favicon.ico",
         "placeholder.svg",
@@ -86,7 +86,7 @@
       "path": "src",
       "purpose": "Source code",
       "fileCount": 6,
-      "lastAccessed": 1775760874294,
+      "lastAccessed": 1776340076585,
       "keyFiles": [
         "App.css",
         "App.tsx",
@@ -99,7 +99,7 @@
       "path": "src/api",
       "purpose": "API routes",
       "fileCount": 9,
-      "lastAccessed": 1775760874299,
+      "lastAccessed": 1776340076588,
       "keyFiles": [
         "auth.ts",
         "dashboard.ts",
@@ -110,7 +110,7 @@
       "path": "src/components",
       "purpose": "UI components",
       "fileCount": 7,
-      "lastAccessed": 1775760874301,
+      "lastAccessed": 1776340076589,
       "keyFiles": [
         "AppHeader.tsx",
         "AppSidebar.tsx",
@@ -121,7 +121,7 @@
       "path": "src/lib",
       "purpose": "Library code",
       "fileCount": 1,
-      "lastAccessed": 1775760874301,
+      "lastAccessed": 1776340076589,
       "keyFiles": [
         "utils.ts"
       ]
