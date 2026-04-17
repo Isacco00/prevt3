@@ -45,6 +45,25 @@ export function usePreventivoMargins({
             scontoPremontaggio: selectedProspect.scontoCliente,
             scontoExtraStandComplesso: selectedProspect.scontoCliente,
 
+            // Sconti storage
+            scontoStrutturaStorage: selectedProspect.scontoCliente,
+            scontoGraficaStorage: selectedProspect.scontoCliente,
+            scontoPremontaggioStorage: selectedProspect.scontoCliente,
+
+            // Sconti desk
+            scontoStrutturaDesk: selectedProspect.scontoCliente,
+            scontoGraficaDesk: selectedProspect.scontoCliente,
+            scontoPremontaggioDesk: selectedProspect.scontoCliente,
+            scontoAccessoriDesk: selectedProspect.scontoCliente,
+            scontoAccessoriDeskNoleggio: selectedProspect.scontoCliente,
+
+            // Sconti espositori
+            scontoStrutturaEspositori: selectedProspect.scontoCliente,
+            scontoGraficaEspositori: selectedProspect.scontoCliente,
+            scontoPremontaggioEspositori: selectedProspect.scontoCliente,
+            scontoAccessoriEspositori: selectedProspect.scontoCliente,
+            scontoAccessoriEspositoriNoleggio: selectedProspect.scontoCliente,
+
             // Stand
             marginalitaGrafica: defaultMargin.marginalita,
             marginalitaRetroilluminazione: defaultMargin.marginalita,
