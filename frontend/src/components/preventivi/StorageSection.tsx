@@ -74,7 +74,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
 
   // Calcolo degli elementi fisici per Storage
   const storageElements = useMemo(() => {
-    if (!formData.larghezzaStorage || !formData.profonditaStorage || !formData.altezzaStorage || !formData.layoutStorage || !formData.distribuzione) {
+    if (!formData.larghezzaStorage || !formData.profonditaStorage || !formData.altezzaStorage || !formData.layoutStorage) {
       return {
         superficieStampa: 0,
         sviluppoLineare: 0,

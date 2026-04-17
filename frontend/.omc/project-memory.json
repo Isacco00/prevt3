@@ -127,6 +127,31 @@
       ]
     }
   },
-  "hotPaths": [],
+  "hotPaths": [
+    {
+      "path": "src/components/preventivi/StorageSection.tsx",
+      "accessCount": 2,
+      "lastAccessed": 1776441217935,
+      "type": "file"
+    },
+    {
+      "path": "src/components/preventivi/DeskSection.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776441086341,
+      "type": "file"
+    },
+    {
+      "path": "src/types/parametri.ts",
+      "accessCount": 1,
+      "lastAccessed": 1776441094749,
+      "type": "directory"
+    },
+    {
+      "path": "src/components/preventivi/ExpositoreSection.tsx",
+      "accessCount": 1,
+      "lastAccessed": 1776441222942,
+      "type": "directory"
+    }
+  ],
   "userDirectives": []
 }

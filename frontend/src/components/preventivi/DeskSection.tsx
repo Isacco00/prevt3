@@ -128,53 +128,14 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
   };
 
   const calculateTotalStructureCost = () => {
-    if (!formData.layoutDesk || !Array.isArray(formData.layoutDesk)) return 0;
-    return formData.layoutDesk.reduce((total, config) => {
+    return deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
       return total + calculateLayoutTotal(config.layout, config.quantity);
     }, 0);
   };
 
-  const calculateSuperficieStampa = () => {
-    if (!formData.layoutDesk || !Array.isArray(formData.layoutDesk)) return 0;
+  const calculateSuperficieStampa = () => calculateSuperficieStampaDesk();
 
-    return formData.layoutDesk.reduce((total, config) => {
-      const {layout, quantity} = config;
-      if (!layout || !quantity) return total;
-
-      switch (layout) {
-        case "50":
-          return total + (1.5 * quantity);
-        case "100":
-          return total + (2 * quantity);
-        case "150":
-          return total + (2.5 * quantity);
-        case "200":
-          return total + (3 * quantity);
-        default:
-          return total;
-      }
-    }, 0);
-  };
-
-  const calculateNumeroPezzi = () => {
-    if (!formData.layoutDesk || !Array.isArray(formData.layoutDesk)) return 0;
-
-    return formData.layoutDesk.reduce((total, config) => {
-      const {layout, quantity} = config;
-      if (!layout || !quantity) return total;
-
-      switch (layout) {
-        case "50":
-        case "100":
-        case "150":
-          return total + (12 * quantity);
-        case "200":
-          return total + (20 * quantity);
-        default:
-          return total;
-      }
-    }, 0);
-  };
+  const calculateNumeroPezzi = () => calculateNumeroPezziDesk();
 
   // Funzioni helper per calcolo desk
   const calculateSuperficieStampaDesk = () => {
@@ -236,11 +197,6 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
 
   // Calcolo dei costi automatici
   const calculateCosts = () => {
-    if (!formData.profondita || !formData.larghezza || !formData.altezza || !formData.layout || !formData.distribuzione) {
-      return {
-        costiAccessoriDesk: 0,
-      };
-    }
     // Calcolo costi accessori desk
     const coeff = formData.coefficienteNoleggio?.valore ?? 0;
     let costiAccessoriDesk = 0;

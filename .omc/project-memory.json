@@ -73,14 +73,14 @@
   "hotPaths": [
     {
       "path": "frontend/src/components/preventivi/StorageSection.tsx",
-      "accessCount": 59,
-      "lastAccessed": 1776435558348,
+      "accessCount": 60,
+      "lastAccessed": 1776440935589,
       "type": "file"
     },
     {
       "path": "frontend/src/components/preventivi/DeskSection.tsx",
-      "accessCount": 56,
-      "lastAccessed": 1776435559344,
+      "accessCount": 59,
+      "lastAccessed": 1776440962626,
       "type": "file"
     },
     {
