@@ -502,7 +502,7 @@ export function TotalePreventivoSection({
 
     // Costo struttura desk
     const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
-      const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => c.layoutDesk === config.layout);
+      const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => Number(c.layoutDesk) === Number(config.layout));
       return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costoUnitario) || 0);
     }, 0);
 

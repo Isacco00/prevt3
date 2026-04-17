@@ -115,6 +115,7 @@ export function ListinoStrutturaDesk() {
     mutationFn: ParametriAPI.saveListinoStrutturaDesk,
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ["costi-struttura-desk"]});
+      queryClient.invalidateQueries({queryKey: ["costi-struttura-desk-layout"]});
 
       setEditingId(null);
       setShowAdd(false);
@@ -137,6 +138,7 @@ export function ListinoStrutturaDesk() {
     mutationFn: ParametriAPI.deleteListinoStrutturaDesk,
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ["costi-struttura-desk"]});
+      queryClient.invalidateQueries({queryKey: ["costi-struttura-desk-layout"]});
 
       toast({
         title: "Costo eliminato",

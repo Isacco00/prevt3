@@ -104,23 +104,17 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
   };
   const getLayoutCost = (layout: string) => {
     if (!listinoStrutturaDesk) return 0;
-    const costo = listinoStrutturaDesk.find(c => String(c.layoutDesk) === layout);
+    const target = Number(layout);
+    const costo = listinoStrutturaDesk.find(c => Number(c.layoutDesk) === target);
     return costo ? Number(costo.costoUnitario) : 0;
-  };
-
-  const LAYOUT_DESK_PREZZO_MULTIPLIER: Record<string, number> = {
-    "50": 2,
-    "100": 3,
-    "150": 1,
-    "200": 1,
   };
 
   const getLayoutPrezzoUnitario = (layout: string) => {
     if (!listinoStrutturaDesk) return 0;
-    const entry = listinoStrutturaDesk.find(c => String(c.layoutDesk) === layout);
+    const target = Number(layout);
+    const entry = listinoStrutturaDesk.find(c => Number(c.layoutDesk) === target);
     if (!entry) return 0;
-    const multiplier = LAYOUT_DESK_PREZZO_MULTIPLIER[layout] ?? 1;
-    return Number(entry.costoUnitario) * multiplier;
+    return Number(entry.costoUnitario) * (1 + (Number(entry.ricaricoPercentuale) || 0) / 100);
   };
 
   const calculateLayoutTotal = (layout: string, quantity: number) => {
@@ -211,7 +205,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
     const costoPremontaggerDesk = (listinoServizi as ListinoServiziPrezzoUnitarioBean[]).find(p => p.parametro === 'Premontaggio');
 
     const strutturaTerraDesk = deskLayoutsArray.reduce((total, config: LayoutDeskBean) => {
-      const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => String(c.layoutDesk) === String(config.layout));
+      const costoLayout = listinoStrutturaDesk?.find((c: ListinoStrutturaDeskBean) => Number(c.layoutDesk) === Number(config.layout));
       return total + (Number(config.quantity) || 0) * (Number(costoLayout?.costoUnitario) || 0);
     }, 0);
     // Grafica desk con cordino cucito
