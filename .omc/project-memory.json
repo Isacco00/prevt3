@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1776340125433,
+  "lastScanned": 1776433678891,
   "projectRoot": "/home/ubuntu/prevt3",
   "techStack": {
     "languages": [],
@@ -33,7 +33,7 @@
       "path": "backend",
       "purpose": null,
       "fileCount": 8,
-      "lastAccessed": 1776340125426,
+      "lastAccessed": 1776433678885,
       "keyFiles": [
         "HELP.md",
         "docker-entrypoint.local.sh",
@@ -46,14 +46,14 @@
       "path": "deployment",
       "purpose": null,
       "fileCount": 0,
-      "lastAccessed": 1776340125430,
+      "lastAccessed": 1776433678886,
       "keyFiles": []
     },
     "frontend": {
       "path": "frontend",
       "purpose": null,
       "fileCount": 13,
-      "lastAccessed": 1776340125430,
+      "lastAccessed": 1776433678887,
       "keyFiles": [
         "components.json",
         "dockerfile",
@@ -66,7 +66,7 @@
       "path": "frontend/node_modules",
       "purpose": "Dependencies",
       "fileCount": 1,
-      "lastAccessed": 1776340125432,
+      "lastAccessed": 1776433678889,
       "keyFiles": []
     }
   },
@@ -120,15 +120,15 @@
       "type": "file"
     },
     {
-      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
-      "accessCount": 16,
-      "lastAccessed": 1775743112021,
+      "path": "backend/src/main/java/it/prevt/backend/merger/PreventivoMerger.java",
+      "accessCount": 18,
+      "lastAccessed": 1776433993988,
       "type": "directory"
     },
     {
-      "path": "backend/src/main/java/it/prevt/backend/merger/PreventivoMerger.java",
+      "path": "backend/src/main/java/it/prevt/backend/mapper/PreventivoMapper.java",
       "accessCount": 16,
-      "lastAccessed": 1775743115950,
+      "lastAccessed": 1775743112021,
       "type": "directory"
     },
     {
@@ -363,6 +363,12 @@
       "path": "frontend/src/hooks/useAuth.tsx",
       "accessCount": 1,
       "lastAccessed": 1776361264643,
+      "type": "file"
+    },
+    {
+      "path": "backend/src/main/java/it/prevt/backend/manager/impl/PreventivoManagerImpl.java",
+      "accessCount": 1,
+      "lastAccessed": 1776433907024,
       "type": "file"
     }
   ],
