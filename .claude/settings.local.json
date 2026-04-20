@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Bash(kubectl config *)",
+      "Bash(kubectl -n test get pods)",
+      "Bash(kubectl -n test get svc)",
+      "Bash(kubectl -n test exec postgres-test-0 -- pg_dump -U postgres -d prevt --no-owner --no-privileges --clean --if-exists)",
+      "Bash(echo \"exit=$?\")",
+      "Read(//tmp/**)",
+      "Bash(docker exec *)",
+      "Bash(find *)",
+      "Bash(./mvnw -q compile)",
+      "Bash(git -C /home/ubuntu/prevt3 log --all --oneline -- '*.sql' '*.dump')",
+      "Bash(curl -s -X POST http://localhost:8081/api/parametri/getListinoStrutturaDesk -H \"Content-Type: application/json\" -d '{\"attivo\":true}')",
+      "Bash(git rm *)",
+      "Bash(git add *)"
+    ]
+  }
+}

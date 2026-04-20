@@ -544,7 +544,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                           <div className="flex items-center gap-2">
                             Premontaggio desk
                             <Checkbox
-                                checked={formData.premontaggioDesk ?? false}
+                                checked={formData.premontaggioDesk ?? true}
                                 onCheckedChange={checked => setFormData({...formData, premontaggioDesk: Boolean(checked)})}
                             />
                           </div>
@@ -738,21 +738,25 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
 
                 const scontoMedioVendita = totalListinoVendita > 0 ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
                 const marginalitaVendita = totalNettoVendita > 0 ? (totalNettoVendita - costoTotale) / totalNettoVendita * 100 : 0;
+                const margineVendita = totalNettoVendita - costoTotale;
 
                 const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
                 const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
                 const prezzoNoleggioAccessori = nettoAccessoriNoleggio * coeffNoleggio;
                 const totalNettoNoleggio = nettoGrafica + nettoPremontaggio + nettoAccessoriVendita;
                 const totalePreventivoFinale = prezzoNoleggioStruttura + totalNettoNoleggio + prezzoNoleggioAccessori;
-                const scontoMedioNoleggio = listStruttura > 0 ? (listStruttura - nettoStruttura) / listStruttura * 100 : 0;
-                const marginalitaNoleggio = totalePreventivoFinale > 0 ? (totalePreventivoFinale - costoTotale) / totalePreventivoFinale * 100 : 0;
+                const totalListinoNoleggio = listGrafica + listPremontaggio + listAccessoriVendita;
+                const costiNoleggio = costoGrafica + costoPremontaggio + costoAccessoriVendita;
+                const scontoMedioNoleggio = totalListinoNoleggio > 0 ? (totalListinoNoleggio - totalNettoNoleggio) / totalListinoNoleggio * 100 : 0;
+                const marginalitaNoleggio = totalNettoNoleggio > 0 ? (totalNettoNoleggio - costiNoleggio) / totalNettoNoleggio * 100 : 0;
+                const margineNoleggio = totalNettoNoleggio - costiNoleggio;
 
                 return (
                   <>
                     {/* VENDITA */}
                     <div>
                       <div className="text-lg font-semibold text-primary mb-2">Vendita</div>
-                      <div className="grid grid-cols-5 gap-4 text-center">
+                      <div className="grid grid-cols-6 gap-4 text-center">
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                           <div className="text-[10px] invisible">-</div>
@@ -767,6 +771,11 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Costi</div>
                           <div className="text-[10px] invisible">-</div>
                           <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Margine</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold text-green-600">€{margineVendita.toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -785,7 +794,7 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
 
                     {/* NOLEGGIO */}
                     <div>
-                      <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                      <div className="grid grid-cols-6 gap-4 text-center mb-4">
                         <div className="text-left">
                           <div className="text-lg font-semibold text-primary">Noleggio</div>
                         </div>
@@ -793,10 +802,10 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Prezzo Noleggio</div>
                           <div className="text-xl font-bold">€{(prezzoNoleggioStruttura + prezzoNoleggioAccessori).toFixed(2)}</div>
                         </div>
-                        <div /><div /><div />
+                        <div /><div /><div /><div />
                       </div>
 
-                      <div className="grid grid-cols-5 gap-4 text-center">
+                      <div className="grid grid-cols-6 gap-4 text-center">
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                           <div className="text-[10px] invisible">-</div>
@@ -820,6 +829,11 @@ export function DeskSection({formData, setFormData}: DeskSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
                           <div className="text-[10px] invisible">-</div>
                           <div className="text-lg font-bold">€{(costoGrafica + costoPremontaggio + costoAccessoriVendita).toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Margine</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold text-green-600">€{margineNoleggio.toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>

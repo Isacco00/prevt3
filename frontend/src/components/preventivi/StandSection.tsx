@@ -645,13 +645,13 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           <div className="flex items-center gap-2">
                             Grafica con cordino
                             <Checkbox
-                                checked={formData.graficaCordinoAttiva ?? false}
+                                checked={formData.graficaCordinoAttiva ?? true}
                                 onCheckedChange={checked => setFormData({...formData, graficaCordinoAttiva: Boolean(checked)})}
                             />
                           </div>
                         </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
-                          €{costs.costoGraficaCordino.toFixed(2)}
+                          €{(formData.graficaCordinoAttiva ? costs.costoGraficaCordino : 0).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-sm">
                           €{(formData.graficaCordinoAttiva ? costs.prezzoGraficaCordino : 0).toFixed(2)}
@@ -754,7 +754,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           <div className="flex items-center gap-2">
                             Premontaggio
                             <Checkbox
-                                checked={formData.premontaggio ?? false}
+                                checked={formData.premontaggio ?? true}
                                 onCheckedChange={(checked) => setFormData({...formData, premontaggio: Boolean(checked)})}
                             />
                           </div>
@@ -867,7 +867,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       Vendita
                     </div>
 
-                    <div className="grid grid-cols-5 gap-4 text-center">
+                    <div className="grid grid-cols-6 gap-4 text-center">
 
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
@@ -890,6 +890,14 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">
                           €{costs.totaleCostiVendita?.toFixed(2) ?? "0.00"}
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-xs text-muted-foreground">Margine</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold text-green-600">
+                          €{costs.margineVendita?.toFixed(2) ?? "0.00"}
                         </div>
                       </div>
 
@@ -919,7 +927,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                   <div>
 
                     {/* Titolo + Totale Prezzo Noleggio allineato sopra col 2 */}
-                    <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                    <div className="grid grid-cols-6 gap-4 text-center mb-4">
                       <div className="text-left">
                         <div className="text-lg font-semibold text-primary">Noleggio</div>
                       </div>
@@ -929,11 +937,11 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           €{costs.totalePrezzoNoleggio?.toFixed(2) ?? "0.00"}
                         </div>
                       </div>
-                      <div /><div /><div />
+                      <div /><div /><div /><div />
                     </div>
 
-                    {/* Griglia a 5 colonne */}
-                    <div className="grid grid-cols-5 gap-4 text-center">
+                    {/* Griglia a 6 colonne */}
+                    <div className="grid grid-cols-6 gap-4 text-center">
 
                       {/* Col 1 – Totale Prezzo Listino */}
                       <div>
@@ -985,7 +993,16 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         </div>
                       </div>
 
-                      {/* Col 4 – Sconto Medio */}
+                      {/* Col 4 – Margine */}
+                      <div>
+                        <div className="text-xs text-muted-foreground">Margine</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold text-green-600">
+                          €{costs.margineNoleggio?.toFixed(2) ?? "0.00"}
+                        </div>
+                      </div>
+
+                      {/* Col 5 – Sconto Medio */}
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>
                         <div className="text-[10px] invisible">-</div>

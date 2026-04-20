@@ -407,7 +407,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                         <div className="flex items-center gap-2">
                           Premontaggio espositori
                           <Checkbox
-                            checked={formData.premontaggioEspositori ?? false}
+                            checked={formData.premontaggioEspositori ?? true}
                             onCheckedChange={(checked) => setFormData({...formData, premontaggioEspositori: Boolean(checked)})}
                           />
                         </div>
@@ -546,7 +546,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
               const scontoPercAccessoriNoleggio = formData.scontoAccessoriEspositoriNoleggio || 0;
 
               const nettoStruttura = strutturaPrezzo * (1 - scontoPercStruttura / 100);
-              const nettoGrafica = graficaPrezzo * (1 - scontoPercGrafica / 100);
+              const nettoGrafica = (formData.graficaEspositoriAttiva ?? true ? graficaPrezzo : 0) * (1 - scontoPercGrafica / 100);
               const nettoPremontaggio = premontaggioPrezzo * (1 - scontoPercPremontaggio / 100);
 
               let costoAccessoriVendita = 0;
@@ -572,32 +572,39 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
               const nettoAccessoriNoleggio = listAccessoriNoleggio * (1 - scontoPercAccessoriNoleggio / 100);
               const nettoAccessori = nettoAccessoriVendita + nettoAccessoriNoleggio;
 
-              const costoTotale = strutturaCosto + graficaCosto + premontaggioCosto + costoAccessori;
-              const totalListinoVendita = strutturaPrezzo + graficaPrezzo + premontaggioPrezzo + listAccessori;
+              const graficaAttivaSum = formData.graficaEspositoriAttiva ?? true;
+              const graficaCostoEff = graficaAttivaSum ? graficaCosto : 0;
+              const graficaPrezzoEff = graficaAttivaSum ? graficaPrezzo : 0;
+              const costoTotale = strutturaCosto + graficaCostoEff + premontaggioCosto + costoAccessori;
+              const totalListinoVendita = strutturaPrezzo + graficaPrezzoEff + premontaggioPrezzo + listAccessori;
               const totalNettoVendita = nettoStruttura + nettoGrafica + nettoPremontaggio + nettoAccessori;
 
               const scontoMedioVendita = totalListinoVendita > 0
                 ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
               const marginalitaVendita = totalNettoVendita > 0
                 ? (totalNettoVendita - costoTotale) / totalNettoVendita * 100 : 0;
+              const margineVendita = totalNettoVendita - costoTotale;
 
               const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
               const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
               const prezzoNoleggioAccessori = nettoAccessoriNoleggio * coeffNoleggio;
               const totalNettoNoleggio = nettoGrafica + nettoPremontaggio + nettoAccessoriVendita;
               const totalePreventivoFinale = prezzoNoleggioStruttura + totalNettoNoleggio + prezzoNoleggioAccessori;
+              const totalListinoNoleggio = graficaPrezzoEff + premontaggioPrezzo + listAccessoriVendita;
+              const costiNoleggio = graficaCostoEff + premontaggioCosto + costoAccessoriVendita;
 
-              const scontoMedioNoleggio = strutturaPrezzo > 0
-                ? (strutturaPrezzo - nettoStruttura) / strutturaPrezzo * 100 : 0;
-              const marginalitaNoleggio = totalePreventivoFinale > 0
-                ? (totalePreventivoFinale - costoTotale) / totalePreventivoFinale * 100 : 0;
+              const scontoMedioNoleggio = totalListinoNoleggio > 0
+                ? (totalListinoNoleggio - totalNettoNoleggio) / totalListinoNoleggio * 100 : 0;
+              const marginalitaNoleggio = totalNettoNoleggio > 0
+                ? (totalNettoNoleggio - costiNoleggio) / totalNettoNoleggio * 100 : 0;
+              const margineNoleggio = totalNettoNoleggio - costiNoleggio;
 
               return (
                 <>
                   {/* VENDITA */}
                   <div>
                     <div className="text-lg font-semibold text-primary mb-2">Vendita</div>
-                    <div className="grid grid-cols-5 gap-4 text-center">
+                    <div className="grid grid-cols-6 gap-4 text-center">
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                         <div className="text-[10px] invisible">-</div>
@@ -612,6 +619,11 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                         <div className="text-xs text-muted-foreground">Totale Costi</div>
                         <div className="text-[10px] invisible">-</div>
                         <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Margine</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold text-green-600">€{margineVendita.toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -630,7 +642,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
 
                   {/* NOLEGGIO */}
                   <div>
-                    <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                    <div className="grid grid-cols-6 gap-4 text-center mb-4">
                       <div className="text-left">
                         <div className="text-lg font-semibold text-primary">Noleggio</div>
                       </div>
@@ -638,14 +650,14 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                         <div className="text-xs text-muted-foreground">Totale Prezzo Noleggio</div>
                         <div className="text-xl font-bold">€{(prezzoNoleggioStruttura + prezzoNoleggioAccessori).toFixed(2)}</div>
                       </div>
-                      <div/><div/><div/>
+                      <div/><div/><div/><div/>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-4 text-center">
+                    <div className="grid grid-cols-6 gap-4 text-center">
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold">€{(graficaPrezzo + premontaggioPrezzo + listAccessoriVendita).toFixed(2)}</div>
+                        <div className="text-lg font-bold">€{(graficaPrezzoEff + premontaggioPrezzo + listAccessoriVendita).toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
@@ -664,7 +676,12 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                       <div>
                         <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold">€{(graficaCosto + premontaggioCosto + costoAccessoriVendita).toFixed(2)}</div>
+                        <div className="text-lg font-bold">€{(graficaCostoEff + premontaggioCosto + costoAccessoriVendita).toFixed(2)}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Margine</div>
+                        <div className="text-[10px] invisible">-</div>
+                        <div className="text-lg font-bold text-green-600">€{margineNoleggio.toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>

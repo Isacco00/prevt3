@@ -168,7 +168,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
     const costoPremontaggioStorage = costoPremontaggioParam && formData.premontaggioStorage ?
         storageElements.numeroPezzi * (costoPremontaggioParam.costo || 0) : 0;
 
-    const costoTotaleStorage = costoStrutturaStorage + costoGraficaStorage + costoPremontaggioStorage;
+    const costoTotaleStorage = costoStrutturaStorage + (formData.graficaStorageAttiva ? costoGraficaStorage : 0) + costoPremontaggioStorage;
     const costoTotaleStorageNoleggio = (formData.graficaStorageAttiva ? costoGraficaStorage : 0) + costoPremontaggioStorage;
 
     // Prezzi con ricarico dal parametro
@@ -396,7 +396,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                   {/* Grafica storage */}
                   {(() => {
                     const prezzo = storageCosts.prezzoGraficaStorage;
-                    const attiva = formData.graficaStorageAttiva ?? false;
+                    const attiva = formData.graficaStorageAttiva ?? true;
                     const scontoPerc = formData.scontoGraficaStorage || 0;
                     const scontoEuro = (attiva ? prezzo : 0) * scontoPerc / 100;
                     const prezzoNetto = (attiva ? prezzo : 0) - scontoEuro;
@@ -412,7 +412,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
-                          €{storageCosts.costoGraficaStorage.toFixed(2)}
+                          €{(attiva ? storageCosts.costoGraficaStorage : 0).toFixed(2)}
                         </TableCell>
                         <TableCell className="text-right text-sm">
                           €{(attiva ? prezzo : 0).toFixed(2)}
@@ -451,7 +451,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="flex items-center gap-2">
                             Premontaggio Storage
                             <Checkbox
-                                checked={formData.premontaggioStorage ?? false}
+                                checked={formData.premontaggioStorage ?? true}
                                 onCheckedChange={(checked) => setFormData({...formData, premontaggioStorage: Boolean(checked)})}
                             />
                           </div>
@@ -492,7 +492,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
           <Card className="border-2 border-primary/20 bg-primary/5">
             <CardContent className="pt-4 space-y-6">
               {(() => {
-                const graficaAttiva = formData.graficaStorageAttiva ?? false;
+                const graficaAttiva = formData.graficaStorageAttiva ?? true;
                 const listStruttura = storageCosts.prezzoStrutturaStorage;
                 const listGrafica = graficaAttiva ? storageCosts.prezzoGraficaStorage : 0;
                 const listPremontaggio = storageCosts.prezzoPremontaggioStorage;
@@ -508,19 +508,22 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                 const costoTotaleNoleggio = storageCosts.costoTotaleStorageNoleggio;
                 const scontoMedioVendita = totalListinoVendita > 0 ? (totalListinoVendita - totalNettoVendita) / totalListinoVendita * 100 : 0;
                 const marginalitaVendita = totalNettoVendita > 0 ? (totalNettoVendita - costoTotale) / totalNettoVendita * 100 : 0;
+                const margineVendita = totalNettoVendita - costoTotale;
 
                 const coeffNoleggio = formData.coefficienteNoleggio?.valore ?? 0;
                 const prezzoNoleggioStruttura = nettoStruttura * coeffNoleggio;
                 const totalePreventivoFinale = prezzoNoleggioStruttura + nettoGrafica + nettoPremontaggio;
-                const scontoMedioNoleggio = listStruttura > 0 ? (listStruttura - nettoStruttura) / listStruttura * 100 : 0;
-                const marginalitaNoleggio = totalePreventivoFinale > 0 ? (totalePreventivoFinale - costoTotale) / totalePreventivoFinale * 100 : 0;
+                const totalListinoNoleggio = listGrafica + listPremontaggio;
+                const scontoMedioNoleggio = totalListinoNoleggio > 0 ? (totalListinoNoleggio - totalNettoNoleggio) / totalListinoNoleggio * 100 : 0;
+                const marginalitaNoleggio = totalNettoNoleggio > 0 ? (totalNettoNoleggio - costoTotaleNoleggio) / totalNettoNoleggio * 100 : 0;
+                const margineNoleggio = totalNettoNoleggio - costoTotaleNoleggio;
 
                 return (
                   <>
                     {/* VENDITA */}
                     <div>
                       <div className="text-lg font-semibold text-primary mb-2">Vendita</div>
-                      <div className="grid grid-cols-5 gap-4 text-center">
+                      <div className="grid grid-cols-6 gap-4 text-center">
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                           <div className="text-[10px] invisible">-</div>
@@ -535,6 +538,11 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Costi</div>
                           <div className="text-[10px] invisible">-</div>
                           <div className="text-lg font-bold">€{costoTotale.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Margine</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold text-green-600">€{margineVendita.toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -553,7 +561,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
 
                     {/* NOLEGGIO */}
                     <div>
-                      <div className="grid grid-cols-5 gap-4 text-center mb-4">
+                      <div className="grid grid-cols-6 gap-4 text-center mb-4">
                         <div className="text-left">
                           <div className="text-lg font-semibold text-primary">Noleggio</div>
                         </div>
@@ -561,10 +569,10 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Prezzo Noleggio</div>
                           <div className="text-xl font-bold">€{prezzoNoleggioStruttura.toFixed(2)}</div>
                         </div>
-                        <div /><div /><div />
+                        <div /><div /><div /><div />
                       </div>
 
-                      <div className="grid grid-cols-5 gap-4 text-center">
+                      <div className="grid grid-cols-6 gap-4 text-center">
                         <div>
                           <div className="text-xs text-muted-foreground">Totale Prezzo Listino</div>
                           <div className="text-[10px] invisible">-</div>
@@ -588,6 +596,11 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Costi Vendita</div>
                           <div className="text-[10px] invisible">-</div>
                           <div className="text-lg font-bold">€{costoTotaleNoleggio.toFixed(2)}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-muted-foreground">Margine</div>
+                          <div className="text-[10px] invisible">-</div>
+                          <div className="text-lg font-bold text-green-600">€{margineNoleggio.toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>

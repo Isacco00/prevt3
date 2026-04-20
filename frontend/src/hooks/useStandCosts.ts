@@ -82,6 +82,7 @@ const empty = {
   totaleCostiVendita: 0,
   scontoMedioVendita: 0,
   marginalitaVendita: 0,
+  margineVendita: 0,
 
   // noleggio
   totalePrezzoListinoNoleggio: 0,
@@ -89,6 +90,7 @@ const empty = {
   totaleCostiNoleggio: 0,
   scontoMedioNoleggio: 0,
   marginalitaNoleggio: 0,
+  margineNoleggio: 0,
   premontaggio: 0,
   extraComplesso: 0,
   totalePrezzoNoleggio: 0,
@@ -164,7 +166,7 @@ export function useStandCosts({
         : 0);
 
     const prezzoNettoGraficaCordino = r2(
-        (formData.graficaCordinoAttiva ?? false)
+        (formData.graficaCordinoAttiva ?? true)
             ? prezzoGraficaCordino * (1 - (formData.scontoGraficaCordino ?? 0) / 100)
             : 0
     );
@@ -348,6 +350,9 @@ export function useStandCosts({
             ? r2((totalePrezzoListinoNoleggio - totalePrezzoNettoNoleggio) / totalePrezzoListinoNoleggio * 100)
             : 0;
 
+    const margineVendita = r2(totalePrezzoNettoVendita - totaleCostiVendita);
+    const margineNoleggio = r2(totalePrezzoNettoNoleggio - totaleCostiNoleggio);
+
     const marginalitaNoleggio =
         totalePrezzoNettoNoleggio > 0
             ? r2((totalePrezzoNettoNoleggio - totaleCostiNoleggio) / totalePrezzoNettoNoleggio * 100)
@@ -367,7 +372,7 @@ export function useStandCosts({
 
     const totaleCostiStand = r2(
         costoStrutturaTerra +
-        costoGraficaCordino +
+        (formData.graficaCordinoAttiva ? costoGraficaCordino : 0) +
         costoRetroilluminazione +
         costoPremontaggio +
         costiAccessoriVendita +
@@ -429,6 +434,7 @@ export function useStandCosts({
       totaleCostiVendita,
       scontoMedioVendita,
       marginalitaVendita,
+      margineVendita,
 
       // noleggio
       totalePrezzoListinoNoleggio,
@@ -436,6 +442,7 @@ export function useStandCosts({
       totaleCostiNoleggio,
       scontoMedioNoleggio,
       marginalitaNoleggio,
+      margineNoleggio,
       premontaggio: prezzoNettoPremontaggio,
       extraComplesso: extraStandComplessoNetto,
       totalePrezzoNoleggio: r2(prezzoNoleggioStrutturaTerra + prezzoNoleggioRetroilluminazione + prezzoNoleggioAccessori),
