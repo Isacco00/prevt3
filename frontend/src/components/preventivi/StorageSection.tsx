@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select.tsx';
-import {Calculator} from 'lucide-react';
+import {Calculator, Info} from 'lucide-react';
 import {Checkbox} from '@/components/ui/checkbox.tsx';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table.tsx';
 import {PreventivoBean} from "@/types/preventivo.ts";
@@ -288,7 +288,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
             <h4 className="text-md font-semibold">Elementi Fisici Storage</h4>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm">Superficie di stampa</CardTitle>
@@ -311,15 +311,23 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Numero di pezzi storage</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{storageElements.numeroPezzi.toFixed(0)}</div>
-                <p className="text-xs text-muted-foreground">N</p>
-              </CardContent>
-            </Card>
+            <div className="space-y-1">
+              {!formData.distribuzione && (
+                <div className="flex items-start gap-1 text-[10px] text-amber-700 leading-tight">
+                  <Info className="h-3 w-3 mt-0.5 shrink-0" />
+                  <span>Imposta la distribuzione nella sezione Stand per valorizzare il numero di pezzi.</span>
+                </div>
+              )}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Numero di pezzi storage</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{storageElements.numeroPezzi.toFixed(0)}</div>
+                  <p className="text-xs text-muted-foreground">N</p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
 
@@ -542,7 +550,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                         <div>
                           <div className="text-xs text-muted-foreground">Margine</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold text-green-600">€{margineVendita.toFixed(2)}</div>
+                          <div className={`text-lg font-bold ${margineVendita < 0 ? 'text-red-600' : 'text-green-600'}`}>€{margineVendita.toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -550,9 +558,9 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="text-lg font-bold">{scontoMedioVendita.toFixed(1)}%</div>
                         </div>
                         <div>
-                          <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                          <div className="text-xs text-muted-foreground">Marginalità di Vendita</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold text-green-600">{marginalitaVendita.toFixed(1)}%</div>
+                          <div className={`text-lg font-bold ${marginalitaVendita < 0 ? 'text-red-600' : 'text-green-600'}`}>{marginalitaVendita.toFixed(1)}%</div>
                         </div>
                       </div>
                     </div>
@@ -582,10 +590,12 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
                           <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
                           <div className="text-lg font-bold text-primary">€{totalNettoNoleggio.toFixed(2)}</div>
-                          <div className="text-xs text-muted-foreground mt-2">di cui:</div>
-                          <div className="text-xs text-muted-foreground">
-                            Premontaggio:{" "}
-                            <span className="font-medium text-foreground">€{nettoPremontaggio.toFixed(2)}</span>
+                          <div className="text-left mt-2">
+                            <div className="text-xs text-muted-foreground">di cui:</div>
+                            <div className="text-xs text-muted-foreground whitespace-nowrap">
+                              - Premontaggio:{" "}
+                              <span className="font-medium text-foreground">€{nettoPremontaggio.toFixed(2)}</span>
+                            </div>
                           </div>
                           <div className="mt-3">
                             <div className="text-xs text-muted-foreground">Totale Preventivo Finale</div>
@@ -600,7 +610,7 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                         <div>
                           <div className="text-xs text-muted-foreground">Margine</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold text-green-600">€{margineNoleggio.toFixed(2)}</div>
+                          <div className={`text-lg font-bold ${margineNoleggio < 0 ? 'text-red-600' : 'text-green-600'}`}>€{margineNoleggio.toFixed(2)}</div>
                         </div>
                         <div>
                           <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -608,9 +618,9 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                           <div className="text-lg font-bold">{scontoMedioNoleggio.toFixed(1)}%</div>
                         </div>
                         <div>
-                          <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                          <div className="text-xs text-muted-foreground">Marginalità di Vendita</div>
                           <div className="text-[10px] invisible">-</div>
-                          <div className="text-lg font-bold text-green-600">{marginalitaNoleggio.toFixed(1)}%</div>
+                          <div className={`text-lg font-bold ${marginalitaNoleggio < 0 ? 'text-red-600' : 'text-green-600'}`}>{marginalitaNoleggio.toFixed(1)}%</div>
                         </div>
                       </div>
                     </div>

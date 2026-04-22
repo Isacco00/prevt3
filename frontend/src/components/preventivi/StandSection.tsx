@@ -725,7 +725,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                           </div>
                         </TableCell>
                         <TableCell className="text-center text-muted-foreground">-</TableCell>
-                        <TableCell className="text-right text-sm text-muted-foreground">
+                        <TableCell className="text-right text-sm">
                           €{costs.extraStandComplesso.toFixed(2)}
                         </TableCell>
                         <TableCell className="text-center">
@@ -896,7 +896,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       <div>
                         <div className="text-xs text-muted-foreground">Margine</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">
+                        <div className={`text-lg font-bold ${(costs.margineVendita ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                           €{costs.margineVendita?.toFixed(2) ?? "0.00"}
                         </div>
                       </div>
@@ -910,9 +910,9 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       </div>
 
                       <div>
-                        <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                        <div className="text-xs text-muted-foreground">Marginalità di Vendita</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">
+                        <div className={`text-lg font-bold ${(costs.marginalitaVendita ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                           {costs.marginalitaVendita?.toFixed(1) ?? "0.0"}%
                         </div>
                       </div>
@@ -961,18 +961,20 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         </div>
 
                         {/* di cui */}
-                        <div className="text-xs text-muted-foreground mt-2">di cui:</div>
-                        <div className="text-xs text-muted-foreground">
-                          Premontaggio:{" "}
-                          <span className="font-medium text-foreground">
-                            €{costs.premontaggio?.toFixed(2) ?? "0.00"}
-                          </span>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Extra complesso:{" "}
-                          <span className="font-medium text-foreground">
-                            €{costs.extraComplesso?.toFixed(2) ?? "0.00"}
-                          </span>
+                        <div className="text-left mt-2">
+                          <div className="text-xs text-muted-foreground">di cui:</div>
+                          <div className="text-xs text-muted-foreground whitespace-nowrap">
+                            - Premontaggio:{" "}
+                            <span className="font-medium text-foreground">
+                              €{costs.premontaggio?.toFixed(2) ?? "0.00"}
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground whitespace-nowrap">
+                            - Extra complesso:{" "}
+                            <span className="font-medium text-foreground">
+                              €{costs.extraComplesso?.toFixed(2) ?? "0.00"}
+                            </span>
+                          </div>
                         </div>
 
                         {/* Totale Preventivo Finale */}
@@ -997,7 +999,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                       <div>
                         <div className="text-xs text-muted-foreground">Margine</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">
+                        <div className={`text-lg font-bold ${(costs.margineNoleggio ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                           €{costs.margineNoleggio?.toFixed(2) ?? "0.00"}
                         </div>
                       </div>
@@ -1011,11 +1013,11 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
                         </div>
                       </div>
 
-                      {/* Col 5 – Marginalità su Venduto */}
+                      {/* Col 5 – Marginalità di Vendita */}
                       <div>
-                        <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                        <div className="text-xs text-muted-foreground">Marginalità di Vendita</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">
+                        <div className={`text-lg font-bold ${(costs.marginalitaNoleggio ?? 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
                           {costs.marginalitaNoleggio?.toFixed(1) ?? "0.0"}%
                         </div>
                       </div>

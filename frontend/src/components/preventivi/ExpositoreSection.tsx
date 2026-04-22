@@ -623,7 +623,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                       <div>
                         <div className="text-xs text-muted-foreground">Margine</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">€{margineVendita.toFixed(2)}</div>
+                        <div className={`text-lg font-bold ${margineVendita < 0 ? 'text-red-600' : 'text-green-600'}`}>€{margineVendita.toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -631,9 +631,9 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                         <div className="text-lg font-bold">{scontoMedioVendita.toFixed(1)}%</div>
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground">Marginalità di vendita</div>
+                        <div className="text-xs text-muted-foreground">Marginalità di Vendita</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">{marginalitaVendita.toFixed(1)}%</div>
+                        <div className={`text-lg font-bold ${marginalitaVendita < 0 ? 'text-red-600' : 'text-green-600'}`}>{marginalitaVendita.toFixed(1)}%</div>
                       </div>
                     </div>
                   </div>
@@ -663,10 +663,12 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                         <div className="text-xs text-muted-foreground">Totale Prezzo Netto</div>
                         <div className="text-[10px] text-muted-foreground">(Prezzo scontato)</div>
                         <div className="text-lg font-bold text-primary">€{totalNettoNoleggio.toFixed(2)}</div>
-                        <div className="text-xs text-muted-foreground mt-2">di cui:</div>
-                        <div className="text-xs text-muted-foreground">
-                          Premontaggio:{" "}
-                          <span className="font-medium text-foreground">€{nettoPremontaggio.toFixed(2)}</span>
+                        <div className="text-left mt-2">
+                          <div className="text-xs text-muted-foreground">di cui:</div>
+                          <div className="text-xs text-muted-foreground whitespace-nowrap">
+                            - Premontaggio:{" "}
+                            <span className="font-medium text-foreground">€{nettoPremontaggio.toFixed(2)}</span>
+                          </div>
                         </div>
                         <div className="mt-3">
                           <div className="text-xs text-muted-foreground">Totale Preventivo Finale</div>
@@ -681,7 +683,7 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                       <div>
                         <div className="text-xs text-muted-foreground">Margine</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">€{margineNoleggio.toFixed(2)}</div>
+                        <div className={`text-lg font-bold ${margineNoleggio < 0 ? 'text-red-600' : 'text-green-600'}`}>€{margineNoleggio.toFixed(2)}</div>
                       </div>
                       <div>
                         <div className="text-xs text-muted-foreground">Sconto Medio</div>
@@ -689,9 +691,9 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
                         <div className="text-lg font-bold">{scontoMedioNoleggio.toFixed(1)}%</div>
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground">Marginalità su Venduto</div>
+                        <div className="text-xs text-muted-foreground">Marginalità di Vendita</div>
                         <div className="text-[10px] invisible">-</div>
-                        <div className="text-lg font-bold text-green-600">{marginalitaNoleggio.toFixed(1)}%</div>
+                        <div className={`text-lg font-bold ${marginalitaNoleggio < 0 ? 'text-red-600' : 'text-green-600'}`}>{marginalitaNoleggio.toFixed(1)}%</div>
                       </div>
                     </div>
                   </div>
