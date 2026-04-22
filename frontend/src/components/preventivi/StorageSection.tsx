@@ -312,12 +312,10 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
             </Card>
 
             <div className="space-y-1">
-              {!formData.distribuzione && (
                 <div className="flex items-start gap-1 text-[10px] text-amber-700 leading-tight">
                   <Info className="h-3 w-3 mt-0.5 shrink-0" />
                   <span>Imposta la distribuzione nella sezione Stand per valorizzare il numero di pezzi.</span>
                 </div>
-              )}
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm">Numero di pezzi storage</CardTitle>
