@@ -164,13 +164,13 @@ export function TotalePreventivoSection({
       return {superficieStampa: 0, superficieMq: 0, sviluppoLineare: 0, numeroPezzi: 0};
     }
 
-    const bifaccialitaEffettiva = bifaccialita + (layout === "4_lati" ? larghezza : 0);
+    const bifaccialitaEffettiva = bifaccialita;
 
     // Superficie di stampa
     let superficieStampa: number;
     switch (layout) {
       case "4_lati":
-        superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza;
+        superficieStampa = (2 * larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza;
         break;
       case "3_lati":
         superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + altezza;
@@ -194,7 +194,7 @@ export function TotalePreventivoSection({
     let sviluppoLineare: number;
     switch (layout) {
       case "4_lati":
-        sviluppoLineare = larghezza + 2 * profondita;
+        sviluppoLineare = 2 * larghezza + 2 * profondita;
         break;
       case "3_lati":
         sviluppoLineare = larghezza + 2 * profondita;

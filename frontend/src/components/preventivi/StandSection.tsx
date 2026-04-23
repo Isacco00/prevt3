@@ -109,14 +109,14 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
       return {superficieStampa: 0, superficieMq: 0, sviluppoLineare: 0, numeroPezzi: 0};
     }
 
-    const bifaccialitaEffettiva = bifaccialita + (layout === "4_lati" ? larghezza : 0);
+    const bifaccialitaEffettiva = bifaccialita;
     const superficiePorte = layout === "0_lati" ? 0 : numeroPorte * 2;
 
     // Superficie di stampa
     let superficieStampa: number;
     switch (layout) {
       case "4_lati":
-        superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + superficiePorte;
+        superficieStampa = (2 * larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + superficiePorte;
         break;
       case "3_lati":
         superficieStampa = (larghezza + 2 * profondita) * altezza + bifaccialitaEffettiva * altezza + altezza + superficiePorte;
@@ -140,7 +140,7 @@ export function StandSection({formData, setFormData}: StandSectionProps) {
     let sviluppoLineare: number;
     switch (layout) {
       case "4_lati":
-        sviluppoLineare = larghezza + 2 * profondita;
+        sviluppoLineare = 2 * larghezza + 2 * profondita;
         break;
       case "3_lati":
         sviluppoLineare = larghezza + 2 * profondita;
