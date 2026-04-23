@@ -1,1144 +1,552 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
-import { ArrowLeft, Settings, Calculator } from 'lucide-react';
-import {PreventivoServiziBean} from "@/types/parametri.ts";
+import React, {useEffect, useMemo, useState} from 'react';
+import {useNavigate, useParams} from 'react-router-dom';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
+import {Input} from '@/components/ui/input';
+import {Label} from '@/components/ui/label';
+import {Button} from '@/components/ui/button';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Checkbox} from '@/components/ui/checkbox';
+import {toast} from 'sonner';
+import {ArrowLeft} from 'lucide-react';
+import {CostoExtraTrasfMontBean, CostoVoloArBean, PreventivoServiziBean} from "@/types/parametri.ts";
 import {ParametriAPI} from "@/api/parametri.ts";
 import {PreventiviAPI} from "@/api/preventivi.ts";
 
-interface ServizioData {
-  id?: string;
-  preventivoId: string;
-  // Montaggio fields
-  personale_mont: number;
-  costo_orario_mont: number;
-  giorni_montaggio: number;
-  ore_lavoro_cantxper_mont: number;
-  km_AR_mont: number;
-  conseg_cant: boolean;
-  volo_mont: string;
-  treno_mont: boolean;
-  ore_viaggio_trasferta_mont: number;
-  viaggio_auto_com_mont: boolean;
-  extra_costi_trasferta_mont: string;
-  extra_km_trasp_furg_mont: number;
-  extra_km_trasp_tir_mont: number;
-  ricarico_montaggio: number;
-  // Smontaggio fields
-  personale_smon: number;
-  costo_orario_smon: number;
-  giorni_smontaggio_viaggio: number;
-  ore_lavoro_cantxper_smon: number;
-  km_AR_smon: number;
-  volo_smon: string;
-  treno_smon: boolean;
-  ore_viaggio_trasferta_smon: number;
-  viaggio_auto_com_smon: boolean;
-  extra_costi_trasferta_smon: string;
-  extra_km_trasp_furg_smon: number;
-  extra_km_trasp_tir_smon: number;
-}
+const DEFAULT_FORM: PreventivoServiziBean = {
+  personaleMont: 0,
+  costoOrarioMont: 20,
+  giorniMontaggio: 0,
+  oreLavoroCantxperMont: 0,
+  kmArMont: 0,
+  consegCant: false,
+  voloMont: 'NO',
+  trenoMont: false,
+  oreViaggioTrasfertaMont: 0,
+  viaggioAutoComMont: false,
+  extraCostiTrasfertaMont: 'NO',
+  extraKmTraspFurgMont: 0,
+  extraKmTraspTirMont: 0,
+  ricaricoMontaggio: 30,
+  personaleSmon: 0,
+  costoOrarioSmon: 20,
+  giorniSmontaggioViaggio: 0,
+  oreLavoroCantxperSmon: 0,
+  kmArSmon: 0,
+  voloSmon: 'NO',
+  trenoSmon: false,
+  oreViaggioTrasfertaSmon: 0,
+  viaggioAutoComSmon: false,
+  extraCostiTrasfertaSmon: 'NO',
+  extraKmTraspFurgSmon: 0,
+  extraKmTraspTirSmon: 0,
+};
+
+const num = (v: unknown): number => {
+  const n = Number(v);
+  return Number.isFinite(n) ? n : 0;
+};
 
 export default function ServizioMontaggio() {
-  const { preventivoId } = useParams<{ preventivoId: string }>();
+  const {preventivoId} = useParams<{ preventivoId: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [formData, setFormData] = useState<ServizioData>({
-    preventivoId: preventivoId || '',
-    // Montaggio defaults
-    personale_mont: 0,
-    costo_orario_mont: 20,
-    giorni_montaggio: 0,
-    ore_lavoro_cantxper_mont: 0,
-    km_AR_mont: 0,
-    conseg_cant: false,
-    volo_mont: 'NO',
-    treno_mont: false,
-    ore_viaggio_trasferta_mont: 0,
-    viaggio_auto_com_mont: false,
-    extra_costi_trasferta_mont: 'NO',
-    extra_km_trasp_furg_mont: 0,
-    extra_km_trasp_tir_mont: 0,
-    ricarico_montaggio: 30,
-    // Smontaggio defaults
-    personale_smon: 0,
-    costo_orario_smon: 20,
-    giorni_smontaggio_viaggio: 0,
-    ore_lavoro_cantxper_smon: 0,
-    km_AR_smon: 0,
-    volo_smon: 'NO',
-    treno_smon: false,
-    ore_viaggio_trasferta_smon: 0,
-    viaggio_auto_com_smon: false,
-    extra_costi_trasferta_smon: 'NO',
-    extra_km_trasp_furg_smon: 0,
-    extra_km_trasp_tir_smon: 0,
+  const [formData, setFormData] = useState<PreventivoServiziBean>({
+    ...DEFAULT_FORM,
+    preventivoId,
   });
 
-  const {
-    data: servizioData,
-  } = useQuery<PreventivoServiziBean | null>({
-    queryKey: ['preventivo-servizi', formData?.id],
-    queryFn: () => {
-      if (!formData?.id) {
-        return Promise.resolve(null);
-      }
-      return ParametriAPI.getPreventivoServiziByPreventivoId({
-        preventivoId: formData.id,
-      });
-    },
-    enabled: !!formData?.id,
+  const {data: servizioData} = useQuery<PreventivoServiziBean | null>({
+    queryKey: ['preventivo-servizi', preventivoId],
+    queryFn: () => ParametriAPI.getPreventivoServiziByPreventivoId({preventivoId}),
+    enabled: !!preventivoId,
   });
 
-  // Fetch preventivo info for header
-  const {
-    data: preventivoInfo = []
-  } = useQuery({
-    queryKey: ['preventivo_info'],
-    queryFn: () => PreventiviAPI.getPreventivoDetail(preventivoId)
+  const {data: preventivoInfo} = useQuery({
+    queryKey: ['preventivo-info', preventivoId],
+    queryFn: () => PreventiviAPI.getPreventivoDetail(preventivoId!),
+    enabled: !!preventivoId,
   });
 
-  // Query per recuperare i parametri a costi unitari
-  const {
-    data: parametri = []
-  } = useQuery({
+  const {data: parametri = []} = useQuery({
     queryKey: ['parametri-costi-unitari'],
     queryFn: () => ParametriAPI.getParametriACostiUnitari({
-      attivo: true, sortFields: [{
-        field: "PARAMETRI_COSTI_UNITARI_PARAMETRO",
-        desc: false
-      }]
+      attivo: true,
+      sortFields: [{field: "PARAMETRI_COSTI_UNITARI_PARAMETRO", desc: false}]
     })
   });
 
-  // Fetch flight costs
-  const { data: costiVolo } = useQuery({
-    queryKey: ['costi_volo_ar'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('costi_volo_ar').select('*').eq('attivo', true);
-      if (error) throw error;
-      return data;
-    },
+  const {data: costiVolo = []} = useQuery<CostoVoloArBean[]>({
+    queryKey: ['costi-volo-ar'],
+    queryFn: () => ParametriAPI.getCostiVoloAr({attivo: true}),
   });
 
-  // Fetch extra costs
-  const { data: costiExtra } = useQuery({
-    queryKey: ['costi_extra_trasf_mont'],
-    queryFn: async () => {
-      const { data, error } = await supabase.from('costi_extra_trasf_mont').select('*').eq('attivo', true);
-      if (error) throw error;
-      return data;
-    },
+  const {data: costiExtra = []} = useQuery<CostoExtraTrasfMontBean[]>({
+    queryKey: ['costi-extra-trasf-mont'],
+    queryFn: () => ParametriAPI.getCostiExtraTrasfMont({attivo: true}),
   });
 
-  // Load existing data
   useEffect(() => {
     if (servizioData) {
       setFormData({
-        id: servizioData.id,
-        preventivoId: servizioData.preventivoId,
-        // Montaggio data
-        personale_mont: servizioData.personale_mont || 0,
-        costo_orario_mont: servizioData.costo_orario_mont || 20,
-        giorni_montaggio: servizioData.giorni_montaggio || 0,
-        ore_lavoro_cantxper_mont: servizioData.ore_lavoro_cantxper_mont || 0,
-        km_AR_mont: servizioData.km_ar_mont || 0,
-        conseg_cant: servizioData.conseg_cant || false,
-        volo_mont: servizioData.volo_mont || 'NO',
-        treno_mont: servizioData.treno_mont || false,
-        ore_viaggio_trasferta_mont: servizioData.ore_viaggio_trasferta_mont || 0,
-        viaggio_auto_com_mont: servizioData.viaggio_auto_com_mont || false,
-        extra_costi_trasferta_mont: servizioData.extra_costi_trasferta_mont || 'NO',
-        extra_km_trasp_furg_mont: servizioData.extra_km_trasp_furg_mont || 0,
-        extra_km_trasp_tir_mont: servizioData.extra_km_trasp_tir_mont || 0,
-        ricarico_montaggio: servizioData.ricarico_montaggio || 30,
-        // Smontaggio data with defaults
-        personale_smon: (servizioData as any).personale_smon || 0,
-        costo_orario_smon: (servizioData as any).costo_orario_smon || 20,
-        giorni_smontaggio_viaggio: (servizioData as any).giorni_smontaggio_viaggio || 0,
-        ore_lavoro_cantxper_smon: (servizioData as any).ore_lavoro_cantxper_smon || 0,
-        km_AR_smon: (servizioData as any).km_ar_smon || 0,
-        volo_smon: (servizioData as any).volo_smon || 'NO',
-        treno_smon: (servizioData as any).treno_smon || false,
-        ore_viaggio_trasferta_smon: (servizioData as any).ore_viaggio_trasferta_smon || 0,
-        viaggio_auto_com_smon: (servizioData as any).viaggio_auto_com_smon || false,
-        extra_costi_trasferta_smon: (servizioData as any).extra_costi_trasferta_smon || 'NO',
-        extra_km_trasp_furg_smon: (servizioData as any).extra_km_trasp_furg_smon || 0,
-        extra_km_trasp_tir_smon: (servizioData as any).extra_km_trasp_tir_smon || 0,
+        ...DEFAULT_FORM,
+        ...servizioData,
+        preventivoId: servizioData.preventivoId ?? preventivoId,
       });
     }
-  }, [servizioData]);
+  }, [servizioData, preventivoId]);
 
-  // Calculate costs
-  const calculateCosts = () => {
-    if (!parametri || !costiVolo || !costiExtra) return {};
-
-    const getParameterValue = (name: string) => {
-      const param = parametri.find((p) => p.parametro === name);
-      return param ? parseFloat(param.valore.toString()) : 0;
+  const costs = useMemo(() => {
+    const getParam = (name: string) => {
+      const p = parametri.find(x => x.parametro === name);
+      return p ? num(p.valore) : 0;
+    };
+    const getFlight = (tipo: string) => {
+      const v = costiVolo.find(x => x.tipologia === tipo);
+      return v ? num(v.costoVoloAr) : 0;
+    };
+    const getExtra = (livello: string) => {
+      const e = costiExtra.find(x => x.livello === livello);
+      return e ? num(e.costoExtraMont) : 0;
     };
 
-    const getFlightCost = (type: string) => {
-      const flight = costiVolo.find((v) => v.tipologia === type);
-      return flight ? parseFloat(flight.costo_volo_ar.toString()) : 0;
-    };
+    const costMontXkm = getParam('Costo montatori xkm');
+    const costoPasto = getParam('Costo pasto');
+    const costoAlloggio = getParam('Costo alloggio');
+    const costoKmTreno = getParam('Costo treno al km');
+    const costoKmAuto = getParam('Costo auto al km');
+    const costoFissoConsegna = getParam('Costo fisso consegna');
+    const costoFurgXKm = getParam('Costo furgone al km');
+    const costoTirXKm = getParam('Costo TIR al km');
 
-    const getExtraCost = (level: string) => {
-      const extra = costiExtra.find((e) => e.livello === level);
-      return extra ? parseFloat(extra.costo_extra_mont.toString()) : 0;
-    };
+    const personaleMont = num(formData.personaleMont);
+    const costoOrarioMont = num(formData.costoOrarioMont);
+    const giorniMontaggio = num(formData.giorniMontaggio);
+    const oreLavoroMont = num(formData.oreLavoroCantxperMont);
+    const kmArMont = num(formData.kmArMont);
+    const oreViaggioMont = num(formData.oreViaggioTrasfertaMont);
+    const extraKmFurgMont = num(formData.extraKmTraspFurgMont);
+    const extraKmTirMont = num(formData.extraKmTraspTirMont);
+    const ricarico = num(formData.ricaricoMontaggio);
 
-    const costMontXkm = getParameterValue('Costo montatori xkm');
-    const costoPasto = getParameterValue('Costo pasto');
-    const costoAlloggio = getParameterValue('Costo alloggio');
-    const costoKmTreno = getParameterValue('Costo treno al km');
-    const costoKmAuto = getParameterValue('Costo auto al km');
-    const costoFissoConsegna = getParameterValue('Costo fisso consegna');
-    const costoFurgXKm = getParameterValue('Costo furgone al km');
-    const costoTirXKm = getParameterValue('Costo TIR al km');
-
-    // Calcoli MONTAGGIO
-    const totCostOreMont =
-      formData.personale_mont *
-      formData.costo_orario_mont *
-      formData.giorni_montaggio *
-      formData.ore_lavoro_cantxper_mont;
-    const totCostKmMont = formData.km_AR_mont * costMontXkm;
-    const numVitti = 2 * formData.personale_mont * formData.giorni_montaggio;
-    const numAlloggi =
-      formData.giorni_montaggio === 1 ? 0 : (formData.giorni_montaggio - 1) * formData.personale_mont;
+    const totCostOreMont = personaleMont * costoOrarioMont * giorniMontaggio * oreLavoroMont;
+    const totCostKmMont = kmArMont * costMontXkm;
+    const numVitti = 2 * personaleMont * giorniMontaggio;
+    const numAlloggi = giorniMontaggio <= 1 ? 0 : (giorniMontaggio - 1) * personaleMont;
     const totCostVittAll = numVitti * costoPasto + numAlloggi * costoAlloggio;
-    const totCostoVoloAR =
-      formData.volo_mont !== 'NO' ? getFlightCost(formData.volo_mont) * formData.personale_mont : 0;
-    const totCostoTreno = formData.treno_mont
-      ? formData.km_AR_mont * costoKmTreno * formData.personale_mont
-      : 0;
-    const totCostoTrasfPers =
-      formData.personale_mont * formData.ore_viaggio_trasferta_mont * formData.costo_orario_mont;
-    const totCostiAuto = formData.viaggio_auto_com_mont ? formData.km_AR_mont * costoKmAuto : 0;
-    const totCostiExtraTrasfMont =
-      formData.extra_costi_trasferta_mont !== 'NO'
-        ? getExtraCost(formData.extra_costi_trasferta_mont) * formData.giorni_montaggio * formData.personale_mont
-        : 0;
-    const totCostiExtraKmTraspFurgMont = formData.extra_km_trasp_furg_mont * costoFurgXKm;
-    const totCostiExtraKmTraspTirMont = formData.extra_km_trasp_tir_mont * costoTirXKm;
-    const totCostiConsegnaCantiere = formData.conseg_cant ? costoFissoConsegna : 0;
-    const totaleCostoMontaggio =
-      totCostOreMont +
-      totCostKmMont +
-      totCostVittAll +
-      totCostoVoloAR +
-      totCostoTreno +
-      totCostoTrasfPers +
-      totCostiAuto +
-      totCostiExtraTrasfMont +
-      totCostiExtraKmTraspFurgMont +
-      totCostiExtraKmTraspTirMont +
-      totCostiConsegnaCantiere;
-    const preventivoMontaggio = totaleCostoMontaggio * (1 + formData.ricarico_montaggio / 100);
+    const totCostoVoloAR = formData.voloMont && formData.voloMont !== 'NO'
+      ? getFlight(formData.voloMont) * personaleMont : 0;
+    const totCostoTreno = formData.trenoMont ? kmArMont * costoKmTreno * personaleMont : 0;
+    const totCostoTrasfPers = personaleMont * oreViaggioMont * costoOrarioMont;
+    const totCostiAuto = formData.viaggioAutoComMont ? kmArMont * costoKmAuto : 0;
+    const totCostiExtraTrasfMont = formData.extraCostiTrasfertaMont && formData.extraCostiTrasfertaMont !== 'NO'
+      ? getExtra(formData.extraCostiTrasfertaMont) * giorniMontaggio * personaleMont : 0;
+    const totCostiExtraKmTraspFurgMont = extraKmFurgMont * costoFurgXKm;
+    const totCostiExtraKmTraspTirMont = extraKmTirMont * costoTirXKm;
+    const totCostiConsegnaCantiere = formData.consegCant ? costoFissoConsegna : 0;
+    const totaleCostoMontaggio = totCostOreMont + totCostKmMont + totCostVittAll + totCostoVoloAR
+      + totCostoTreno + totCostoTrasfPers + totCostiAuto + totCostiExtraTrasfMont
+      + totCostiExtraKmTraspFurgMont + totCostiExtraKmTraspTirMont + totCostiConsegnaCantiere;
+    const preventivoMontaggio = totaleCostoMontaggio * (1 + ricarico / 100);
 
-    // Calcoli SMONTAGGIO
-    const totCostOreSmon =
-      formData.personale_smon *
-      formData.costo_orario_smon *
-      formData.giorni_smontaggio_viaggio *
-      formData.ore_lavoro_cantxper_smon;
-    const totCostKmSmon = formData.km_AR_smon * costMontXkm;
-    const numVittiSmon = 2 * formData.personale_smon * formData.giorni_smontaggio_viaggio;
-    const numAlloggiSmon =
-      formData.giorni_smontaggio_viaggio === 1
-        ? 0
-        : (formData.giorni_smontaggio_viaggio - 1) * formData.personale_smon;
+    const personaleSmon = num(formData.personaleSmon);
+    const costoOrarioSmon = num(formData.costoOrarioSmon);
+    const giorniSmon = num(formData.giorniSmontaggioViaggio);
+    const oreLavoroSmon = num(formData.oreLavoroCantxperSmon);
+    const kmArSmon = num(formData.kmArSmon);
+    const oreViaggioSmon = num(formData.oreViaggioTrasfertaSmon);
+    const extraKmFurgSmon = num(formData.extraKmTraspFurgSmon);
+    const extraKmTirSmon = num(formData.extraKmTraspTirSmon);
+
+    const totCostOreSmon = personaleSmon * costoOrarioSmon * giorniSmon * oreLavoroSmon;
+    const totCostKmSmon = kmArSmon * costMontXkm;
+    const numVittiSmon = 2 * personaleSmon * giorniSmon;
+    const numAlloggiSmon = giorniSmon <= 1 ? 0 : (giorniSmon - 1) * personaleSmon;
     const totCostVittAllSmon = numVittiSmon * costoPasto + numAlloggiSmon * costoAlloggio;
-    const totCostoVoloARSmon =
-      formData.volo_smon !== 'NO' ? getFlightCost(formData.volo_smon) * formData.personale_smon : 0;
-    const totCostoTrenoSmon = formData.treno_smon
-      ? formData.km_AR_smon * costoKmTreno * formData.personale_smon
-      : 0;
-    const totCostoTrasfPersSmon =
-      formData.personale_smon * formData.ore_viaggio_trasferta_smon * formData.costo_orario_smon;
-    const totCostiAutoSmon = formData.viaggio_auto_com_smon ? formData.km_AR_smon * costoKmAuto : 0;
-    const totCostiExtraTrasfSmon =
-      formData.extra_costi_trasferta_smon !== 'NO'
-        ? getExtraCost(formData.extra_costi_trasferta_smon) *
-          formData.giorni_smontaggio_viaggio *
-          formData.personale_smon
-        : 0;
-    const totCostiExtraKmTraspFurgSmon = formData.extra_km_trasp_furg_smon * costoFurgXKm;
-    const totCostiExtraKmTraspTirSmon = formData.extra_km_trasp_tir_smon * costoTirXKm;
-    const totaleCostoSmontaggio =
-      totCostOreSmon +
-      totCostKmSmon +
-      totCostVittAllSmon +
-      totCostoVoloARSmon +
-      totCostoTrenoSmon +
-      totCostoTrasfPersSmon +
-      totCostiAutoSmon +
-      totCostiExtraTrasfSmon +
-      totCostiExtraKmTraspFurgSmon +
-      totCostiExtraKmTraspTirSmon;
-    const preventivoSmontaggio = totaleCostoSmontaggio * (1 + formData.ricarico_montaggio / 100);
-
-    // Totale combinato
-    const totaleCombinato = preventivoMontaggio + preventivoSmontaggio;
+    const totCostoVoloARSmon = formData.voloSmon && formData.voloSmon !== 'NO'
+      ? getFlight(formData.voloSmon) * personaleSmon : 0;
+    const totCostoTrenoSmon = formData.trenoSmon ? kmArSmon * costoKmTreno * personaleSmon : 0;
+    const totCostoTrasfPersSmon = personaleSmon * oreViaggioSmon * costoOrarioSmon;
+    const totCostiAutoSmon = formData.viaggioAutoComSmon ? kmArSmon * costoKmAuto : 0;
+    const totCostiExtraTrasfSmon = formData.extraCostiTrasfertaSmon && formData.extraCostiTrasfertaSmon !== 'NO'
+      ? getExtra(formData.extraCostiTrasfertaSmon) * giorniSmon * personaleSmon : 0;
+    const totCostiExtraKmTraspFurgSmon = extraKmFurgSmon * costoFurgXKm;
+    const totCostiExtraKmTraspTirSmon = extraKmTirSmon * costoTirXKm;
+    const totaleCostoSmontaggio = totCostOreSmon + totCostKmSmon + totCostVittAllSmon
+      + totCostoVoloARSmon + totCostoTrenoSmon + totCostoTrasfPersSmon + totCostiAutoSmon
+      + totCostiExtraTrasfSmon + totCostiExtraKmTraspFurgSmon + totCostiExtraKmTraspTirSmon;
+    const preventivoSmontaggio = totaleCostoSmontaggio * (1 + ricarico / 100);
 
     return {
-      // Montaggio
-      totCostOreMont,
-      totCostKmMont,
-      numVitti,
-      numAlloggi,
-      totCostVittAll,
-      totCostoVoloAR,
-      totCostoTreno,
-      totCostoTrasfPers,
-      totCostiAuto,
-      totCostiExtraTrasfMont,
-      totCostiExtraKmTraspFurgMont,
-      totCostiExtraKmTraspTirMont,
-      totCostiConsegnaCantiere,
-      totaleCostoMontaggio,
-      preventivoMontaggio,
-      // Smontaggio
-      totCostOreSmon,
-      totCostKmSmon,
-      numVittiSmon,
-      numAlloggiSmon,
-      totCostVittAllSmon,
-      totCostoVoloARSmon,
-      totCostoTrenoSmon,
-      totCostoTrasfPersSmon,
-      totCostiAutoSmon,
-      totCostiExtraTrasfSmon,
-      totCostiExtraKmTraspFurgSmon,
-      totCostiExtraKmTraspTirSmon,
-      totaleCostoSmontaggio,
-      preventivoSmontaggio,
-      // Totale
-      totaleCombinato,
+      totCostOreMont, totCostKmMont, numVitti, numAlloggi, totCostVittAll,
+      totCostoVoloAR, totCostoTreno, totCostoTrasfPers, totCostiAuto,
+      totCostiExtraTrasfMont, totCostiExtraKmTraspFurgMont, totCostiExtraKmTraspTirMont,
+      totCostiConsegnaCantiere, totaleCostoMontaggio, preventivoMontaggio,
+      totCostOreSmon, totCostKmSmon, numVittiSmon, numAlloggiSmon, totCostVittAllSmon,
+      totCostoVoloARSmon, totCostoTrenoSmon, totCostoTrasfPersSmon, totCostiAutoSmon,
+      totCostiExtraTrasfSmon, totCostiExtraKmTraspFurgSmon, totCostiExtraKmTraspTirSmon,
+      totaleCostoSmontaggio, preventivoSmontaggio,
+      totaleCombinato: preventivoMontaggio + preventivoSmontaggio,
     };
-  };
+  }, [formData, parametri, costiVolo, costiExtra]);
 
-  const costs = calculateCosts();
-
-  // Save mutation
   const saveMutation = useMutation({
-    mutationFn: async (data: ServizioData & { costs: any }) => {
-      const payload = {
-        preventivoId: data.preventivoId,
-        montaggio_smontaggio: true,
-        // Montaggio fields
-        personale_mont: data.personale_mont,
-        costo_orario_mont: data.costo_orario_mont,
-        giorni_montaggio: data.giorni_montaggio,
-        ore_lavoro_cantxper_mont: data.ore_lavoro_cantxper_mont,
-        km_ar_mont: data.km_AR_mont,
-        conseg_cant: data.conseg_cant,
-        volo_mont: data.volo_mont,
-        treno_mont: data.treno_mont,
-        ore_viaggio_trasferta_mont: data.ore_viaggio_trasferta_mont,
-        viaggio_auto_com_mont: data.viaggio_auto_com_mont,
-        extra_costi_trasferta_mont: data.extra_costi_trasferta_mont,
-        extra_km_trasp_furg_mont: data.extra_km_trasp_furg_mont,
-        extra_km_trasp_tir_mont: data.extra_km_trasp_tir_mont,
-        ricarico_montaggio: data.ricarico_montaggio,
-        // Smontaggio fields
-        personale_smon: data.personale_smon,
-        costo_orario_smon: data.costo_orario_smon,
-        giorni_smontaggio_viaggio: data.giorni_smontaggio_viaggio,
-        ore_lavoro_cantxper_smon: data.ore_lavoro_cantxper_smon,
-        km_ar_smon: data.km_AR_smon,
-        volo_smon: data.volo_smon,
-        treno_smon: data.treno_smon,
-        ore_viaggio_trasferta_smon: data.ore_viaggio_trasferta_smon,
-        viaggio_auto_com_smon: data.viaggio_auto_com_smon,
-        extra_costi_trasferta_smon: data.extra_costi_trasferta_smon,
-        extra_km_trasp_furg_smon: data.extra_km_trasp_furg_smon,
-        extra_km_trasp_tir_smon: data.extra_km_trasp_tir_smon,
-        // Montaggio calculated fields
-        tot_cost_ore_mont: data.costs.totCostOreMont,
-        tot_cost_km_mont: data.costs.totCostKmMont,
-        num_vitti: data.costs.numVitti,
-        num_alloggi: data.costs.numAlloggi,
-        tot_cost_vittall: data.costs.totCostVittAll,
-        tot_costo_volo_ar: data.costs.totCostoVoloAR,
-        tot_costo_treno: data.costs.totCostoTreno,
-        tot_costo_trasf_pers: data.costs.totCostoTrasfPers,
-        tot_costi_auto: data.costs.totCostiAuto,
-        tot_costi_extra_trasf_mont: data.costs.totCostiExtraTrasfMont,
-        tot_costi_extra_km_trasp_furg_mont: data.costs.totCostiExtraKmTraspFurgMont,
-        tot_costi_extra_km_trasp_tir_mont: data.costs.totCostiExtraKmTraspTirMont,
-        tot_costi_consegna_cantiere: data.costs.totCostiConsegnaCantiere,
-        totale_costo_montaggio: data.costs.totaleCostoMontaggio,
-        preventivo_montaggio: data.costs.preventivoMontaggio,
-        // Smontaggio calculated fields
-        tot_cost_ore_smon: data.costs.totCostOreSmon,
-        tot_cost_km_smon: data.costs.totCostKmSmon,
-        num_vitti_smon: data.costs.numVittiSmon,
-        num_alloggi_smon: data.costs.numAlloggiSmon,
-        tot_cost_vittall_smon: data.costs.totCostVittAllSmon,
-        tot_costo_volo_ar_smon: data.costs.totCostoVoloARSmon,
-        tot_costo_treno_smon: data.costs.totCostoTrenoSmon,
-        tot_costo_trasf_pers_smon: data.costs.totCostoTrasfPersSmon,
-        tot_costi_auto_smon: data.costs.totCostiAutoSmon,
-        tot_costi_extra_trasf_smon: data.costs.totCostiExtraTrasfSmon,
-        tot_costi_extra_km_trasp_furg_smon: data.costs.totCostiExtraKmTraspFurgSmon,
-        tot_costi_extra_km_trasp_tir_smon: data.costs.totCostiExtraKmTraspTirSmon,
-        totale_costo_smontaggio: data.costs.totaleCostoSmontaggio,
-        preventivo_smontaggio: data.costs.preventivoSmontaggio,
+    mutationFn: async () => {
+      const payload: PreventivoServiziBean = {
+        ...formData,
+        preventivoId,
+        montaggioSmontaggio: true,
+        totCostOreMont: costs.totCostOreMont,
+        totCostKmMont: costs.totCostKmMont,
+        numVitti: costs.numVitti,
+        numAlloggi: costs.numAlloggi,
+        totCostVittall: costs.totCostVittAll,
+        totCostoVoloAr: costs.totCostoVoloAR,
+        totCostoTreno: costs.totCostoTreno,
+        totCostoTrasfPers: costs.totCostoTrasfPers,
+        totCostiAuto: costs.totCostiAuto,
+        totCostiExtraTrasfMont: costs.totCostiExtraTrasfMont,
+        totCostiExtraKmTraspFurgMont: costs.totCostiExtraKmTraspFurgMont,
+        totCostiExtraKmTraspTirMont: costs.totCostiExtraKmTraspTirMont,
+        totCostiConsegnaCantiere: costs.totCostiConsegnaCantiere,
+        totaleCostoMontaggio: costs.totaleCostoMontaggio,
+        preventivoMontaggio: costs.preventivoMontaggio,
+        totCostOreSmon: costs.totCostOreSmon,
+        totCostKmSmon: costs.totCostKmSmon,
+        numVittiSmon: costs.numVittiSmon,
+        numAlloggiSmon: costs.numAlloggiSmon,
+        totCostVittallSmon: costs.totCostVittAllSmon,
+        totCostoVoloArSmon: costs.totCostoVoloARSmon,
+        totCostoTrenoSmon: costs.totCostoTrenoSmon,
+        totCostoTrasfPersSmon: costs.totCostoTrasfPersSmon,
+        totCostiAutoSmon: costs.totCostiAutoSmon,
+        totCostiExtraTrasfSmon: costs.totCostiExtraTrasfSmon,
+        totCostiExtraKmTraspFurgSmon: costs.totCostiExtraKmTraspFurgSmon,
+        totCostiExtraKmTraspTirSmon: costs.totCostiExtraKmTraspTirSmon,
+        totaleCostoSmontaggio: costs.totaleCostoSmontaggio,
+        preventivoSmontaggio: costs.preventivoSmontaggio,
       };
-
-      // Save to preventivi_servizi table
-      if (data.id) {
-        const { error } = await supabase.from('preventivi_servizi').update(payload).eq('id', data.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from('preventivi_servizi').insert(payload);
-        if (error) throw error;
-      }
-
-      // Update the main preventivi table to mark service as selected
-      const { error: preventivoError } = await supabase
-        .from('preventivi')
-        .update({ servizio_montaggio_smontaggio: true })
-        .eq('id', data.preventivoId);
-
-      if (preventivoError) throw preventivoError;
+      return ParametriAPI.savePreventivoServizi(payload);
     },
     onSuccess: () => {
       toast.success('Servizio montaggio e smontaggio salvato con successo');
-      queryClient.invalidateQueries({
-        queryKey: ['preventivi_servizi'],
-      });
-      // Stay on the same page after successful save
+      queryClient.invalidateQueries({queryKey: ['preventivo-servizi', preventivoId]});
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast.error('Errore nel salvataggio: ' + error.message);
     },
   });
 
-  const handleSave = () => {
-    saveMutation.mutate({
-      ...formData,
-      costs,
-    });
-  };
+  const update = <K extends keyof PreventivoServiziBean>(key: K, value: PreventivoServiziBean[K]) =>
+    setFormData(prev => ({...prev, [key]: value}));
+
+  const fmt = (n?: number) => (n ?? 0).toFixed(2);
+
+  const prospect = (preventivoInfo as unknown as { prospect?: { ragioneSociale?: string } } | undefined)?.prospect;
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Button variant="ghost" onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivoId, focusSection: 'servizi' } })}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Torna al preventivo {preventivoInfo?.numero_preventivo}
-          </Button>
-          
-          {/* Project info in top right */}
-          <div className="text-right">
-            <div className="text-sm text-muted-foreground">
-              {preventivoInfo?.titolo}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {(preventivoInfo?.prospects as any)?.ragione_sociale}
+      <div className="min-h-screen bg-background p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-6">
+            <Button variant="ghost" onClick={() => navigate('/preventivi', {state: {openPreventivoId: preventivoId, focusSection: 'servizi'}})}>
+              <ArrowLeft className="h-4 w-4 mr-2"/>
+              Torna al preventivo {preventivoInfo?.numeroPreventivo}
+            </Button>
+            <div className="text-right">
+              <div className="text-sm text-muted-foreground">{preventivoInfo?.titolo}</div>
+              <div className="text-xs text-muted-foreground">{prospect?.ragioneSociale}</div>
             </div>
           </div>
-        </div>
 
-        <h1 className="text-3xl font-bold mb-8">Servizi di Montaggio e Smontaggio</h1>
+          <h1 className="text-3xl font-bold mb-8">Servizi di Montaggio e Smontaggio</h1>
 
-        {/* MONTAGGIO SECTION */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          <Card>
-            <CardHeader>
-              <CardTitle>Servizio di Montaggio - Dati ingresso</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="personale_mont">Personale</Label>
-                  <Input
-                    id="personale_mont"
-                    type="number"
-                    value={formData.personale_mont}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        personale_mont: parseInt(e.target.value) || 0,
-                      })
-                    }
-                  />
+          {/* MONTAGGIO */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+            <Card>
+              <CardHeader><CardTitle>Servizio di Montaggio - Dati ingresso</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Personale</Label>
+                    <Input type="number" value={formData.personaleMont ?? 0}
+                           onChange={e => update('personaleMont', parseInt(e.target.value) || 0)}/>
+                  </div>
+                  <div>
+                    <Label>Costo orario personale</Label>
+                    <Input type="number" value={formData.costoOrarioMont ?? 0}
+                           onChange={e => update('costoOrarioMont', parseFloat(e.target.value) || 0)}/>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="costo_orario_mont">Costo orario personale</Label>
-                  <Input
-                    id="costo_orario_mont"
-                    type="number"
-                    value={formData.costo_orario_mont}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        costo_orario_mont: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Giorni per il montaggio + viaggio</Label>
+                    <Input type="number" value={formData.giorniMontaggio ?? 0}
+                           onChange={e => update('giorniMontaggio', parseInt(e.target.value) || 0)}/>
+                  </div>
+                  <div>
+                    <Label>Ore montaggio in cantiere per persona</Label>
+                    <Input type="number" value={formData.oreLavoroCantxperMont ?? 0}
+                           onChange={e => update('oreLavoroCantxperMont', parseFloat(e.target.value) || 0)}/>
+                  </div>
                 </div>
-              </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Km Viaggio montaggio A+R</Label>
+                  <Input type="number" value={formData.kmArMont ?? 0}
+                         onChange={e => update('kmArMont', parseFloat(e.target.value) || 0)}
+                         className="w-32 text-right"/>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox checked={formData.consegCant ?? false}
+                            onCheckedChange={v => update('consegCant', Boolean(v))}/>
+                  <Label>Consegna cantiere (SI/NO)</Label>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Volo</Label>
+                  <Select value={formData.voloMont ?? 'NO'} onValueChange={v => update('voloMont', v)}>
+                    <SelectTrigger className="w-32"><SelectValue/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NO">NO</SelectItem>
+                      <SelectItem value="Low cost">Low cost</SelectItem>
+                      <SelectItem value="Last minute">Last minute</SelectItem>
+                      <SelectItem value="Standard">Standard</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox checked={formData.trenoMont ?? false}
+                            onCheckedChange={v => update('trenoMont', Boolean(v))}/>
+                  <Label>Treno</Label>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Ore viaggio trasferta montatori (treno/aereo, no camion)</Label>
+                  <Input type="number" value={formData.oreViaggioTrasfertaMont ?? 0}
+                         onChange={e => update('oreViaggioTrasfertaMont', parseFloat(e.target.value) || 0)}
+                         className="w-32 text-right"/>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox checked={formData.viaggioAutoComMont ?? false}
+                            onCheckedChange={v => update('viaggioAutoComMont', Boolean(v))}/>
+                  <Label>Viaggio Auto commerciale</Label>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Extra (park,metro, taxi, materiali di consumo)</Label>
+                  <Select value={formData.extraCostiTrasfertaMont ?? 'NO'}
+                          onValueChange={v => update('extraCostiTrasfertaMont', v)}>
+                    <SelectTrigger className="w-32"><SelectValue/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NO">NO</SelectItem>
+                      <SelectItem value="Basso">Basso</SelectItem>
+                      <SelectItem value="Medio">Medio</SelectItem>
+                      <SelectItem value="Alto">Alto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Km. extra Trasporto Furgone &lt; 35 q.li</Label>
+                    <Input type="number" value={formData.extraKmTraspFurgMont ?? 0}
+                           onChange={e => update('extraKmTraspFurgMont', parseFloat(e.target.value) || 0)}/>
+                  </div>
+                  <div>
+                    <Label>Km. extra trasporto camion &gt; 35 q.li</Label>
+                    <Input type="number" value={formData.extraKmTraspTirMont ?? 0}
+                           onChange={e => update('extraKmTraspTirMont', parseFloat(e.target.value) || 0)}/>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="giorni_montaggio">Giorni per il montaggio + viaggio</Label>
-                  <Input
-                    id="giorni_montaggio"
-                    type="number"
-                    value={formData.giorni_montaggio}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        giorni_montaggio: parseInt(e.target.value) || 0,
-                      })
-                    }
-                  />
+            <Card>
+              <CardHeader><CardTitle>Calcolo costi Montaggio</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <Row label="Costo ore montatori" value={`€ ${fmt(costs.totCostOreMont)}`}/>
+                  <Row label="Costo km montaggio" value={`€ ${fmt(costs.totCostKmMont)}`}/>
+                  <Row label="Numero dei pasti previsti" value={costs.numVitti}/>
+                  <Row label="Numero dei pernottamenti previsti" value={costs.numAlloggi}/>
+                  <Row label="Costo vitto e alloggio montatori" value={`€ ${fmt(costs.totCostVittAll)}`}/>
+                  <Row label="Costo volo aereo A/R" value={`€ ${fmt(costs.totCostoVoloAR)}`}/>
+                  <Row label="Costo treno A/R" value={`€ ${fmt(costs.totCostoTreno)}`}/>
+                  <Row label="Costo di trasferta del personale" value={`€ ${fmt(costs.totCostoTrasfPers)}`}/>
+                  <Row label="Costo viaggio in auto" value={`€ ${fmt(costs.totCostiAuto)}`}/>
+                  <Row label="Costi extra (park,metro, taxi, materiali di consumo)" value={`€ ${fmt(costs.totCostiExtraTrasfMont)}`}/>
+                  <Row label="Costi trasporto legati ad utilizzo di mezzo leggero (<35q.li)" value={`€ ${fmt(costs.totCostiExtraKmTraspFurgMont)}`}/>
+                  <Row label="Costi trasporto legati ad utilizzo di mezzo pesante (>35q.li)" value={`€ ${fmt(costs.totCostiExtraKmTraspTirMont)}`}/>
+                  <Row label="Costi per consegna merce in cantiere" value={`€ ${fmt(costs.totCostiConsegnaCantiere)}`}/>
                 </div>
-                <div>
-                  <Label htmlFor="ore_lavoro_cantxper_mont">Ore montaggio in cantiere per persona</Label>
-                  <Input
-                    id="ore_lavoro_cantxper_mont"
-                    type="number"
-                    value={formData.ore_lavoro_cantxper_mont}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        ore_lavoro_cantxper_mont: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="km_AR_mont" className="text-left">
-                  Km Viaggio montaggio A+R
-                </Label>
-                <Input
-                  id="km_AR_mont"
-                  type="number"
-                  value={formData.km_AR_mont}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      km_AR_mont: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="w-32 text-right"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="conseg_cant"
-                  checked={formData.conseg_cant}
-                  onCheckedChange={(checked) =>
-                    setFormData({
-                      ...formData,
-                      conseg_cant: checked as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="conseg_cant">Consegna cantiere (SI/NO)</Label>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="volo_mont" className="text-left">
-                  Volo
-                </Label>
-                <Select
-                  value={formData.volo_mont}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      volo_mont: value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="NO">NO</SelectItem>
-                    <SelectItem value="Low cost">Low cost</SelectItem>
-                    <SelectItem value="Last minute">Last minute</SelectItem>
-                    <SelectItem value="Standard">Standard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="treno_mont"
-                  checked={formData.treno_mont}
-                  onCheckedChange={(checked) =>
-                    setFormData({
-                      ...formData,
-                      treno_mont: checked as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="treno_mont">Treno</Label>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="ore_viaggio_trasferta_mont" className="text-left">
-                  Ore viaggio trasferta montatori (treno/aereo, no camion)
-                </Label>
-                <Input
-                  id="ore_viaggio_trasferta_mont"
-                  type="number"
-                  value={formData.ore_viaggio_trasferta_mont}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      ore_viaggio_trasferta_mont: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="w-32 text-right"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="viaggio_auto_com_mont"
-                  checked={formData.viaggio_auto_com_mont}
-                  onCheckedChange={(checked) =>
-                    setFormData({
-                      ...formData,
-                      viaggio_auto_com_mont: checked as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="viaggio_auto_com_mont">Viaggio Auto commerciale</Label>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="extra_costi_trasferta_mont" className="text-left">
-                  Extra (park,metro, taxi, materiali di consumo)
-                </Label>
-                <Select
-                  value={formData.extra_costi_trasferta_mont}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      extra_costi_trasferta_mont: value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="NO">NO</SelectItem>
-                    <SelectItem value="Basso">Basso</SelectItem>
-                    <SelectItem value="Medio">Medio</SelectItem>
-                    <SelectItem value="Alto">Alto</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="extra_km_trasp_furg_mont">Km. extra Trasporto Furgone &lt; 35 q.li</Label>
-                  <Input
-                    id="extra_km_trasp_furg_mont"
-                    type="number"
-                    value={formData.extra_km_trasp_furg_mont}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        extra_km_trasp_furg_mont: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="extra_km_trasp_tir_mont">Km. extra trasporto camion &gt; 35 q.li</Label>
-                  <Input
-                    id="extra_km_trasp_tir_mont"
-                    type="number"
-                    value={formData.extra_km_trasp_tir_mont}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        extra_km_trasp_tir_mont: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Calcolo costi Montaggio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo ore montatori</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostOreMont?.toFixed(2) || '0.00'}</span>
+                <div className="mt-6 p-4 bg-muted/50 rounded-lg space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Totale costo montaggio</span>
+                    <span className="font-bold text-lg">€ {fmt(costs.totaleCostoMontaggio)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <Label>Ricarico</Label>
+                    <div className="flex items-center gap-2">
+                      <Input type="number" value={formData.ricaricoMontaggio ?? 0}
+                             onChange={e => update('ricaricoMontaggio', parseFloat(e.target.value) || 0)}
+                             className="w-20 text-right"/>
+                      <span>%</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center text-lg font-bold">
+                    <span>Preventivo Montaggio</span>
+                    <span>€ {fmt(costs.preventivoMontaggio)}</span>
                   </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo km montaggio</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostKmMont?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Numero dei pasti previsti</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">{costs.numVitti || 0}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Numero dei pernottamenti previsti</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">{costs.numAlloggi || 0}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo vitto e alloggio montatori</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostVittAll?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo volo aereo A/R</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostoVoloAR?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo treno A/R</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostoTreno?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo di trasferta del personale</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostoTrasfPers?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo viaggio in auto</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiAuto?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi extra (park,metro, taxi, materiali di consumo)</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiExtraTrasfMont?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi trasporto legati ad utilizzo di mezzo leggero (&lt;35q.li)</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiExtraKmTraspFurgMont?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi trasporto legati ad utilizzo di mezzo pesante (&gt;35q.li)</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiExtraKmTraspTirMont?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi per consegna merce in cantiere</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiConsegnaCantiere?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Totale costo montaggio</span>
-                  <span className="font-bold text-lg">€ {costs.totaleCostoMontaggio?.toFixed(2) || '0.00'}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="ricarico_montaggio">Ricarico</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      id="ricarico_montaggio"
-                      type="number"
-                      value={formData.ricarico_montaggio}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          ricarico_montaggio: parseFloat(e.target.value) || 0,
-                        })
-                      }
-                      className="w-20 text-right"
-                    />
-                    <span>%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center text-lg font-bold">
-                  <span>Preventivo Montaggio</span>
-                  <span>€ {costs.preventivoMontaggio?.toFixed(2) || '0.00'}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* SMONTAGGIO SECTION */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Servizio di Smontaggio - Dati ingresso</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="personale_smon">Personale</Label>
-                  <Input
-                    id="personale_smon"
-                    type="number"
-                    value={formData.personale_smon}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        personale_smon: parseInt(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="costo_orario_smon">Costo orario personale</Label>
-                  <Input
-                    id="costo_orario_smon"
-                    type="number"
-                    value={formData.costo_orario_smon}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        costo_orario_smon: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="giorni_smontaggio_viaggio">Giorni per lo smontaggio + viaggio</Label>
-                  <Input
-                    id="giorni_smontaggio_viaggio"
-                    type="number"
-                    value={formData.giorni_smontaggio_viaggio}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        giorni_smontaggio_viaggio: parseInt(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="ore_lavoro_cantxper_smon">Ore smontaggio in cantiere per persona</Label>
-                  <Input
-                    id="ore_lavoro_cantxper_smon"
-                    type="number"
-                    value={formData.ore_lavoro_cantxper_smon}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        ore_lavoro_cantxper_smon: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="km_AR_smon" className="text-left">
-                  Km Viaggio smontaggio A+R
-                </Label>
-                <Input
-                  id="km_AR_smon"
-                  type="number"
-                  value={formData.km_AR_smon}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      km_AR_smon: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="w-32 text-right"
-                />
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="volo_smon" className="text-left">
-                  Volo
-                </Label>
-                <Select
-                  value={formData.volo_smon}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      volo_smon: value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="NO">NO</SelectItem>
-                    <SelectItem value="Low cost">Low cost</SelectItem>
-                    <SelectItem value="Last minute">Last minute</SelectItem>
-                    <SelectItem value="Standard">Standard</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="treno_smon"
-                  checked={formData.treno_smon}
-                  onCheckedChange={(checked) =>
-                    setFormData({
-                      ...formData,
-                      treno_smon: checked as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="treno_smon">Treno</Label>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="ore_viaggio_trasferta_smon" className="text-left">
-                  Ore viaggio trasferta smontatori (treno/aereo, no camion)
-                </Label>
-                <Input
-                  id="ore_viaggio_trasferta_smon"
-                  type="number"
-                  value={formData.ore_viaggio_trasferta_smon}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      ore_viaggio_trasferta_smon: parseFloat(e.target.value) || 0,
-                    })
-                  }
-                  className="w-32 text-right"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="viaggio_auto_com_smon"
-                  checked={formData.viaggio_auto_com_smon}
-                  onCheckedChange={(checked) =>
-                    setFormData({
-                      ...formData,
-                      viaggio_auto_com_smon: checked as boolean,
-                    })
-                  }
-                />
-                <Label htmlFor="viaggio_auto_com_smon">Viaggio Auto commerciale</Label>
-              </div>
-
-              <div className="flex items-center justify-between py-2">
-                <Label htmlFor="extra_costi_trasferta_smon" className="text-left">
-                  Extra (park,metro, taxi, materiali di consumo)
-                </Label>
-                <Select
-                  value={formData.extra_costi_trasferta_smon}
-                  onValueChange={(value) =>
-                    setFormData({
-                      ...formData,
-                      extra_costi_trasferta_smon: value,
-                    })
-                  }
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="NO">NO</SelectItem>
-                    <SelectItem value="Basso">Basso</SelectItem>
-                    <SelectItem value="Medio">Medio</SelectItem>
-                    <SelectItem value="Alto">Alto</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="extra_km_trasp_furg_smon">Km. extra Trasporto Furgone &lt; 35 q.li</Label>
-                  <Input
-                    id="extra_km_trasp_furg_smon"
-                    type="number"
-                    value={formData.extra_km_trasp_furg_smon}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        extra_km_trasp_furg_smon: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="extra_km_trasp_tir_smon">Km. extra trasporto camion &gt; 35 q.li</Label>
-                  <Input
-                    id="extra_km_trasp_tir_smon"
-                    type="number"
-                    value={formData.extra_km_trasp_tir_smon}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        extra_km_trasp_tir_smon: parseFloat(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Calcolo costi Smontaggio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo ore smontatori</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostOreSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo km smontaggio</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostKmSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Numero dei pasti previsti</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">{costs.numVittiSmon || 0}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Numero dei pernottamenti previsti</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">{costs.numAlloggiSmon || 0}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo vitto e alloggio smontatori</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostVittAllSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo volo aereo A/R</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostoVoloARSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo treno A/R</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostoTrenoSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo di trasferta del personale</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostoTrasfPersSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costo viaggio in auto</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiAutoSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi extra (park,metro, taxi, materiali di consumo)</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiExtraTrasfSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi trasporto legati ad utilizzo di mezzo leggero (&lt;35q.li)</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiExtraKmTraspFurgSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Costi trasporto legati ad utilizzo di mezzo pesante (&gt;35q.li)</span>
-                  <div className="text-right">
-                    <span className="text-sm font-medium">€ {costs.totCostiExtraKmTraspTirSmon?.toFixed(2) || '0.00'}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">Totale costo smontaggio</span>
-                  <span className="font-bold text-lg">€ {costs.totaleCostoSmontaggio?.toFixed(2) || '0.00'}</span>
-                </div>
-                <div className="flex justify-between items-center text-lg font-bold">
-                  <span>Preventivo Smontaggio</span>
-                  <span>€ {costs.preventivoSmontaggio?.toFixed(2) || '0.00'}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Footer with total and buttons on same line */}
-        <div className="flex items-center justify-between bg-muted/30 p-6 rounded-lg">
-          <div className="flex-1">
-            <div className="text-lg font-medium">Totale preventivo montaggio/smontaggio</div>
-            <div className="text-3xl font-bold text-primary">{costs.totaleCombinato?.toFixed(2) || '0.00'}€</div>
+              </CardContent>
+            </Card>
           </div>
-          
-          <div className="flex gap-4">
-            <Button 
-              variant="outline" 
-              size="lg" 
-              onClick={() => navigate('/preventivi', { state: { openPreventivoId: preventivoId, focusSection: 'servizi' } })}
-            >
-              Annulla
-            </Button>
-            <Button 
-              onClick={handleSave} 
-              disabled={saveMutation.isPending} 
-              size="lg"
-            >
-              {saveMutation.isPending ? 'Salvataggio...' : 'Salva Configurazione'}
-            </Button>
+
+          {/* SMONTAGGIO */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <Card>
+              <CardHeader><CardTitle>Servizio di Smontaggio - Dati ingresso</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Personale</Label>
+                    <Input type="number" value={formData.personaleSmon ?? 0}
+                           onChange={e => update('personaleSmon', parseInt(e.target.value) || 0)}/>
+                  </div>
+                  <div>
+                    <Label>Costo orario personale</Label>
+                    <Input type="number" value={formData.costoOrarioSmon ?? 0}
+                           onChange={e => update('costoOrarioSmon', parseFloat(e.target.value) || 0)}/>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Giorni per lo smontaggio + viaggio</Label>
+                    <Input type="number" value={formData.giorniSmontaggioViaggio ?? 0}
+                           onChange={e => update('giorniSmontaggioViaggio', parseInt(e.target.value) || 0)}/>
+                  </div>
+                  <div>
+                    <Label>Ore smontaggio in cantiere per persona</Label>
+                    <Input type="number" value={formData.oreLavoroCantxperSmon ?? 0}
+                           onChange={e => update('oreLavoroCantxperSmon', parseFloat(e.target.value) || 0)}/>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Km Viaggio smontaggio A+R</Label>
+                  <Input type="number" value={formData.kmArSmon ?? 0}
+                         onChange={e => update('kmArSmon', parseFloat(e.target.value) || 0)}
+                         className="w-32 text-right"/>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Volo</Label>
+                  <Select value={formData.voloSmon ?? 'NO'} onValueChange={v => update('voloSmon', v)}>
+                    <SelectTrigger className="w-32"><SelectValue/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NO">NO</SelectItem>
+                      <SelectItem value="Low cost">Low cost</SelectItem>
+                      <SelectItem value="Last minute">Last minute</SelectItem>
+                      <SelectItem value="Standard">Standard</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox checked={formData.trenoSmon ?? false}
+                            onCheckedChange={v => update('trenoSmon', Boolean(v))}/>
+                  <Label>Treno</Label>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Ore viaggio trasferta smontatori (treno/aereo, no camion)</Label>
+                  <Input type="number" value={formData.oreViaggioTrasfertaSmon ?? 0}
+                         onChange={e => update('oreViaggioTrasfertaSmon', parseFloat(e.target.value) || 0)}
+                         className="w-32 text-right"/>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox checked={formData.viaggioAutoComSmon ?? false}
+                            onCheckedChange={v => update('viaggioAutoComSmon', Boolean(v))}/>
+                  <Label>Viaggio Auto commerciale</Label>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <Label>Extra (park,metro, taxi, materiali di consumo)</Label>
+                  <Select value={formData.extraCostiTrasfertaSmon ?? 'NO'}
+                          onValueChange={v => update('extraCostiTrasfertaSmon', v)}>
+                    <SelectTrigger className="w-32"><SelectValue/></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NO">NO</SelectItem>
+                      <SelectItem value="Basso">Basso</SelectItem>
+                      <SelectItem value="Medio">Medio</SelectItem>
+                      <SelectItem value="Alto">Alto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Km. extra Trasporto Furgone &lt; 35 q.li</Label>
+                    <Input type="number" value={formData.extraKmTraspFurgSmon ?? 0}
+                           onChange={e => update('extraKmTraspFurgSmon', parseFloat(e.target.value) || 0)}/>
+                  </div>
+                  <div>
+                    <Label>Km. extra trasporto camion &gt; 35 q.li</Label>
+                    <Input type="number" value={formData.extraKmTraspTirSmon ?? 0}
+                           onChange={e => update('extraKmTraspTirSmon', parseFloat(e.target.value) || 0)}/>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Calcolo costi Smontaggio</CardTitle></CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <Row label="Costo ore smontatori" value={`€ ${fmt(costs.totCostOreSmon)}`}/>
+                  <Row label="Costo km smontaggio" value={`€ ${fmt(costs.totCostKmSmon)}`}/>
+                  <Row label="Numero dei pasti previsti" value={costs.numVittiSmon}/>
+                  <Row label="Numero dei pernottamenti previsti" value={costs.numAlloggiSmon}/>
+                  <Row label="Costo vitto e alloggio smontatori" value={`€ ${fmt(costs.totCostVittAllSmon)}`}/>
+                  <Row label="Costo volo aereo A/R" value={`€ ${fmt(costs.totCostoVoloARSmon)}`}/>
+                  <Row label="Costo treno A/R" value={`€ ${fmt(costs.totCostoTrenoSmon)}`}/>
+                  <Row label="Costo di trasferta del personale" value={`€ ${fmt(costs.totCostoTrasfPersSmon)}`}/>
+                  <Row label="Costo viaggio in auto" value={`€ ${fmt(costs.totCostiAutoSmon)}`}/>
+                  <Row label="Costi extra (park,metro, taxi, materiali di consumo)" value={`€ ${fmt(costs.totCostiExtraTrasfSmon)}`}/>
+                  <Row label="Costi trasporto legati ad utilizzo di mezzo leggero (<35q.li)" value={`€ ${fmt(costs.totCostiExtraKmTraspFurgSmon)}`}/>
+                  <Row label="Costi trasporto legati ad utilizzo di mezzo pesante (>35q.li)" value={`€ ${fmt(costs.totCostiExtraKmTraspTirSmon)}`}/>
+                </div>
+                <div className="mt-6 p-4 bg-muted/50 rounded-lg space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Totale costo smontaggio</span>
+                    <span className="font-bold text-lg">€ {fmt(costs.totaleCostoSmontaggio)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg font-bold">
+                    <span>Preventivo Smontaggio</span>
+                    <span>€ {fmt(costs.preventivoSmontaggio)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="flex items-center justify-between bg-muted/30 p-6 rounded-lg">
+            <div className="flex-1">
+              <div className="text-lg font-medium">Totale preventivo montaggio/smontaggio</div>
+              <div className="text-3xl font-bold text-primary">{fmt(costs.totaleCombinato)}€</div>
+            </div>
+            <div className="flex gap-4">
+              <Button variant="outline" size="lg"
+                      onClick={() => navigate('/preventivi', {state: {openPreventivoId: preventivoId, focusSection: 'servizi'}})}>
+                Annulla
+              </Button>
+              <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending} size="lg">
+                {saveMutation.isPending ? 'Salvataggio...' : 'Salva Configurazione'}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+  );
+}
+
+function Row({label, value}: { label: string; value: React.ReactNode }) {
+  return (
+      <div className="flex justify-between">
+        <span className="text-sm">{label}</span>
+        <div className="text-right">
+          <span className="text-sm font-medium">{value}</span>
+        </div>
+      </div>
   );
 }

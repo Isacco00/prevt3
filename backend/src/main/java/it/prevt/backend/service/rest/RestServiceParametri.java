@@ -107,6 +107,16 @@ public interface RestServiceParametri {
   List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
 
+  @PostMapping("/savePreventivoServizi")
+  PreventivoServiziBean savePreventivoServizi(@RequestBody PreventivoServiziBean dto);
+
+  @PostMapping("/getCostiVoloAr")
+  List<CostoVoloArBean> getCostiVoloAr(@RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/getCostiExtraTrasfMont")
+  List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(
+      @RequestBody ListinoAccessoriRequestBean searchRequest);
+
   @PostMapping("/saveAltriBeniServizi")
   AltriBeniServiziBean saveAltriBeniServizi(@RequestBody AltriBeniServiziBean dto);
 

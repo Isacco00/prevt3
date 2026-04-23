@@ -118,7 +118,7 @@ public class Preventivo {
   private BigDecimal altStorage = new BigDecimal("2.5");
 
   @Column(name = "layout_storage")
-  private String layoutStorage = "0";
+  private String layoutStorage = "0_lati";
 
   @Column(name = "numero_porte")
   private String numeroPorte = "0";

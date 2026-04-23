@@ -365,4 +365,53 @@ public class PreventivoRepositoryImpl extends AbstractRepositoryImpl implements
     return getResultList(query);
   }
 
+  @Override
+  public List<CostoVoloArEntity> getCostiVoloAr(ListinoAccessoriRequestBean searchRequest) {
+    Class<CostoVoloArEntity> clazz = CostoVoloArEntity.class;
+    Map<String, Object> parameters = new HashMap<>();
+
+    StringBuilder strQueryFrom = new StringBuilder(
+        " SELECT u FROM " + clazz.getSimpleName() + " u ");
+    StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
+
+    if (searchRequest != null && searchRequest.getAttivo() != null) {
+      strQueryWhere.append(" AND u.attivo = :attivo ");
+      parameters.put("attivo", searchRequest.getAttivo());
+    }
+    if (searchRequest != null && searchRequest.getSortFields() != null
+        && !searchRequest.getSortFields().isEmpty()) {
+      StringBuilder strQueryOrderBy = orderBy(null, searchRequest.getSortFields(), null);
+      strQueryWhere.append(strQueryOrderBy.toString());
+    }
+    String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
+    TypedQuery<CostoVoloArEntity> query = entityManager.createQuery(strQueryFinal, clazz);
+    parameters.forEach(query::setParameter);
+    return getResultList(query);
+  }
+
+  @Override
+  public List<CostoExtraTrasfMontEntity> getCostiExtraTrasfMont(
+      ListinoAccessoriRequestBean searchRequest) {
+    Class<CostoExtraTrasfMontEntity> clazz = CostoExtraTrasfMontEntity.class;
+    Map<String, Object> parameters = new HashMap<>();
+
+    StringBuilder strQueryFrom = new StringBuilder(
+        " SELECT u FROM " + clazz.getSimpleName() + " u ");
+    StringBuilder strQueryWhere = new StringBuilder(" WHERE 1=1 ");
+
+    if (searchRequest != null && searchRequest.getAttivo() != null) {
+      strQueryWhere.append(" AND u.attivo = :attivo ");
+      parameters.put("attivo", searchRequest.getAttivo());
+    }
+    if (searchRequest != null && searchRequest.getSortFields() != null
+        && !searchRequest.getSortFields().isEmpty()) {
+      StringBuilder strQueryOrderBy = orderBy(null, searchRequest.getSortFields(), null);
+      strQueryWhere.append(strQueryOrderBy.toString());
+    }
+    String strQueryFinal = (strQueryFrom.append(strQueryWhere)).toString();
+    TypedQuery<CostoExtraTrasfMontEntity> query = entityManager.createQuery(strQueryFinal, clazz);
+    parameters.forEach(query::setParameter);
+    return getResultList(query);
+  }
+
 }

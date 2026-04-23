@@ -38,4 +38,8 @@ public interface PreventivoRepository extends AbstractRepository {
 
   List<PreventivoServizi> getPreventivoServizi(
       ListinoAccessoriRequestBean searchRequest);
+
+  List<CostoVoloArEntity> getCostiVoloAr(ListinoAccessoriRequestBean searchRequest);
+
+  List<CostoExtraTrasfMontEntity> getCostiExtraTrasfMont(ListinoAccessoriRequestBean searchRequest);
 }

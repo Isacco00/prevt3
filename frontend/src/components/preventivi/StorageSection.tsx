@@ -93,28 +93,36 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
     // Superficie di stampa Storage
     let superficieStampa = 0;
     switch (layout) {
-      case '0':
+      case '4_lati':
         superficieStampa = (2 * larg + 2 * prof) * alt + superficiePorte;
         break;
-      case '1':
-        superficieStampa = (2 * larg + 2 * prof) * alt + superficiePorte;
+      case '3_lati':
+        superficieStampa = (larg + 2 * prof) * alt + superficiePorte;
         break;
-      case '2':
+      case '2_lati':
         superficieStampa = (larg + prof) * alt + superficiePorte;
+        break;
+      case '0_lati':
+      default:
+        superficieStampa = 0;
         break;
     }
 
     // Sviluppo in metri lineari Storage
     let sviluppoLineare = 0;
     switch (layout) {
-      case '0':
-        sviluppoLineare = larg + prof;
+      case '4_lati':
+        sviluppoLineare = 2 * larg + 2 * prof + numeroPorte;
         break;
-      case '1':
-        sviluppoLineare = 2 * larg + 2 * prof;
+      case '3_lati':
+        sviluppoLineare = larg + 2 * prof + numeroPorte;
         break;
-      case '2':
-        sviluppoLineare = larg + prof + 1;
+      case '2_lati':
+        sviluppoLineare = larg + prof + numeroPorte;
+        break;
+      case '0_lati':
+      default:
+        sviluppoLineare = 0;
         break;
     }
 
@@ -256,9 +264,10 @@ export function StorageSection({formData, setFormData}: StorageSectionProps) {
                   <SelectValue placeholder="Seleziona layout"/>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0">0</SelectItem>
-                  <SelectItem value="1">1</SelectItem>
-                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="0_lati">0 Lati</SelectItem>
+                  <SelectItem value="2_lati">2 Lati</SelectItem>
+                  <SelectItem value="3_lati">3 Lati</SelectItem>
+                  <SelectItem value="4_lati">4 Lati</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -7,7 +7,8 @@ import {
   ListinoRetroilluminazioneBean,
   ListinoAccessoriDeskBean,
   ParametriACostiUnitariBean, ListinoAccessoriEspositoriBean, ListinoStrutturaDeskBean,
-  ListinoStrutturaEspositoriBean, AltriBeniServiziBean, ListinoServiziPrezzoUnitarioBean
+  ListinoStrutturaEspositoriBean, AltriBeniServiziBean, ListinoServiziPrezzoUnitarioBean,
+  PreventivoServiziBean, CostoVoloArBean, CostoExtraTrasfMontBean
 } from "@/types/parametri.ts";
 import {
   ListinoAccessoriRequestBean,
@@ -147,8 +148,24 @@ export const ParametriAPI = {
     return data.data;
   },
 
-  getPreventivoServiziByPreventivoId: async (filter?: ListinoAccessoriRequestBean): Promise<void> => {
-    const res = await api.post(entryPoint + "/getPreventivoServiziByPreventivoId", filter);
+  getPreventivoServiziByPreventivoId: async (filter?: ListinoAccessoriRequestBean): Promise<PreventivoServiziBean | null> => {
+    const res = await api.post(entryPoint + "/getPreventivoServiziByPreventivoId", filter ?? {});
+    const list = (res.data as PreventivoServiziBean[]) || [];
+    return list.length > 0 ? list[0] : null;
+  },
+
+  savePreventivoServizi: async (bean: PreventivoServiziBean): Promise<PreventivoServiziBean> => {
+    const res = await api.post(entryPoint + "/savePreventivoServizi", bean);
+    return res.data;
+  },
+
+  getCostiVoloAr: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostoVoloArBean[]> => {
+    const res = await api.post(entryPoint + "/getCostiVoloAr", filter);
+    return res.data;
+  },
+
+  getCostiExtraTrasfMont: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostoExtraTrasfMontBean[]> => {
+    const res = await api.post(entryPoint + "/getCostiExtraTrasfMont", filter);
     return res.data;
   },
 };

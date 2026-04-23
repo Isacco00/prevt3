@@ -106,11 +106,84 @@ export interface AltriBeniServiziBean {
 }
 
 export interface PreventivoServiziBean {
-  id: string;
-  preventivoMontaggio?: number;
-  preventivoSmontaggio?: number;
+  id?: string;
+  preventivoId?: string;
+  montaggioSmontaggio?: boolean;
+  certificazioni?: boolean;
+  istruzioniAssistenza?: boolean;
+
+  personaleMont?: number;
+  costoOrarioMont?: number;
+  giorniMontaggio?: number;
+  oreLavoroCantxperMont?: number;
+  kmArMont?: number;
+  consegCant?: boolean;
+  voloMont?: string;
+  trenoMont?: boolean;
+  oreViaggioTrasfertaMont?: number;
+  viaggioAutoComMont?: boolean;
+  extraCostiTrasfertaMont?: string;
+  extraKmTraspFurgMont?: number;
+  extraKmTraspTirMont?: number;
+  ricaricoMontaggio?: number;
+
+  totCostOreMont?: number;
+  totCostKmMont?: number;
+  numVitti?: number;
+  numAlloggi?: number;
+  totCostVittall?: number;
+  totCostoVoloAr?: number;
+  totCostoTreno?: number;
+  totCostoTrasfPers?: number;
+  totCostiAuto?: number;
+  totCostiExtraTrasfMont?: number;
+  totCostiExtraKmTraspFurgMont?: number;
+  totCostiExtraKmTraspTirMont?: number;
+  totCostiConsegnaCantiere?: number;
   totaleCostoMontaggio?: number;
+  preventivoMontaggio?: number;
+
+  personaleSmon?: number;
+  costoOrarioSmon?: number;
+  giorniSmontaggioViaggio?: number;
+  oreLavoroCantxperSmon?: number;
+  kmArSmon?: number;
+  voloSmon?: string;
+  trenoSmon?: boolean;
+  oreViaggioTrasfertaSmon?: number;
+  viaggioAutoComSmon?: boolean;
+  extraCostiTrasfertaSmon?: string;
+  extraKmTraspFurgSmon?: number;
+  extraKmTraspTirSmon?: number;
+
+  totCostOreSmon?: number;
+  totCostKmSmon?: number;
+  numVittiSmon?: number;
+  numAlloggiSmon?: number;
+  totCostVittallSmon?: number;
+  totCostoVoloArSmon?: number;
+  totCostoTrenoSmon?: number;
+  totCostoTrasfPersSmon?: number;
+  totCostiAutoSmon?: number;
+  totCostiExtraTrasfSmon?: number;
+  totCostiExtraKmTraspFurgSmon?: number;
+  totCostiExtraKmTraspTirSmon?: number;
   totaleCostoSmontaggio?: number;
+  preventivoSmontaggio?: number;
+}
+
+export interface CostoVoloArBean {
+  id: string;
+  tipologia: string;
+  costoVoloAr: number;
+  attivo: boolean;
+}
+
+export interface CostoExtraTrasfMontBean {
+  id: string;
+  livello: string;
+  costoExtraMont: number;
+  attivo: boolean;
 }
 
 export interface ParametriRequestBean extends AbstractSearchRequestBean {

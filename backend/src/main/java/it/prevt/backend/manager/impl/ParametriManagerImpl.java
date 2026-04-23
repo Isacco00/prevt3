@@ -1,6 +1,8 @@
 package it.prevt.backend.manager.impl;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
+import it.prevt.backend.bean.CostoExtraTrasfMontBean;
+import it.prevt.backend.bean.CostoVoloArBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
@@ -12,6 +14,8 @@ import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
 import it.prevt.backend.entity.AltriBeniServizi;
+import it.prevt.backend.entity.CostoExtraTrasfMontEntity;
+import it.prevt.backend.entity.CostoVoloArEntity;
 import it.prevt.backend.entity.ListinoRetroilluminazione;
 import it.prevt.backend.entity.ListinoStrutturaEspositori;
 import it.prevt.backend.entity.ListinoServiziPrezzoUnitario;
@@ -21,9 +25,12 @@ import it.prevt.backend.entity.ListinoAccessoriEspositori;
 import it.prevt.backend.entity.ListinoAccessoriStand;
 import it.prevt.backend.entity.Parametri;
 import it.prevt.backend.entity.ParametriACostiUnitari;
+import it.prevt.backend.entity.Preventivo;
 import it.prevt.backend.entity.PreventivoServizi;
 import it.prevt.backend.manager.ParametriManager;
 import it.prevt.backend.mapper.AltriBeniServiziMapper;
+import it.prevt.backend.mapper.CostoExtraTrasfMontMapper;
+import it.prevt.backend.mapper.CostoVoloArMapper;
 import it.prevt.backend.mapper.ListinoRetroilluminazioneMapper;
 import it.prevt.backend.mapper.ListinoStrutturaEspositoriMapper;
 import it.prevt.backend.mapper.ListinoServiziPrezzoUnitarioMapper;
@@ -34,6 +41,7 @@ import it.prevt.backend.mapper.ListinoAccessoriStandMapper;
 import it.prevt.backend.mapper.ParametriACostiUnitariMapper;
 import it.prevt.backend.mapper.ParametriMapper;
 import it.prevt.backend.mapper.PreventivoServiziMapper;
+import it.prevt.backend.merger.PreventivoServiziMerger;
 import it.prevt.backend.merger.AltriBeniServiziMerger;
 import it.prevt.backend.merger.ListinoRetroilluminazioneMerger;
 import it.prevt.backend.merger.ListinoServiziPrezzoUnitarioMerger;
@@ -50,6 +58,7 @@ import it.prevt.backend.request.bean.ParametriRequestBean;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -83,6 +92,9 @@ public class ParametriManagerImpl implements ParametriManager {
   private final AltriBeniServiziMapper altriBeniServiziMapper;
   private final AltriBeniServiziMerger altriBeniServiziMerger;
   private final PreventivoServiziMapper preventivoServiziMapper;
+  private final PreventivoServiziMerger preventivoServiziMerger;
+  private final CostoVoloArMapper costoVoloArMapper;
+  private final CostoExtraTrasfMontMapper costoExtraTrasfMontMapper;
 
   @Override
   public List<ParametriBean> getParametriList(ParametriRequestBean request) {
@@ -439,6 +451,56 @@ public class ParametriManagerImpl implements ParametriManager {
     }
     this.repository.save(entity);
     return listinoServiziPrezzoUnitarioMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public PreventivoServiziBean savePreventivoServizi(PreventivoServiziBean bean) {
+    PreventivoServizi entity = null;
+    if (bean.getId() != null) {
+      entity = repository.find(PreventivoServizi.class, bean.getId());
+    }
+    if (entity == null && bean.getPreventivoId() != null) {
+      ListinoAccessoriRequestBean search = new ListinoAccessoriRequestBean();
+      search.setPreventivoId(bean.getPreventivoId());
+      List<PreventivoServizi> existing = repository.getPreventivoServizi(search);
+      if (existing != null && !existing.isEmpty()) {
+        entity = existing.get(0);
+      }
+    }
+    if (entity == null) {
+      entity = preventivoServiziMerger.mapNew(bean, PreventivoServizi.class);
+    } else {
+      preventivoServiziMerger.merge(bean, entity);
+    }
+    if (bean.getPreventivoId() != null) {
+      Preventivo preventivo = repository.find(Preventivo.class,
+          UUID.fromString(bean.getPreventivoId()));
+      if (preventivo != null) {
+        preventivo.setServizioMontaggioSmontaggio(Boolean.TRUE);
+        repository.save(preventivo);
+      }
+    }
+    repository.save(entity);
+    return preventivoServiziMapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public List<CostoVoloArBean> getCostiVoloAr(ListinoAccessoriRequestBean searchRequest) {
+    List<CostoVoloArEntity> list = repository.getCostiVoloAr(searchRequest);
+    if (list == null) {
+      throw new UsernameNotFoundException("error.costivoloar.notfound");
+    }
+    return costoVoloArMapper.mapEntitiesToBeans(list);
+  }
+
+  @Override
+  public List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(
+      ListinoAccessoriRequestBean searchRequest) {
+    List<CostoExtraTrasfMontEntity> list = repository.getCostiExtraTrasfMont(searchRequest);
+    if (list == null) {
+      throw new UsernameNotFoundException("error.costiextratrasfmont.notfound");
+    }
+    return costoExtraTrasfMontMapper.mapEntitiesToBeans(list);
   }
 
 }

@@ -11,17 +11,19 @@ import lombok.Setter;
 public class PreventivoServiziBean {
 
   private UUID id;
+  private String preventivoId;
   private OffsetDateTime createdAt;
   private OffsetDateTime updatedAt;
   private Boolean montaggioSmontaggio;
   private Boolean certificazioni;
   private Boolean istruzioniAssistenza;
+
   private Integer personaleMont;
   private BigDecimal costoOrarioMont;
   private Integer giorniMontaggio;
   private BigDecimal oreLavoroCantxperMont;
   private BigDecimal kmArMont;
-  private Boolean consegCantiere;
+  private Boolean consegCant;
   private String voloMont;
   private Boolean trenoMont;
   private BigDecimal oreViaggioTrasfertaMont;
@@ -30,6 +32,7 @@ public class PreventivoServiziBean {
   private BigDecimal extraKmTraspFurgMont;
   private BigDecimal extraKmTraspTirMont;
   private BigDecimal ricaricoMontaggio;
+
   private BigDecimal totCostOreMont;
   private BigDecimal totCostKmMont;
   private Integer numVitti;
@@ -45,6 +48,7 @@ public class PreventivoServiziBean {
   private BigDecimal totCostiConsegnaCantiere;
   private BigDecimal totaleCostoMontaggio;
   private BigDecimal preventivoMontaggio;
+
   private Integer personaleSmon;
   private BigDecimal costoOrarioSmon;
   private Integer giorniSmontaggioViaggio;
@@ -57,10 +61,11 @@ public class PreventivoServiziBean {
   private String extraCostiTrasfertaSmon;
   private BigDecimal extraKmTraspFurgSmon;
   private BigDecimal extraKmTraspTirSmon;
+
   private BigDecimal totCostOreSmon;
   private BigDecimal totCostKmSmon;
-  private BigDecimal numVittiSmon;
-  private BigDecimal numAlloggiSmon;
+  private Integer numVittiSmon;
+  private Integer numAlloggiSmon;
   private BigDecimal totCostVittallSmon;
   private BigDecimal totCostoVoloArSmon;
   private BigDecimal totCostoTrenoSmon;

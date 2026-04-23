@@ -10,6 +10,8 @@ import it.prevt.backend.bean.ListinoAccessoriEspositoriBean;
 import it.prevt.backend.bean.ListinoAccessoriStandBean;
 import it.prevt.backend.bean.ParametriACostiUnitariBean;
 import it.prevt.backend.bean.ParametriBean;
+import it.prevt.backend.bean.CostoExtraTrasfMontBean;
+import it.prevt.backend.bean.CostoVoloArBean;
 import it.prevt.backend.bean.PreventivoServiziBean;
 import it.prevt.backend.request.bean.ListinoAccessoriRequestBean;
 import it.prevt.backend.request.bean.ParametriRequestBean;
@@ -71,6 +73,12 @@ public interface ParametriManager {
 
   List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
       ListinoAccessoriRequestBean searchRequest);
+
+  PreventivoServiziBean savePreventivoServizi(PreventivoServiziBean bean);
+
+  List<CostoVoloArBean> getCostiVoloAr(ListinoAccessoriRequestBean searchRequest);
+
+  List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(ListinoAccessoriRequestBean searchRequest);
 
   AltriBeniServiziBean saveAltriBeniServizi(AltriBeniServiziBean bean);
 

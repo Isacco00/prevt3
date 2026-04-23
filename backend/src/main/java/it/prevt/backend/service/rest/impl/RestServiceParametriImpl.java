@@ -1,6 +1,8 @@
 package it.prevt.backend.service.rest.impl;
 
 import it.prevt.backend.bean.AltriBeniServiziBean;
+import it.prevt.backend.bean.CostoExtraTrasfMontBean;
+import it.prevt.backend.bean.CostoVoloArBean;
 import it.prevt.backend.bean.ListinoRetroilluminazioneBean;
 import it.prevt.backend.bean.ListinoServiziPrezzoUnitarioBean;
 import it.prevt.backend.bean.ListinoStrutturaDeskBean;
@@ -154,6 +156,22 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   public List<PreventivoServiziBean> getPreventivoServiziByPreventivoId(
       ListinoAccessoriRequestBean searchRequest) {
     return manager.getPreventivoServiziByPreventivoId(searchRequest);
+  }
+
+  @Override
+  public PreventivoServiziBean savePreventivoServizi(PreventivoServiziBean dto) {
+    return manager.savePreventivoServizi(dto);
+  }
+
+  @Override
+  public List<CostoVoloArBean> getCostiVoloAr(ListinoAccessoriRequestBean searchRequest) {
+    return manager.getCostiVoloAr(searchRequest);
+  }
+
+  @Override
+  public List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(
+      ListinoAccessoriRequestBean searchRequest) {
+    return manager.getCostiExtraTrasfMont(searchRequest);
   }
 
   @Override
