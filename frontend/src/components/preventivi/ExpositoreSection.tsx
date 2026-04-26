@@ -2,7 +2,7 @@ import React, {useMemo, useState} from 'react';
 import {Calculator, ChevronDown, ChevronRight} from 'lucide-react';
 import {Input} from '../ui/input.tsx';
 import {Label} from '../ui/label.tsx';
-import {Card, CardContent, CardHeader, CardTitle} from '../ui/card.tsx';
+import {Card, CardContent} from '../ui/card.tsx';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '../ui/table.tsx';
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "../ui/collapsible.tsx";
 import {useQuery} from '@tanstack/react-query';
@@ -11,45 +11,9 @@ import {ListinoAccessoriEspositoriBean, ListinoServiziPrezzoUnitarioBean, Listin
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 
-interface ExpositorePhysicalElements {
-  numeroPezziEspositori: number;
-  superficieStampaEspositori: number;
-}
-
-interface EspositorePhysicalElementsProps {
-  physicalElements: ExpositorePhysicalElements;
-}
-
 interface EspositoriSectionProps {
   formData: PreventivoBean;
   setFormData: React.Dispatch<React.SetStateAction<PreventivoBean>>;
-}
-
-function EspositorePhysicalElements({physicalElements}: EspositorePhysicalElementsProps) {
-  return <Card className="border-l-4 border-l-espositore">
-    <CardHeader className="pb-3">
-      <CardTitle className="text-sm flex items-center gap-2 text-espositore">
-        <Calculator className="h-4 w-4"/>
-        Elementi Fisici Espositori (calcolati automaticamente)
-      </CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Numero pezzi espositori</Label>
-          <div className="text-lg font-semibold text-espositore">
-            {physicalElements.numeroPezziEspositori}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label className="text-xs text-muted-foreground">Superficie stampa espositori (mq)</Label>
-          <div className="text-lg font-semibold text-espositore">
-            {physicalElements.superficieStampaEspositori.toFixed(2)}
-          </div>
-        </div>
-      </div>
-    </CardContent>
-  </Card>;
 }
 
 export function ExpositoreSection({formData, setFormData}: EspositoriSectionProps) {
@@ -174,122 +138,166 @@ export function ExpositoreSection({formData, setFormData}: EspositoriSectionProp
     : 0;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Calculator className="h-5 w-5"/>
-        <h4 className="text-md font-semibold">Dati di Ingresso per Espositori</h4>
-      </div>
+    <div className="space-y-6">
+      {/* Dati di ingresso */}
+      <Card>
+        <CardContent className="pt-6">
+          <h4 className="text-lg font-semibold mb-4 text-espositore">Dati di ingresso per Espositori</h4>
 
-      {/* Configurazione Espositori */}
-      <Card className="border-l-4 border-l-espositore">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm text-espositore">Configurazione Espositori</CardTitle>
-        </CardHeader>
-        <CardContent>
           <div className="space-y-4">
-            <div className="grid grid-cols-4 gap-4 text-sm font-medium text-muted-foreground">
-              <div className="text-center">Tipo espositore</div>
-              <div className="text-center">Tipo 30</div>
-              <div className="text-center">Tipo 50</div>
-              <div className="text-center">Tipo 100</div>
-            </div>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="flex items-center justify-center">
-                <Label className="text-sm font-medium">Quantità</Label>
-              </div>
-              <div className="space-y-1">
-                <Input type="number" min="0"
-                       value={formData.qtaTipo30}
-                       onChange={e => updateIntField('qtaTipo30', e.target.value)}
-                       placeholder="0"/>
-              </div>
-              <div className="space-y-1">
-                <Input type="number" min="0"
-                       value={formData.qtaTipo50}
-                       onChange={e => updateIntField('qtaTipo50', e.target.value)}
-                       placeholder="0"/>
-              </div>
-              <div className="space-y-1">
-                <Input type="number" min="0"
-                       value={formData.qtaTipo100}
-                       onChange={e => updateIntField('qtaTipo100', e.target.value)}
-                       placeholder="0"/>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Layout</TableHead>
+                  <TableHead className="text-center w-36">Costo Unitario</TableHead>
+                  <TableHead className="text-center w-36">Prezzo Unitario</TableHead>
+                  <TableHead className="text-center w-28">Quantità</TableHead>
+                  <TableHead className="text-right w-36">Prezzo</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {([
+                  {layout: '30', field: 'qtaTipo30' as const},
+                  {layout: '50', field: 'qtaTipo50' as const},
+                  {layout: '100', field: 'qtaTipo100' as const},
+                ]).map(({layout, field}) => {
+                  const costoUnitario = getLayoutCostUnitario(layout);
+                  const prezzoUnitario = getLayoutPrezzoUnitario(layout);
+                  const quantity = Number(formData[field] ?? 0);
+                  const prezzo = prezzoUnitario * quantity;
+                  return (
+                    <TableRow key={layout}>
+                      <TableCell className="font-medium py-1">Tipo {layout}</TableCell>
+                      <TableCell className="text-center py-1">
+                        € {costoUnitario.toFixed(2).replace('.', ',')}
+                      </TableCell>
+                      <TableCell className="text-center py-1">
+                        € {prezzoUnitario.toFixed(2).replace('.', ',')}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Input
+                          type="number"
+                          min="0"
+                          value={quantity}
+                          onChange={e => updateIntField(field, e.target.value)}
+                          className="w-20 text-center"
+                        />
+                      </TableCell>
+                      <TableCell className="text-right font-medium py-1 whitespace-nowrap">
+                        € {prezzo.toFixed(2).replace('.', ',')}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+
+            <div className="pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Totale Struttura Espositori:</span>
+                <span className="text-xl font-bold text-espositore">€ {strutturaPrezzo.toFixed(2).replace('.', ',')}</span>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Elementi Fisici */}
-      <EspositorePhysicalElements physicalElements={physicalElements}/>
+      {/* Elementi fisici calcolati */}
+      <Card>
+        <CardContent className="pt-6">
+          <h4 className="text-lg font-semibold mb-4 text-espositore">Elementi fisici Espositori</h4>
 
-      {/* Accessori Espositori */}
-      <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen}>
-        <Card className="border-l-4 border-l-espositore">
-          <CardHeader className="pb-3 py-[16px]">
-            <CollapsibleTrigger className="flex items-center gap-2 w-full">
-              <CardTitle className="text-sm text-espositore">Accessori Espositori</CardTitle>
-              {accessoriOpen ? <ChevronDown className="h-4 w-4"/> : <ChevronRight className="h-4 w-4"/>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Numero pezzi Espositori</Label>
+              <div className="p-3 bg-espositore/10 rounded-md border border-espositore/20">
+                <span className="text-lg font-medium text-espositore">
+                  {physicalElements.numeroPezziEspositori}
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Superficie di stampa Espositori (m²)</Label>
+              <div className="p-3 bg-espositore/10 rounded-md border border-espositore/20">
+                <span className="text-lg font-medium text-espositore">
+                  {physicalElements.superficieStampaEspositori.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Accessori Espositori */}
+          <Collapsible open={accessoriOpen} onOpenChange={setAccessoriOpen} className="mt-6">
+            <CollapsibleTrigger className="flex items-center gap-2 w-full mb-4">
+              <h5 className="text-lg font-semibold text-espositore">Accessori Espositori</h5>
+              {accessoriOpen ? (
+                <ChevronDown className="h-4 w-4"/>
+              ) : (
+                <ChevronRight className="h-4 w-4"/>
+              )}
             </CollapsibleTrigger>
-          </CardHeader>
-          <CollapsibleContent>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Accessorio</TableHead>
-                    <TableHead className="text-center">Costo unitario</TableHead>
-                    <TableHead className="text-center">Prezzo unitario</TableHead>
-                    <TableHead className="text-center w-24">Quantità</TableHead>
-                    <TableHead className="text-center w-24">Noleggio</TableHead>
-                    <TableHead className="text-right">Prezzo</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(accessoriesData as ListinoAccessoriEspositoriBean[]).map(accessorio => {
-                    const item = espositoriMap[accessorio.id];
-                    const quantity = item?.qty ?? 0;
-                    const noleggio = item?.noleggio ?? false;
-                    const prezzoUnitario = Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
-                    const coeff = formData.coefficienteNoleggio?.valore ?? 0;
-                    const prezzo = noleggio
-                      ? prezzoUnitario * quantity * coeff
-                      : prezzoUnitario * quantity;
-                    return (
-                      <TableRow key={accessorio.id}>
-                        <TableCell className="font-medium py-1">{accessorio.nome}</TableCell>
-                        <TableCell className="text-center py-1">
-                          € {Number(accessorio.costoUnitario).toFixed(2).replace('.', ',')}
-                        </TableCell>
-                        <TableCell className="text-center py-1">
-                          € {prezzoUnitario.toFixed(2).replace('.', ',')}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Input
-                            type="number" min="0" max="99"
-                            value={quantity}
-                            onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
-                            className="w-14 text-center"
-                          />
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Checkbox
-                            checked={noleggio}
-                            onCheckedChange={(checked) => handleNoleggioChange(accessorio.id, !!checked)}
-                          />
-                        </TableCell>
-                        <TableCell className="text-right font-medium py-1">
-                          € {prezzo.toFixed(2).replace('.', ',')}
-                        </TableCell>
+            <CollapsibleContent>
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Accessorio</TableHead>
+                        <TableHead className="text-center">Costo unitario</TableHead>
+                        <TableHead className="text-center">Prezzo Unitario</TableHead>
+                        <TableHead className="text-center w-24">Quantità</TableHead>
+                        <TableHead className="text-center w-24">Noleggio</TableHead>
+                        <TableHead className="text-right">Prezzo</TableHead>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+                    </TableHeader>
+                    <TableBody>
+                      {(accessoriesData as ListinoAccessoriEspositoriBean[]).map(accessorio => {
+                        const item = espositoriMap[accessorio.id];
+                        const quantity = item?.qty ?? 0;
+                        const noleggio = item?.noleggio ?? false;
+                        const prezzoUnitario = Number(accessorio.costoUnitario) * (1 + (accessorio.ricaricoPercentuale ?? 0) / 100);
+                        const coeff = formData.coefficienteNoleggio?.valore ?? 0;
+                        const prezzo = noleggio
+                          ? prezzoUnitario * quantity * coeff
+                          : prezzoUnitario * quantity;
+                        return (
+                          <TableRow key={accessorio.id}>
+                            <TableCell className="font-medium py-1">{accessorio.nome}</TableCell>
+                            <TableCell className="text-center py-1">
+                              € {Number(accessorio.costoUnitario).toFixed(2).replace('.', ',')}
+                            </TableCell>
+                            <TableCell className="text-center py-1">
+                              € {prezzoUnitario.toFixed(2).replace('.', ',')}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Input
+                                type="number" min="0" max="99"
+                                value={quantity}
+                                onChange={(e) => handleAccessorioChange(accessorio.id, parseInt(e.target.value) || 0)}
+                                className="w-14 text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Checkbox
+                                checked={noleggio}
+                                onCheckedChange={(checked) => handleNoleggioChange(accessorio.id, !!checked)}
+                              />
+                            </TableCell>
+                            <TableCell className="text-right font-medium py-1">
+                              € {prezzo.toFixed(2).replace('.', ',')}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </CollapsibleContent>
+          </Collapsible>
+        </CardContent>
+      </Card>
 
       {/* Calcolo Preventivo Espositori */}
       <div className="space-y-4">
