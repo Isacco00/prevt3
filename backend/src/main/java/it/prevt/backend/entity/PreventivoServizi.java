@@ -46,6 +46,7 @@ public class PreventivoServizi {
     private BigDecimal extraKmTraspFurgMont = BigDecimal.ZERO;
     private BigDecimal extraKmTraspTirMont = BigDecimal.ZERO;
     private BigDecimal ricaricoMontaggio = new BigDecimal("30");
+    private BigDecimal scontoMontaggio = BigDecimal.ZERO;
 
     private BigDecimal totCostOreMont = BigDecimal.ZERO;
     private BigDecimal totCostKmMont = BigDecimal.ZERO;
@@ -62,6 +63,10 @@ public class PreventivoServizi {
     private BigDecimal totCostiConsegnaCantiere = BigDecimal.ZERO;
     private BigDecimal totaleCostoMontaggio = BigDecimal.ZERO;
     private BigDecimal preventivoMontaggio = BigDecimal.ZERO;
+    private BigDecimal totalePrezzoListinoMont = BigDecimal.ZERO;
+    private BigDecimal totalePrezzoNettoMont = BigDecimal.ZERO;
+    private BigDecimal margineMont = BigDecimal.ZERO;
+    private BigDecimal marginalitaMont = BigDecimal.ZERO;
 
     private Integer personaleSmon = 0;
     private BigDecimal costoOrarioSmon = new BigDecimal("20");
@@ -90,6 +95,10 @@ public class PreventivoServizi {
     private BigDecimal totCostiExtraKmTraspTirSmon = BigDecimal.ZERO;
     private BigDecimal totaleCostoSmontaggio = BigDecimal.ZERO;
     private BigDecimal preventivoSmontaggio = BigDecimal.ZERO;
+    private BigDecimal totalePrezzoListinoSmon = BigDecimal.ZERO;
+    private BigDecimal totalePrezzoNettoSmon = BigDecimal.ZERO;
+    private BigDecimal margineSmon = BigDecimal.ZERO;
+    private BigDecimal marginalitaSmon = BigDecimal.ZERO;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

@@ -46,6 +46,7 @@ public class PreventivoServiziMerger
     entity.setExtraKmTraspFurgMont(bean.getExtraKmTraspFurgMont());
     entity.setExtraKmTraspTirMont(bean.getExtraKmTraspTirMont());
     entity.setRicaricoMontaggio(bean.getRicaricoMontaggio());
+    entity.setScontoMontaggio(bean.getScontoMontaggio());
 
     entity.setTotCostOreMont(bean.getTotCostOreMont());
     entity.setTotCostKmMont(bean.getTotCostKmMont());
@@ -62,6 +63,10 @@ public class PreventivoServiziMerger
     entity.setTotCostiConsegnaCantiere(bean.getTotCostiConsegnaCantiere());
     entity.setTotaleCostoMontaggio(bean.getTotaleCostoMontaggio());
     entity.setPreventivoMontaggio(bean.getPreventivoMontaggio());
+    entity.setTotalePrezzoListinoMont(bean.getTotalePrezzoListinoMont());
+    entity.setTotalePrezzoNettoMont(bean.getTotalePrezzoNettoMont());
+    entity.setMargineMont(bean.getMargineMont());
+    entity.setMarginalitaMont(bean.getMarginalitaMont());
 
     entity.setPersonaleSmon(bean.getPersonaleSmon());
     entity.setCostoOrarioSmon(bean.getCostoOrarioSmon());
@@ -90,5 +95,9 @@ public class PreventivoServiziMerger
     entity.setTotCostiExtraKmTraspTirSmon(bean.getTotCostiExtraKmTraspTirSmon());
     entity.setTotaleCostoSmontaggio(bean.getTotaleCostoSmontaggio());
     entity.setPreventivoSmontaggio(bean.getPreventivoSmontaggio());
+    entity.setTotalePrezzoListinoSmon(bean.getTotalePrezzoListinoSmon());
+    entity.setTotalePrezzoNettoSmon(bean.getTotalePrezzoNettoSmon());
+    entity.setMargineSmon(bean.getMargineSmon());
+    entity.setMarginalitaSmon(bean.getMarginalitaSmon());
   }
 }

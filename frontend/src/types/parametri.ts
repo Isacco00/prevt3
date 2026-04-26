@@ -126,6 +126,7 @@ export interface PreventivoServiziBean {
   extraKmTraspFurgMont?: number;
   extraKmTraspTirMont?: number;
   ricaricoMontaggio?: number;
+  scontoMontaggio?: number;
 
   totCostOreMont?: number;
   totCostKmMont?: number;
@@ -142,6 +143,10 @@ export interface PreventivoServiziBean {
   totCostiConsegnaCantiere?: number;
   totaleCostoMontaggio?: number;
   preventivoMontaggio?: number;
+  totalePrezzoListinoMont?: number;
+  totalePrezzoNettoMont?: number;
+  margineMont?: number;
+  marginalitaMont?: number;
 
   personaleSmon?: number;
   costoOrarioSmon?: number;
@@ -170,6 +175,10 @@ export interface PreventivoServiziBean {
   totCostiExtraKmTraspTirSmon?: number;
   totaleCostoSmontaggio?: number;
   preventivoSmontaggio?: number;
+  totalePrezzoListinoSmon?: number;
+  totalePrezzoNettoSmon?: number;
+  margineSmon?: number;
+  marginalitaSmon?: number;
 }
 
 export interface CostoVoloArBean {

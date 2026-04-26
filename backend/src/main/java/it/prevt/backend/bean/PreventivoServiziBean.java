@@ -32,6 +32,7 @@ public class PreventivoServiziBean {
   private BigDecimal extraKmTraspFurgMont;
   private BigDecimal extraKmTraspTirMont;
   private BigDecimal ricaricoMontaggio;
+  private BigDecimal scontoMontaggio;
 
   private BigDecimal totCostOreMont;
   private BigDecimal totCostKmMont;
@@ -48,6 +49,10 @@ public class PreventivoServiziBean {
   private BigDecimal totCostiConsegnaCantiere;
   private BigDecimal totaleCostoMontaggio;
   private BigDecimal preventivoMontaggio;
+  private BigDecimal totalePrezzoListinoMont;
+  private BigDecimal totalePrezzoNettoMont;
+  private BigDecimal margineMont;
+  private BigDecimal marginalitaMont;
 
   private Integer personaleSmon;
   private BigDecimal costoOrarioSmon;
@@ -76,4 +81,8 @@ public class PreventivoServiziBean {
   private BigDecimal totCostiExtraKmTraspTirSmon;
   private BigDecimal totaleCostoSmontaggio;
   private BigDecimal preventivoSmontaggio;
+  private BigDecimal totalePrezzoListinoSmon;
+  private BigDecimal totalePrezzoNettoSmon;
+  private BigDecimal margineSmon;
+  private BigDecimal marginalitaSmon;
 }

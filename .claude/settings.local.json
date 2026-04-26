@@ -17,7 +17,9 @@
       "Bash(git add *)",
       "Bash(mvn compile *)",
       "Bash(echo \"EXIT:$?\")",
-      "Bash(pdfinfo /mnt/c/Users/Isacco/Downloads/Smontaggio.pdf)"
+      "Bash(pdfinfo /mnt/c/Users/Isacco/Downloads/Smontaggio.pdf)",
+      "Bash(./mvnw -q -o compile)",
+      "Bash(sh mvnw *)"
     ]
   }
 }
