@@ -53,7 +53,7 @@ export function TotalePreventivoSection({
   const {
     data: serviceCosts = {},
   } = useQuery({
-    queryKey: ['listino-servizi-prezzo-unitario'],
+    queryKey: ['service-costs-map'],
     queryFn: async () => {
       const res = await ParametriAPI.getListinoServiziPrezzoUnitario({
         attivo: true,
