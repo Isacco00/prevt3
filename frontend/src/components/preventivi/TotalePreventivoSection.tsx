@@ -49,22 +49,20 @@ export function TotalePreventivoSection({
     enabled: !!formData?.id,
   });
 
-// Query for service costs (certificazione + istruzioni/assistenza)
+// Query for service costs (certificazione + istruzioni/assistenza) from listino servizi
   const {
     data: serviceCosts = {},
   } = useQuery({
-    queryKey: ['service-costs'],
+    queryKey: ['listino-servizi-prezzo-unitario'],
     queryFn: async () => {
-      const res = await ParametriAPI.getParametriACostiUnitari({
+      const res = await ParametriAPI.getListinoServiziPrezzoUnitario({
         attivo: true,
-        parametri: [
-          'Costo_certificazione',
-          'Costo_istruzionieassistenza',
-        ],
+        sortFields: [{field: 'LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO', desc: false}],
       });
       const costs: Record<string, number> = {};
       res.forEach((p) => {
-        costs[p.parametro] = Number(p.valore) || 0;
+        const prezzo = (Number(p.costo) || 0) * (1 + (Number(p.ricaricoPercentuale) || 0) / 100);
+        costs[p.parametro] = prezzo;
       });
       return costs;
     },
@@ -658,8 +656,8 @@ export function TotalePreventivoSection({
       calculatePreventivoWithMargin(espositoriCosts.premontaggioEspositori ?? 0, espositoriMargins.marginalitaPremontaggioEspositori ?? 0);
 
   const costoMontaggio = formData.servizioMontaggioSmontaggio ? (preventivoServizi?.preventivoMontaggio || 0) + (preventivoServizi?.preventivoSmontaggio || 0) : 0;
-  const costoCertificazioni = formData.servizioCertificazioni ? serviceCosts?.['Costo_certificazione'] || 0 : 0;
-  const costoIstruzioni = formData.servizioIstruzioniAssistenza ? serviceCosts?.['Costo_istruzionieassistenza'] || 0 : 0;
+  const costoCertificazioni = formData.servizioCertificazioni ? serviceCosts?.['Certificazione'] || 0 : 0;
+  const costoIstruzioni = formData.servizioIstruzioniAssistenza ? serviceCosts?.['Istruzioni e Assistenza'] || 0 : 0;
 
   const servicesCost = formData.servizioMontaggioSmontaggio ? (preventivoServizi?.totaleCostoMontaggio || 0) + (preventivoServizi?.totaleCostoSmontaggio || 0) : 0;
   const servicesTotal = costoMontaggio + costoCertificazioni + costoIstruzioni;

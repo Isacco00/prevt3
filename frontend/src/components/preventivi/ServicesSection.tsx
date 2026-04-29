@@ -2,12 +2,13 @@ import React from 'react';
 import {Settings} from 'lucide-react';
 import {Label} from '../ui/label.tsx';
 import {Checkbox} from '../ui/checkbox.tsx';
-import {Card, CardContent, CardHeader, CardTitle} from '../ui/card.tsx';
+import {Card, CardContent} from '../ui/card.tsx';
 import {Button} from '../ui/button.tsx';
 import {useQuery} from '@tanstack/react-query';
 import {useNavigate} from 'react-router-dom';
 import {PreventivoBean} from "@/types/preventivo.ts";
 import {ParametriAPI} from "@/api/parametri.ts";
+import {ListinoServiziPrezzoUnitarioBean} from "@/types/parametri.ts";
 
 interface ServicesSectionProps {
   formData: PreventivoBean;
@@ -18,26 +19,22 @@ interface ServicesSectionProps {
 export function ServicesSection({formData, setFormData, preventivoId}: ServicesSectionProps) {
   const navigate = useNavigate();
 
-// Query for service costs (certificazione + istruzioni/assistenza)
   const {
-    data: serviceCosts = {},
+    data: listinoServizi = [],
   } = useQuery({
-    queryKey: ['service-costs'],
-    queryFn: async () => {
-      const res = await ParametriAPI.getParametriACostiUnitari({
-        attivo: true,
-        parametri: [
-          'Costo_certificazione',
-          'Costo_istruzionieassistenza',
-        ],
-      });
-      const costs: Record<string, number> = {};
-      res.forEach((p) => {
-        costs[p.parametro] = Number(p.valore) || 0;
-      });
-      return costs;
-    },
+    queryKey: ['listino-servizi-prezzo-unitario'],
+    queryFn: () => ParametriAPI.getListinoServiziPrezzoUnitario({
+      attivo: true,
+      sortFields: [{field: 'LISTINO_SERVIZI_PREZZO_UNITARIO_PARAMETRO', desc: false}],
+    }),
   });
+
+  const getServicePrice = (parametro: string): number => {
+    const item = (listinoServizi as ListinoServiziPrezzoUnitarioBean[])
+        .find(p => p.parametro === parametro);
+    if (!item) return 0;
+    return (item.costo || 0) * (1 + (item.ricaricoPercentuale || 0) / 100);
+  };
 
   const handleCheckboxChange = (field: keyof PreventivoBean, checked: boolean) => {
     setFormData({
@@ -53,11 +50,13 @@ export function ServicesSection({formData, setFormData, preventivoId}: ServicesS
   };
 
   const getCostDisplay = (serviceId: string) => {
-    if (serviceId === 'servizioCertificazioni' && serviceCosts?.['Costo_certificazione']) {
-      return `€${serviceCosts['Costo_certificazione'].toFixed(2)}`;
+    if (serviceId === 'servizioCertificazioni') {
+      const prezzo = getServicePrice('Certificazione');
+      return prezzo > 0 ? `€${prezzo.toFixed(2)}` : null;
     }
-    if (serviceId === 'servizioIstruzioniAssistenza' && serviceCosts?.['Costo_istruzionieassistenza']) {
-      return `€${serviceCosts['Costo_istruzionieassistenza'].toFixed(2)}`;
+    if (serviceId === 'servizioIstruzioniAssistenza') {
+      const prezzo = getServicePrice('Istruzioni e Assistenza');
+      return prezzo > 0 ? `€${prezzo.toFixed(2)}` : null;
     }
     return null;
   };
@@ -90,11 +89,8 @@ export function ServicesSection({formData, setFormData, preventivoId}: ServicesS
           <h4 className="text-md font-semibold">Dati di Ingresso per Servizi</h4>
         </div>
 
-        <Card className="border-l-4 border-l-complement">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm text-complement">Servizi Aggiuntivi</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Card>
+          <CardContent className="pt-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {services.map((service) => (
                   <div key={service.id} className="flex items-start justify-between w-full">
