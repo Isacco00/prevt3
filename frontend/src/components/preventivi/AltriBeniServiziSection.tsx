@@ -161,14 +161,14 @@ export function AltriBeniServiziSection({preventivoId, formData, setFormData}: A
 
         <Table className="table-fixed w-full">
           <colgroup>
-            <col className="w-12"/>
+            <col style={{width: '3rem'}}/>
             <col/>
-            <col className="w-24"/>
-            <col className="w-20"/>
-            <col className="w-24"/>
-            <col className="w-20"/>
-            <col className="w-28"/>
-            <col className="w-12"/>
+            <col style={{width: '7rem'}}/>
+            <col style={{width: '6rem'}}/>
+            <col style={{width: '7rem'}}/>
+            <col style={{width: '5rem'}}/>
+            <col style={{width: '7rem'}}/>
+            <col style={{width: '3rem'}}/>
           </colgroup>
           <TableHeader>
             <TableRow>
@@ -222,7 +222,7 @@ export function AltriBeniServiziSection({preventivoId, formData, setFormData}: A
                           value={item.marginalita}
                           onChange={e => updateLocalItem(index, 'marginalita', toNumber(e.target.value))}
                           onBlur={() => persistItem(index)}
-                          className="w-12 px-1"
+                          className="w-14 px-1 text-right"
                       />
                       <span className="text-xs">%</span>
                     </div>
