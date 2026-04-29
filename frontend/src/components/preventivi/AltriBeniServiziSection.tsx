@@ -159,6 +159,7 @@ export function AltriBeniServiziSection({preventivoId, formData, setFormData}: A
           )}
         </div>
 
+        <div className="w-full [&>div]:overflow-hidden">
         <Table className="table-fixed w-full">
           <colgroup>
             <col style={{width: '3rem'}}/>
@@ -265,6 +266,7 @@ export function AltriBeniServiziSection({preventivoId, formData, setFormData}: A
             </TableRow>
           </TableBody>
         </Table>
+        </div>
 
         <div className="flex items-center gap-2 px-2">
           <span className="text-sm font-medium">Sconto Cliente:</span>
