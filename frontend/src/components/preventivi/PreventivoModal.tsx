@@ -289,7 +289,7 @@ export function PreventivoModal({
                   <CollapsibleContent>
                     <div
                         className="border-t border-[hsl(var(--section-services-border))] bg-card p-6 mx-0 my-0 px-[2px] py-[12px]">
-                      <AltriBeniServiziSection preventivoId={formData?.id || ''}/>
+                      <AltriBeniServiziSection preventivoId={formData?.id || ''} formData={formData} setFormData={setFormData}/>
                     </div>
                   </CollapsibleContent>
                 </div>
