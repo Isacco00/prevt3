@@ -26,6 +26,12 @@ public class ListinoStrutturaDesk {
     @Column(name = "layout_desk", nullable = false)
     private BigDecimal layoutDesk;
 
+    @Column(name = "superficie", nullable = false)
+    private BigDecimal superficie = BigDecimal.ZERO;
+
+    @Column(name = "numero_pezzi", nullable = false)
+    private Integer numeroPezzi = 0;
+
     @Column(name = "costo_unitario", nullable = false)
     private BigDecimal costoUnitario = BigDecimal.ZERO;
 

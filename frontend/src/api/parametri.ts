@@ -28,6 +28,10 @@ export const ParametriAPI = {
     return data.data;
   },
 
+  deleteParametro: async (parametro: ParametriBean): Promise<void> => {
+    await api.post(entryPoint + "/deleteParametro", parametro);
+  },
+
   getParametriACostiUnitari: async (filter: ListinoAccessoriRequestBean = {}): Promise<ParametriACostiUnitariBean[]> => {
     const res = await api.post(entryPoint + "/getParametriACostiUnitari", filter);
     return res.data;
@@ -166,6 +170,11 @@ export const ParametriAPI = {
 
   getCostiExtraTrasfMont: async (filter: ListinoAccessoriRequestBean = {}): Promise<CostoExtraTrasfMontBean[]> => {
     const res = await api.post(entryPoint + "/getCostiExtraTrasfMont", filter);
+    return res.data;
+  },
+
+  saveCostoExtraTrasfMont: async (bean: CostoExtraTrasfMontBean): Promise<CostoExtraTrasfMontBean> => {
+    const res = await api.post(entryPoint + "/saveCostoExtraTrasfMont", bean);
     return res.data;
   },
 };

@@ -23,6 +23,8 @@ public interface ParametriManager {
 
   ParametriBean saveParametro(ParametriBean bean);
 
+  void deleteParametro(ParametriBean bean);
+
   List<ParametriACostiUnitariBean> getParametriACostiUnitari(
       ListinoAccessoriRequestBean searchRequest);
 
@@ -79,6 +81,8 @@ public interface ParametriManager {
   List<CostoVoloArBean> getCostiVoloAr(ListinoAccessoriRequestBean searchRequest);
 
   List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(ListinoAccessoriRequestBean searchRequest);
+
+  CostoExtraTrasfMontBean saveCostoExtraTrasfMont(CostoExtraTrasfMontBean bean);
 
   AltriBeniServiziBean saveAltriBeniServizi(AltriBeniServiziBean bean);
 

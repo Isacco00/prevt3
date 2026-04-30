@@ -70,6 +70,8 @@ export function ListinoStrutturaDesk() {
 
   const [editForm, setEditForm] = useState({
     layout: 0,
+    superficie: 0,
+    numeroPezzi: 0,
     descrizione: "",
     costo: 0,
     ricarico: 0,
@@ -79,6 +81,8 @@ export function ListinoStrutturaDesk() {
 
   const [newForm, setNewForm] = useState({
     layout: 0,
+    superficie: 0,
+    numeroPezzi: 0,
     descrizione: "",
     costo: 0,
     ricarico: 0,
@@ -122,6 +126,8 @@ export function ListinoStrutturaDesk() {
 
       setNewForm({
         layout: 0,
+        superficie: 0,
+        numeroPezzi: 0,
         descrizione: "",
         costo: 0,
         ricarico: 0,
@@ -156,6 +162,8 @@ export function ListinoStrutturaDesk() {
 
     setEditForm({
       layout: c.layoutDesk,
+      superficie: c.superficie ?? 0,
+      numeroPezzi: c.numeroPezzi ?? 0,
       descrizione: c.descrizione ?? "",
       costo: c.costoUnitario,
       ricarico: c.ricaricoPercentuale ?? 0,
@@ -181,6 +189,8 @@ export function ListinoStrutturaDesk() {
     saveMutation.mutate({
       ...(existing ?? {}),
       layoutDesk: form.layout,
+      superficie: form.superficie,
+      numeroPezzi: Math.trunc(form.numeroPezzi),
       descrizione: form.descrizione,
       costoUnitario: costo,
       ricaricoPercentuale: ricarico,
@@ -214,7 +224,7 @@ export function ListinoStrutturaDesk() {
           {/* ADD FORM */}
 
           {showAdd && (
-              <div className="mb-4 flex items-end gap-2">
+              <div className="mb-4 flex flex-wrap items-end gap-2">
 
                 <div className="space-y-2">
                   <Label>Layout</Label>
@@ -226,12 +236,48 @@ export function ListinoStrutturaDesk() {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>Superficie (mq)</Label>
+                  <Input
+                      type="number"
+                      step="0.01"
+                      value={newForm.superficie}
+                      onChange={(e) => updateNew("superficie", e.target.value)}
+                      className="w-28"/>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Nr. pezzi</Label>
+                  <Input
+                      type="number"
+                      step="1"
+                      value={newForm.numeroPezzi}
+                      onChange={(e) => updateNew("numeroPezzi", e.target.value)}
+                      className="w-24"/>
+                </div>
+
+                <div className="space-y-2">
                   <Label>Costo</Label>
                   <Input
                       type="number"
                       value={newForm.costo}
                       onChange={(e) => updateNew("costo", e.target.value)}
                       className="w-24"/>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Ricarico %</Label>
+                  <Input
+                      type="number"
+                      value={newForm.ricarico}
+                      onChange={(e) => updateNew("ricarico", e.target.value)}
+                      className="w-24"/>
+                </div>
+
+                <div className="space-y-2 grow min-w-[200px]">
+                  <Label>Descrizione</Label>
+                  <Input
+                      value={newForm.descrizione}
+                      onChange={(e) => updateNew("descrizione", e.target.value)}/>
                 </div>
 
                 <Button size="sm" onClick={() => handleSave()}>
@@ -252,12 +298,14 @@ export function ListinoStrutturaDesk() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[250px]">Layout</TableHead>
+                <TableHead className="w-[120px]">Layout</TableHead>
+                <TableHead className="w-[120px]">Superficie</TableHead>
+                <TableHead className="w-[100px]">Nr. pezzi</TableHead>
                 <TableHead className="w-[100px]">Costo</TableHead>
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
-                <TableHead className="w-[100px]">Descrizione</TableHead>
-                <TableHead className="w-[100px]">Azioni</TableHead>
+                <TableHead className="w-[200px]">Descrizione</TableHead>
+                <TableHead className="w-[100px] text-right">Azioni</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -287,6 +335,34 @@ export function ListinoStrutturaDesk() {
                                     updateEdit("layout", e.target.value)
                                 }/>
                         ) : (c.layoutDesk)}
+                      </TableCell>
+
+                      {/* SUPERFICIE */}
+                      <TableCell>
+                        {editing ? (
+                            <Input
+                                type="number"
+                                step="0.01"
+                                value={editForm.superficie}
+                                onChange={(e) =>
+                                    updateEdit("superficie", e.target.value)
+                                }
+                                className="w-24"/>
+                        ) : (c.superficie ?? 0)}
+                      </TableCell>
+
+                      {/* NUMERO PEZZI */}
+                      <TableCell>
+                        {editing ? (
+                            <Input
+                                type="number"
+                                step="1"
+                                value={editForm.numeroPezzi}
+                                onChange={(e) =>
+                                    updateEdit("numeroPezzi", e.target.value)
+                                }
+                                className="w-20"/>
+                        ) : (c.numeroPezzi ?? 0)}
                       </TableCell>
 
                       {/* COSTO */}
@@ -338,7 +414,7 @@ export function ListinoStrutturaDesk() {
                       {/* ACTIONS */}
                       <TableCell>
                         {editing ? (
-                            <div className="flex gap-2">
+                            <div className="flex justify-end gap-2">
                               <Button size="sm" onClick={() => handleSave(c)}>
                                 <Save className="h-4 w-4"/>
                               </Button>
@@ -351,7 +427,7 @@ export function ListinoStrutturaDesk() {
                               </Button>
                             </div>
                         ) : (
-                            <div className="flex gap-2">
+                            <div className="flex justify-end gap-2">
                               <Button
                                   size="sm"
                                   variant="outline"

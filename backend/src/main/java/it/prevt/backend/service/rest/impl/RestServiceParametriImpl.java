@@ -42,6 +42,11 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   }
 
   @Override
+  public void deleteParametro(ParametriBean bean) {
+    manager.deleteParametro(bean);
+  }
+
+  @Override
   public List<ParametriACostiUnitariBean> getParametriACostiUnitari(
       ListinoAccessoriRequestBean searchRequest) {
     return manager.getParametriACostiUnitari(searchRequest);
@@ -172,6 +177,11 @@ public class RestServiceParametriImpl implements RestServiceParametri {
   public List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(
       ListinoAccessoriRequestBean searchRequest) {
     return manager.getCostiExtraTrasfMont(searchRequest);
+  }
+
+  @Override
+  public CostoExtraTrasfMontBean saveCostoExtraTrasfMont(CostoExtraTrasfMontBean dto) {
+    return manager.saveCostoExtraTrasfMont(dto);
   }
 
   @Override

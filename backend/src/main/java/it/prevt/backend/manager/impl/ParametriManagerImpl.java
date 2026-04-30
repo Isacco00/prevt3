@@ -95,6 +95,7 @@ public class ParametriManagerImpl implements ParametriManager {
   private final PreventivoServiziMerger preventivoServiziMerger;
   private final CostoVoloArMapper costoVoloArMapper;
   private final CostoExtraTrasfMontMapper costoExtraTrasfMontMapper;
+  private final it.prevt.backend.merger.CostoExtraTrasfMontMerger costoExtraTrasfMontMerger;
 
   @Override
   public List<ParametriBean> getParametriList(ParametriRequestBean request) {
@@ -119,6 +120,18 @@ public class ParametriManagerImpl implements ParametriManager {
     }
     this.repository.save(entity);
     return mapper.mapEntityToBean(entity);
+  }
+
+  @Override
+  public void deleteParametro(ParametriBean bean) {
+    if (bean != null && bean.getId() != null) {
+      Parametri entity = repository.find(Parametri.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      entity.setAttivo(false);
+      this.repository.save(entity);
+    }
   }
 
   @Override
@@ -501,6 +514,22 @@ public class ParametriManagerImpl implements ParametriManager {
       throw new UsernameNotFoundException("error.costiextratrasfmont.notfound");
     }
     return costoExtraTrasfMontMapper.mapEntitiesToBeans(list);
+  }
+
+  @Override
+  public CostoExtraTrasfMontBean saveCostoExtraTrasfMont(CostoExtraTrasfMontBean bean) {
+    CostoExtraTrasfMontEntity entity;
+    if (bean.getId() == null) {
+      entity = costoExtraTrasfMontMerger.mapNew(bean, CostoExtraTrasfMontEntity.class);
+    } else {
+      entity = repository.find(CostoExtraTrasfMontEntity.class, bean.getId());
+      if (entity == null) {
+        throw new EntityNotFoundException();
+      }
+      costoExtraTrasfMontMerger.merge(bean, entity);
+    }
+    repository.save(entity);
+    return costoExtraTrasfMontMapper.mapEntityToBean(entity);
   }
 
 }

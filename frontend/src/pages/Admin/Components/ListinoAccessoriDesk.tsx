@@ -282,7 +282,7 @@ export function ListinoAccessoriDesk() {
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
                 <TableHead className="w-[100px]">Descrizione</TableHead>
-                <TableHead className="w-[100px]">Azioni</TableHead>
+                <TableHead className="w-[100px] text-right">Azioni</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -353,7 +353,7 @@ export function ListinoAccessoriDesk() {
                       <TableCell>
                         {editingAccessorio?.id === a.id
                             ? (
-                                <div className="flex gap-2">
+                                <div className="flex justify-end gap-2">
                                   <Button size="sm" onClick={handleSave}>
                                     <Save className="h-4 w-4"/>
                                   </Button>
@@ -366,7 +366,7 @@ export function ListinoAccessoriDesk() {
                                 </div>
                             )
                             : (
-                                <div className="flex gap-2">
+                                <div className="flex justify-end gap-2">
                                   <Button
                                       size="sm"
                                       variant="outline"

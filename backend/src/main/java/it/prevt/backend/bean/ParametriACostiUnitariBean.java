@@ -12,6 +12,7 @@ import java.util.UUID;
 public class ParametriACostiUnitariBean {
   private UUID id;
   private String parametro;
+  private String nomeVariabile;
   private String unitaMisura;
   private BigDecimal valore;
   private BigDecimal ricaricoPercentuale;

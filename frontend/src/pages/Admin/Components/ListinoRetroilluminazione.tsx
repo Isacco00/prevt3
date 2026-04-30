@@ -260,7 +260,7 @@ export function ListinoRetroilluminazione() {
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
                 <TableHead className="w-[100px]">Descrizione</TableHead>
-                <TableHead className="w-[100px]">Azioni</TableHead>
+                <TableHead className="w-[100px] text-right">Azioni</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -317,7 +317,7 @@ export function ListinoRetroilluminazione() {
                     </TableCell>
                     <TableCell>
                       {editingCosto?.id === row.id ? (
-                          <div className="flex gap-2">
+                          <div className="flex justify-end gap-2">
                             <Button size="sm" onClick={handleSave}>
                               <Save className="h-4 w-4"/>
                             </Button>
@@ -329,12 +329,14 @@ export function ListinoRetroilluminazione() {
                             </Button>
                           </div>
                       ) : (
-                          <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEdit(row)}>
-                            <Edit className="h-4 w-4"/>
-                          </Button>
+                          <div className="flex justify-end gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleEdit(row)}>
+                              <Edit className="h-4 w-4"/>
+                            </Button>
+                          </div>
                       )}
                     </TableCell>
                   </TableRow>

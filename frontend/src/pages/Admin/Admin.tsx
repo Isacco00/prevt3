@@ -12,6 +12,8 @@ import {ListinoStrutturaEspositori} from "@/pages/Admin/Components/ListinoStrutt
 import {ListinoStrutturaStand} from "@/pages/Admin/Components/ListinoStrutturaStand.tsx";
 import {ListinoServiziPrezzoUnitario} from "@/pages/Admin/Components/ListinoServiziPrezzoUnitario.tsx";
 import {CoefficientiNoleggio} from "@/pages/Admin/Components/CoefficienteNoleggio.tsx";
+import {CostiExtraTrasfMont} from "@/pages/Admin/Components/CostiExtraTrasfMont.tsx";
+import {OpzioniValori} from "@/pages/Admin/Components/OpzioniValori.tsx";
 import {useSearchParams, useLocation} from "react-router-dom";
 
 export default function Admin() {
@@ -46,8 +48,25 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="parametri" className="space-y-6">
+            <div id="opzioni-altezza">
+              <OpzioniValori
+                  tipo="opzione_altezza"
+                  title="Opzioni per altezza"
+                  description="Altezze utilizzate nella configurazione Stand"
+                  valueLabel="Altezza (m)"
+                  step="0.1"/>
+            </div>
+            <div id="opzioni-larghezza-prof">
+              <OpzioniValori
+                  tipo="opzione_larghezza_prof"
+                  title="Opzioni per larghezza e profondità"
+                  description="Valori utilizzati nella configurazione Stand (larghezza e profondità)"
+                  valueLabel="Valore (m)"
+                  step="0.25"/>
+            </div>
             <div id="parametri-costi"><ParametriACostoUnitario/></div>
             <div id="servizi"><ListinoServiziPrezzoUnitario/></div>
+            <div id="costi-extra-trasf"><CostiExtraTrasfMont/></div>
             <div id="profili"><NumeroProfiliDistribuzione/></div>
             <div id="retroilluminazione"><ListinoRetroilluminazione/></div>
             <div id="accessori-stand"><ListinoAccessoriStand/></div>

@@ -11,5 +11,6 @@ public class CostoExtraTrasfMontBean {
   private UUID id;
   private String livello;
   private BigDecimal costoExtraMont;
+  private BigDecimal costoExtraSmont;
   private Boolean attivo;
 }

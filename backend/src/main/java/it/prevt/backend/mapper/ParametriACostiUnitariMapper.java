@@ -18,6 +18,7 @@ public class ParametriACostiUnitariMapper
       ParametriACostiUnitari entity) {
     bean.setId(entity.getId());
     bean.setParametro(entity.getParametro());
+    bean.setNomeVariabile(entity.getNomeVariabile());
     bean.setUnitaMisura(entity.getUnitaMisura());
     bean.setValore(entity.getValore());
     bean.setRicaricoPercentuale(entity.getRicaricoPercentuale());

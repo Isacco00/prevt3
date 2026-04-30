@@ -153,11 +153,12 @@ export function ParametriACostoUnitario() {
                     <TableHeader>
                         <TableRow>
                             <TableHead className="w-[150px]">Parametro</TableHead>
+                            <TableHead className="w-[160px]">Nome variabile</TableHead>
                             <TableHead className="w-[100px]">U.M.</TableHead>
                             <TableHead className="w-[100px]">Costo</TableHead>
                             <TableHead className="w-[100px]">Ricarico %</TableHead>
                             <TableHead className="w-[200px]">Prezzo</TableHead>
-                            <TableHead className="w-[100px]">Azioni</TableHead>
+                            <TableHead className="w-[100px] text-right">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -170,6 +171,9 @@ export function ParametriACostoUnitario() {
                                 <TableRow key={p.id}>
                                     <TableCell className="font-medium">
                                         {p.parametro}
+                                    </TableCell>
+                                    <TableCell className="font-mono text-xs text-muted-foreground">
+                                        {p.nomeVariabile ?? "-"}
                                     </TableCell>
                                     <TableCell>
                                         {p.unitaMisura}
@@ -213,7 +217,7 @@ export function ParametriACostoUnitario() {
                                     {/* AZIONI */}
                                     <TableCell>
                                         {isEditing ? (
-                                            <div className="flex gap-2">
+                                            <div className="flex justify-end gap-2">
                                                 <Button
                                                     size="sm"
                                                     onClick={handleSave}
@@ -228,12 +232,14 @@ export function ParametriACostoUnitario() {
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <Button
-                                                size="sm"
-                                                variant="ghost"
-                                                onClick={() => handleEdit(p)}>
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
+                                            <div className="flex justify-end gap-2">
+                                                <Button
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    onClick={() => handleEdit(p)}>
+                                                    <Edit className="h-4 w-4" />
+                                                </Button>
+                                            </div>
                                         )}
                                     </TableCell>
                                 </TableRow>

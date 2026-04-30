@@ -164,7 +164,7 @@ export function ListinoServiziPrezzoUnitario() {
                 <TableHead className="w-[100px]">Ricarico %</TableHead>
                 <TableHead className="w-[100px]">Prezzo</TableHead>
                 <TableHead className="w-[100px]">Descrizione</TableHead>
-                <TableHead className="w-[100px]">Azioni</TableHead>
+                <TableHead className="w-[100px] text-right">Azioni</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -232,7 +232,7 @@ export function ListinoServiziPrezzoUnitario() {
                       {/* AZIONI */}
                       <TableCell>
                         {isEditing ? (
-                            <div className="flex gap-2">
+                            <div className="flex justify-end gap-2">
                               <Button
                                   size="sm"
                                   onClick={handleSave}
@@ -247,12 +247,14 @@ export function ListinoServiziPrezzoUnitario() {
                               </Button>
                             </div>
                         ) : (
-                            <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => handleEdit(p)}>
-                              <Edit className="h-4 w-4"/>
-                            </Button>
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handleEdit(p)}>
+                                <Edit className="h-4 w-4"/>
+                              </Button>
+                            </div>
                         )}
                       </TableCell>
                     </TableRow>

@@ -18,6 +18,8 @@ public class ListinoStrutturaDeskMapper
       ListinoStrutturaDesk entity) {
     bean.setId(entity.getId());
     bean.setLayoutDesk(entity.getLayoutDesk());
+    bean.setSuperficie(entity.getSuperficie());
+    bean.setNumeroPezzi(entity.getNumeroPezzi());
     bean.setCostoUnitario(entity.getCostoUnitario());
     bean.setRicaricoPercentuale(entity.getRicaricoPercentuale());
     bean.setPrezzo(entity.getPrezzo());

@@ -30,6 +30,9 @@ public class CostoExtraTrasfMontEntity {
     @Column(name = "costo_extra_mont", nullable = false)
     private BigDecimal costoExtraMont = BigDecimal.ZERO;
 
+    @Column(name = "costo_extra_smont", nullable = false)
+    private BigDecimal costoExtraSmont = BigDecimal.ZERO;
+
     @Column(nullable = false)
     private Boolean attivo = true;
 

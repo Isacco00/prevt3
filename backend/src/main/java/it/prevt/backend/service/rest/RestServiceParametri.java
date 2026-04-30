@@ -23,6 +23,9 @@ public interface RestServiceParametri {
   @PostMapping("/saveParametro")
   ParametriBean saveParametro(@RequestBody ParametriBean dto);
 
+  @PostMapping("/deleteParametro")
+  void deleteParametro(@RequestBody ParametriBean dto);
+
   @PostMapping("/getParametriACostiUnitari")
   List<ParametriACostiUnitariBean> getParametriACostiUnitari(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
@@ -116,6 +119,9 @@ public interface RestServiceParametri {
   @PostMapping("/getCostiExtraTrasfMont")
   List<CostoExtraTrasfMontBean> getCostiExtraTrasfMont(
       @RequestBody ListinoAccessoriRequestBean searchRequest);
+
+  @PostMapping("/saveCostoExtraTrasfMont")
+  CostoExtraTrasfMontBean saveCostoExtraTrasfMont(@RequestBody CostoExtraTrasfMontBean dto);
 
   @PostMapping("/saveAltriBeniServizi")
   AltriBeniServiziBean saveAltriBeniServizi(@RequestBody AltriBeniServiziBean dto);

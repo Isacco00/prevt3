@@ -131,7 +131,7 @@ export function NumeroProfiliDistribuzione() {
                         <TableRow>
                             <TableHead className="w-[150px]">Distribuzione</TableHead>
                             <TableHead className="w-[500px]">Numero di Profili m/l</TableHead>
-                            <TableHead className="w-[100px]" />
+                            <TableHead className="w-[100px] text-right">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -160,7 +160,7 @@ export function NumeroProfiliDistribuzione() {
 
                                 <TableCell>
                                     {editingParametro?.id === parametro.id ? (
-                                        <div className="flex gap-2">
+                                        <div className="flex justify-end gap-2">
                                             <Button
                                                 size="sm"
                                                 onClick={handleSave}
@@ -177,12 +177,14 @@ export function NumeroProfiliDistribuzione() {
                                             </Button>
                                         </div>
                                     ) : (
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            onClick={() => handleEdit(parametro)}>
-                                            <Edit className="h-4 w-4" />
-                                        </Button>
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => handleEdit(parametro)}>
+                                                <Edit className="h-4 w-4" />
+                                            </Button>
+                                        </div>
                                     )}
                                 </TableCell>
                             </TableRow>

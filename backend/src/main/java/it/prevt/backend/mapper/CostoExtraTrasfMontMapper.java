@@ -15,6 +15,7 @@ public class CostoExtraTrasfMontMapper
     bean.setId(entity.getId());
     bean.setLivello(entity.getLivello());
     bean.setCostoExtraMont(entity.getCostoExtraMont());
+    bean.setCostoExtraSmont(entity.getCostoExtraSmont());
     bean.setAttivo(entity.getAttivo());
     return bean;
   }

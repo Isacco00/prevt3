@@ -172,7 +172,7 @@ export function CoefficientiNoleggio() {
                         <TableRow>
                             <TableHead>Etichetta</TableHead>
                             <TableHead>Valore</TableHead>
-                            <TableHead className="w-[120px]" />
+                            <TableHead className="w-[120px] text-right">Azioni</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -199,7 +199,7 @@ export function CoefficientiNoleggio() {
                                     />
                                 </TableCell>
                                 <TableCell>
-                                    <div className="flex gap-2">
+                                    <div className="flex justify-end gap-2">
                                         <Button size="sm" onClick={handleSave}>
                                             <Save className="h-4 w-4" />
                                         </Button>
@@ -245,7 +245,7 @@ export function CoefficientiNoleggio() {
 
                                     <TableCell>
                                         {isEditing ? (
-                                            <div className="flex gap-2">
+                                            <div className="flex justify-end gap-2">
                                                 <Button size="sm" onClick={handleSave}>
                                                     <Save className="h-4 w-4" />
                                                 </Button>
@@ -254,7 +254,7 @@ export function CoefficientiNoleggio() {
                                                 </Button>
                                             </div>
                                         ) : (
-                                            <div className="flex gap-2">
+                                            <div className="flex justify-end gap-2">
                                                 <Button
                                                     size="sm"
                                                     variant="outline"

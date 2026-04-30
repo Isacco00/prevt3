@@ -26,6 +26,9 @@ public class ParametriACostiUnitari {
     @Column(nullable = false)
     private String parametro;
 
+    @Column(name = "nome_variabile")
+    private String nomeVariabile;
+
     @Column(name = "unita_misura", nullable = false)
     private String unitaMisura;
 

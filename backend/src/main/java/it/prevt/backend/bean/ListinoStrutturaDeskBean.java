@@ -12,6 +12,8 @@ import java.util.UUID;
 public class ListinoStrutturaDeskBean {
   private UUID id;
   private BigDecimal layoutDesk;
+  private BigDecimal superficie;
+  private Integer numeroPezzi;
   private BigDecimal costoUnitario;
   private BigDecimal ricaricoPercentuale;
   private BigDecimal prezzo;

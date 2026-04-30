@@ -11,6 +11,12 @@ public class ListinoStrutturaDeskMerger extends
   @Override
   protected void doMerge(ListinoStrutturaDeskBean bean, ListinoStrutturaDesk entity) {
     entity.setLayoutDesk(bean.getLayoutDesk());
+    if (bean.getSuperficie() != null) {
+      entity.setSuperficie(bean.getSuperficie());
+    }
+    if (bean.getNumeroPezzi() != null) {
+      entity.setNumeroPezzi(bean.getNumeroPezzi());
+    }
     entity.setCostoUnitario(bean.getCostoUnitario());
     entity.setRicaricoPercentuale(bean.getRicaricoPercentuale());
     entity.setPrezzo(bean.getPrezzo());
