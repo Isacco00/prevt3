@@ -31,6 +31,17 @@ public class PreventivoServiziMapper
     bean.setGiorniMontaggio(entity.getGiorniMontaggio());
     bean.setOreLavoroCantxperMont(entity.getOreLavoroCantxperMont());
     bean.setKmArMont(entity.getKmArMont());
+    bean.setPuntoPartenza(entity.getPuntoPartenza());
+    bean.setPuntoArrivo(entity.getPuntoArrivo());
+    bean.setRientroDopomont(entity.getRientroDopomont());
+    bean.setGiorniViaggio(entity.getGiorniViaggio());
+    bean.setPernottamentiViaggio(entity.getPernottamentiViaggio());
+    bean.setTempoViaggioArMont(entity.getTempoViaggioArMont());
+    bean.setCostoOrarioViaggio(entity.getCostoOrarioViaggio());
+    bean.setNoleggioMezzo(entity.getNoleggioMezzo());
+    bean.setCostoPedaggi(entity.getCostoPedaggi());
+    bean.setCostoVoloPp(entity.getCostoVoloPp());
+    bean.setCostoTrenoPp(entity.getCostoTrenoPp());
     bean.setConsegCant(entity.getConsegCant());
     bean.setVoloMont(entity.getVoloMont());
     bean.setTrenoMont(entity.getTrenoMont());
@@ -51,6 +62,7 @@ public class PreventivoServiziMapper
     bean.setTotCostoTreno(entity.getTotCostoTreno());
     bean.setTotCostoTrasfPers(entity.getTotCostoTrasfPers());
     bean.setTotCostiAuto(entity.getTotCostiAuto());
+    bean.setTotCostNoleggio(entity.getTotCostNoleggio());
     bean.setTotCostiExtraTrasfMont(entity.getTotCostiExtraTrasfMont());
     bean.setTotCostiExtraKmTraspFurgMont(entity.getTotCostiExtraKmTraspFurgMont());
     bean.setTotCostiExtraKmTraspTirMont(entity.getTotCostiExtraKmTraspTirMont());

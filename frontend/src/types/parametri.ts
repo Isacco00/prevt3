@@ -17,6 +17,7 @@ export interface ParametriBean {
 export interface ParametriACostiUnitariBean {
   id: string;
   parametro: string
+  nomeVariabile?: string;
   unitaMisura: string;
   valore: number;
   ricaricoPercentuale: number;
@@ -81,6 +82,8 @@ export interface ListinoStrutturaDeskBean {
   prezzo?: number;
   descrizione: string;
   layoutDesk: number;
+  superficie: number;
+  numeroPezzi: number;
   attivo: boolean;
 }
 
@@ -117,6 +120,17 @@ export interface PreventivoServiziBean {
   giorniMontaggio?: number;
   oreLavoroCantxperMont?: number;
   kmArMont?: number;
+  puntoPartenza?: string;
+  puntoArrivo?: string;
+  rientroDopomont?: boolean;
+  giorniViaggio?: number;
+  pernottamentiViaggio?: number;
+  tempoViaggioArMont?: number;
+  costoOrarioViaggio?: number;
+  noleggioMezzo?: string;
+  costoPedaggi?: number;
+  costoVoloPp?: number;
+  costoTrenoPp?: number;
   consegCant?: boolean;
   voloMont?: string;
   trenoMont?: boolean;
@@ -137,6 +151,7 @@ export interface PreventivoServiziBean {
   totCostoTreno?: number;
   totCostoTrasfPers?: number;
   totCostiAuto?: number;
+  totCostNoleggio?: number;
   totCostiExtraTrasfMont?: number;
   totCostiExtraKmTraspFurgMont?: number;
   totCostiExtraKmTraspTirMont?: number;
@@ -192,6 +207,7 @@ export interface CostoExtraTrasfMontBean {
   id: string;
   livello: string;
   costoExtraMont: number;
+  costoExtraSmont: number;
   attivo: boolean;
 }
 

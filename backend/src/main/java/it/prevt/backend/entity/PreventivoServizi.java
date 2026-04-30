@@ -37,6 +37,30 @@ public class PreventivoServizi {
     private Integer giorniMontaggio = 0;
     private BigDecimal oreLavoroCantxperMont = BigDecimal.ZERO;
     private BigDecimal kmArMont = BigDecimal.ZERO;
+
+    @Column(name = "punto_partenza")
+    private String puntoPartenza;
+    @Column(name = "punto_arrivo")
+    private String puntoArrivo;
+    @Column(name = "rientro_dopomont", nullable = false)
+    private Boolean rientroDopomont = true;
+    @Column(name = "giorni_viaggio", nullable = false)
+    private Integer giorniViaggio = 0;
+    @Column(name = "pernottamenti_viaggio", nullable = false)
+    private Integer pernottamentiViaggio = 0;
+    @Column(name = "tempo_viaggio_ar_mont", nullable = false)
+    private BigDecimal tempoViaggioArMont = BigDecimal.ZERO;
+    @Column(name = "costo_orario_viaggio", nullable = false)
+    private BigDecimal costoOrarioViaggio = BigDecimal.ZERO;
+    @Column(name = "noleggio_mezzo", nullable = false)
+    private String noleggioMezzo = "No";
+    @Column(name = "costo_pedaggi", nullable = false)
+    private BigDecimal costoPedaggi = BigDecimal.ZERO;
+    @Column(name = "costo_volo_pp", nullable = false)
+    private BigDecimal costoVoloPp = BigDecimal.ZERO;
+    @Column(name = "costo_treno_pp", nullable = false)
+    private BigDecimal costoTrenoPp = BigDecimal.ZERO;
+
     private Boolean consegCant = false;
     private String voloMont = "NO";
     private Boolean trenoMont = false;
@@ -57,6 +81,8 @@ public class PreventivoServizi {
     private BigDecimal totCostoTreno = BigDecimal.ZERO;
     private BigDecimal totCostoTrasfPers = BigDecimal.ZERO;
     private BigDecimal totCostiAuto = BigDecimal.ZERO;
+    @Column(name = "tot_cost_noleggio", nullable = false)
+    private BigDecimal totCostNoleggio = BigDecimal.ZERO;
     private BigDecimal totCostiExtraTrasfMont = BigDecimal.ZERO;
     private BigDecimal totCostiExtraKmTraspFurgMont = BigDecimal.ZERO;
     private BigDecimal totCostiExtraKmTraspTirMont = BigDecimal.ZERO;

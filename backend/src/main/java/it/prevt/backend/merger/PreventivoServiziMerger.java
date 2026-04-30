@@ -37,6 +37,17 @@ public class PreventivoServiziMerger
     entity.setGiorniMontaggio(bean.getGiorniMontaggio());
     entity.setOreLavoroCantxperMont(bean.getOreLavoroCantxperMont());
     entity.setKmArMont(bean.getKmArMont());
+    if (bean.getPuntoPartenza() != null) entity.setPuntoPartenza(bean.getPuntoPartenza());
+    if (bean.getPuntoArrivo() != null) entity.setPuntoArrivo(bean.getPuntoArrivo());
+    if (bean.getRientroDopomont() != null) entity.setRientroDopomont(bean.getRientroDopomont());
+    if (bean.getGiorniViaggio() != null) entity.setGiorniViaggio(bean.getGiorniViaggio());
+    if (bean.getPernottamentiViaggio() != null) entity.setPernottamentiViaggio(bean.getPernottamentiViaggio());
+    if (bean.getTempoViaggioArMont() != null) entity.setTempoViaggioArMont(bean.getTempoViaggioArMont());
+    if (bean.getCostoOrarioViaggio() != null) entity.setCostoOrarioViaggio(bean.getCostoOrarioViaggio());
+    if (bean.getNoleggioMezzo() != null) entity.setNoleggioMezzo(bean.getNoleggioMezzo());
+    if (bean.getCostoPedaggi() != null) entity.setCostoPedaggi(bean.getCostoPedaggi());
+    if (bean.getCostoVoloPp() != null) entity.setCostoVoloPp(bean.getCostoVoloPp());
+    if (bean.getCostoTrenoPp() != null) entity.setCostoTrenoPp(bean.getCostoTrenoPp());
     entity.setConsegCant(bean.getConsegCant());
     entity.setVoloMont(bean.getVoloMont());
     entity.setTrenoMont(bean.getTrenoMont());
@@ -57,6 +68,7 @@ public class PreventivoServiziMerger
     entity.setTotCostoTreno(bean.getTotCostoTreno());
     entity.setTotCostoTrasfPers(bean.getTotCostoTrasfPers());
     entity.setTotCostiAuto(bean.getTotCostiAuto());
+    if (bean.getTotCostNoleggio() != null) entity.setTotCostNoleggio(bean.getTotCostNoleggio());
     entity.setTotCostiExtraTrasfMont(bean.getTotCostiExtraTrasfMont());
     entity.setTotCostiExtraKmTraspFurgMont(bean.getTotCostiExtraKmTraspFurgMont());
     entity.setTotCostiExtraKmTraspTirMont(bean.getTotCostiExtraKmTraspTirMont());
