@@ -75,6 +75,17 @@ pipeline {
             }
         }
 
+        stage('Apply Manifests') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
+                    script {
+                        def manifest = env.NAMESPACE == "produzione" ? "prevt.yaml" : "prevt-test.yaml"
+                        sh "kubectl --kubeconfig=\"\$KCFG\" apply -f deployment/k3s/${manifest}"
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
@@ -108,7 +119,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'kubeconfig-k3s', variable: 'KCFG')]) {
                     sh """
                         kubectl --kubeconfig="$KCFG" rollout status deployment/prevt \
-                          -n ${NAMESPACE} --timeout=120s
+                          -n ${NAMESPACE} --timeout=240s
 
                         kubectl --kubeconfig="$KCFG" rollout status deployment/prevt-webapp \
                           -n ${NAMESPACE} --timeout=120s
