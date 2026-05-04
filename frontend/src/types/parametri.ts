@@ -128,6 +128,7 @@ export interface PreventivoServiziBean {
   tempoViaggioArMont?: number;
   costoOrarioViaggio?: number;
   noleggioMezzo?: string;
+  giorniNoleggio?: number;
   costoPedaggi?: number;
   costoVoloPp?: number;
   costoTrenoPp?: number;

@@ -31,6 +31,7 @@ public class PreventivoServiziBean {
   private BigDecimal tempoViaggioArMont;
   private BigDecimal costoOrarioViaggio;
   private String noleggioMezzo;
+  private Integer giorniNoleggio;
   private BigDecimal costoPedaggi;
   private BigDecimal costoVoloPp;
   private BigDecimal costoTrenoPp;

@@ -54,6 +54,8 @@ public class PreventivoServizi {
     private BigDecimal costoOrarioViaggio = BigDecimal.ZERO;
     @Column(name = "noleggio_mezzo", nullable = false)
     private String noleggioMezzo = "No";
+    @Column(name = "giorni_noleggio", nullable = false)
+    private Integer giorniNoleggio = 0;
     @Column(name = "costo_pedaggi", nullable = false)
     private BigDecimal costoPedaggi = BigDecimal.ZERO;
     @Column(name = "costo_volo_pp", nullable = false)

@@ -45,6 +45,7 @@ public class PreventivoServiziMerger
     if (bean.getTempoViaggioArMont() != null) entity.setTempoViaggioArMont(bean.getTempoViaggioArMont());
     if (bean.getCostoOrarioViaggio() != null) entity.setCostoOrarioViaggio(bean.getCostoOrarioViaggio());
     if (bean.getNoleggioMezzo() != null) entity.setNoleggioMezzo(bean.getNoleggioMezzo());
+    if (bean.getGiorniNoleggio() != null) entity.setGiorniNoleggio(bean.getGiorniNoleggio());
     if (bean.getCostoPedaggi() != null) entity.setCostoPedaggi(bean.getCostoPedaggi());
     if (bean.getCostoVoloPp() != null) entity.setCostoVoloPp(bean.getCostoVoloPp());
     if (bean.getCostoTrenoPp() != null) entity.setCostoTrenoPp(bean.getCostoTrenoPp());

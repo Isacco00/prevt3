@@ -39,6 +39,7 @@ public class PreventivoServiziMapper
     bean.setTempoViaggioArMont(entity.getTempoViaggioArMont());
     bean.setCostoOrarioViaggio(entity.getCostoOrarioViaggio());
     bean.setNoleggioMezzo(entity.getNoleggioMezzo());
+    bean.setGiorniNoleggio(entity.getGiorniNoleggio());
     bean.setCostoPedaggi(entity.getCostoPedaggi());
     bean.setCostoVoloPp(entity.getCostoVoloPp());
     bean.setCostoTrenoPp(entity.getCostoTrenoPp());

@@ -48,6 +48,7 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="parametri" className="space-y-6">
+            {/* Sezioni nascoste su richiesta
             <div id="opzioni-altezza">
               <OpzioniValori
                   tipo="opzione_altezza"
@@ -64,6 +65,7 @@ export default function Admin() {
                   valueLabel="Valore (m)"
                   step="0.25"/>
             </div>
+            */}
             <div id="parametri-costi"><ParametriACostoUnitario/></div>
             <div id="servizi"><ListinoServiziPrezzoUnitario/></div>
             <div id="costi-extra-trasf"><CostiExtraTrasfMont/></div>
