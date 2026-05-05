@@ -507,7 +507,7 @@ function SezioneServizio({title, datiIngresso, calcoloCosti, specchietto}: Sezio
       <h2 className="text-2xl font-semibold mb-4">{title}</h2>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <div>{datiIngresso}</div>
-        <div className="space-y-4 lg:sticky lg:top-4">
+        <div className="space-y-4">
           {calcoloCosti}
           {specchietto}
         </div>
@@ -527,197 +527,257 @@ function DatiIngressoMontaggio({formData, update, onReset}: DatiIngressoProps) {
   const trenoOn = !!formData.trenoMont;
   const extraOn = !!formData.extraCostiTrasfertaMont && formData.extraCostiTrasfertaMont !== 'NO';
   const noleggioOn = (formData.noleggioMezzo ?? 'No') !== 'No';
-  const sectionTitle = "text-xs font-semibold uppercase tracking-wide text-muted-foreground border-b pb-1";
-  const lbl = "text-xs";
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between py-3">
-        <CardTitle className="text-base">Servizio di Montaggio - Dati ingresso</CardTitle>
-        <Button variant="outline" size="sm" onClick={onReset}>
-          <RotateCcw className="h-4 w-4 mr-2"/>Reset
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-3 text-sm">
-
-        <div className={sectionTitle}>Personale e tempi</div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className={lbl}>Personale</Label>
-            <Input type="number" min={0} value={formData.personaleMont ?? 0}
-                   onChange={e => update('personaleMont', posI(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Costo orario montaggio</Label>
-            <Input type="number" min={0} value={formData.costoOrarioMont ?? 0}
-                   onChange={e => update('costoOrarioMont', posF(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Giorni di montaggio</Label>
-            <Input type="number" min={0} value={formData.giorniMontaggio ?? 0}
-                   onChange={e => update('giorniMontaggio', posI(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Ore giornaliere</Label>
-            <Input type="number" min={0} value={formData.oreLavoroCantxperMont ?? 0}
-                   onChange={e => update('oreLavoroCantxperMont', posF(e.target.value))}/>
-          </div>
+    <Card className="shadow-sm">
+      <CardContent className="pt-4 pb-4 text-sm">
+        <div className="flex justify-end mb-2">
+          <Button variant="outline" size="sm" onClick={onReset} className="h-7 px-3 text-xs">
+            <RotateCcw className="h-3 w-3 mr-1.5"/>Reset
+          </Button>
         </div>
 
-        <div className={sectionTitle}>Tragitto e viaggio</div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className={lbl}>Punto Partenza</Label>
-            <Input value={formData.puntoPartenza ?? ''}
-                   onChange={e => update('puntoPartenza', e.target.value)}/>
+        <div>
+          {/* R2 */}
+          <GridRow divider>
+            <Cellf label="Personale">
+              <NumInput value={formData.personaleMont ?? 0}
+                        onChange={v => update('personaleMont', posI(v))}/>
+            </Cellf>
+            <Cellf label="Costo orario montaggio" prefix="€">
+              <NumInput value={formData.costoOrarioMont ?? 0}
+                        onChange={v => update('costoOrarioMont', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          {/* R3 */}
+          <GridRow>
+            <Cellf label="Giorni di montaggio in cantiere">
+              <NumInput value={formData.giorniMontaggio ?? 0}
+                        onChange={v => update('giorniMontaggio', posI(v))}/>
+            </Cellf>
+            <Cellf label="Ore giornaliere montaggio">
+              <NumInput value={formData.oreLavoroCantxperMont ?? 0}
+                        onChange={v => update('oreLavoroCantxperMont', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          {/* R4 */}
+          <GridRow divider>
+            <Cellf label="Costo orario viaggio" prefix="€">
+              <NumInput value={formData.costoOrarioViaggio ?? 0}
+                        onChange={v => update('costoOrarioViaggio', posF(v))}/>
+            </Cellf>
+            <Cellf label="Giorni viaggio">
+              <NumInput value={formData.giorniViaggio ?? 0}
+                        onChange={v => update('giorniViaggio', posI(v))}/>
+            </Cellf>
+          </GridRow>
+          {/* R5 */}
+          <GridRow>
+            <Cellb>
+              <Checkbox checked={formData.rientroDopomont ?? true}
+                        onCheckedChange={v => update('rientroDopomont', Boolean(v))}/>
+              <span>Rientro a fine montaggio</span>
+            </Cellb>
+            <Cellf label="Pernottamenti/pp">
+              <NumInput value={formData.pernottamentiViaggio ?? 0}
+                        onChange={v => update('pernottamentiViaggio', posI(v))}/>
+            </Cellf>
+          </GridRow>
+          {/* R6 */}
+          <GridRow>
+            <div className="px-3 py-2 col-span-2 flex items-center gap-3">
+              <span className="text-xs font-semibold">Noleggio Mezzo</span>
+              <RadioGroup
+                className="flex gap-3"
+                value={formData.noleggioMezzo ?? 'No'}
+                onValueChange={v => update('noleggioMezzo', v)}>
+                {['No', 'Auto', 'Furgone', 'Altro'].map(opt => (
+                  <label key={opt} className="flex items-center gap-1 text-xs">
+                    <RadioGroupItem value={opt}/>
+                    <span>{opt}</span>
+                  </label>
+                ))}
+              </RadioGroup>
+            </div>
+          </GridRow>
+          {/* R7 */}
+          <GridRow>
+            <Cellf label="Giorni noleggio">
+              <NumInput value={formData.giorniNoleggio ?? 0} disabled={!noleggioOn}
+                        onChange={v => update('giorniNoleggio', posI(v))}/>
+            </Cellf>
+            <Cellf label="Stima pedaggi" prefix="€">
+              <NumInput value={formData.costoPedaggi ?? 0}
+                        onChange={v => update('costoPedaggi', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          {/* R8 - Avvertenza */}
+          <div className="px-3 py-1 text-[10px] italic text-muted-foreground leading-tight">
+            <span className="font-semibold not-italic">Avvertenza:</span> in Francia, furgoni di altezza superiore a 3 metri pagano come TIR
           </div>
-          <div>
-            <Label className={lbl}>Punto Arrivo</Label>
-            <Input value={formData.puntoArrivo ?? ''}
-                   onChange={e => update('puntoArrivo', e.target.value)}/>
+          {/* R9 - Partenza/Arrivo */}
+          <GridRow>
+            <div className="px-3 py-2">
+              <Label className="text-xs font-semibold">Partenza</Label>
+              <Input value={formData.puntoPartenza ?? ''}
+                     onChange={e => update('puntoPartenza', e.target.value)}
+                     className="h-8 mt-1"/>
+            </div>
+            <div className="px-3 py-2">
+              <Label className="text-xs font-semibold">Arrivo</Label>
+              <Input value={formData.puntoArrivo ?? ''}
+                     onChange={e => update('puntoArrivo', e.target.value)}
+                     className="h-8 mt-1"/>
+            </div>
+          </GridRow>
+          {/* R10 - Km totali / Ore viaggio */}
+          <GridRow divider>
+            <Cellf label="Km totali">
+              <NumInput value={formData.kmArMont ?? 0}
+                        onChange={v => update('kmArMont', posF(v))}/>
+            </Cellf>
+            <Cellf label="Ore viaggio">
+              <NumInput value={formData.tempoViaggioArMont ?? 0}
+                        onChange={v => update('tempoViaggioArMont', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          {/* R11+R12 - Volo+Treno con Ore viaggio centrato a destra */}
+          <div className="grid grid-cols-2 border-b border-border">
+            <div>
+              <div className="border-b border-border">
+                <Cellb>
+                  <Checkbox checked={voloOn}
+                            onCheckedChange={v => {
+                              update('voloMont', v ? 'SI' : 'NO');
+                              if (!v) update('costoVoloPp', 0);
+                            }}/>
+                  <span>Volo aereo per persona</span>
+                  <span className="ml-auto text-xs text-muted-foreground">€</span>
+                  <NumInput value={formData.costoVoloPp ?? 0} disabled={!voloOn} className="w-16"
+                            onChange={v => update('costoVoloPp', posF(v))}/>
+                </Cellb>
+              </div>
+              <div>
+                <Cellb>
+                  <Checkbox checked={trenoOn}
+                            onCheckedChange={v => {
+                              update('trenoMont', Boolean(v));
+                              if (!v) update('costoTrenoPp', 0);
+                            }}/>
+                  <span>Treno per persona</span>
+                  <span className="ml-auto text-xs text-muted-foreground">€</span>
+                  <NumInput value={formData.costoTrenoPp ?? 0} disabled={!trenoOn} className="w-16"
+                            onChange={v => update('costoTrenoPp', posF(v))}/>
+                </Cellb>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <Cellf label="Ore viaggio">
+                <NumInput value={formData.oreViaggioTrasfertaMont ?? 0}
+                          disabled={!voloOn && !trenoOn}
+                          onChange={v => update('oreViaggioTrasfertaMont', posF(v))}/>
+              </Cellf>
+            </div>
           </div>
-          <div className="flex items-center space-x-2 self-end pb-1 col-span-2">
-            <Checkbox checked={formData.rientroDopomont ?? true}
-                      onCheckedChange={v => update('rientroDopomont', Boolean(v))}/>
-            <Label className={lbl}>Rientro a fine montaggio</Label>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className={lbl}>Km Viaggio solo andata</Label>
-            <Input type="number" min={0} value={formData.kmArMont ?? 0}
-                   onChange={e => update('kmArMont', posF(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Giorni viaggio</Label>
-            <Input type="number" min={0} value={formData.giorniViaggio ?? 0}
-                   onChange={e => update('giorniViaggio', posI(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Ore viaggio solo andata</Label>
-            <Input type="number" min={0} value={formData.tempoViaggioArMont ?? 0}
-                   onChange={e => update('tempoViaggioArMont', posF(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Costo orario viaggio</Label>
-            <Input type="number" min={0} value={formData.costoOrarioViaggio ?? 0}
-                   onChange={e => update('costoOrarioViaggio', posF(e.target.value))}/>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className={lbl}>Pernottamenti per persona</Label>
-            <Input type="number" min={0} value={formData.pernottamentiViaggio ?? 0}
-                   onChange={e => update('pernottamentiViaggio', posI(e.target.value))}/>
-          </div>
-        </div>
-
-        <div className={sectionTitle}>Mezzo e trasferta</div>
-        <div className="grid grid-cols-2 gap-3 items-end">
-          <div className="col-span-2">
-            <Label className={lbl}>Noleggio Mezzo</Label>
-            <RadioGroup
-              className="flex gap-3 mt-1"
-              value={formData.noleggioMezzo ?? 'No'}
-              onValueChange={v => update('noleggioMezzo', v)}>
-              {['No', 'Auto', 'Furgone', 'Altro'].map(opt => (
-                <label key={opt} className="flex items-center gap-1 text-xs">
-                  <RadioGroupItem value={opt}/>
-                  <span>{opt}</span>
-                </label>
-              ))}
-            </RadioGroup>
-          </div>
-          <div>
-            <Label className={lbl}>Giorni Noleggio</Label>
-            <Input type="number" min={0} disabled={!noleggioOn}
-                   value={formData.giorniNoleggio ?? 0}
-                   onChange={e => update('giorniNoleggio', posI(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Stima Pedaggi</Label>
-            <Input type="number" min={0} value={formData.costoPedaggi ?? 0}
-                   onChange={e => update('costoPedaggi', posF(e.target.value))}/>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3 items-end">
-          <div className="flex items-center space-x-2 pb-1">
-            <Checkbox checked={voloOn}
-                      onCheckedChange={v => {
-                        update('voloMont', v ? 'SI' : 'NO');
-                        if (!v) update('costoVoloPp', 0);
-                      }}/>
-            <Label className={lbl}>Volo aereo p/p</Label>
-          </div>
-          <div>
-            <Label className={lbl}>€ volo p/p</Label>
-            <Input type="number" min={0} disabled={!voloOn} value={formData.costoVoloPp ?? 0}
-                   onChange={e => update('costoVoloPp', posF(e.target.value))}/>
-          </div>
-          <div className="flex items-center space-x-2 pb-1">
-            <Checkbox checked={trenoOn}
-                      onCheckedChange={v => {
-                        update('trenoMont', Boolean(v));
-                        if (!v) update('costoTrenoPp', 0);
-                      }}/>
-            <Label className={lbl}>Treno p/p</Label>
-          </div>
-          <div>
-            <Label className={lbl}>€ treno p/p</Label>
-            <Input type="number" min={0} disabled={!trenoOn} value={formData.costoTrenoPp ?? 0}
-                   onChange={e => update('costoTrenoPp', posF(e.target.value))}/>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className={lbl}>Ore viaggio trasferta (treno/aereo)</Label>
-            <Input type="number" min={0} disabled={!voloOn && !trenoOn}
-                   value={formData.oreViaggioTrasfertaMont ?? 0}
-                   onChange={e => update('oreViaggioTrasfertaMont', posF(e.target.value))}/>
-          </div>
-        </div>
-
-        <div className={sectionTitle}>Costi extra</div>
-        <div className="grid grid-cols-2 gap-3 items-end">
-          <div className="flex items-center space-x-2 pb-1">
-            <Checkbox checked={formData.viaggioAutoComMont ?? false}
-                      onCheckedChange={v => update('viaggioAutoComMont', Boolean(v))}/>
-            <Label className={lbl}>Auto propria/WOW</Label>
-          </div>
-          <div className="flex items-center space-x-2 pb-1">
-            <Checkbox checked={formData.consegCant ?? false}
-                      onCheckedChange={v => update('consegCant', Boolean(v))}/>
-            <Label className={lbl}>Consegna in cantiere</Label>
-          </div>
-          <div className="flex items-center space-x-2 pb-1">
-            <Checkbox checked={extraOn}
-                      onCheckedChange={v => update('extraCostiTrasfertaMont', v ? 'Basso' : 'NO')}/>
-            <Label className={lbl}>Extra giornaliero p/p</Label>
-          </div>
-          <Select value={extraOn ? (formData.extraCostiTrasfertaMont ?? 'Basso') : 'NO'}
-                  disabled={!extraOn}
-                  onValueChange={v => update('extraCostiTrasfertaMont', v)}>
-            <SelectTrigger><SelectValue/></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Basso">Basso</SelectItem>
-              <SelectItem value="Medio">Medio</SelectItem>
-              <SelectItem value="Alto">Alto</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label className={lbl}>Km extra trasporto Furgone (&lt;35 q.li)</Label>
-            <Input type="number" min={0} value={formData.extraKmTraspFurgMont ?? 0}
-                   onChange={e => update('extraKmTraspFurgMont', posF(e.target.value))}/>
-          </div>
-          <div>
-            <Label className={lbl}>Km extra trasporto camion (&gt;35 q.li)</Label>
-            <Input type="number" min={0} value={formData.extraKmTraspTirMont ?? 0}
-                   onChange={e => update('extraKmTraspTirMont', posF(e.target.value))}/>
-          </div>
+          {/* R13 - Auto / Consegna */}
+          <GridRow>
+            <Cellb>
+              <Checkbox checked={formData.viaggioAutoComMont ?? false}
+                        onCheckedChange={v => update('viaggioAutoComMont', Boolean(v))}/>
+              <span>Auto propria/WOW</span>
+            </Cellb>
+            <Cellb>
+              <Checkbox checked={formData.consegCant ?? false}
+                        onCheckedChange={v => update('consegCant', Boolean(v))}/>
+              <span>Consegna in cantiere</span>
+            </Cellb>
+          </GridRow>
+          {/* R14 - Extra giornaliero */}
+          <GridRow>
+            <Cellb>
+              <Checkbox checked={extraOn}
+                        onCheckedChange={v => update('extraCostiTrasfertaMont', v ? 'Basso' : 'NO')}/>
+              <span className="leading-tight">Extra giornaliero per persona<br/>(park, taxi, ...)</span>
+            </Cellb>
+            <div className="px-3 py-2 flex items-center">
+              <Select value={extraOn ? (formData.extraCostiTrasfertaMont ?? 'Basso') : 'NO'}
+                      disabled={!extraOn}
+                      onValueChange={v => update('extraCostiTrasfertaMont', v)}>
+                <SelectTrigger className="h-8 text-xs"><SelectValue/></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Basso">Basso</SelectItem>
+                  <SelectItem value="Medio">Medio</SelectItem>
+                  <SelectItem value="Alto">Alto</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </GridRow>
+          {/* R15 - Km Extra labels */}
+          <GridRow divider>
+            <div className="px-3 pt-2 pb-1">
+              <Label className="text-xs font-semibold leading-tight">Km Extra Trasporto<br/>Furgone (&lt;35 q.li)</Label>
+            </div>
+            <div className="px-3 pt-2 pb-1">
+              <Label className="text-xs font-semibold leading-tight">Km Extra Trasporto<br/>Furgone (&lt;35 q.li)</Label>
+            </div>
+          </GridRow>
+          {/* R16 - Km Extra inputs */}
+          <GridRow>
+            <div className="px-3 py-2">
+              <NumInput value={formData.extraKmTraspFurgMont ?? 0} className="w-full"
+                        onChange={v => update('extraKmTraspFurgMont', posF(v))}/>
+            </div>
+            <div className="px-3 py-2">
+              <NumInput value={formData.extraKmTraspTirMont ?? 0} className="w-full"
+                        onChange={v => update('extraKmTraspTirMont', posF(v))}/>
+            </div>
+          </GridRow>
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function GridRow({children, divider, dividerHalf}: {children: React.ReactNode; divider?: boolean; dividerHalf?: boolean}) {
+  if (dividerHalf) {
+    return (
+      <div className="grid grid-cols-2 min-h-[40px]">
+        <div className="contents [&>*]:border-b-2 [&>*]:border-foreground/30">
+          {Array.isArray(children) ? children[0] : children}
+        </div>
+        {Array.isArray(children) ? children[1] : null}
+      </div>
+    );
+  }
+  return (
+    <div className={`grid grid-cols-2 min-h-[40px] ${divider ? 'border-b border-border' : ''}`}>
+      {children}
+    </div>
+  );
+}
+
+function Cellf({label, prefix, children}: {label: string; prefix?: string; children: React.ReactNode}) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-1.5">
+      <Label className="text-xs font-semibold leading-tight flex-1">{label}</Label>
+      {prefix && <span className="text-xs text-muted-foreground">{prefix}</span>}
+      <div className="w-16">{children}</div>
+    </div>
+  );
+}
+
+function Cellb({children}: {children: React.ReactNode}) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-1.5 text-xs">
+      {children}
+    </div>
+  );
+}
+
+function NumInput({value, onChange, disabled, className}: {value: number; onChange: (v: string) => void; disabled?: boolean; className?: string}) {
+  return (
+    <Input type="number" min={0} value={value} disabled={disabled}
+           onChange={e => onChange(e.target.value)}
+           className={`h-7 text-right text-xs px-2 ${className ?? ''}`}/>
   );
 }
 
@@ -829,46 +889,44 @@ function CalcoloCostiTabella({titolo, voci, ricaricoFactor, ricaricoPerc, onRica
   const totCosto = voci.reduce((s, v) => s + v.costo, 0);
   const totPrezzo = totCosto * ricaricoFactor;
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{titolo}</CardTitle>
-      </CardHeader>
-      <CardContent className="px-2">
+    <Card className="shadow-sm">
+      <CardContent className="pt-5 pb-4">
+        <h3 className="text-lg font-semibold mb-4">{titolo}</h3>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Voce di costo</TableHead>
-              <TableHead className="text-right w-32">Costo</TableHead>
-              <TableHead className="text-right w-32">Prezzo</TableHead>
+            <TableRow className="hover:bg-transparent border-b">
+              <TableHead className="h-8 text-xs font-medium text-muted-foreground">Voce di costo</TableHead>
+              <TableHead className="h-8 text-right w-24 text-xs font-medium text-muted-foreground">Costo</TableHead>
+              <TableHead className="h-8 text-right w-24 text-xs font-medium text-muted-foreground">Prezzo</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {voci.map(v => (
-              <TableRow key={v.label}>
-                <TableCell className="py-1">{v.label}</TableCell>
-                <TableCell className="text-right py-1">€ {fmt(v.costo)}</TableCell>
-                <TableCell className="text-right py-1">€ {fmt(v.costo * ricaricoFactor)}</TableCell>
+              <TableRow key={v.label} className="hover:bg-transparent border-0">
+                <TableCell className="py-2 text-sm">{v.label}</TableCell>
+                <TableCell className="text-right py-2 text-sm tabular-nums">€ {fmt(v.costo)}</TableCell>
+                <TableCell className="text-right py-2 text-sm tabular-nums">€ {fmt(v.costo * ricaricoFactor)}</TableCell>
               </TableRow>
             ))}
-            <TableRow className="border-t-2 bg-muted/40">
-              <TableCell className="font-semibold">
-                <div className="flex items-center gap-2">
+            <TableRow className="hover:bg-transparent border-t-2">
+              <TableCell className="font-semibold pt-3">
+                <div className="flex items-center gap-3">
                   <span>Totale</span>
-                  <span className="text-xs text-muted-foreground ml-4">Ricarico</span>
+                  <span className="text-xs text-muted-foreground ml-auto">Ricarico</span>
                   {onRicaricoChange ? (
                     <div className="flex items-center gap-1">
                       <Input type="number" min={0} value={ricaricoPerc}
                              onChange={e => onRicaricoChange(posF(e.target.value))}
-                             className="w-16 h-7 text-right"/>
+                             className="w-14 h-7 text-right text-xs"/>
                       <span className="text-xs">%</span>
                     </div>
                   ) : (
-                    <span className="text-xs">{ricaricoPerc}%</span>
+                    <span className="text-xs font-semibold">{ricaricoPerc}%</span>
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-right font-semibold">€ {fmt(totCosto)}</TableCell>
-              <TableCell className="text-right font-semibold">€ {fmt(totPrezzo)}</TableCell>
+              <TableCell className="text-right font-semibold pt-3 tabular-nums">€ {fmt(totCosto)}</TableCell>
+              <TableCell className="text-right font-semibold pt-3 tabular-nums">€ {fmt(totPrezzo)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -893,9 +951,9 @@ function Specchietto({
                        scontoPerc, scontoEditable, onScontoChange,
                      }: SpecchiettoProps) {
   return (
-    <Card className="border-2 border-primary/20 bg-primary/5">
-      <CardContent className="pt-6 space-y-4">
-        <div className="grid grid-cols-3 gap-4">
+    <Card className="bg-muted/40 border shadow-sm">
+      <CardContent className="pt-5 pb-5 space-y-5">
+        <div className="grid grid-cols-3 gap-6">
           <Cell label="Totale Costi" value={`€${fmt(totaleCosti)}`}/>
           <div>
             <div className="text-xs text-muted-foreground mb-1">Sconto</div>
@@ -903,16 +961,16 @@ function Specchietto({
               <div className="flex items-center gap-2">
                 <Input type="number" min={0} max={100} value={scontoPerc}
                        onChange={e => onScontoChange?.(posF(e.target.value))}
-                       className="w-24 h-9 text-right"/>
-                <span>%</span>
+                       className="w-20 h-8 text-right"/>
+                <span className="text-sm">%</span>
               </div>
             ) : (
               <div className="text-lg font-bold">{scontoPerc.toFixed(0)}%</div>
             )}
           </div>
-          <Cell label="Totale Prezzo Netto" value={`€${fmt(totalePrezzoNetto)}`} primary/>
+          <Cell label="Totale Prezzo Netto" value={`€${fmt(totalePrezzoNetto)}`}/>
         </div>
-        <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+        <div className="grid grid-cols-3 gap-6 pt-4 border-t">
           <Cell label="Totale Prezzo Listino" value={`€${fmt(totalePrezzoListino)}`}/>
           <Cell label="Margine di Vendita" value={`${marginalita.toFixed(1)}%`}
                 color={marginalita < 0 ? 'text-red-600' : 'text-green-600'}/>
