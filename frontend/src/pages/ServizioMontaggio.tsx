@@ -13,7 +13,6 @@ import {toast} from 'sonner';
 import {ArrowLeft, RotateCcw} from 'lucide-react';
 import {
   CostoExtraTrasfMontBean,
-  CostoVoloArBean,
   PreventivoServiziBean
 } from "@/types/parametri.ts";
 import {ParametriAPI} from "@/api/parametri.ts";
@@ -53,6 +52,19 @@ const DEFAULT_SMON: Partial<PreventivoServiziBean> = {
   giorniSmontaggioViaggio: 0,
   oreLavoroCantxperSmon: 0,
   kmArSmon: 0,
+  puntoPartenzaSmon: '',
+  puntoArrivoSmon: '',
+  rientroDoposmont: true,
+  giorniViaggioSmon: 0,
+  pernottamentiViaggioSmon: 0,
+  tempoViaggioArSmon: 0,
+  costoOrarioViaggioSmon: 0,
+  noleggioMezzoSmon: 'No',
+  giorniNoleggioSmon: 0,
+  costoPedaggiSmon: 0,
+  costoVoloPpSmon: 0,
+  costoTrenoPpSmon: 0,
+  ritiroCant: false,
   voloSmon: 'NO',
   trenoSmon: false,
   oreViaggioTrasfertaSmon: 0,
@@ -109,11 +121,6 @@ export default function ServizioMontaggio() {
     })
   });
 
-  const {data: costiVolo = []} = useQuery<CostoVoloArBean[]>({
-    queryKey: ['costi-volo-ar'],
-    queryFn: () => ParametriAPI.getCostiVoloAr({attivo: true}),
-  });
-
   const {data: costiExtra = []} = useQuery<CostoExtraTrasfMontBean[]>({
     queryKey: ['costi-extra-trasf-mont'],
     queryFn: () => ParametriAPI.getCostiExtraTrasfMont({attivo: true}),
@@ -133,7 +140,16 @@ export default function ServizioMontaggio() {
     setFormData(prev => ({...prev, [key]: value}));
 
   const resetMontaggio = () => setFormData(prev => ({...prev, ...DEFAULT_MONT}));
-  const resetSmontaggio = () => setFormData(prev => ({...prev, ...DEFAULT_SMON}));
+  const resetSmontaggio = () => setFormData(prev => ({
+    ...prev,
+    ...DEFAULT_SMON,
+    // NOTA 1: Reset Smontaggio ripropone i valori del Montaggio per i campi condivisi
+    personaleSmon: prev.personaleMont ?? 0,
+    costoOrarioSmon: prev.costoOrarioMont ?? 20,
+    giorniSmontaggioViaggio: prev.giorniMontaggio ?? 0,
+    oreLavoroCantxperSmon: prev.oreLavoroCantxperMont ?? 0,
+    costoOrarioViaggioSmon: prev.costoOrarioViaggio ?? 0,
+  }));
 
   const costs = useMemo(() => {
     // Lookup parametri_a_costi_unitari per label "parametro"
@@ -145,10 +161,6 @@ export default function ServizioMontaggio() {
     const getParamVar = (nomeVar: string) => {
       const p = parametri.find(x => x.nomeVariabile === nomeVar);
       return p ? num(p.valore) : 0;
-    };
-    const getFlightSmon = (tipo: string) => {
-      const v = costiVolo.find(x => x.tipologia === tipo);
-      return v ? num(v.costoVoloAr) : 0;
     };
     const getExtraMont = (livello: string) => {
       const e = costiExtra.find(x => x.livello === livello);
@@ -174,11 +186,6 @@ export default function ServizioMontaggio() {
     const costoAutowowXkm = getParamVar('costo_autowow_xkm');
     const costoFurgextraXkm = getParamVar('costo_furgextra_xkm');
     const costoTirextraXkm = getParamVar('costo_tirextra_xkm');
-
-    // Smon usa ancora i vecchi parametri label
-    const costoMontXkmSmon = getParam('Costo montatori xkm');
-    const costoKmTrenoSmon = getParam('Costo treno al km');
-    const costoKmAutoSmon = getParam('Costo auto al km');
 
     const ricaricoPerc = num(formData.ricaricoMontaggio);
     const scontoPerc = num(formData.scontoMontaggio);
@@ -278,42 +285,87 @@ export default function ServizioMontaggio() {
     const margineMont = totalePrezzoNettoMont - totaleCostoMontaggio;
     const marginalitaMont = totalePrezzoNettoMont > 0 ? margineMont / totalePrezzoNettoMont * 100 : 0;
 
-    // ---- SMONTAGGIO (resta su parametri label come prima) ----
+    // ---- SMONTAGGIO (specchio del Montaggio sui parametri nome_variabile) ----
     const personaleSmon = num(formData.personaleSmon);
     const costoOrarioSmon = num(formData.costoOrarioSmon);
     const giorniSmon = num(formData.giorniSmontaggioViaggio);
     const oreLavoroSmon = num(formData.oreLavoroCantxperSmon);
-    const kmArSmon = num(formData.kmArSmon);
-    const oreViaggioSmon = num(formData.oreViaggioTrasfertaSmon);
+    const giorniViaggioSmon = num(formData.giorniViaggioSmon);
+    const pernottamentiViaggioSmon = num(formData.pernottamentiViaggioSmon);
+    const rientroDoposmont = formData.rientroDoposmont !== false;
+    const tempoViaggioArSmon = num(formData.tempoViaggioArSmon);
+    const costoOrarioViaggioSmon = num(formData.costoOrarioViaggioSmon);
+    const kmAndataSmon = num(formData.kmArSmon);
+    const kmArSmonReale = rientroDoposmont ? kmAndataSmon * 2 : kmAndataSmon;
+    const tempoViaggioSmonReale = rientroDoposmont ? tempoViaggioArSmon * 2 : tempoViaggioArSmon;
+    const noleggioMezzoSmon = formData.noleggioMezzoSmon ?? 'No';
+    const giorniNoleggioSmon = num(formData.giorniNoleggioSmon);
+    const costoPedaggiSmon = num(formData.costoPedaggiSmon);
+    const costoVoloPpSmon = num(formData.costoVoloPpSmon);
+    const costoTrenoPpSmon = num(formData.costoTrenoPpSmon);
+    const voloAttivoSmon = !!formData.voloSmon && formData.voloSmon !== 'NO';
+    const trenoAttivoSmon = !!formData.trenoSmon;
+    const oreViaggioTrenoAereoSmon = (voloAttivoSmon || trenoAttivoSmon) ? num(formData.oreViaggioTrasfertaSmon) : 0;
     const extraKmFurgSmon = num(formData.extraKmTraspFurgSmon);
     const extraKmTirSmon = num(formData.extraKmTraspTirSmon);
 
+    // Ore smontaggio fiera/cantiere
     const totCostOreSmon = personaleSmon * costoOrarioSmon * giorniSmon * oreLavoroSmon;
-    const totCostKmSmon = kmArSmon * costoMontXkmSmon;
-    const numVittiSmon = 2 * personaleSmon * giorniSmon;
-    const numAlloggiSmon = giorniSmon <= 1 ? 0 : (giorniSmon - 1) * personaleSmon;
+
+    // Ore di viaggio da/per fiera/cantiere
+    const totCostOreViaggioSmon = personaleSmon * costoOrarioViaggioSmon * (tempoViaggioSmonReale + oreViaggioTrenoAereoSmon);
+
+    // Vitto/Alloggio
+    const numVittiSmon = 2 * personaleSmon * (giorniSmon + giorniViaggioSmon);
+    let numAlloggiSmon: number;
+    if (giorniSmon === 1) {
+      numAlloggiSmon = pernottamentiViaggioSmon * personaleSmon;
+    } else {
+      numAlloggiSmon = (giorniSmon - 1 + pernottamentiViaggioSmon) * personaleSmon;
+    }
+    if (numAlloggiSmon < 0) numAlloggiSmon = 0;
     const totCostVittAllSmon = numVittiSmon * costoPasto + numAlloggiSmon * costoAlloggio;
-    const totCostoVoloARSmon = formData.voloSmon && formData.voloSmon !== 'NO'
-      ? getFlightSmon(formData.voloSmon) * personaleSmon : 0;
-    const totCostoTrenoSmon = formData.trenoSmon ? kmArSmon * costoKmTrenoSmon * personaleSmon : 0;
-    const totCostoTrasfPersSmon = personaleSmon * oreViaggioSmon * costoOrarioSmon;
-    const totCostiAutoSmon = formData.viaggioAutoComSmon ? kmArSmon * costoKmAutoSmon : 0;
-    const totCostiExtraTrasfSmon = formData.extraCostiTrasfertaSmon && formData.extraCostiTrasfertaSmon !== 'NO'
-      ? getExtraSmont(formData.extraCostiTrasfertaSmon) * giorniSmon * personaleSmon : 0;
-    const totCostiExtraKmTraspFurgSmon = extraKmFurgSmon * getParam('Costo furgone al km');
-    const totCostiExtraKmTraspTirSmon = extraKmTirSmon * getParam('Costo TIR al km');
+
+    // Noleggio mezzi + spese
+    let totCostNoleggioSmon = 0;
+    if (noleggioMezzoSmon === 'Auto') {
+      totCostNoleggioSmon = costoAutoXkm * kmArSmonReale + costoNoleggioAuto * giorniNoleggioSmon + costoPedaggiSmon;
+    } else if (noleggioMezzoSmon === 'Furgone') {
+      totCostNoleggioSmon = costoFurgoneXkm * kmArSmonReale + costoNoleggioFurgone * giorniNoleggioSmon + costoPedaggiSmon;
+    } else if (noleggioMezzoSmon === 'Altro') {
+      totCostNoleggioSmon = costoAltromezzoXkm * kmArSmonReale + costoNoleggioAltromezzo * giorniNoleggioSmon + costoPedaggiSmon;
+    }
+
+    // Voli aerei + treni
+    const totCostoVoloTrenoSmon =
+      ((voloAttivoSmon ? costoVoloPpSmon : 0) + (trenoAttivoSmon ? costoTrenoPpSmon : 0)) * personaleSmon;
+
+    // Auto propria/WOW
+    const totCostiAutoSmon = formData.viaggioAutoComSmon ? kmArSmonReale * costoAutowowXkm : 0;
+
+    // Extra trasferta giornaliera
+    const extraLivelloSmon = formData.extraCostiTrasfertaSmon ?? 'NO';
+    const totCostiExtraTrasfSmon = extraLivelloSmon !== 'NO'
+      ? getExtraSmont(extraLivelloSmon) * giorniSmon * personaleSmon : 0;
+
+    // Trasporti km mezzo leggero/pesante
+    const totCostiExtraKmTraspFurgSmon = extraKmFurgSmon * costoFurgextraXkm;
+    const totCostiExtraKmTraspTirSmon = extraKmTirSmon * costoTirextraXkm;
+
+    // Ritiro cantiere
+    const totCostiRitiroCantiere = formData.ritiroCant ? costoFissoConsegna : 0;
 
     const voiciSmon = [
-      {label: 'Costo ore smontatori', costo: totCostOreSmon},
-      {label: 'Costo km smontaggio', costo: totCostKmSmon},
-      {label: 'Costo vitto e alloggio smontatori', costo: totCostVittAllSmon},
-      {label: 'Costo volo aereo A/R', costo: totCostoVoloARSmon},
-      {label: 'Costo treno A/R', costo: totCostoTrenoSmon},
-      {label: 'Costo di trasferta del personale', costo: totCostoTrasfPersSmon},
-      {label: 'Costo viaggio in auto', costo: totCostiAutoSmon},
-      {label: 'Costi extra (park, metro, taxi)', costo: totCostiExtraTrasfSmon},
-      {label: 'Costi trasporto mezzo leggero (<35 q.li)', costo: totCostiExtraKmTraspFurgSmon},
-      {label: 'Costi trasporto mezzo pesante (>35 q.li)', costo: totCostiExtraKmTraspTirSmon},
+      {label: 'Ore smontaggio fiera/cantiere', costo: totCostOreSmon},
+      {label: 'Ore di viaggio da/per fiera/cantiere', costo: totCostOreViaggioSmon},
+      {label: 'Vitto/Alloggio', costo: totCostVittAllSmon},
+      {label: 'Noleggio mezzi + spese (carburante, pedaggi)', costo: totCostNoleggioSmon},
+      {label: 'Voli aerei/treni', costo: totCostoVoloTrenoSmon},
+      {label: 'Auto propria/WOW', costo: totCostiAutoSmon},
+      {label: 'Costi extra (park, metro, taxi, materiali di consumo)', costo: totCostiExtraTrasfSmon},
+      {label: 'Trasporto extra con autista mezzo leggero (<35 q.li)', costo: totCostiExtraKmTraspFurgSmon},
+      {label: 'Trasporto extra con autista mezzo pesante (>35 q.li)', costo: totCostiExtraKmTraspTirSmon},
+      {label: 'Ritiro merce in cantiere', costo: totCostiRitiroCantiere},
     ];
     const totaleCostoSmontaggio = voiciSmon.reduce((s, v) => s + v.costo, 0);
     const totalePrezzoListinoSmon = totaleCostoSmontaggio * ricaricoFactor;
@@ -330,14 +382,15 @@ export default function ServizioMontaggio() {
       totCostiExtraTrasfMont, totCostiExtraKmTraspFurgMont, totCostiExtraKmTraspTirMont,
       totCostiConsegnaCantiere,
       totaleCostoMontaggio, totalePrezzoListinoMont, totalePrezzoNettoMont, margineMont, marginalitaMont,
-      totCostOreSmon, totCostKmSmon, numVittiSmon, numAlloggiSmon, totCostVittAllSmon,
-      totCostoVoloARSmon, totCostoTrenoSmon, totCostoTrasfPersSmon, totCostiAutoSmon,
+      totCostOreSmon, totCostOreViaggioSmon, numVittiSmon, numAlloggiSmon, totCostVittAllSmon,
+      totCostNoleggioSmon, totCostoVoloTrenoSmon, totCostiAutoSmon,
       totCostiExtraTrasfSmon, totCostiExtraKmTraspFurgSmon, totCostiExtraKmTraspTirSmon,
+      totCostiRitiroCantiere,
       totaleCostoSmontaggio, totalePrezzoListinoSmon, totalePrezzoNettoSmon, margineSmon, marginalitaSmon,
       ricaricoFactor,
       totaleNettoCombinato,
     };
-  }, [formData, parametri, costiVolo, costiExtra]);
+  }, [formData, parametri, costiExtra]);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -366,14 +419,16 @@ export default function ServizioMontaggio() {
         margineMont: costs.margineMont,
         marginalitaMont: costs.marginalitaMont,
         totCostOreSmon: costs.totCostOreSmon,
-        totCostKmSmon: costs.totCostKmSmon,
+        totCostKmSmon: costs.totCostOreViaggioSmon,
         numVittiSmon: costs.numVittiSmon,
         numAlloggiSmon: costs.numAlloggiSmon,
         totCostVittallSmon: costs.totCostVittAllSmon,
-        totCostoVoloArSmon: costs.totCostoVoloARSmon,
-        totCostoTrenoSmon: costs.totCostoTrenoSmon,
-        totCostoTrasfPersSmon: costs.totCostoTrasfPersSmon,
+        totCostoVoloArSmon: costs.totCostoVoloTrenoSmon,
+        totCostoTrenoSmon: 0,
+        totCostoTrasfPersSmon: costs.totCostOreViaggioSmon,
         totCostiAutoSmon: costs.totCostiAutoSmon,
+        totCostNoleggioSmon: costs.totCostNoleggioSmon,
+        totCostiRitiroCantiere: costs.totCostiRitiroCantiere,
         totCostiExtraTrasfSmon: costs.totCostiExtraTrasfSmon,
         totCostiExtraKmTraspFurgSmon: costs.totCostiExtraKmTraspFurgSmon,
         totCostiExtraKmTraspTirSmon: costs.totCostiExtraKmTraspTirSmon,
@@ -782,95 +837,200 @@ function NumInput({value, onChange, disabled, className}: {value: number; onChan
 }
 
 function DatiIngressoSmontaggio({formData, update, onReset}: DatiIngressoProps) {
+  const voloOn = !!formData.voloSmon && formData.voloSmon !== 'NO';
+  const trenoOn = !!formData.trenoSmon;
+  const extraOn = !!formData.extraCostiTrasfertaSmon && formData.extraCostiTrasfertaSmon !== 'NO';
+  const noleggioOn = (formData.noleggioMezzoSmon ?? 'No') !== 'No';
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Servizio di Smontaggio - Dati ingresso</CardTitle>
-        <Button variant="outline" size="sm" onClick={onReset}>
-          <RotateCcw className="h-4 w-4 mr-2"/>Reset
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Personale</Label>
-            <Input type="number" min={0} value={formData.personaleSmon ?? 0}
-                   onChange={e => update('personaleSmon', posI(e.target.value))}/>
-          </div>
-          <div>
-            <Label>Costo orario</Label>
-            <Input type="number" min={0} value={formData.costoOrarioSmon ?? 0}
-                   onChange={e => update('costoOrarioSmon', posF(e.target.value))}/>
-          </div>
+    <Card className="shadow-sm">
+      <CardContent className="pt-4 pb-4 text-sm">
+        <div className="flex justify-end mb-2">
+          <Button variant="outline" size="sm" onClick={onReset} className="h-7 px-3 text-xs">
+            <RotateCcw className="h-3 w-3 mr-1.5"/>Reset
+          </Button>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Giorni smontaggio + viaggio</Label>
-            <Input type="number" min={0} value={formData.giorniSmontaggioViaggio ?? 0}
-                   onChange={e => update('giorniSmontaggioViaggio', posI(e.target.value))}/>
-          </div>
-          <div>
-            <Label>Ore lavoro smontaggio cantiere/persona</Label>
-            <Input type="number" min={0} value={formData.oreLavoroCantxperSmon ?? 0}
-                   onChange={e => update('oreLavoroCantxperSmon', posF(e.target.value))}/>
-          </div>
-        </div>
+
         <div>
-          <Label>Km Viaggio smontaggio A+R</Label>
-          <Input type="number" min={0} value={formData.kmArSmon ?? 0}
-                 onChange={e => update('kmArSmon', posF(e.target.value))}/>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <Label>Volo</Label>
-          <Select value={formData.voloSmon ?? 'NO'} onValueChange={v => update('voloSmon', v)}>
-            <SelectTrigger className="w-40"><SelectValue/></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="NO">NO</SelectItem>
-              <SelectItem value="Low cost">Low cost</SelectItem>
-              <SelectItem value="Last minute">Last minute</SelectItem>
-              <SelectItem value="Standard">Standard</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox checked={formData.trenoSmon ?? false}
-                    onCheckedChange={v => update('trenoSmon', Boolean(v))}/>
-          <Label>Treno</Label>
-        </div>
-        <div>
-          <Label>Ore viaggio trasferta smontatori (treno/aereo)</Label>
-          <Input type="number" min={0} value={formData.oreViaggioTrasfertaSmon ?? 0}
-                 onChange={e => update('oreViaggioTrasfertaSmon', posF(e.target.value))}/>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox checked={formData.viaggioAutoComSmon ?? false}
-                    onCheckedChange={v => update('viaggioAutoComSmon', Boolean(v))}/>
-          <Label>Viaggio auto commerciale</Label>
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <Label>Extra (park, metro, taxi, …)</Label>
-          <Select value={formData.extraCostiTrasfertaSmon ?? 'NO'}
-                  onValueChange={v => update('extraCostiTrasfertaSmon', v)}>
-            <SelectTrigger className="w-40"><SelectValue/></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="NO">NO</SelectItem>
-              <SelectItem value="Basso">Basso</SelectItem>
-              <SelectItem value="Medio">Medio</SelectItem>
-              <SelectItem value="Alto">Alto</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Km. extra Furgone (&lt;35 q.li)</Label>
-            <Input type="number" min={0} value={formData.extraKmTraspFurgSmon ?? 0}
-                   onChange={e => update('extraKmTraspFurgSmon', posF(e.target.value))}/>
+          <GridRow divider>
+            <Cellf label="Personale">
+              <NumInput value={formData.personaleSmon ?? 0}
+                        onChange={v => update('personaleSmon', posI(v))}/>
+            </Cellf>
+            <Cellf label="Costo orario smontaggio" prefix="€">
+              <NumInput value={formData.costoOrarioSmon ?? 0}
+                        onChange={v => update('costoOrarioSmon', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          <GridRow>
+            <Cellf label="Giorni di smontaggio in cantiere">
+              <NumInput value={formData.giorniSmontaggioViaggio ?? 0}
+                        onChange={v => update('giorniSmontaggioViaggio', posI(v))}/>
+            </Cellf>
+            <Cellf label="Ore giornaliere smontaggio">
+              <NumInput value={formData.oreLavoroCantxperSmon ?? 0}
+                        onChange={v => update('oreLavoroCantxperSmon', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          <GridRow divider>
+            <Cellf label="Costo orario viaggio" prefix="€">
+              <NumInput value={formData.costoOrarioViaggioSmon ?? 0}
+                        onChange={v => update('costoOrarioViaggioSmon', posF(v))}/>
+            </Cellf>
+            <Cellf label="Giorni viaggio">
+              <NumInput value={formData.giorniViaggioSmon ?? 0}
+                        onChange={v => update('giorniViaggioSmon', posI(v))}/>
+            </Cellf>
+          </GridRow>
+          <GridRow>
+            <Cellb>
+              <Checkbox checked={formData.rientroDoposmont ?? true}
+                        onCheckedChange={v => update('rientroDoposmont', Boolean(v))}/>
+              <span>Rientro a fine smontaggio</span>
+            </Cellb>
+            <Cellf label="Pernottamenti/pp">
+              <NumInput value={formData.pernottamentiViaggioSmon ?? 0}
+                        onChange={v => update('pernottamentiViaggioSmon', posI(v))}/>
+            </Cellf>
+          </GridRow>
+          <GridRow>
+            <div className="px-3 py-2 col-span-2 flex items-center gap-3">
+              <span className="text-xs font-semibold">Noleggio Mezzo</span>
+              <RadioGroup
+                className="flex gap-3"
+                value={formData.noleggioMezzoSmon ?? 'No'}
+                onValueChange={v => update('noleggioMezzoSmon', v)}>
+                {['No', 'Auto', 'Furgone', 'Altro'].map(opt => (
+                  <label key={opt} className="flex items-center gap-1 text-xs">
+                    <RadioGroupItem value={opt}/>
+                    <span>{opt}</span>
+                  </label>
+                ))}
+              </RadioGroup>
+            </div>
+          </GridRow>
+          <GridRow>
+            <Cellf label="Giorni noleggio">
+              <NumInput value={formData.giorniNoleggioSmon ?? 0} disabled={!noleggioOn}
+                        onChange={v => update('giorniNoleggioSmon', posI(v))}/>
+            </Cellf>
+            <Cellf label="Stima pedaggi" prefix="€">
+              <NumInput value={formData.costoPedaggiSmon ?? 0}
+                        onChange={v => update('costoPedaggiSmon', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          <div className="px-3 py-1 text-[10px] italic text-muted-foreground leading-tight">
+            <span className="font-semibold not-italic">Avvertenza:</span> in Francia, furgoni di altezza superiore a 3 metri pagano come TIR
           </div>
-          <div>
-            <Label>Km. extra camion (&gt;35 q.li)</Label>
-            <Input type="number" min={0} value={formData.extraKmTraspTirSmon ?? 0}
-                   onChange={e => update('extraKmTraspTirSmon', posF(e.target.value))}/>
+          <GridRow>
+            <div className="px-3 py-2">
+              <Label className="text-xs font-semibold">Partenza</Label>
+              <Input value={formData.puntoPartenzaSmon ?? ''}
+                     onChange={e => update('puntoPartenzaSmon', e.target.value)}
+                     className="h-8 mt-1"/>
+            </div>
+            <div className="px-3 py-2">
+              <Label className="text-xs font-semibold">Arrivo</Label>
+              <Input value={formData.puntoArrivoSmon ?? ''}
+                     onChange={e => update('puntoArrivoSmon', e.target.value)}
+                     className="h-8 mt-1"/>
+            </div>
+          </GridRow>
+          <GridRow divider>
+            <Cellf label="Km totali">
+              <NumInput value={formData.kmArSmon ?? 0}
+                        onChange={v => update('kmArSmon', posF(v))}/>
+            </Cellf>
+            <Cellf label="Ore viaggio">
+              <NumInput value={formData.tempoViaggioArSmon ?? 0}
+                        onChange={v => update('tempoViaggioArSmon', posF(v))}/>
+            </Cellf>
+          </GridRow>
+          <div className="grid grid-cols-2 border-b border-border">
+            <div>
+              <div className="border-b border-border">
+                <Cellb>
+                  <Checkbox checked={voloOn}
+                            onCheckedChange={v => {
+                              update('voloSmon', v ? 'SI' : 'NO');
+                              if (!v) update('costoVoloPpSmon', 0);
+                            }}/>
+                  <span>Volo aereo per persona</span>
+                  <span className="ml-auto text-xs text-muted-foreground">€</span>
+                  <NumInput value={formData.costoVoloPpSmon ?? 0} disabled={!voloOn} className="w-16"
+                            onChange={v => update('costoVoloPpSmon', posF(v))}/>
+                </Cellb>
+              </div>
+              <div>
+                <Cellb>
+                  <Checkbox checked={trenoOn}
+                            onCheckedChange={v => {
+                              update('trenoSmon', Boolean(v));
+                              if (!v) update('costoTrenoPpSmon', 0);
+                            }}/>
+                  <span>Treno per persona</span>
+                  <span className="ml-auto text-xs text-muted-foreground">€</span>
+                  <NumInput value={formData.costoTrenoPpSmon ?? 0} disabled={!trenoOn} className="w-16"
+                            onChange={v => update('costoTrenoPpSmon', posF(v))}/>
+                </Cellb>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <Cellf label="Ore viaggio">
+                <NumInput value={formData.oreViaggioTrasfertaSmon ?? 0}
+                          disabled={!voloOn && !trenoOn}
+                          onChange={v => update('oreViaggioTrasfertaSmon', posF(v))}/>
+              </Cellf>
+            </div>
           </div>
+          <GridRow>
+            <Cellb>
+              <Checkbox checked={formData.viaggioAutoComSmon ?? false}
+                        onCheckedChange={v => update('viaggioAutoComSmon', Boolean(v))}/>
+              <span>Auto propria/WOW</span>
+            </Cellb>
+            <Cellb>
+              <Checkbox checked={formData.ritiroCant ?? false}
+                        onCheckedChange={v => update('ritiroCant', Boolean(v))}/>
+              <span>Ritiro in cantiere</span>
+            </Cellb>
+          </GridRow>
+          <GridRow>
+            <Cellb>
+              <Checkbox checked={extraOn}
+                        onCheckedChange={v => update('extraCostiTrasfertaSmon', v ? 'Basso' : 'NO')}/>
+              <span className="leading-tight">Extra giornaliero per persona<br/>(park, taxi, ...)</span>
+            </Cellb>
+            <div className="px-3 py-2 flex items-center">
+              <Select value={extraOn ? (formData.extraCostiTrasfertaSmon ?? 'Basso') : 'NO'}
+                      disabled={!extraOn}
+                      onValueChange={v => update('extraCostiTrasfertaSmon', v)}>
+                <SelectTrigger className="h-8 text-xs"><SelectValue/></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Basso">Basso</SelectItem>
+                  <SelectItem value="Medio">Medio</SelectItem>
+                  <SelectItem value="Alto">Alto</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </GridRow>
+          <GridRow divider>
+            <div className="px-3 pt-2 pb-1">
+              <Label className="text-xs font-semibold leading-tight">Km Extra Trasporto<br/>Furgone (&lt;35 q.li)</Label>
+            </div>
+            <div className="px-3 pt-2 pb-1">
+              <Label className="text-xs font-semibold leading-tight">Km Extra Trasporto<br/>Camion (&gt;35 q.li)</Label>
+            </div>
+          </GridRow>
+          <GridRow>
+            <div className="px-3 py-2">
+              <NumInput value={formData.extraKmTraspFurgSmon ?? 0} className="w-full"
+                        onChange={v => update('extraKmTraspFurgSmon', posF(v))}/>
+            </div>
+            <div className="px-3 py-2">
+              <NumInput value={formData.extraKmTraspTirSmon ?? 0} className="w-full"
+                        onChange={v => update('extraKmTraspTirSmon', posF(v))}/>
+            </div>
+          </GridRow>
         </div>
       </CardContent>
     </Card>

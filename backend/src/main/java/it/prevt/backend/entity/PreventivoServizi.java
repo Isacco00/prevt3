@@ -101,6 +101,32 @@ public class PreventivoServizi {
     private Integer giorniSmontaggioViaggio = 0;
     private BigDecimal oreLavoroCantxperSmon = BigDecimal.ZERO;
     private BigDecimal kmArSmon = BigDecimal.ZERO;
+    @Column(name = "punto_partenza_smon")
+    private String puntoPartenzaSmon;
+    @Column(name = "punto_arrivo_smon")
+    private String puntoArrivoSmon;
+    @Column(name = "rientro_doposmont", nullable = false)
+    private Boolean rientroDoposmont = true;
+    @Column(name = "giorni_viaggio_smon", nullable = false)
+    private Integer giorniViaggioSmon = 0;
+    @Column(name = "pernottamenti_viaggio_smon", nullable = false)
+    private Integer pernottamentiViaggioSmon = 0;
+    @Column(name = "tempo_viaggio_ar_smon", nullable = false)
+    private BigDecimal tempoViaggioArSmon = BigDecimal.ZERO;
+    @Column(name = "costo_orario_viaggio_smon", nullable = false)
+    private BigDecimal costoOrarioViaggioSmon = BigDecimal.ZERO;
+    @Column(name = "noleggio_mezzo_smon", nullable = false)
+    private String noleggioMezzoSmon = "No";
+    @Column(name = "giorni_noleggio_smon", nullable = false)
+    private Integer giorniNoleggioSmon = 0;
+    @Column(name = "costo_pedaggi_smon", nullable = false)
+    private BigDecimal costoPedaggiSmon = BigDecimal.ZERO;
+    @Column(name = "costo_volo_pp_smon", nullable = false)
+    private BigDecimal costoVoloPpSmon = BigDecimal.ZERO;
+    @Column(name = "costo_treno_pp_smon", nullable = false)
+    private BigDecimal costoTrenoPpSmon = BigDecimal.ZERO;
+    @Column(name = "ritiro_cant", nullable = false)
+    private Boolean ritiroCant = false;
     private String voloSmon = "NO";
     private Boolean trenoSmon = false;
     private BigDecimal oreViaggioTrasfertaSmon = BigDecimal.ZERO;
@@ -118,6 +144,10 @@ public class PreventivoServizi {
     private BigDecimal totCostoTrenoSmon = BigDecimal.ZERO;
     private BigDecimal totCostoTrasfPersSmon = BigDecimal.ZERO;
     private BigDecimal totCostiAutoSmon = BigDecimal.ZERO;
+    @Column(name = "tot_cost_noleggio_smon", nullable = false)
+    private BigDecimal totCostNoleggioSmon = BigDecimal.ZERO;
+    @Column(name = "tot_costi_ritiro_cantiere", nullable = false)
+    private BigDecimal totCostiRitiroCantiere = BigDecimal.ZERO;
     private BigDecimal totCostiExtraTrasfSmon = BigDecimal.ZERO;
     private BigDecimal totCostiExtraKmTraspFurgSmon = BigDecimal.ZERO;
     private BigDecimal totCostiExtraKmTraspTirSmon = BigDecimal.ZERO;

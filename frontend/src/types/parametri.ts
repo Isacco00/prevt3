@@ -169,6 +169,19 @@ export interface PreventivoServiziBean {
   giorniSmontaggioViaggio?: number;
   oreLavoroCantxperSmon?: number;
   kmArSmon?: number;
+  puntoPartenzaSmon?: string;
+  puntoArrivoSmon?: string;
+  rientroDoposmont?: boolean;
+  giorniViaggioSmon?: number;
+  pernottamentiViaggioSmon?: number;
+  tempoViaggioArSmon?: number;
+  costoOrarioViaggioSmon?: number;
+  noleggioMezzoSmon?: string;
+  giorniNoleggioSmon?: number;
+  costoPedaggiSmon?: number;
+  costoVoloPpSmon?: number;
+  costoTrenoPpSmon?: number;
+  ritiroCant?: boolean;
   voloSmon?: string;
   trenoSmon?: boolean;
   oreViaggioTrasfertaSmon?: number;
@@ -186,6 +199,8 @@ export interface PreventivoServiziBean {
   totCostoTrenoSmon?: number;
   totCostoTrasfPersSmon?: number;
   totCostiAutoSmon?: number;
+  totCostNoleggioSmon?: number;
+  totCostiRitiroCantiere?: number;
   totCostiExtraTrasfSmon?: number;
   totCostiExtraKmTraspFurgSmon?: number;
   totCostiExtraKmTraspTirSmon?: number;

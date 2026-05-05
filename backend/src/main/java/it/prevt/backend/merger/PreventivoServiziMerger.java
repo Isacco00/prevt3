@@ -86,6 +86,19 @@ public class PreventivoServiziMerger
     entity.setGiorniSmontaggioViaggio(bean.getGiorniSmontaggioViaggio());
     entity.setOreLavoroCantxperSmon(bean.getOreLavoroCantxperSmon());
     entity.setKmArSmon(bean.getKmArSmon());
+    if (bean.getPuntoPartenzaSmon() != null) entity.setPuntoPartenzaSmon(bean.getPuntoPartenzaSmon());
+    if (bean.getPuntoArrivoSmon() != null) entity.setPuntoArrivoSmon(bean.getPuntoArrivoSmon());
+    if (bean.getRientroDoposmont() != null) entity.setRientroDoposmont(bean.getRientroDoposmont());
+    if (bean.getGiorniViaggioSmon() != null) entity.setGiorniViaggioSmon(bean.getGiorniViaggioSmon());
+    if (bean.getPernottamentiViaggioSmon() != null) entity.setPernottamentiViaggioSmon(bean.getPernottamentiViaggioSmon());
+    if (bean.getTempoViaggioArSmon() != null) entity.setTempoViaggioArSmon(bean.getTempoViaggioArSmon());
+    if (bean.getCostoOrarioViaggioSmon() != null) entity.setCostoOrarioViaggioSmon(bean.getCostoOrarioViaggioSmon());
+    if (bean.getNoleggioMezzoSmon() != null) entity.setNoleggioMezzoSmon(bean.getNoleggioMezzoSmon());
+    if (bean.getGiorniNoleggioSmon() != null) entity.setGiorniNoleggioSmon(bean.getGiorniNoleggioSmon());
+    if (bean.getCostoPedaggiSmon() != null) entity.setCostoPedaggiSmon(bean.getCostoPedaggiSmon());
+    if (bean.getCostoVoloPpSmon() != null) entity.setCostoVoloPpSmon(bean.getCostoVoloPpSmon());
+    if (bean.getCostoTrenoPpSmon() != null) entity.setCostoTrenoPpSmon(bean.getCostoTrenoPpSmon());
+    if (bean.getRitiroCant() != null) entity.setRitiroCant(bean.getRitiroCant());
     entity.setVoloSmon(bean.getVoloSmon());
     entity.setTrenoSmon(bean.getTrenoSmon());
     entity.setOreViaggioTrasfertaSmon(bean.getOreViaggioTrasfertaSmon());
@@ -103,6 +116,8 @@ public class PreventivoServiziMerger
     entity.setTotCostoTrenoSmon(bean.getTotCostoTrenoSmon());
     entity.setTotCostoTrasfPersSmon(bean.getTotCostoTrasfPersSmon());
     entity.setTotCostiAutoSmon(bean.getTotCostiAutoSmon());
+    if (bean.getTotCostNoleggioSmon() != null) entity.setTotCostNoleggioSmon(bean.getTotCostNoleggioSmon());
+    if (bean.getTotCostiRitiroCantiere() != null) entity.setTotCostiRitiroCantiere(bean.getTotCostiRitiroCantiere());
     entity.setTotCostiExtraTrasfSmon(bean.getTotCostiExtraTrasfSmon());
     entity.setTotCostiExtraKmTraspFurgSmon(bean.getTotCostiExtraKmTraspFurgSmon());
     entity.setTotCostiExtraKmTraspTirSmon(bean.getTotCostiExtraKmTraspTirSmon());

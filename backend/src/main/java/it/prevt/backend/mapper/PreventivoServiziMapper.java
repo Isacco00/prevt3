@@ -80,6 +80,19 @@ public class PreventivoServiziMapper
     bean.setGiorniSmontaggioViaggio(entity.getGiorniSmontaggioViaggio());
     bean.setOreLavoroCantxperSmon(entity.getOreLavoroCantxperSmon());
     bean.setKmArSmon(entity.getKmArSmon());
+    bean.setPuntoPartenzaSmon(entity.getPuntoPartenzaSmon());
+    bean.setPuntoArrivoSmon(entity.getPuntoArrivoSmon());
+    bean.setRientroDoposmont(entity.getRientroDoposmont());
+    bean.setGiorniViaggioSmon(entity.getGiorniViaggioSmon());
+    bean.setPernottamentiViaggioSmon(entity.getPernottamentiViaggioSmon());
+    bean.setTempoViaggioArSmon(entity.getTempoViaggioArSmon());
+    bean.setCostoOrarioViaggioSmon(entity.getCostoOrarioViaggioSmon());
+    bean.setNoleggioMezzoSmon(entity.getNoleggioMezzoSmon());
+    bean.setGiorniNoleggioSmon(entity.getGiorniNoleggioSmon());
+    bean.setCostoPedaggiSmon(entity.getCostoPedaggiSmon());
+    bean.setCostoVoloPpSmon(entity.getCostoVoloPpSmon());
+    bean.setCostoTrenoPpSmon(entity.getCostoTrenoPpSmon());
+    bean.setRitiroCant(entity.getRitiroCant());
     bean.setVoloSmon(entity.getVoloSmon());
     bean.setTrenoSmon(entity.getTrenoSmon());
     bean.setOreViaggioTrasfertaSmon(entity.getOreViaggioTrasfertaSmon());
@@ -97,6 +110,8 @@ public class PreventivoServiziMapper
     bean.setTotCostoTrenoSmon(entity.getTotCostoTrenoSmon());
     bean.setTotCostoTrasfPersSmon(entity.getTotCostoTrasfPersSmon());
     bean.setTotCostiAutoSmon(entity.getTotCostiAutoSmon());
+    bean.setTotCostNoleggioSmon(entity.getTotCostNoleggioSmon());
+    bean.setTotCostiRitiroCantiere(entity.getTotCostiRitiroCantiere());
     bean.setTotCostiExtraTrasfSmon(entity.getTotCostiExtraTrasfSmon());
     bean.setTotCostiExtraKmTraspFurgSmon(entity.getTotCostiExtraKmTraspFurgSmon());
     bean.setTotCostiExtraKmTraspTirSmon(entity.getTotCostiExtraKmTraspTirSmon());

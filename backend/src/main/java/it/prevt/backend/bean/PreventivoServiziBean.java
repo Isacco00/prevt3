@@ -72,6 +72,19 @@ public class PreventivoServiziBean {
   private Integer giorniSmontaggioViaggio;
   private BigDecimal oreLavoroCantxperSmon;
   private BigDecimal kmArSmon;
+  private String puntoPartenzaSmon;
+  private String puntoArrivoSmon;
+  private Boolean rientroDoposmont;
+  private Integer giorniViaggioSmon;
+  private Integer pernottamentiViaggioSmon;
+  private BigDecimal tempoViaggioArSmon;
+  private BigDecimal costoOrarioViaggioSmon;
+  private String noleggioMezzoSmon;
+  private Integer giorniNoleggioSmon;
+  private BigDecimal costoPedaggiSmon;
+  private BigDecimal costoVoloPpSmon;
+  private BigDecimal costoTrenoPpSmon;
+  private Boolean ritiroCant;
   private String voloSmon;
   private Boolean trenoSmon;
   private BigDecimal oreViaggioTrasfertaSmon;
@@ -89,6 +102,8 @@ public class PreventivoServiziBean {
   private BigDecimal totCostoTrenoSmon;
   private BigDecimal totCostoTrasfPersSmon;
   private BigDecimal totCostiAutoSmon;
+  private BigDecimal totCostNoleggioSmon;
+  private BigDecimal totCostiRitiroCantiere;
   private BigDecimal totCostiExtraTrasfSmon;
   private BigDecimal totCostiExtraKmTraspFurgSmon;
   private BigDecimal totCostiExtraKmTraspTirSmon;
